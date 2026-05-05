@@ -653,6 +653,16 @@ nav.flex.flex-col.px-6.py-6.pb-24 {
   margin-top: 40px;
 }
 
+nav.flex.flex-col.px-6.py-6.pb-24 a {
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+nav.flex.flex-col.px-6.py-6.pb-24 a span {
+  color: #000;
+}
+
 /* @media start  */
 @media(max-width: 1600px) {
   .bg-hero-bg .max-w-\[1400px\] {
