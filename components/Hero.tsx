@@ -141,7 +141,7 @@ const Hero = () => {
     <section className="w-full bg-hero-bg banner_hr">
       <div className="max-w-[1400px] mx-auto px-6 py-16 grid md:grid-cols-[1.2fr_1fr] gap-12 items-center">
         {/* LEFT SIDE */}
-        <div className="relative flex flex-col justify-center">
+        <div className="relative flex flex-col justify-center desktop_banner_dk">
           {/* TEXT */}
           <h1 className="font-carmax text-[52px] lg:text-[72px] leading-[1.05] tracking-tight text-black relative z-10">
             <span className="block bu_ell">Buy or sell a</span>
@@ -174,7 +174,24 @@ const Hero = () => {
             className="absolute bottom-[0px] left-[20%] w-[180px] lg:w-[240px] z-20 red_car"
           />
         </div>
-
+        <div className="mobile_banner_mb">
+          <h1>
+            Buy or sell a
+            <span>
+              <img src={yellowSuv.src} alt="" />
+            </span>
+            <span>
+              <img src={whiteSuv.src} alt="" />
+            </span>
+            pre-owned car.
+            <span>
+              <img src={orangeTruck.src} alt="" />
+            </span>
+            <span>
+              <span className="banner_spa">The way everyone deserves.</span>
+            </span>
+          </h1>
+        </div>
         {/* RIGHT SIDE */}
         <div className="serach_banner">
           <div className="part_search bg-search-panel/80 rounded-2xl p-8 shadow-sm search_panel">

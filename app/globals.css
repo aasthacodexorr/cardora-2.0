@@ -178,6 +178,20 @@ footer .max-w-\[1400px\] {
   background-color: #c4eafa;
 }
 
+.callus_btn_header a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #00af66;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.callus_btn_header a img {
+  width: 22px;
+  height: 22px;
+}
+
 /* momepage hero section css start  */
 .bg-hero-bg h1,
 .bg-hero-bg h1 span {
@@ -288,6 +302,10 @@ span.bu_ell {
 .banner_btn:hover a {
   color: #00af66 !important;
   background: none;
+}
+
+.mobile_banner_mb {
+  display: none;
 }
 
 /* category pill section start  */
@@ -469,26 +487,349 @@ span.bu_ell {
   font-weight: 500;
   background-color: #512da8;
 }
+
 .reviews_section p {
-    font-size: 16px;
+  font-size: 16px;
 }
+
 .reviews_section h3 {
-    font-size: 20px;
+  font-size: 20px;
 }
+
 .google_review_logo img {
-    width: 30px;
-    height: 30px;
+  width: 30px;
+  height: 30px;
 }
+
 .google_review_logo span {
-    font-size: 14px;
-    font-weight: 700;
+  font-size: 14px;
+  font-weight: 700;
 }
+
 .cardora_diff img {
-    width: 77px;
-    height: 77px;
+  width: 77px;
+  height: 77px;
+  border-radius: 20px;
 }
+
 .cardora_diff p {
-    font-size: 20px;
-    color: #000;
-    margin-top: 15px;
+  font-size: 20px;
+  color: #000;
+  margin-top: 15px;
+}
+
+.dream_vehicle_cta p {
+  font-size: 18px;
+}
+
+.cardora_diff .bg-diff-card {
+  font-size: 20px;
+  color: #000000;
+  background-color: #e6f4ff;
+  border-radius: 15px 15px 15px 15px;
+  overflow: hidden;
+  min-height: 280px;
+  padding-top: 40px;
+  padding-right: 25px;
+  padding-bottom: 40px;
+  padding-left: 25px;
+}
+
+.cardora_diff .grid {
+  gap: 40px;
+}
+
+/* get touch section with footer start  */
+.get_toch .bg-dark-card {
+  background: transparent;
+  border: 1px solid #2a2b30;
+}
+
+.get_toch h2 {
+  font-size: 30px;
+}
+
+.get_toch {
+  background-color: #121319;
+}
+
+footer h3 {
+  text-transform: uppercase;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+footer li a {
+  color: #fff;
+}
+
+.grid_col_wr a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.grid_col_wr p {
+  font-size: 16px;
+  color: #fff;
+  font-family: Lato, sans-serif !important;
+  margin-top: 5px;
+}
+
+.tabs_ft button {
+  border: none;
+  padding: 5px 30px;
+  width: auto;
+  background-color: #2a2b30;
+  margin-right: 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  position: relative;
+  cursor: pointer;
+  max-width: 100%;
+  display: table;
+  z-index: 11;
+  line-height: 1.7em;
+}
+
+.ft_hours span {
+  font-size: 16px;
+  color: #fff;
+}
+
+.grid_col_wr {
+  row-gap: 20px;
+  column-gap: 40px;
+}
+
+.copyright_sec p {
+  color: #fff;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+footer {
+  border-top: none;
+}
+
+footer .mx-auto.max-w-\[1400px\] {
+  padding-top: 0px;
+}
+
+.cards_f_wr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 380px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.cards_f_wr .h-12.w-12.rounded-full {
+  width: 65px;
+  height: 65px;
+}
+
+footer address,
+footer svg {
+  color: #fff;
+}
+
+.cards_f_wr img {
+  width: 32px;
+}
+
+/* mobile header css start  */
+.cardora_mobile_logo img {
+  max-width: 165px;
+  height: auto;
+}
+
+img.mobile_iocns_header {
+  width: 25px;
+}
+
+nav.flex.flex-col.px-6.py-6.pb-24 {
+  margin-top: 40px;
+}
+
+/* @media start  */
+@media(max-width: 1600px) {
+  .bg-hero-bg .max-w-\[1400px\] {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .banner_hr .max-w-\[1400px\].mx-auto.px-6.py-16.grid.md\:grid-cols-\[1\.2fr_1fr\].gap-12.items-center {
+    padding: 87px 30px 80px;
+  }
+}
+
+@media(max-width: 1538px) {
+
+  .bg-hero-bg h1,
+  .bg-hero-bg h1 span {
+    color: #000 !important;
+    font-size: 60px;
+  }
+
+  .pre_owned {
+    margin-left: 30%;
+  }
+
+  .derserve_everyone {
+    left: 15%;
+  }
+
+  .red_car {
+    bottom: -100px;
+  }
+}
+
+@media(max-width: 1399px) {
+
+  .bg-hero-bg h1,
+  .bg-hero-bg h1 span {
+    font-size: 50px;
+  }
+
+  .pre_owned {
+    bottom: 14%;
+  }
+
+  .derserve_everyone {
+    bottom: -28%;
+    left: 15%;
+  }
+}
+
+@media(max-width: 1304px) {
+
+  .green_car,
+  .white_car,
+  .red_car {
+    width: 100%;
+    max-width: 215px;
+  }
+
+  .white_car {
+    top: 44%;
+  }
+
+  .derserve_everyone {
+    bottom: -41%;
+  }
+
+  .green_car {
+    right: 13%;
+  }
+}
+
+@media(max-width: 1299px) {
+  .derserve_everyone {
+    font-size: 18px;
+  }
+
+  .bg-hero-bg h1,
+  .bg-hero-bg h1 span {
+    font-size: 40px;
+  }
+
+  .pre_owned {
+    bottom: 1%;
+  }
+
+  span.bu_ell {
+    margin-bottom: 20%;
+  }
+
+  .global_header nav a {
+    font-size: 14px;
+    padding: 3px 14px !important;
+  }
+
+  .callus_btn_header a {
+    font-size: 16px;
+  }
+}
+
+@media(max-width: 1140px) {
+  .banner_hr .max-w-\[1400px\].mx-auto.px-6.py-16.grid.md\:grid-cols-\[1\.2fr_1fr\].gap-12.items-center {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .desktop_banner_dk {
+    display: none;
+  }
+
+  .mobile_banner_mb {
+    display: block;
+    width: 100%;
+  }
+
+  .mobile_banner_mb h1 {
+    font-size: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .mobile_banner_mb h1 img {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  span.banner_spa {
+    font-size: 24px !important;
+  }
+
+  .serach_banner {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    width: 100%;
+  }
+
+  .part_search {
+    width: 100%;
+  }
+}
+
+@media(max-width: 767px) {
+  .box_card .grid.grid-cols-1.md\:grid-cols-\[1fr_280px\].lg\:grid-cols-\[1fr_300px\].gap-8.lg\:gap-10 {
+    grid-template-columns: 1fr;
+  }
+
+  .reviews_google_bar {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .mobile_banner_mb h1 {
+    font-size: 30px;
+  }
+
+  .banner_hr .max-w-\[1400px\].mx-auto.px-6.py-16.grid.md\:grid-cols-\[1\.2fr_1fr\].gap-12.items-center {
+    padding: 30px 20px 30px;
+  }
+
+  span.banner_spa {
+    font-size: 18px !important;
+  }
+
+  .mobile_banner_mb h1 img {
+    max-width: 300px;
+    height: 100px;
+  }
+}
+
+@media(max-width: 474px) {
+
+  .mobile_banner_mb h1 img {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+  }
 }

@@ -54,7 +54,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-dark-border flex flex-col md:flex-row gap-4 justify-between text-[14px] text-dark-section-foreground/70">
+        <div className="copyright_sec mt-12 pt-6 border-t border-dark-border flex flex-col md:flex-row gap-4 justify-between text-[14px] text-dark-section-foreground/70">
           <p>© 2026 Cardora Motor Group. All rights reserved.</p>
           <p>
             <a href="#" className="hover:text-dark-section-foreground">Privacy Policy</a>

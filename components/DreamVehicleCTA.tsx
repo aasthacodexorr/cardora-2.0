@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 
 const DreamVehicleCTA = () => {
   return (
-    <section className="w-full bg-hero-bg">
+    <section className="w-full bg-hero-bg dream_vehicle_cta">
       <div className="mx-auto max-w-[1400px] px-6 py-16 text-center">
         <h2 className="text-[36px] lg:text-[52px] font-extrabold text-foreground tracking-tight">
           Your dream vehicle is close...
