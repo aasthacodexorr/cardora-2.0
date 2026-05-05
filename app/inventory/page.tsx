@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import { InstantSearch, Hits, SearchBox, RefinementList, Configure, useHits, RangeInput, ClearRefinements, SortBy, CurrentRefinements } from "react-instantsearch";
 import { searchClient, TYPESENSE_COLLECTION_NAME } from "@/lib/typesense";
 import { HitCard } from "@/components/Inventory/HitCard";
+import GetInTouch from "@/components/GetInTouch";
 
 type FilterGroupProps = {
   title: string;
@@ -282,6 +283,7 @@ const InventoryContent = () => {
         </InstantSearch>
       </section>
 
+      <GetInTouch />
       <Footer />
     </main>
   );
