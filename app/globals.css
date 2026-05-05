@@ -483,3 +483,12 @@ span.bu_ell {
     font-size: 14px;
     font-weight: 700;
 }
+.cardora_diff img {
+    width: 77px;
+    height: 77px;
+}
+.cardora_diff p {
+    font-size: 20px;
+    color: #000;
+    margin-top: 15px;
+}

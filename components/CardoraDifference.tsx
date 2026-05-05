@@ -45,7 +45,7 @@ const items = [
 
 const CardoraDifference = () => {
   return (
-    <section className="w-full bg-background">
+    <section className="w-full bg-background cardora_diff">
       <div className="mx-auto max-w-[1400px] px-6 py-14">
         
         <h2 className="text-[34px] lg:text-[44px] font-extrabold text-foreground tracking-tight mb-10">
@@ -56,7 +56,7 @@ const CardoraDifference = () => {
           {items.map((item, idx) => (
             <div key={idx} className="rounded-2xl bg-diff-card p-8">
               
-              <div className="h-14 w-14 rounded-xl bg-card shadow-sm flex items-center justify-center mb-8">
+              <div className="image_car">
                 {item.icon}
               </div>
 
