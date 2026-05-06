@@ -7,7 +7,7 @@ import { Phone, MapPin, Menu, X } from "lucide-react";
 import Image from "next/image";
 import facebook from "../assets/fb.png";
 import instagram from "../assets/insta-1.png";
-import famicons from "../assets/famicons_call.svg"
+import famicons from "../assets/famicons_call.svg";
 
 const FacebookIcon = ({ className }: { className?: string }) => (
   <svg
@@ -92,7 +92,9 @@ const Header = () => {
       ? "bg-transparent"
       : "bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]";
   const mobileHeaderBgClass =
-    isLandingPage && !isScrolled ? "bg-transparent" : "bg-transparent shadow-sm";
+    isLandingPage && !isScrolled
+      ? "bg-transparent"
+      : "bg-transparent shadow-sm";
   const topBarBgClass =
     isLandingPage && !isScrolled ? "bg-transparent" : "bg-transparent";
 
@@ -108,7 +110,6 @@ const Header = () => {
               <CardoraLogo />
             </Link>
           </div>
-
           <nav className="flex-[0.6] flex justify-center items-center gap-8">
             {navItems.map((item) => {
               const isActive =
@@ -130,10 +131,7 @@ const Header = () => {
           </nav>
 
           <div className="flex-[0.2] flex justify-end callus_btn_header">
-            <a
-              href="tel:1-855-514-5500"
-              className=""
-            >
+            <a href="tel:1-855-514-5500" className="">
               {/* <Phone className="h-4 w-4" /> */}
               <Image src={famicons} alt="Phone" className="h-4 w-4" />
               1-855-514-5500
