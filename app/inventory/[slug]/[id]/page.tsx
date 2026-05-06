@@ -212,7 +212,7 @@ export default async function VehicleDetailsPage({ params }: { params: Promise<{
           </div>
         </div>
       </section>
-
+        
       <Footer />
     </main>
   );
