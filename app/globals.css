@@ -140,6 +140,13 @@ footer .max-w-\[1400px\] {
   max-width: 1600px !important;
 }
 
+.bg-hero-bg .max-w-\[1400px\] {
+  padding-top: 8px;
+  padding-bottom: 7px;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
 .main_logo img {
   width: 100%;
   object-fit: initial;
@@ -178,31 +185,28 @@ footer .max-w-\[1400px\] {
 
 .green_car {
   top: -8%;
-  right: 23%;
+  right: 20%;
 }
 
 .banner_hr .max-w-\[1400px\].mx-auto.px-6.py-16.grid.md\:grid-cols-\[1\.2fr_1fr\].gap-12.items-center {
-  padding-top: 87px;
-  padding-bottom: 80px;
-  padding-right: 10px;
-  padding-left: 10px;
+  padding: 87px 20px 80px;
 }
 
 span.bu_ell {
   margin-bottom: 18%;
+  margin-left: 1%;
 }
-
 .pre_owned {
-  margin-top: -15%;
-  margin-left: 24%;
-  position: absolute;
-  bottom: 25%;
+    margin-top: -15%;
+    margin-left: 29%;
+    position: absolute;
+    bottom: 25%;
 }
 
 .white_car {
   width: 100%;
   max-width: 320px;
-  left: -9%;
+  left: -6%;
   top: 25%;
 }
 
@@ -210,15 +214,15 @@ span.bu_ell {
   width: 100%;
   max-width: 309px;
   bottom: -70px;
-  left: -7%;
+  left: -4%;
 }
 
 .derserve_everyone {
-  font-size: 26px;
-  font-weight: 600;
-  position: absolute;
-  bottom: -16%;
-  left: 12%;
+    font-size: 26px;
+    font-weight: 600;
+    position: absolute;
+    bottom: -16%;
+    left: 17%;
 }
 
 .serach_banner {
@@ -312,7 +316,7 @@ body #page-container .et_pb_section .et_pb_button_0_tb_header {
 
 /* impact section css start  */
 .impact_section .container_box {
-  max-width: 1250px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0px 15px;
 }
@@ -410,7 +414,7 @@ body #page-container .et_pb_section .et_pb_button_0_tb_header {
 }
 
 .next_ride_section .container_box {
-  max-width: 1250px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0px 20px;
 }
@@ -425,7 +429,7 @@ body #page-container .et_pb_section .et_pb_button_0_tb_header {
 }
 
 .shop_featured_vehicle .mx-auto {
-  max-width: 1250px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0px 20px;
 }
@@ -444,7 +448,7 @@ body #page-container .et_pb_section .et_pb_button_0_tb_header {
 }
 
 .reviews_section .mx-auto.max-w-\[1400px\] {
-  max-width: 1250px;
+  max-width: 1280px;
 }
 
 .reviews_google_bar img {
@@ -687,13 +691,17 @@ header.hidden.lg\:block.w-full.top-0.z-50.global_header.transition-colors.durati
   padding: 15px;
   border-radius: 15px;
 }
-.inventory_page aside > .mb-6.flex.flex-col.items-center.gap-4 {
-    margin-top: 10px;
-}.inventory_page aside > .mb-6.flex.flex-col.items-center.gap-4 span {
-    color: #fff;
-    font-weight: 400;
-    text-transform: uppercase;
+
+.inventory_page aside>.mb-6.flex.flex-col.items-center.gap-4 {
+  margin-top: 10px;
 }
+
+.inventory_page aside>.mb-6.flex.flex-col.items-center.gap-4 span {
+  color: #fff;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
 /* @media start  */
 @media(max-width: 1600px) {
   .bg-hero-bg .max-w-\[1400px\] {
