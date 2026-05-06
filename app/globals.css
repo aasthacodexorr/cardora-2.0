@@ -90,6 +90,16 @@
   }
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-poppins), sans-serif;
+  font-weight: 500;
+}
+
 /* =========================
    BASE STYLES
 ========================= */
@@ -102,74 +112,6 @@
     @apply bg-background text-foreground;
     font-family: var(--font-lato), sans-serif;
   }
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: '888' !important;
-  font-weight: 600 !important;
-}
-
-/* ========================= CUSTOM FONTS ========================= */
-@font-face {
-    font-family: '888';
-    src: url('../public/fonts/888-DemiBold.woff2') format('woff2'),
-        url('../public/fonts/888-DemiBold.woff') format('woff'),
-        url('../public/fonts/888-DemiBold.ttf') format('truetype');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: '888';
-    src: url('../public/fonts/888-DemiBold_1.woff2') format('woff2'),
-        url('../public/fonts/888-DemiBold_1.woff') format('woff'),
-        url('../public/fonts/888-DemiBold_1.ttf') format('truetype');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: '888';
-    src: url('../public/fonts/888-DemiBold_2.woff2') format('woff2'),
-        url('../public/fonts/888-DemiBold_2.woff') format('woff'),
-        url('../public/fonts/888-DemiBold_2.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-
-
-@font-face {
-  font-family: 'Carmax Variable';
-  src: url('../public/fonts/CarmaxVariableRegular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-
-@font-face {
-  font-family: 'Carmax Variable';
-  src: url('../public/fonts/CarmaxVariableBold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Carmax Variable';
-  src: url('../public/fonts/CarmaxVariableLight.woff2') format('woff2');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
 }
 
 /* header footer css start  */
@@ -231,6 +173,7 @@ footer .max-w-\[1400px\] {
 .bg-hero-bg h1,
 .bg-hero-bg h1 span {
   color: #000 !important;
+  font-weight: 600;
 }
 
 .green_car {
@@ -391,13 +334,13 @@ body #page-container .et_pb_section .et_pb_button_0_tb_header {
   color: #333;
   margin-top: 5px;
   font-size: 50px;
-  font-weight: 400;
-  font-family: 'Carmax Variable';
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
 }
 
 .impact_right_sec .mt-4.inline-block.rounded-md.bg-\[\#00AF66\].text-white.px-4.py-1\.5.text-\[15px\].font-bold.shadow-sm {
-  font-family: 'Carmax Variable';
-  font-weight: 400;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
 }
 
 .impact_right_sec p {
@@ -717,10 +660,6 @@ nav.flex.flex-col.px-6.py-6.pb-24 a span {
   padding-bottom: 7px;
 }
 
-header.hidden.lg\:block.w-full.sticky.top-0.z-50.global_header.transition-colors.duration-300.bg-white.shadow-\[0_2px_10px_rgba\(0\,0\,0\,0\.05\)\] {
-  background-color: #f9f9f9;
-}
-
 .dream_vehicle_cta .mx-auto.max-w-\[1400px\].px-6.py-16.text-center {
   padding: 60px 0;
 }
@@ -737,6 +676,24 @@ header.hidden.lg\:block.w-full.sticky.top-0.z-50.global_header.transition-colors
   grid-template-columns: 370px 1fr;
 }
 
+header.hidden.lg\:block.w-full.top-0.z-50.global_header.transition-colors.duration-300.bg-white.shadow-\[0_2px_10px_rgba\(0\,0\,0\,0\.05\)\] {
+  background: #f9f9f9;
+}
+
+.inventory_page aside {
+  background: #fff;
+  color: #fff;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 15px;
+}
+.inventory_page aside > .mb-6.flex.flex-col.items-center.gap-4 {
+    margin-top: 10px;
+}.inventory_page aside > .mb-6.flex.flex-col.items-center.gap-4 span {
+    color: #fff;
+    font-weight: 400;
+    text-transform: uppercase;
+}
 /* @media start  */
 @media(max-width: 1600px) {
   .bg-hero-bg .max-w-\[1400px\] {
