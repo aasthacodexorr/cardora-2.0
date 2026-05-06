@@ -102,16 +102,16 @@
     @apply bg-background text-foreground;
     font-family: var(--font-lato), sans-serif;
   }
+}
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: 'Carmax Variable';
-    font-weight: 400 !important;
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Carmax Variable;
+  font-weight: 400 !important;
 }
 
 /* ========================= CUSTOM FONTS ========================= */
@@ -124,6 +124,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 
 @font-face {
   font-family: 'Carmax Variable';
@@ -148,7 +149,7 @@ nav.flex-\[0\.6\].flex.justify-center.items-center.gap-8 {
 
 .global_header nav a {
   text-transform: capitalize;
-  font-size: 16px;
+  font-size: 15px;
   color: #000 !important;
   font-family: Lato, sans-serif !important;
   font-weight: 600 !important;
@@ -171,7 +172,7 @@ footer .max-w-\[1400px\] {
   width: 100%;
   object-fit: initial;
   height: auto;
-  max-width: 168px;
+  max-width: 165px;
 }
 
 .bg-hero-bg {
@@ -190,6 +191,10 @@ footer .max-w-\[1400px\] {
 .callus_btn_header a img {
   width: 22px;
   height: 22px;
+}
+
+.home_p header {
+  background: #c4eafa;
 }
 
 /* momepage hero section css start  */
@@ -262,12 +267,12 @@ span.bu_ell {
 }
 
 .part_search button {
-  border-radius: 10px;
-  height: 35px;
-  display: flex;
+  border-radius: 5px;
   justify-content: center;
   align-items: center;
+  height: 34px;
   font-weight: 500;
+  display: flex;
 }
 
 .part_search .flex.items-center.bg-white.rounded-full.overflow-hidden.shadow input {
@@ -306,6 +311,10 @@ span.bu_ell {
 
 .mobile_banner_mb {
   display: none;
+}
+
+body #page-container .et_pb_section .et_pb_button_0_tb_header {
+  padding-right: 0px !important;
 }
 
 /* category pill section start  */
@@ -348,11 +357,17 @@ span.bu_ell {
 }
 
 .impact_right_sec .mt-3.text-\[48px\].lg\:text-\[56px\].font-extrabold.text-gray-900.leading-none.tracking-tight {
-  font-size: 50px;
-  font-weight: 600;
   text-align: center;
   color: #333;
   margin-top: 5px;
+  font-size: 50px;
+  font-weight: 400;
+  font-family: 'Carmax Variable';
+}
+
+.impact_right_sec .mt-4.inline-block.rounded-md.bg-\[\#00AF66\].text-white.px-4.py-1\.5.text-\[15px\].font-bold.shadow-sm {
+  font-family: 'Carmax Variable';
+  font-weight: 400;
 }
 
 .impact_right_sec p {
@@ -667,6 +682,31 @@ nav.flex.flex-col.px-6.py-6.pb-24 a span {
   color: #000;
 }
 
+.bg-hero-bg .max-w-\[1400px\] {
+  padding-top: 8px;
+  padding-bottom: 7px;
+}
+
+header.hidden.lg\:block.w-full.sticky.top-0.z-50.global_header.transition-colors.duration-300.bg-white.shadow-\[0_2px_10px_rgba\(0\,0\,0\,0\.05\)\] {
+  background-color: #f9f9f9;
+}
+
+.dream_vehicle_cta .mx-auto.max-w-\[1400px\].px-6.py-16.text-center {
+  padding: 60px 0;
+}
+
+
+/* inventory page css start  */
+.inventory_page .max-w-\[1400px\] {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px 20px;
+}
+
+.inventory_page .grid.grid-cols-1.lg\:grid-cols-\[300px_1fr\].gap-8 {
+  grid-template-columns: 370px 1fr;
+}
+
 /* @media start  */
 @media(max-width: 1600px) {
   .bg-hero-bg .max-w-\[1400px\] {
@@ -840,7 +880,6 @@ nav.flex.flex-col.px-6.py-6.pb-24 a span {
 }
 
 @media(max-width: 474px) {
-
   .mobile_banner_mb h1 img {
     width: 100%;
     max-width: 150px;

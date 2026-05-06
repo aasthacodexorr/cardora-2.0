@@ -92,15 +92,15 @@ const Header = () => {
       ? "bg-transparent"
       : "bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]";
   const mobileHeaderBgClass =
-    isLandingPage && !isScrolled ? "bg-transparent" : "bg-white shadow-sm";
+    isLandingPage && !isScrolled ? "bg-transparent" : "bg-transparent shadow-sm";
   const topBarBgClass =
-    isLandingPage && !isScrolled ? "bg-transparent" : "bg-white";
+    isLandingPage && !isScrolled ? "bg-transparent" : "bg-transparent";
 
   return (
     <>
       {/* Desktop Header */}
       <header
-        className={`hidden lg:block w-full sticky top-0 z-50 global_header transition-colors duration-300 ${headerBgClass}`}
+        className={`hidden lg:block w-full top-0 z-50 global_header transition-colors duration-300 ${headerBgClass}`}
       >
         <div className="mx-auto flex max-w-[1400px] items-center justify-between  py-4">
           <div className="flex-[0.2] main_logo">

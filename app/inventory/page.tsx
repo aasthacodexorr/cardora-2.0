@@ -100,7 +100,7 @@ const InventoryContent = () => {
         <Header />
       </div>
 
-      <section className="w-full bg-[#f4f4f4] flex-1">
+      <section className="w-full bg-[#efefef] flex-1 inventory_page">
         <InstantSearch searchClient={searchClient} indexName={TYPESENSE_COLLECTION_NAME} initialUiState={initialUiState}>
           <Configure hitsPerPage={21} />
 
