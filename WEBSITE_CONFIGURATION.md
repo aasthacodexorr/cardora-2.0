@@ -2,10 +2,10 @@
 
 ## Server Details
 - **Version:** Typesense v0.23.1 (Server Side)
-- **Host:** `v6eba1srpfohj89dp-1.a1.typesense.net`
+- **Host:** `**********`
 - **Port:** `443`
 - **Protocol:** `https`
-- **Collection:** `07cb7c095c0cf712732a976016079e19`
+- **Collection:** `*********`
   *(Note: This is specific for Cardora and changes depending on the customer we are trying to connect.)*
 
 ## Authentication
