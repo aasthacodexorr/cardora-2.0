@@ -25,7 +25,7 @@ const Index = () => {
       <FeaturedVehicles />
       <Reviews />
       <CardoraDifference />
-      <DreamVehicleCTA />
+      {/* <DreamVehicleCTA /> */}
       <GetInTouch />
       <Footer />
     </main>
