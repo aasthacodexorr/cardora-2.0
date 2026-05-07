@@ -1035,6 +1035,60 @@ span.ais-CurrentRefinements-category.flex.items-center.bg-white.rounded-lg.px-4.
   height: 512px;
 }
 
+.about_this_vehicle {
+  padding: 0;
+  border: none;
+}
+
+.about_this_vehicle h2 {
+  color: #000;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 p.text-\[13px\].text-muted-foreground.mb-1 {
+  align-items: center;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 400;
+  color: #787582;
+  display: flex;
+  gap: 5px;
+  margin-bottom: 0;
+}
+
+.about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 p.text-\[13px\].text-muted-foreground.mb-1 svg {
+  color: #000;
+}
+
+.about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 p.font-bold.text-\[15px\] {
+  margin-left: 25px;
+}
+
+.about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 {
+  gap: 35px;
+}
+
+.about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 {
+  gap: 35px;
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+.vehicle_descr {
+  padding: 0;
+  border: none;
+  margin-top: 45px;
+}
+
+.vehicle_descr h2 {
+  color: #000;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
 /* @media start  */
 @media(max-width: 1600px) {
   .bg-hero-bg .max-w-\[1400px\] {
@@ -1200,6 +1254,10 @@ span.ais-CurrentRefinements-category.flex.items-center.bg-white.rounded-lg.px-4.
     grid-template-columns: 1fr;
   }
 
+  .about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 {
+    grid-template-columns: auto auto;
+  }
+
   .reviews_google_bar {
     width: 100%;
     flex-wrap: wrap;
@@ -1229,4 +1287,11 @@ span.ais-CurrentRefinements-category.flex.items-center.bg-white.rounded-lg.px-4.
     max-width: 150px;
     height: auto;
   }
+    .about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 {
+    grid-template-columns: auto;
+  }
+  .right_detail_container .flex.items-center.gap-6.mt-4 {
+    flex-wrap: wrap;
+    gap: 10px;
+}
 }
