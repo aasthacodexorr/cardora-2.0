@@ -108,7 +108,7 @@ const InventoryContent = () => {
             <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
               
               {/* Sidebar */}
-              <aside className="rounded-[2.5rem] bg-white shadow-[0_4px_20px_rgb(0,0,0,0.03)] p-6 h-fit">
+              <aside className="rounded-[2.5rem] bg-white shadow-[0_4px_20px_rgb(0,0,0,0.03)] p-6 h-fit invntory_left_sidebar">
                 <div className="mb-6 flex flex-col items-center gap-4">
                   <div className="bg-[#00A651] text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm">
                     <CustomHitsCount />
@@ -123,7 +123,7 @@ const InventoryContent = () => {
                   />
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1 vehicle_type">
                   <FilterGroup title="VEHICLE TYPE">
                     <RefinementList
                       attribute="vehicle_type"
@@ -216,9 +216,9 @@ const InventoryContent = () => {
               </aside>
 
               {/* Results */}
-              <div>
+              <div className="results_view_wr">
                 {/* Search & Sort bar */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-3">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-3 seacrh_header_part">
                   <div className="relative w-full md:max-w-md">
                     <SearchBox
                       classNames={{
@@ -266,7 +266,7 @@ const InventoryContent = () => {
                   />
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-4 results_view_wr_grid">
                   <NoResultsHandler>
                     <Hits
                       hitComponent={HitCard}
@@ -282,7 +282,6 @@ const InventoryContent = () => {
           </div>
         </InstantSearch>
       </section>
-
       <GetInTouch />
       <Footer />
     </main>
