@@ -51,7 +51,7 @@ const FeaturedVehicles = () => {
             {vehicles.map((v) => (
               <article
                 key={v.title}
-                className="snap-start shrink-0 w-[280px] rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
+                className="snap-start shrink-0 w-[290px] rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
               >
                 <div className="aspect-[4/3] bg-muted">
                   <img
