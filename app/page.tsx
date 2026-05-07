@@ -8,7 +8,7 @@ import NextRide from "@/components/NextRide";
 import FeaturedVehicles from "@/components/FeaturedVehicles";
 import Reviews from "@/components/Reviews";
 import CardoraDifference from "@/components/CardoraDifference";
-import DreamVehicleCTA from "@/components/DreamVehicleCTA";
+// import DreamVehicleCTA from "@/components/DreamVehicleCTA";
 import GetInTouch from "@/components/GetInTouch";
 import Footer from "@/components/Footer";
 
