@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 type ImageGalleryProps = {
   images: string[];
@@ -9,85 +10,110 @@ type ImageGalleryProps = {
   isSold?: boolean;
 };
 
-export const ImageGallery = ({ images, title, isSold = false }: ImageGalleryProps) => {
+export const ImageGallery = ({
+  images,
+  title,
+  isSold = false,
+}: ImageGalleryProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const thumbRef = useRef<HTMLDivElement>(null);
 
   const goTo = (index: number) => {
-    if (index < 0) index = images.length - 1;
-    if (index >= images.length) index = 0;
-    setActiveIndex(index);
+    if (!images.length) return;
 
-    // Scroll the thumbnail into view
+    let newIndex = index;
+
+    if (newIndex < 0) {
+      newIndex = images.length - 1;
+    }
+    if (newIndex >= images.length) {
+      newIndex = 0;
+    }
+    setActiveIndex(newIndex);
     if (thumbRef.current) {
-      const thumb = thumbRef.current.children[index] as HTMLElement;
+      const thumb = thumbRef.current.children[newIndex] as HTMLElement;
+
       if (thumb) {
-        thumb.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        thumb.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
       }
     }
   };
 
-  if (images.length === 0) return null;
+  if (!images || images.length === 0) return null;
 
   return (
-    <div className="flex gap-3" style={{ height: "480px" }}>
-      {/* Main image with left/right arrows */}
-      <div className="flex-1 min-w-0 relative rounded-xl overflow-hidden shadow-sm bg-muted group" style={{ height: "480px" }}>
+    <div className="flex gap-1 h-[320px] md:h-[623px]">
+      {/* MAIN IMAGE */}
+      <div className="flex-1 relative rounded-2xl overflow-hidden bg-gray-100 shadow-sm btnsd_bt">
+        {/* SOLD BADGE */}
         {isSold && (
-          <div className="absolute top-4 right-4 z-10 bg-red-600 text-white text-[14px] font-bold px-4 py-2 rounded-sm shadow-md uppercase tracking-wider">
+          <div className="absolute top-4 right-4 z-20 bg-red-600 text-white text-sm font-bold px-4 py-2 rounded-md shadow-lg uppercase">
             Sold
           </div>
         )}
 
+        {/* MAIN IMAGE */}
         <img
           src={images[activeIndex]}
           alt={`${title} - Image ${activeIndex + 1}`}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${isSold ? "grayscale opacity-90" : ""}`}
+          className={`w-full h-full object-cover transition-opacity duration-500 ease-in-out ${
+            isSold ? "grayscale opacity-90" : ""
+          }`}
         />
 
-        {/* Left Arrow */}
+        {/* LEFT BUTTON */}
         {images.length > 1 && (
           <button
-            onClick={() => goTo(activeIndex - 1)}
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            aria-label="Previous image"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              goTo(activeIndex - 1);
+            }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white rounded-full p-3 shadow-xl transition-all duration-300 hover:scale-110"
+            aria-label="Previous Image"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="w-6 h-6 text-black" />
           </button>
         )}
 
-        {/* Right Arrow */}
+        {/* RIGHT BUTTON */}
         {images.length > 1 && (
           <button
-            onClick={() => goTo(activeIndex + 1)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            aria-label="Next image"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              goTo(activeIndex + 1);
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white rounded-full p-3 shadow-xl transition-all duration-300 hover:scale-110"
+            aria-label="Next Image"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="w-6 h-6 text-black" />
           </button>
         )}
 
-        {/* Image counter */}
-        <div className="absolute bottom-3 right-3 z-10 bg-black/60 text-white text-[12px] font-semibold px-3 py-1 rounded-full backdrop-blur-sm">
+        {/* IMAGE COUNTER */}
+        <div className="absolute bottom-4 right-4 z-20 bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm">
           {activeIndex + 1} / {images.length}
         </div>
       </div>
 
-      {/* Thumbnails — scrollable vertical strip on the right */}
+      {/* THUMBNAILS */}
       {images.length > 1 && (
         <div
           ref={thumbRef}
-          className="flex flex-col gap-2 overflow-y-auto"
-          style={{ width: "120px", height: "480px" }}
+          className="hidden md:flex flex-col gap-1 overflow-y-auto scroll-smooth w-[185px] h-full pr-1 thumb_cont"
         >
           {images.map((img, idx) => (
-            <div
+            <button
               key={idx}
-              onClick={() => setActiveIndex(idx)}
-              style={{ width: "120px", height: "90px", minHeight: "90px" }}
-              className={`rounded-lg overflow-hidden border-2 cursor-pointer transition-colors bg-muted ${
+              type="button"
+              onClick={() => goTo(idx)}
+              className={`btn_thumb relative w-[185px] h-[138px] min-h-[138px] rounded-xl overflow-hidden border-2 transition-all duration-300 ${
                 idx === activeIndex
-                  ? "border-brand-green"
+                  ? "border-green-500 scale-[0.98]"
                   : "border-transparent hover:border-gray-300"
               }`}
             >
@@ -95,8 +121,9 @@ export const ImageGallery = ({ images, title, isSold = false }: ImageGalleryProp
                 src={img}
                 alt={`Thumbnail ${idx + 1}`}
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
-            </div>
+            </button>
           ))}
         </div>
       )}
