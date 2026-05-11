@@ -697,6 +697,7 @@ header.hidden.lg\:block.w-full.top-0.z-50.global_header.transition-colors.durati
   border-radius: 15px;
   padding: 15px;
   margin-left: 10px;
+  width: 370px;
 }
 
 .inventory_page aside>.mb-6.flex.flex-col.items-center.gap-4 {
@@ -802,10 +803,14 @@ span.ais-CurrentRefinements-category.flex.items-center.bg-white.rounded-lg.px-4.
 
 .seacrh_header_part select {
   border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  width: 212px;
 }
 
 .results_view_wr {
   margin-right: 40px;
+  margin-left: 10px;
 }
 
 .results_view_wr_grid ol.ais-Hits-list.grid.grid-cols-1.sm\:grid-cols-2.xl\:grid-cols-3.gap-6 {
@@ -1106,6 +1111,11 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
   background: #f9f9f9;
 }
 
+.results_view_wr .mb-6 {
+  margin: 10px;
+}
+
+
 /* @media start  */
 @media(max-width: 1600px) {
   .bg-hero-bg .max-w-\[1400px\] {
@@ -1264,6 +1274,12 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
   .results_view_wr_grid ol li a article .bg-\[\#eaf5ff\].w-full.py-3.px-4.rounded-xl.text-center span {
     padding: 7px 7px;
   }
+
+  .results_view_wr {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
 }
 
 @media(max-width: 767px) {
