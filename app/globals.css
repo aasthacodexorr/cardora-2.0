@@ -4,9 +4,6 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
 
-/* =========================
-   DESIGN SYSTEM (COLORS)
-========================= */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -121,13 +118,20 @@ nav.flex-\[0\.6\].flex.justify-center.items-center.gap-8 {
 
 .global_header nav a {
   text-transform: capitalize;
-  font-size: 15px;
-  color: #000 !important;
-  font-family: Lato, sans-serif !important;
-  font-weight: 600 !important;
-  padding: 3px 20px !important;
-  border-right: 1px solid #0000001a !important;
+  font-size: 16px;
   line-height: normal;
+  color: #000 !important;
+  border-right: 1px solid #0000001a !important;
+  padding: 6px 20px !important;
+  font-family: Lato, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0px;
+  margin-top: 8px;
+  word-wrap: break-word;
+}
+
+.flex-\[0\.2\].flex.justify-end.callus_btn_header {
+  padding-right: 20px;
 }
 
 .global_header nav a:nth-last-child(1) {
@@ -159,12 +163,12 @@ footer .max-w-\[1400px\] {
 }
 
 .callus_btn_header a {
-  display: flex;
+  color: #00af66;
   align-items: center;
   gap: 5px;
-  color: #00af66;
   font-size: 20px;
   font-weight: 600;
+  display: flex;
 }
 
 .callus_btn_header a img {
@@ -185,7 +189,7 @@ footer .max-w-\[1400px\] {
 
 .green_car {
   top: -8%;
-  right: 20%;
+  right: 23%;
 }
 
 .banner_hr .max-w-\[1400px\].mx-auto.px-6.py-16.grid.md\:grid-cols-\[1\.2fr_1fr\].gap-12.items-center {
@@ -194,12 +198,12 @@ footer .max-w-\[1400px\] {
 
 span.bu_ell {
   margin-bottom: 18%;
-  margin-left: 1%;
+  margin-left: -2%;
 }
 
 .pre_owned {
   margin-top: -15%;
-  margin-left: 29%;
+  margin-left: 23%;
   position: absolute;
   bottom: 25%;
 }
@@ -207,7 +211,7 @@ span.bu_ell {
 .white_car {
   width: 100%;
   max-width: 320px;
-  left: -6%;
+  left: -10%;
   top: 25%;
 }
 
@@ -215,15 +219,15 @@ span.bu_ell {
   width: 100%;
   max-width: 309px;
   bottom: -70px;
-  left: -4%;
+  left: -8%;
 }
 
 .derserve_everyone {
   font-size: 26px;
   font-weight: 600;
   position: absolute;
-  bottom: -16%;
-  left: 17%;
+  bottom: -15%;
+  left: 12%;
 }
 
 .serach_banner {
@@ -687,11 +691,12 @@ header.hidden.lg\:block.w-full.top-0.z-50.global_header.transition-colors.durati
 }
 
 .inventory_page aside {
-  background: #fff;
   color: #fff;
+  background: #fff;
   border: 1px solid #ddd;
-  padding: 15px;
   border-radius: 15px;
+  padding: 15px;
+  margin-left: 10px;
 }
 
 .inventory_page aside>.mb-6.flex.flex-col.items-center.gap-4 {
@@ -797,6 +802,10 @@ span.ais-CurrentRefinements-category.flex.items-center.bg-white.rounded-lg.px-4.
 
 .seacrh_header_part select {
   border-radius: 12px;
+}
+
+.results_view_wr {
+  margin-right: 40px;
 }
 
 .results_view_wr_grid ol.ais-Hits-list.grid.grid-cols-1.sm\:grid-cols-2.xl\:grid-cols-3.gap-6 {
@@ -1089,6 +1098,14 @@ span.ais-CurrentRefinements-category.flex.items-center.bg-white.rounded-lg.px-4.
   margin-bottom: 15px;
 }
 
+.bg-hero-bg .max-w-\[1400px\] {
+  padding: 8px 0px 7px;
+}
+
+header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.duration-300.bg-transparent.shadow-sm .flex.items-center.justify-between.px-4.py-3.z-50.transition-colors.duration-300.bg-transparent {
+  background: #f9f9f9;
+}
+
 /* @media start  */
 @media(max-width: 1600px) {
   .bg-hero-bg .max-w-\[1400px\] {
@@ -1287,11 +1304,13 @@ span.ais-CurrentRefinements-category.flex.items-center.bg-white.rounded-lg.px-4.
     max-width: 150px;
     height: auto;
   }
-    .about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 {
+
+  .about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 {
     grid-template-columns: auto;
   }
+
   .right_detail_container .flex.items-center.gap-6.mt-4 {
     flex-wrap: wrap;
     gap: 10px;
-}
+  }
 }
