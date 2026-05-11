@@ -36,6 +36,7 @@ const PreQualify = () => {
   }
 
   return (
+    // added class impact_section 
     <section className="w-full bg-background impact_section">
       <div className="container_box">
         <div className="box_card">
@@ -146,6 +147,7 @@ const PreQualify = () => {
             </div>
 
             {/* Right: result */}
+            {/* added class impact_right_sec  */}
             <div className="flex flex-col items-center md:items-stretch mt-8 md:mt-0 impact_right_sec">
               <div className="w-full rounded-xl bg-[#E6F4FF] px-6 py-8 text-center shadow-inner border border-blue-100">
                 <p className="text-[16px] font-bold text-gray-800 uppercase tracking-wide">Est. Bi-Weekly</p>

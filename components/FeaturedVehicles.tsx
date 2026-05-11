@@ -29,6 +29,7 @@ const FeaturedVehicles = () => {
   };
 
   return (
+    // added class shop_featured_vehicle 
     <section className="w-full bg-background shop_featured_vehicle">
       <div className="mx-auto max-w-[1400px] px-6 py-12 relative">
         <h2 className="text-[34px] lg:text-[44px] font-extrabold text-foreground tracking-tight text-center mb-8">

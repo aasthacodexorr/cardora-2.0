@@ -38,6 +38,7 @@ const cards: Card[] = [
 
 const NextRide = () => {
   return (
+    // added class next_ride_section 
     <section className="w-full bg-background next_ride_section">
       <div className="container_box">
         <h2 className="text-[34px] lg:text-[44px] font-extrabold text-foreground tracking-tight mb-8">

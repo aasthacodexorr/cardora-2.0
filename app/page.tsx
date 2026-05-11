@@ -8,12 +8,12 @@ import NextRide from "@/components/NextRide";
 import FeaturedVehicles from "@/components/FeaturedVehicles";
 import Reviews from "@/components/Reviews";
 import CardoraDifference from "@/components/CardoraDifference";
-// import DreamVehicleCTA from "@/components/DreamVehicleCTA";
 import GetInTouch from "@/components/GetInTouch";
 import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
+    // add class home_p
     <main className="min-h-screen bg-background home_p">
       <div className="bg-hero-bg">
         <Header />
@@ -25,7 +25,6 @@ const Index = () => {
       <FeaturedVehicles />
       <Reviews />
       <CardoraDifference />
-      {/* <DreamVehicleCTA /> */}
       <GetInTouch />
       <Footer />
     </main>

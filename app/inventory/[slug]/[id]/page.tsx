@@ -82,7 +82,7 @@ export default async function VehicleDetailsPage({
       <div className="bg-hero-bg">
         <Header />
       </div>
-
+      {/* added class detail_page_section  */}
       <section className="w-full bg-background flex-1 pb-16 detail_page_section">
         <div className="mx-auto max-w-[1400px] px-6 py-6">
           {/* Breadcrumbs */}
@@ -100,7 +100,8 @@ export default async function VehicleDetailsPage({
 
           <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10">
             {/* Left Column: Images & Details */}
-            <div className="space-y-8">
+            {/* added class gallry_p  */}
+            <div className="space-y-8 gallry_p">
               {/* Image Gallery with arrows */}
               <ImageGallery
                 images={images}
@@ -108,7 +109,97 @@ export default async function VehicleDetailsPage({
                 isSold={vehicle.status?.toLowerCase() !== "instock"}
               />
 
+              <div className="mb_con">
+                            <div className="relative right_detail_container">
+              <div className="sticky top-6 space-y-5">
+                {/* Vehicle Title & Specs */}
+                <div className="bg-[#eaf5ff] rounded-2xl p-6">
+                  <h1 className="text-[28px] font-extrabold text-gray-900 leading-tight">
+                    {vehicle.year} {vehicle.make} {vehicle.model}
+                  </h1>
+                  <p className="text-[16px] text-gray-500 mt-0.5">
+                    {vehicle.trim}
+                  </p>
+
+                  <div className="flex items-center gap-6 mt-4">
+                    <div className="flex items-center gap-2 text-[14px] text-gray-700">
+                      <svg
+                        className="w-5 h-5 text-gray-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 512 512"
+                        fill="currentColor"
+                      >
+                        <path d="M0 256a256 256 0 1 1 512 0 256 256 0 1 1-512 0zm320 96c0-26.9-16.5-49.9-40-59.3L280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24v172.7c-23.5 9.5-40 32.5-40 59.3 0 35.3 28.7 64 64 64s64-28.7 64-64zM144 176a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm-16 80a32 32 0 1 0-64 0 32 32 0 1 0 64 0zm288 32a32 32 0 1 0 0-64 32 32 0 1 0 0 64zM400 144a32 32 0 1 0-64 0 32 32 0 1 0 64 0z" />
+                      </svg>
+                      <span className="font-semibold">
+                        {vehicle.odometer.toLocaleString()} KM
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[14px] text-gray-700">
+                      <svg
+                        className="w-5 h-5 text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0zM13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m10 0H3m10 0h2m0 0a1 1 0 011-1l2-3h3l1 3a1 1 0 011 1v1h-8v-1z"
+                        />
+                      </svg>
+                      <span className="font-semibold">
+                        {vehicle.drivetrain || "Other"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price & Express Checkout */}
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                  <p className="text-[32px] font-extrabold text-[#00A651] leading-none">
+                    ${vehicle.selling_price.toLocaleString()}.00
+                    <span className="inline-block ml-1.5 align-middle">
+                      <svg
+                        className="w-5 h-5 text-gray-400 inline"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
+                        <path
+                          strokeLinecap="round"
+                          strokeWidth={1.5}
+                          d="M12 16v-4m0-4h.01"
+                        />
+                      </svg>
+                    </span>
+                  </p>
+
+                  {/* Express Checkout */}
+                  {/* added class express_checkout  */}
+                  <div className="express_checkout">
+                    <Image src={expre} alt="Express Checkout" />
+                  </div>
+
+                  {/* CTA Buttons */}
+                  {/* added class cehckout_bbtns  */}
+                  <div className="mt-6 space-y-3 cehckout_bbtns">
+                    <button className="w-full bg-[#00A651] text-white font-bold py-3.5 rounded-xl hover:bg-[#009347] transition-colors text-[16px] shadow-sm">
+                      Get started
+                    </button>
+                    <button className="w-full bg-white border-2 border-[#00A651] text-[#00A651] font-bold py-3 rounded-xl hover:bg-green-50 transition-colors text-[16px]">
+                      Send message
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+              </div>
+
               {/* Specs Grid */}
+              {/* added class about_this_vehicle  */}
               <div className="bg-card border border-border rounded-xl p-6 about_this_vehicle">
                 <h2 className="text-[20px] font-bold text-foreground mb-5">
                   About this vehicle
@@ -245,6 +336,7 @@ export default async function VehicleDetailsPage({
 
               {/* Vehicle Description */}
               {vehicle.vehicle_description && (
+                // added class vehicle_descr
                 <div className="bg-card border border-border rounded-xl p-6 vehicle_descr">
                   <h2 className="text-[20px] font-bold text-foreground mb-5">
                     Vehicle Description
@@ -260,6 +352,7 @@ export default async function VehicleDetailsPage({
             </div>
 
             {/* Right Column: Info & Checkout */}
+            {/* added class right_detail_container  */}
             <div className="relative right_detail_container">
               <div className="sticky top-6 space-y-5">
                 {/* Vehicle Title & Specs */}
@@ -328,11 +421,13 @@ export default async function VehicleDetailsPage({
                   </p>
 
                   {/* Express Checkout */}
+                  {/* added class express_checkout  */}
                   <div className="express_checkout">
                     <Image src={expre} alt="Express Checkout" />
                   </div>
 
                   {/* CTA Buttons */}
+                  {/* added class cehckout_bbtns  */}
                   <div className="mt-6 space-y-3 cehckout_bbtns">
                     <button className="w-full bg-[#00A651] text-white font-bold py-3.5 rounded-xl hover:bg-[#009347] transition-colors text-[16px] shadow-sm">
                       Get started
