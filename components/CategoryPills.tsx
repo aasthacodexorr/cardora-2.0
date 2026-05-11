@@ -42,6 +42,7 @@ const categories: Category[] = [
 
 const CategoryPills = () => {
   return (
+    // added class category_pills 
     <section className="w-full bg-background category_pills">
       <div className="mx-auto flex max-w-[1400px] flex-wrap justify-center gap-4">
         {categories.map(({ label, icon, queryParams }) => (

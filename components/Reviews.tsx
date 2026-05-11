@@ -49,6 +49,7 @@ const GoogleG = () => (
 
 const Reviews = () => {
   return (
+    // added class reviews_section 
     <section className="w-full bg-review-bg reviews_section">
       <div className="mx-auto max-w-[1400px] px-6 py-14">
         <h2 className="text-[34px] lg:text-[44px] font-extrabold text-foreground tracking-tight text-center mb-8">
@@ -57,6 +58,7 @@ const Reviews = () => {
 
         {/* Top Google bar */}
         <div className="flex justify-center">
+          {/* added class reviews_google_bar  */}
           <div className="inline-flex items-center gap-4 rounded-xl bg-card px-5 py-3 shadow-sm border border-border reviews_google_bar">
             <Image src={google} alt="Google" className="h-5 w-5" />
             {/* <GoogleG /> */}
@@ -92,6 +94,7 @@ const Reviews = () => {
                 className="rounded-2xl bg-card p-6 shadow-sm flex flex-col"
               >
                 <div className="flex items-center gap-4">
+                  {/* added class round_pill_reviews  */}
                   <div className="h-12 w-12 round_pill_reviews rounded-full bg-review-avatar flex items-center justify-center text-dark-section-foreground font-bold text-lg">
                     {r.initial}
                   </div>

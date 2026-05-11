@@ -101,10 +101,12 @@ const Header = () => {
   return (
     <>
       {/* Desktop Header */}
+      {/* class added global_header  */}
       <header
         className={`hidden lg:block w-full top-0 z-50 global_header transition-colors duration-300 ${headerBgClass}`}
       >
         <div className="mx-auto flex max-w-[1400px] items-center justify-between  py-4">
+          {/* added class main_logo  */}
           <div className="flex-[0.2] main_logo">
             <Link href="/" aria-label="Cardora home">
               <CardoraLogo />
@@ -129,7 +131,7 @@ const Header = () => {
               );
             })}
           </nav>
-
+          {/* added class callus_btn_header  */}
           <div className="flex-[0.2] flex justify-end callus_btn_header">
             <a href="tel:1-855-514-5500" className="">
               {/* <Phone className="h-4 w-4" /> */}
@@ -148,6 +150,7 @@ const Header = () => {
         <div
           className={`flex items-center justify-between px-4 py-3 z-50 transition-colors duration-300 ${topBarBgClass}`}
         >
+          {/* added class cardora_mobile_logo  */}
           <Link
             href="/"
             aria-label="Cardora home"

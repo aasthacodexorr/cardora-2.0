@@ -1,6 +1,3 @@
-/* ✅ Google font ALWAYS top pe */
-/* @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap'); */
-
 @import "tailwindcss";
 @config "../tailwind.config.ts";
 
@@ -9,7 +6,7 @@
     --background: 0 0% 100%;
     --foreground: 0 0% 0%;
     --hero-bg: rgb(196 234 250);
-    --brand-green: 152 67% 42%;
+    --brand-green: hsl(153.93deg 98.82% 33.33%);
     --brand-green-foreground: 0 0% 100%;
     --search-panel: 165 35% 75%;
     --result-bg: 200 75% 92%;
@@ -180,20 +177,10 @@ footer .max-w-\[1400px\] {
   background: #c4eafa;
 }
 
-/* momepage hero section css start  */
-.bg-hero-bg h1,
-.bg-hero-bg h1 span {
-  color: #000 !important;
-  font-weight: 600;
-}
-
-.green_car {
-  top: -8%;
-  right: 23%;
-}
+/* homepage hero section css start  */
 
 .banner_hr .max-w-\[1400px\].mx-auto.px-6.py-16.grid.md\:grid-cols-\[1\.2fr_1fr\].gap-12.items-center {
-  padding: 87px 20px 80px;
+  padding: 87px 0px 80px;
 }
 
 span.bu_ell {
@@ -208,18 +195,18 @@ span.bu_ell {
   bottom: 25%;
 }
 
-.white_car {
-  width: 100%;
-  max-width: 320px;
-  left: -10%;
-  top: 25%;
+.banner_text h1 {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 66px;
+  font-weight: 600;
+  align-items: center;
 }
 
-.red_car {
-  width: 100%;
-  max-width: 309px;
-  bottom: -70px;
-  left: -8%;
+span.banner_sp {
+  font-size: 24px;
+  font-weight: 500 !important;
+  margin-top: 35px;
 }
 
 .derserve_everyone {
@@ -297,6 +284,10 @@ span.bu_ell {
 
 body #page-container .et_pb_section .et_pb_button_0_tb_header {
   padding-right: 0px !important;
+}
+
+.banner_text h1 img {
+  max-width: 250px;
 }
 
 /* category pill section start  */
@@ -413,7 +404,7 @@ body #page-container .et_pb_section .et_pb_button_0_tb_header {
   background: #1bb776;
 }
 
-/* next ride css start  */
+/* Next ride css start  */
 .next_ride_section p {
   font-size: 16px;
 }
@@ -428,7 +419,7 @@ body #page-container .et_pb_section .et_pb_button_0_tb_header {
   margin-top: 50px;
 }
 
-/* featured section start  */
+/* Featured section start  */
 .shop_featured_vehicle {
   margin-top: 50px;
 }
@@ -540,7 +531,7 @@ body #page-container .et_pb_section .et_pb_button_0_tb_header {
   gap: 40px;
 }
 
-/* get touch section with footer start  */
+/* Get in Touch section with footer start  */
 .get_toch .bg-dark-card {
   background: transparent;
   border: 1px solid #2a2b30;
@@ -640,7 +631,7 @@ footer svg {
   width: 32px;
 }
 
-/* mobile header css start  */
+/* Mobile header css start  */
 .cardora_mobile_logo img {
   max-width: 165px;
   height: auto;
@@ -674,7 +665,8 @@ nav.flex.flex-col.px-6.py-6.pb-24 a span {
 }
 
 
-/* inventory page css start  */
+/*============ Inventory page css start =========== */
+
 .inventory_page .max-w-\[1400px\] {
   max-width: 1600px;
   margin: 0 auto;
@@ -688,6 +680,12 @@ nav.flex.flex-col.px-6.py-6.pb-24 a span {
 
 header.hidden.lg\:block.w-full.top-0.z-50.global_header.transition-colors.duration-300.bg-white.shadow-\[0_2px_10px_rgba\(0\,0\,0\,0\.05\)\] {
   background: #f9f9f9;
+  padding: 0px 20px;
+}
+
+.global_header .mx-auto.flex.max-w-\[1400px\].items-center.justify-between.py-4 {
+  max-width: 1600px;
+  padding: 7.4px 0;
 }
 
 .inventory_page aside {
@@ -783,7 +781,7 @@ header.hidden.lg\:block.w-full.top-0.z-50.global_header.transition-colors.durati
   border: 1px solid #ddd;
   color: #000;
   border-radius: 12px;
-  padding: 12px 10px 12px 43px;
+  padding: 10px 10px 10px 43px;
   font-size: 16px;
   box-shadow: none;
 }
@@ -913,10 +911,13 @@ span.ais-CurrentRefinements-category.flex.items-center.bg-white.rounded-lg.px-4.
   transform: rotate(322deg);
 }
 
-/* inventory detail page css start  */
+/*============ Inventory detail page css start ============= */
+
 .detail_page_section .mx-auto.max-w-\[1400px\].px-6.py-6 {
   max-width: 1600px;
   padding-top: 30px;
+  padding-right: 0;
+  padding-left: 15px;
 }
 
 .detail_page_section nav {
@@ -981,6 +982,7 @@ span.ais-CurrentRefinements-category.flex.items-center.bg-white.rounded-lg.px-4.
 .right_detail_container .sticky.top-6.space-y-5 .bg-\[\#eaf5ff\].rounded-2xl.p-6 .flex.items-center.gap-6.mt-4 span.font-semibold {
   color: #000;
   font-size: 16px;
+  font-weight: 500;
 }
 
 .right_detail_container .sticky.top-6.space-y-5 .bg-\[\#eaf5ff\].rounded-2xl.p-6 .flex.items-center.gap-6.mt-4 svg.w-5.h-5.text-gray-500 {
@@ -1115,8 +1117,17 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
   margin: 10px;
 }
 
+.gallry_p {
+  display: flex;
+  flex-direction: column;
+}
 
-/* @media start  */
+.mb_con {
+  display: none;
+}
+
+/* ============= @media start ================ */
+
 @media(max-width: 1600px) {
   .bg-hero-bg .max-w-\[1400px\] {
     padding-left: 15px;
@@ -1126,15 +1137,13 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
   .banner_hr .max-w-\[1400px\].mx-auto.px-6.py-16.grid.md\:grid-cols-\[1\.2fr_1fr\].gap-12.items-center {
     padding: 87px 30px 80px;
   }
+
+  .relative.right_detail_container {
+    margin-right: 15px;
+  }
 }
 
 @media(max-width: 1538px) {
-
-  .bg-hero-bg h1,
-  .bg-hero-bg h1 span {
-    color: #000 !important;
-    font-size: 60px;
-  }
 
   .pre_owned {
     margin-left: 30%;
@@ -1144,16 +1153,15 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
     left: 15%;
   }
 
-  .red_car {
-    bottom: -100px;
+  .banner_text h1 {
+    font-size: 50px;
   }
 }
 
 @media(max-width: 1399px) {
 
-  .bg-hero-bg h1,
-  .bg-hero-bg h1 span {
-    font-size: 50px;
+  .banner_text h1 img {
+    max-width: 200px;
   }
 
   .pre_owned {
@@ -1193,11 +1201,6 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
     font-size: 18px;
   }
 
-  .bg-hero-bg h1,
-  .bg-hero-bg h1 span {
-    font-size: 40px;
-  }
-
   .pre_owned {
     bottom: 1%;
   }
@@ -1214,14 +1217,27 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
   .callus_btn_header a {
     font-size: 16px;
   }
+
+  .thumb_cont {
+    height: 559px;
+  }
+}
+
+@media(max-width: 1024px) {
+  .relative.right_detail_container {
+    display: none;
+  }
+
+  .mb_con {
+    display: block;
+  }
+
+  .mb_con .relative.right_detail_container {
+    display: block;
+  }
 }
 
 @media(max-width: 1140px) {
-  .banner_hr .max-w-\[1400px\].mx-auto.px-6.py-16.grid.md\:grid-cols-\[1\.2fr_1fr\].gap-12.items-center {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
 
   .desktop_banner_dk {
     display: none;
@@ -1261,6 +1277,16 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
 }
 
 @media(max-width: 991px) {
+  .inventory_page aside {
+    width: 100%;
+    display: none;
+  }
+
+  .vehicle_descr {
+    margin-top: 0;
+    margin-bottom: 40px;
+  }
+
   .inventory_page .grid.grid-cols-1.lg\:grid-cols-\[300px_1fr\].gap-8 {
     grid-template-columns: 1fr;
   }
@@ -1280,6 +1306,31 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
     margin-right: 0;
   }
 
+  span.banner_sp {
+    margin-top: 0;
+  }
+
+  .max-w-\[1400px\].mx-auto.px-6.py-16.grid.md\:grid-cols-\[1\.2fr_1fr\].gap-12.items-center {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .banner_text,
+  .serach_banner {
+    max-width: 550px;
+  }
+
+  .banner_text h1 img {
+    max-width: 150px;
+  }
+
+  span.banner_sp {
+    font-size: 20px;
+  }
+
+  .banner_text h1 {
+    font-size: 45px;
+  }
 }
 
 @media(max-width: 767px) {
@@ -1287,8 +1338,16 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
     grid-template-columns: 1fr;
   }
 
+  .results_view_wr .flex.items-center.gap-4.self-end.md\:self-auto {
+    display: none;
+  }
+
   .about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 {
     grid-template-columns: auto auto;
+  }
+
+  .gallry_p .flex.gap-1.h-\[320px\].md\:h-\[623px\] {
+    height: auto;
   }
 
   .reviews_google_bar {
@@ -1304,6 +1363,14 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
     padding: 30px 20px 30px;
   }
 
+  .get_toch h2 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 26px;
+  }
+
   span.banner_spa {
     font-size: 18px !important;
   }
@@ -1314,15 +1381,39 @@ header.lg\:hidden.w-full.sticky.top-0.z-50.flex.flex-col.transition-colors.durat
   }
 }
 
+@media(max-width: 549px) {
+  .banner_text h1 {
+    font-size: 35px;
+  }
+
+  .banner_text h1 img {
+    max-width: 150px;
+  }
+}
+
+@media(max-width: 481px) {
+  span.banner_sp {
+    font-size: 15px;
+  }
+
+  .banner_text h1 img {
+    max-width: 130px;
+  }
+
+  .banner_text h1 {
+    font-size: 30px;
+  }
+
+  footer .mx-auto.max-w-\[1400px\] .grid.grid-cols-2.md\:grid-cols-3.lg\:grid-cols-5.gap-10 {
+    grid-template-columns: auto;
+  }
+}
+
 @media(max-width: 474px) {
   .mobile_banner_mb h1 img {
     width: 100%;
     max-width: 150px;
     height: auto;
-  }
-
-  .about_this_vehicle .grid.grid-cols-2.md\:grid-cols-4.gap-6 {
-    grid-template-columns: auto;
   }
 
   .right_detail_container .flex.items-center.gap-6.mt-4 {

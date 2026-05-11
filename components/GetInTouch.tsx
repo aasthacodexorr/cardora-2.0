@@ -18,6 +18,7 @@ const GetInTouch = () => {
   const [tab, setTab] = useState<"Sales" | "Service">("Sales");
 
   return (
+    // added class get_toch 
     <section className="w-full bg-dark-section text-dark-section-foreground get_toch">
       <div className="mx-auto max-w-[1400px] px-6 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-10">
@@ -44,7 +45,7 @@ const GetInTouch = () => {
                   </button>
                 ))}
               </div>
-
+{/* added class ft_hours */}
               <div className="mt-5 space-y-3 text-[15px] ft_hours">
                 <div className="flex justify-between">
                   <span className="text-dark-section-foreground/70">
@@ -69,6 +70,7 @@ const GetInTouch = () => {
           </div>
 
           {/* Right: contact cards */}
+          {/* added class grid_col_wr  */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 grid_col_wr">
             {contactCards.map((item) => (
               <a
