@@ -262,7 +262,7 @@ const InventoryContent = () => {
                   </div>
 
                   <div className="flex items-center gap-4 self-end md:self-auto">
-                    <span className="text-[15px] font-bold text-gray-900">
+                    <span className="text-[15px] font-bold text-gray-900 sort_by_title">
                       Sort By
                     </span>
                     <SortBy

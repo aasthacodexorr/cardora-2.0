@@ -41,7 +41,7 @@ const Hero = () => {
                 alt="Orange Truck"
                 className="b_orange_car"
               />
-              <span className="banner_sp">The way everyone deserves.</span>
+              <span className="banner_sp">The way everyone <br/> deserves.</span>
             </h1>
         </div>
 
