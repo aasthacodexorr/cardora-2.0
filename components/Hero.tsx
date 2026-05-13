@@ -26,7 +26,7 @@ const Hero = () => {
     <section className="w-full bg-hero-bg banner_hr">
       <div className="max-w-[1400px] mx-auto px-6 py-16 grid md:grid-cols-[1.2fr_1fr] gap-12 items-center">
         {/* LEFT SIDE */}
-        <div className="banner_text">
+        {/* <div className="banner_text">
             <h1>
               Buy or sell a{" "}
               <img
@@ -43,6 +43,34 @@ const Hero = () => {
               />
               <span className="banner_sp">The way everyone <br/> deserves.</span>
             </h1>
+        </div> */}
+
+        <div className="banner_text">
+          <h1>
+            <div className="ban_1">
+              Buy or sell a{" "}
+              <img
+                src={yellowSuv.src}
+                alt="Yellow SUV"
+                className="b_yellow_car"
+              />
+            </div>
+            <div className="ban_2">
+              <img src={whiteSuv.src} alt="White SUV" className="b_white_car" />
+              pre-owned car.
+            </div>
+            <div className="ban_3">
+              {" "}
+              <img
+                src={orangeTruck.src}
+                alt="Orange Truck"
+                className="b_orange_car"
+              />
+              <span className="banner_sp">
+                The way everyone <br /> deserves.
+              </span>
+            </div>
+          </h1>
         </div>
 
         {/* RIGHT SIDE */}

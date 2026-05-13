@@ -17,33 +17,39 @@ const reviews: Review[] = [
   {
     initial: "J",
     name: "It's Jerry",
-    text: "So, I recently bought a 2021 Jetta High line from Cardora, and I can confidently say the experience was nothing short of amazing—thanks to Sam! From the very beginning, Sam went above and beyond to make sure everything went smoothly.",
+    text: "So, I recently bought a 2021 Jetta High line from Cardora, and I can confidently say the experience was nothing short of amazing—thanks to Sam! From the very beginning, Sam went above and beyond to make sure everything went smoothly. I encountered a few issues during the deal, but he personally stepped in and resolved everything with professionalism and genuine care.",
   },
   {
     initial: "S",
     name: "Shimul Rajput",
-    text: "Just bought my first car and Sam was amazing! He was so supportive, quick to respond, and made the whole process feel easy and stress-free.",
+    text: "Just bought my first car and Sam was amazing! He was so supportive, quick to respond, and made the whole process feel easy and stress-free. Couldn’t have asked for a better experience! Highly recommended! ✨",
   },
   {
     initial: "K",
     name: "Katie McWade",
-    text: "My husband and I recently went through Sam for the purchase of our new family vehicle. He worked very hard for us for the best rate possible.",
+    text: "My husband and I recently went through Sam for the purchase of our new family vehicle. He worked very hard for us for the best rate possible and turned what had been a stressful and frustrating process, into something absolutely seamless and enjoyable. He was absolutely wonderful to work with and we are incredibly happy with our newly purchased vehicle. Thank you so much Sam for your fantastic service and a great experience!",
   },
   {
     initial: "A",
     name: "Alex Brown",
-    text: "Amazing service from start to finish. Highly recommend Cardora and their amazing customer support.",
+    text: "Amazing experience dealing with Sam and his team at Gedi Route (GR Cars). I highly recommend them for any vehicle purchase. I will definitely be using them for my next vehicle upgrade.",
   },
 ];
 
 const Reviews = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const [slidesToShow, setSlidesToShow] = useState(3);
 
-  // Detect Mobile
+  // Detect Screen Size
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth < 768) {
+        setSlidesToShow(1); // Mobile
+      } else if (window.innerWidth < 1024) {
+        setSlidesToShow(2); // Tablet
+      } else {
+        setSlidesToShow(3); // Desktop
+      }
     };
 
     handleResize();
@@ -60,7 +66,7 @@ const Reviews = () => {
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [currentIndex]);
+  }, [currentIndex, slidesToShow]);
 
   const nextSlide = () => {
     setCurrentIndex((prev) =>
@@ -88,10 +94,7 @@ const Reviews = () => {
 
             <div className="flex items-center gap-1">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  className="h-4 w-4 fill-star text-star"
-                />
+                <Star key={i} className="h-4 w-4 fill-star text-star" />
               ))}
             </div>
 
@@ -125,14 +128,23 @@ const Reviews = () => {
               className="flex transition-transform duration-700 ease-in-out"
               style={{
                 transform: `translateX(-${
-                  currentIndex * (isMobile ? 100 : 33.3333)
+                  currentIndex * (100 / slidesToShow)
                 }%)`,
               }}
             >
               {[...reviews, ...reviews].map((r, index) => (
                 <div
                   key={`${r.name}-${index}`}
-                  className="w-full md:w-1/3 flex-shrink-0 px-2 md:px-3"
+                  className={`
+                    flex-shrink-0 px-2 md:px-3
+                    ${
+                      slidesToShow === 1
+                        ? "w-full"
+                        : slidesToShow === 2
+                        ? "w-1/2"
+                        : "w-1/3"
+                    }
+                  `}
                 >
                   <article className="rounded-2xl bg-card p-5 md:p-6 shadow-sm flex flex-col h-full">
                     <div className="flex items-center gap-4">
