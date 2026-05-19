@@ -10,9 +10,9 @@ const items = [
       <Image
         src={CheckIcon}
         alt="Check Icon"
-        width={28}
-        height={28}
-        className="h-7 w-7"
+        width={77}
+        height={77}
+        className="w-[77px] h-[77px] rounded-[20px]"
       />
     ),
     text: "Upfront prices, Cardora Certified quality, and detailed history reports on every car",
@@ -22,9 +22,9 @@ const items = [
       <Image
         src={MapIcon}
         alt="Map Icon"
-        width={28}
-        height={28}
-        className="h-7 w-7"
+        width={77}
+        height={77}
+        className="w-[77px] h-[77px] rounded-[20px]"
       />
     ),
     text: "Shop online, in-store, or both. We provide no-pressure help along the way.",
@@ -34,9 +34,9 @@ const items = [
       <Image
         src={HeartIcon}
         alt="Heart Icon"
-        width={28}
-        height={28}
-        className="h-7 w-7"
+        width={77}
+        height={77}
+        className="w-[77px] h-[77px] rounded-[20px]"
       />
     ),
     text: "6-month or 10,000 km limited warranty (whichever comes first)",
@@ -45,26 +45,27 @@ const items = [
 
 const CardoraDifference = () => {
   return (
-    // added class cardora_diff 
-    <section className="w-full bg-background cardora_diff">
-      <div className="mx-auto max-w-[1400px] px-6 py-14">
-        
+    <section className="w-full bg-background">
+      <div className="mx-auto max-w-[1400px] px-10 py-14">
+
         <h2 className="text-[34px] lg:text-[44px] font-extrabold text-foreground tracking-tight mb-10">
           The Cardora difference
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {items.map((item, idx) => (
-            <div key={idx} className="rounded-2xl bg-diff-card p-8">
-              
-              <div className="image_car">
-                {item.icon}
-              </div>
+        {/* gap-[40px] replaces .cardora_diff .grid { gap: 40px } */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-[40px]">
+          {items?.map((item, idx) => (
+            // .cardora_diff .bg-diff-card styles applied directly
+            <div
+              key={idx}
+              className="rounded-[15px] overflow-hidden min-h-[280px] bg-[#e6f4ff] pt-[40px] pr-[25px] pb-[40px] pl-[25px] text-[20px] text-[#000]"
+            >
+              {item.icon}
 
-              <p className="text-[17px] text-foreground leading-relaxed">
+              {/* .cardora_diff p: font-size 20px, color #000, margin-top 15px */}
+              <p className="text-[20px] text-[#000] mt-[15px] leading-relaxed">
                 {item.text}
               </p>
-
             </div>
           ))}
         </div>

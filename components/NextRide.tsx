@@ -38,11 +38,12 @@ const cards: Card[] = [
 
 const NextRide = () => {
   return (
-    // added class next_ride_section 
-    <section className="w-full bg-background next_ride_section">
-      <div className="container_box">
+    /* next_ride_section: margin-top 50px */
+    <section className="w-full bg-background mt-[50px]">
+      {/* next_ride_section .container_box: max-w-[1280px] mx-auto px-[20px] */}
+      <div className="max-w-[1280px] mx-auto px-[20px]">
         <h2 className="text-[34px] lg:text-[44px] font-extrabold text-foreground tracking-tight mb-8">
-          Let's find your next ride
+          Let&apos;s find your next ride
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -67,7 +68,8 @@ const NextRide = () => {
                   <h3 className="text-[18px] font-bold text-foreground">
                     {card.title}
                   </h3>
-                  <p className="text-[14px] text-muted-foreground mt-1">
+                  {/* next_ride_section p: font-size 16px */}
+                  <p className="text-[16px] text-muted-foreground mt-1">
                     {card.subtitle}
                   </p>
                 </div>

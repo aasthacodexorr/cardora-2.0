@@ -22,7 +22,7 @@ const reviews: Review[] = [
   {
     initial: "S",
     name: "Shimul Rajput",
-    text: "Just bought my first car and Sam was amazing! He was so supportive, quick to respond, and made the whole process feel easy and stress-free. Couldn’t have asked for a better experience! Highly recommended! ✨",
+    text: "Just bought my first car and Sam was amazing! He was so supportive, quick to respond, and made the whole process feel easy and stress-free. Couldn't have asked for a better experience! Highly recommended! ✨",
   },
   {
     initial: "K",
@@ -44,18 +44,16 @@ const Reviews = () => {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        setSlidesToShow(1); // Mobile
+        setSlidesToShow(1);
       } else if (window.innerWidth < 1024) {
-        setSlidesToShow(2); // Tablet
+        setSlidesToShow(2);
       } else {
-        setSlidesToShow(3); // Desktop
+        setSlidesToShow(3);
       }
     };
 
     handleResize();
-
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -69,28 +67,31 @@ const Reviews = () => {
   }, [currentIndex, slidesToShow]);
 
   const nextSlide = () => {
-    setCurrentIndex((prev) =>
-      prev + 1 >= reviews.length ? 0 : prev + 1
-    );
+    setCurrentIndex((prev) => (prev + 1 >= reviews.length ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) =>
-      prev - 1 < 0 ? reviews.length - 1 : prev - 1
-    );
+    setCurrentIndex((prev) => (prev - 1 < 0 ? reviews.length - 1 : prev - 1));
   };
 
   return (
-    <section className="w-full bg-review-bg reviews_section overflow-hidden">
-      <div className="mx-auto max-w-[1400px] px-4 md:px-6 py-14">
+    /* bg-review-bg: #eaeff5 */
+    <section className="w-full bg-[#eaeff5] overflow-hidden">
+      {/* reviews_section .mx-auto.max-w-[1400px]: max-width 1280px */}
+      <div className="mx-auto max-w-[1280px] px-4 md:px-6 py-14">
         <h2 className="text-[30px] md:text-[44px] font-extrabold text-foreground tracking-tight text-center mb-8">
           People love buying with Cardora
         </h2>
 
-        {/* Google Bar */}
+        {/* Google Bar — reviews_google_bar styles applied directly */}
         <div className="flex justify-center">
-          <div className="inline-flex items-center gap-3 rounded-xl bg-card px-4 py-3 shadow-sm border border-border reviews_google_bar">
-            <Image src={google} alt="Google" className="h-5 w-5" />
+          <div className="flex items-center justify-center gap-3 rounded-[20px] overflow-hidden border border-[#e2e2e2] bg-transparent shadow-none py-[10px] px-4 w-[500px] max-w-full flex-wrap">
+            {/* reviews_google_bar img: 85×29 */}
+            <Image
+              src={google}
+              alt="Google"
+              className="h-[29px] w-[85px] object-contain"
+            />
 
             <div className="flex items-center gap-1">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -102,9 +103,10 @@ const Reviews = () => {
               5.0 (33)
             </span>
 
+            {/* reviews_google_bar a: font-weight 600, font-size 16px */}
             <a
               href="#"
-              className="text-[15px] underline text-foreground hover:opacity-80"
+              className="text-[16px] font-semibold underline text-foreground hover:opacity-80"
             >
               View all
             </a>
@@ -127,33 +129,30 @@ const Reviews = () => {
             <div
               className="flex transition-transform duration-700 ease-in-out"
               style={{
-                transform: `translateX(-${
-                  currentIndex * (100 / slidesToShow)
-                }%)`,
+                transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
               }}
             >
               {[...reviews, ...reviews].map((r, index) => (
                 <div
                   key={`${r.name}-${index}`}
-                  className={`
-                    flex-shrink-0 px-2 md:px-3
-                    ${
-                      slidesToShow === 1
-                        ? "w-full"
-                        : slidesToShow === 2
-                        ? "w-1/2"
-                        : "w-1/3"
-                    }
-                  `}
+                  className={`flex-shrink-0 px-2 md:px-3 ${
+                    slidesToShow === 1
+                      ? "w-full"
+                      : slidesToShow === 2
+                      ? "w-1/2"
+                      : "w-1/3"
+                  }`}
                 >
                   <article className="rounded-2xl bg-card p-5 md:p-6 shadow-sm flex flex-col h-full">
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 round_pill_reviews rounded-full bg-review-avatar flex items-center justify-center text-dark-section-foreground font-bold text-lg">
+                      {/* round_pill_reviews: 65×65, font-size 35px, font-weight 500, bg #512da8 */}
+                      <div className="h-[65px] w-[65px] rounded-full bg-[#512da8] flex items-center justify-center text-white text-[35px] font-medium flex-shrink-0">
                         {r.initial}
                       </div>
 
                       <div>
-                        <h3 className="text-[18px] font-bold text-review-name">
+                        {/* reviews_section h3: font-size 20px */}
+                        <h3 className="text-[20px] font-bold text-review-name">
                           {r.name}
                         </h3>
 
@@ -168,18 +167,19 @@ const Reviews = () => {
                       </div>
                     </div>
 
-                    <p className="mt-5 text-[15px] text-foreground/80 leading-relaxed flex-1">
+                    {/* reviews_section p: font-size 16px */}
+                    <p className="mt-5 text-[16px] text-foreground/80 leading-relaxed flex-1">
                       {r.text}
                     </p>
 
-                    <div className="flex items-center gap-2 mt-6 pt-2 google_review_logo">
+                    {/* google_review_logo: img 30×30, span font-size 14px font-weight 700 */}
+                    <div className="flex items-center gap-2 mt-6 pt-2">
                       <Image
                         src={google_review}
                         alt="Google"
-                        className="h-5 w-5"
+                        className="h-[30px] w-[30px] object-contain"
                       />
-
-                      <span className="text-[15px] text-foreground/80">
+                      <span className="text-[14px] font-bold text-foreground/80">
                         Google Review
                       </span>
                     </div>
