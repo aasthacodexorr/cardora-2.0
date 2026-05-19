@@ -22,64 +22,96 @@ const Hero = () => {
   };
 
   return (
-    //  added class banner_hr
-    <section className="w-full bg-hero-bg banner_hr">
-      <div className="max-w-[1400px] mx-auto px-6 py-16 grid md:grid-cols-[1.2fr_1fr] gap-12 items-center">
-        {/* LEFT SIDE */}
-        {/* <div className="banner_text">
-            <h1>
-              Buy or sell a{" "}
-              <img
-                src={yellowSuv.src}
-                alt="Yellow SUV"
-                className="b_yellow_car"
-              />
-              <img src={whiteSuv.src} alt="White SUV" className="b_white_car" />
-              pre-owned car.
-              <img
-                src={orangeTruck.src}
-                alt="Orange Truck"
-                className="b_orange_car"
-              />
-              <span className="banner_sp">The way everyone <br/> deserves.</span>
-            </h1>
-        </div> */}
+    <section className="w-full px-5">
+      <div className="max-w-[1600px] mx-auto px-5 pt-[87px] pb-[80px] grid md:grid-cols-[1.2fr_1fr] gap-12 items-center max-[991px]:flex max-[991px]:flex-col max-[767px]:pt-[30px] max-[767px]:pb-[30px] max-[767px]:px-5">
 
-        <div className="banner_text">
-          <h1>
-            <div className="ban_1">
+        {/* ── LEFT SIDE ── */}
+
+        {/* Desktop banner: hidden below 1140px */}
+        <div className="font-carmax block max-[1140px]:hidden max-[991px]:max-w-[550px]">
+          <h1 className="flex flex-col items-start font-bold leading-[1.3]
+            text-[70px]
+            max-[1538px]:text-[70px]
+            max-[1203px]:text-[40px]
+            max-[1078px]:text-[35px]
+            max-[991px]:text-[45px]
+            max-[549px]:text-[35px]
+            max-[481px]:text-[30px]">
+
+            {/* line 1: Buy or sell a + yellow car */}
+            <div className="flex items-center font-carmax font-semibold">
               Buy or sell a{" "}
               <img
                 src={yellowSuv.src}
                 alt="Yellow SUV"
-                className="b_yellow_car"
+                className="max-w-[250px] max-[1399px]:max-w-[200px] max-[991px]:max-w-[150px] max-[481px]:max-w-[130px]"
               />
             </div>
-            <div className="ban_2">
-              <img src={whiteSuv.src} alt="White SUV" className="b_white_car" />
-              pre-owned car.
+
+            {/* line 2: white car + pre-owned */}
+            <div className="flex items-center font-carmax font-semibold">
+              <img
+                src={whiteSuv.src}
+                alt="White SUV"
+                className="max-w-[250px] -ml-[25px] max-[1399px]:max-w-[200px] max-[1024px]:ml-0 max-[991px]:max-w-[150px] max-[481px]:max-w-[130px]"
+              />
+              pre-owned
             </div>
-            <div className="ban_3">
-              {" "}
+
+            {/* line 3: car. + orange truck + tagline */}
+            <div className="flex items-center font-carmax font-semibold">
+              {" "}car.
               <img
                 src={orangeTruck.src}
                 alt="Orange Truck"
-                className="b_orange_car"
+                className="max-w-[250px] -ml-[15px] max-[1399px]:max-w-[200px] max-[1024px]:ml-0 max-[991px]:max-w-[150px] max-[481px]:max-w-[130px]"
               />
-              <span className="banner_sp">
+              <span className="font-carmax font-semibold mt-5 text-2xl font-semibold max-[1203px]:mt-[15px] max-[1203px]:text-[19px] max-[991px]:mt-0 max-[991px]:text-[20px] max-[481px]:text-[15px]">
                 The way everyone <br /> deserves.
               </span>
             </div>
           </h1>
         </div>
 
-        {/* RIGHT SIDE */}
-        {/* added class serach_banner  */}
-        <div className="serach_banner">
-          {/* added class part_search  */}
-          <div className="part_search bg-search-panel/80 rounded-2xl p-8 shadow-sm search_panel">
-            {/* SEARCH */}
-            <div className="flex items-center bg-white rounded-full overflow-hidden shadow">
+        {/* Mobile banner: hidden above 1140px */}
+        <div className="hidden max-[1140px]:block w-full max-[991px]:max-w-[550px]">
+          <h1 className="flex flex-wrap items-center font-semibold
+            text-[50px]
+            max-[767px]:text-[30px]
+            max-[549px]:text-[35px]
+            max-[481px]:text-[30px]">
+            Buy or sell a{" "}
+            <img
+              src={yellowSuv.src}
+              alt="Yellow SUV"
+              className="w-full max-w-[300px] max-[767px]:max-w-[300px] max-[767px]:h-[100px] max-[474px]:max-w-[150px] max-[474px]:h-auto"
+            />
+            <img
+              src={whiteSuv.src}
+              alt="White SUV"
+              className="w-full max-w-[300px] max-[767px]:max-w-[300px] max-[767px]:h-[100px] max-[474px]:max-w-[150px] max-[474px]:h-auto"
+            />
+            pre-owned car.
+            <img
+              src={orangeTruck.src}
+              alt="Orange Truck"
+              className="w-full max-w-[300px] max-[767px]:max-w-[300px] max-[767px]:h-[100px] max-[474px]:max-w-[150px] max-[474px]:h-auto"
+            />
+            <span className="text-[24px] font-medium max-[767px]:text-[18px]">
+              The way everyone deserves.
+            </span>
+          </h1>
+        </div>
+
+        {/* ── RIGHT SIDE ── */}
+        <div className="flex justify-end items-center max-[1140px]:justify-center max-[1140px]:w-full max-[991px]:max-w-[550px]">
+          {/* Search panel */}
+          <div className="bg-search-panel/80 overflow-hidden w-[550px] max-[1140px]:w-full"
+               style={{ borderRadius: "10px", padding: "35px 25px 18px" }}>
+
+            {/* Search input row */}
+            <div className="flex items-center bg-white overflow-hidden shadow relative"
+                 style={{ borderRadius: "10px" }}>
               <div className="pl-5 text-gray-500">
                 <Search className="w-5 h-5" />
               </div>
@@ -90,42 +122,51 @@ const Hero = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                className="flex-1 px-3 py-4 outline-none text-sm"
+                className="flex-1 px-3 py-4 outline-none text-sm [font-family:Lato,sans-serif]"
               />
 
               <button
                 onClick={handleSearch}
-                className="bg-brand-green text-white px-6 py-3 font-semibold rounded-full mr-2 hover:opacity-90"
+                className="bg-brand-green text-white px-6 font-medium hover:opacity-90 absolute right-2 h-[34px] flex justify-center items-center"
+                style={{ borderRadius: "5px" }}
               >
                 Go
               </button>
             </div>
 
-            {/* OR */}
+            {/* OR divider */}
             <div className="flex items-center gap-4 my-6">
               <div className="h-px bg-black/20 flex-1" />
               <span className="text-sm text-black/70">or</span>
               <div className="h-px bg-black/20 flex-1" />
             </div>
 
-            {/* BUTTON */}
+            {/* Browse all Cars button */}
             <Link
               href="/inventory"
-              className="block text-center bg-brand-green text-white py-4 rounded-md font-semibold text-lg hover:opacity-90"
+              className="block text-center text-white font-medium text-base w-full hover:opacity-90 transition-opacity"
+              style={{
+                background: "linear-gradient(180deg, #00af66, #00af66a6)",
+                borderRadius: "12px",
+                padding: "12px 30px",
+              }}
             >
               Browse all Cars
             </Link>
 
-            {/* TEXT */}
-            {/* added class banner_btn  */}
-            <p className="text-center mt-4 text-sm text-black/80 banner_btn">
+            {/* Sell CTA text */}
+            <p className="text-center mt-4 text-base text-black p-0 bg-transparent">
               Looking to sell your car?{" "}
-              <Link href="/financing" className="underline cursor-pointer">
+              <Link
+                href="/financing"
+                className="underline cursor-pointer text-black hover:text-[#00af66] bg-transparent p-0"
+              >
                 Get a valuation
               </Link>
             </p>
           </div>
         </div>
+
       </div>
     </section>
   );

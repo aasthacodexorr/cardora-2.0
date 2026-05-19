@@ -119,8 +119,10 @@ const FeaturedVehicles = () => {
   }, []);
 
   return (
-    <section className="w-full bg-background shop_featured_vehicle overflow-hidden">
-      <div className="mx-auto max-w-[1400px] px-4 md:px-6 py-12 relative">
+    /* shop_featured_vehicle: mt-[50px] mb-[50px] */
+    <section className="w-full bg-background mt-[50px] mb-[50px] overflow-hidden">
+      {/* shop_featured_vehicle .mx-auto: max-w-[1280px] mx-auto px-[20px] */}
+      <div className="max-w-[1280px] mx-auto px-[20px] py-12 relative">
         <h2 className="text-[34px] lg:text-[44px] font-extrabold text-foreground tracking-tight text-center mb-8">
           Shop featured vehicles
         </h2>
@@ -145,8 +147,8 @@ const FeaturedVehicles = () => {
                 key={`${v.title}-${index}`}
                 className="snap-start shrink-0 w-[290px] rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
               >
-                {/* Image */}
-                <div className="aspect-[4/3] bg-muted">
+                {/* Image — aspect-ratio 3/3 = square, per .shop_featured_vehicle .aspect-[4/3].bg-muted */}
+                <div className="aspect-square  bg-muted">
                   <img
                     src={v.image.src}
                     alt={v.title}
