@@ -38,19 +38,15 @@ const PreQualify = () => {
 
   return (
     <section className="w-full bg-background">
-      {/* container_box: max-w-[1280px] mx-auto px-[15px] */}
       <div className="max-w-[1280px] mx-auto px-[15px]">
-        {/* box_card: rounded-[15px] overflow-hidden border border-black/10 p-[30px] */}
-        <div className="rounded-[15px] overflow-hidden border border-black/10 p-[30px]">
-          {/* grid override from .box_card .grid: 1fr 229px */}
-          <div className="grid gap-8 lg:gap-6" style={{ gridTemplateColumns: "1fr 229px" }}>
-            {/* Left: form */}
+        <div className="rounded-[15px] overflow-hidden border border-black/10 p-[20px] md:p-[30px]">
+          <div className="grid gap-8 lg:gap-6 lg:grid-cols-[1fr_280px]">
             <div>
-              <h2 className="text-[32px] lg:text-[38px] font-extrabold text-[#333] leading-tight tracking-tight">
+              <h2 className="text-[26px] sm:text-[30px] lg:text-[38px] font-extrabold text-[#333] leading-tight tracking-tight">
                 Pre-qualify with no impact to your credit
               </h2>
 
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="mt-6 sm:mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-[15px] font-medium text-foreground/80 mb-2">
                     Vehicle Price
@@ -111,9 +107,8 @@ const PreQualify = () => {
                 </div>
               </div>
 
-              {/* Trade-in toggle */}
               <div
-                className="mt-8 flex items-center gap-3 cursor-pointer w-fit"
+                className="mt-6 sm:mt-8 flex items-center gap-3 cursor-pointer w-fit"
                 onClick={() => setIncludeTradeIn(!includeTradeIn)}
               >
                 <button
@@ -137,7 +132,6 @@ const PreQualify = () => {
                 </span>
               </div>
 
-              {/* Trade-in Value Input */}
               {includeTradeIn && (
                 <div className="mt-6">
                   <label className="block text-[15px] font-medium text-foreground/80 mb-2">
@@ -154,31 +148,27 @@ const PreQualify = () => {
               )}
             </div>
 
-            {/* Right: result panel */}
-            <div className="flex flex-col items-center md:items-stretch mt-8 md:mt-0">
-              {/* Result card */}
-              <div className="w-full mt-[15px] rounded-[10px] bg-[#e6f4ff] px-[10px] pt-5 pb-[30px] text-center overflow-hidden border border-blue-100">
-                <p className="text-[16px] font-medium text-gray-800 tracking-wide mb-0 capitalize">
+            <div className="flex flex-col items-center md:items-stretch mt-6 lg:mt-0">
+              <div className="w-full rounded-[10px] bg-[#e6f4ff] px-[15px] sm:px-[10px] pt-4 sm:pt-5 pb-[25px] sm:pb-[30px] text-center overflow-hidden border border-blue-100">
+                <p className="text-[14px] sm:text-[16px] font-medium text-gray-800 tracking-wide mb-0 capitalize">
                   Est. Bi-Weekly
                 </p>
-                <div className="mt-[5px] text-[50px] font-semibold text-[#333] leading-none tracking-tight text-center font-[Poppins,sans-serif]">
+                <div className="mt-[5px] text-[40px] sm:text-[50px] font-semibold text-[#333] leading-none tracking-tight text-center font-[Poppins,sans-serif]">
                   ${loanAmount > 0 ? biWeeklyPayment.toFixed(2) : "0.00"}
                 </div>
-                <div className="mt-4 inline-block rounded-md bg-[#00AF66] text-white px-4 py-1.5 text-[15px] font-semibold shadow-sm font-[Poppins,sans-serif]">
+                <div className="mt-3 sm:mt-4 inline-block rounded-md bg-[#00AF66] text-white px-3 sm:px-4 py-1.5 text-[14px] sm:text-[15px] font-semibold shadow-sm font-[Poppins,sans-serif]">
                   at {rate.toFixed(2)}% APR
                 </div>
               </div>
 
-              {/* CTA button */}
               <a
                 href="/financing"
-                className="mt-[10px] w-full min-w-full block text-center rounded-[12px] border border-[#00b066] bg-gradient-to-b from-[#00af66] to-[#00af66]/65 text-white py-[10px] text-[16px] font-medium hover:opacity-90 shadow-md transition-opacity"
+                className="mt-3 sm:mt-[10px] w-full min-w-full block text-center rounded-[10px] sm:rounded-[12px] border border-[#00b066] bg-gradient-to-b from-[#00af66] to-[#00af66]/65 text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[16px] font-medium hover:opacity-90 shadow-md transition-opacity"
               >
                 Get pre-qualified
               </a>
 
-              {/* Disclaimer */}
-              <p className="mt-[7px] text-center text-[14px] font-medium text-[#333] mb-0 capitalize">
+              <p className="mt-[7px] text-center text-[13px] sm:text-[14px] font-medium text-[#333] mb-0 capitalize">
                 No impact to your credit score
               </p>
             </div>

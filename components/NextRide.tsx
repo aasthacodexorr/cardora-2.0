@@ -63,13 +63,13 @@ const NextRide = () => {
                   className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
                 />
               </div>
-              <div className="flex items-center justify-between gap-4 px-6 py-5">
-                <div>
+              <div className="flex items-center justify-between gap-4 px-2 py-5">
+                <div className="opacity-70">
                   <h3 className="text-[18px] font-bold text-foreground">
                     {card.title}
                   </h3>
                   {/* next_ride_section p: font-size 16px */}
-                  <p className="text-[16px] text-muted-foreground mt-1">
+                  <p className="text-[16px]  mt-1">
                     {card.subtitle}
                   </p>
                 </div>
