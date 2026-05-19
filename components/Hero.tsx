@@ -23,7 +23,7 @@ const Hero = () => {
 
   return (
     <section className="w-full px-5">
-      <div className="max-w-[1600px] mx-auto px-5 pt-[87px] pb-[80px] grid md:grid-cols-[1.2fr_1fr] gap-12 items-center max-[991px]:flex max-[991px]:flex-col max-[767px]:pt-[30px] max-[767px]:pb-[30px] max-[767px]:px-5">
+      <div className="max-w-[1600px] mx-auto px-5 pt-[87px] pb-[80px] grid md:grid-cols-[1.2fr_1fr] gap-12 items-center max-[991px]:flex max-[991px]:flex-col max-[767px]:pt-[30px] max-[767px]:pb-[30px] max-[767px]:px-5 max-[640px]:px-0 max-[640px]:pt-16">
 
         {/* ── LEFT SIDE ── */}
 
@@ -79,27 +79,32 @@ const Hero = () => {
             text-[50px]
             max-[767px]:text-[30px]
             max-[549px]:text-[35px]
-            max-[481px]:text-[30px]">
+            max-[481px]:text-[34px]">
             Buy or sell a{" "}
             <img
               src={yellowSuv.src}
               alt="Yellow SUV"
-              className="w-full max-w-[300px] max-[767px]:max-w-[300px] max-[767px]:h-[100px] max-[474px]:max-w-[150px] max-[474px]:h-auto"
+              className="w-full max-w-[300px] max-[767px]:max-w-[300px] max-[767px]:h-[100px] max-[474px]:max-w-[100px] max-[474px]:h-auto"
             />
-            <img
+           <div className="flex">
+             <img
               src={whiteSuv.src}
               alt="White SUV"
               className="w-full max-w-[300px] max-[767px]:max-w-[300px] max-[767px]:h-[100px] max-[474px]:max-w-[150px] max-[474px]:h-auto"
             />
-            pre-owned car.
+            pre-owned
+           </div>
+           <div className="flex w-full">
+            car. 
             <img
               src={orangeTruck.src}
               alt="Orange Truck"
-              className="w-full max-w-[300px] max-[767px]:max-w-[300px] max-[767px]:h-[100px] max-[474px]:max-w-[150px] max-[474px]:h-auto"
+              className="w-full max-w-[300px] max-[767px]:max-w-[300px] max-[767px]:h-[100px] max-[474px]:max-w-[140px] max-[474px]:h-auto"
             />
-            <span className="text-[24px] font-medium max-[767px]:text-[18px]">
+            <span className="text-[24px] font-semibold max-[767px]:text-[16px]">
               The way everyone deserves.
             </span>
+           </div>
           </h1>
         </div>
 
