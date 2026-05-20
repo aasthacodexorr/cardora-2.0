@@ -1,65 +1,93 @@
+/* =========================
+   HitCard Component (Inventory)
+   Renders a single vehicle card in the
+   react-instantsearch Hits grid.
+   Displays: vehicle image, title, price, KM,
+   drivetrain, stock number, and a pre-qualify CTA.
+   Handles "Sold" state with a diagonal banner overlay.
+   Image URLs are semicolon-separated strings from Typesense.
+========================= */
+
 import React from "react";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/config";
+// no image placeholder
+import noimage from "@/assets/cars/no-image-placeholder.jpg";
 
+/* ── Component ─────────────────────────────────────────────── */
 export const HitCard = ({ hit }: { hit: any }) => {
-  // Extracting details from Typesense hit schema
+  // Build display title from Typesense document fields
   const title =
     `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${hit.trim || ""}`.trim();
-  const price = Number(hit.selling_price) || 0;
-  const km = Number(hit.odometer) || 0;
-  const biWeekly = Number(hit.emi_amount) || 0;
-  const drivetrain = hit.drivetrain || "N/A";
-  const stock = hit.stock_no || "N/A";
+
+  const price      = Number(hit.selling_price) || 0;
+  const km         = Number(hit.odometer)      || 0;
+  const drivetrain = hit.drivetrain             || "N/A";
+  const stock      = hit.stock_no              || "N/A";
+
+  // Vehicle is "sold" when status is anything other than "instock"
   const isSold = hit.status && hit.status.toLowerCase() !== "instock";
 
-  // image_urls is a semicolon-separated string
+  // Parse semicolon-separated image URLs; prepend CDN domain for relative paths
   const imageUrls = hit.image_urls ? hit.image_urls.split(";") : [];
-  let imageSrc = "/placeholder-car.jpg"; // fallback if no image
+  let imageSrc = noimage.src;
   if (imageUrls.length > 0) {
     const firstUrl = imageUrls[0].trim();
-    // Prepend domain if relative
     imageSrc = firstUrl.startsWith("/")
       ? `${SITE_CONFIG.urls.assetBaseUrl}${firstUrl}`
       : firstUrl;
   }
 
   return (
-    <Link href={hit.page_url || "#"} className="block h-full group">
-      <article className="rounded-3xl border border-gray-200 bg-white overflow-hidden flex flex-col h-full hover:shadow-lg transition-all duration-300 relative group-hover:-translate-y-1">
-        <div className="aspect-[4/3] bg-muted relative overflow-hidden rounded-t-3xl">
+    <Link href={hit.page_url || "#"} className="block h-full">
+      <article className="rounded-[20px] border border-gray-200 bg-white overflow-hidden flex flex-col h-full hover:shadow-none transition-none relative">
+
+        {/* Vehicle image with optional sold overlay */}
+        <div className="relative overflow-hidden rounded-xl p-2">
           <img
             src={imageSrc}
             alt={title}
-            className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isSold ? "grayscale opacity-80" : ""}`}
+            className={`w-full object-cover min-h-[240px] max-h-[240px] rounded-xl group-hover:scale-100 transition-transform duration-500 ${
+              isSold ? "grayscale opacity-80" : ""
+            }`}
             loading="lazy"
           />
-          {/* SOLD Badge overlay */}
+          {/* Diagonal "Sold" banner */}
           {isSold && (
-            <div className="absolute top-4 right-4 z-10 bg-red-600 text-white text-[12px] font-bold px-3 py-1 rounded-sm shadow-md uppercase tracking-wider">
+            <div
+              className="absolute z-[1] bg-[#626262] text-white text-[20px] font-bold w-[150%] py-[7px] text-center uppercase tracking-wider shadow-md"
+              style={{ top: "38%", left: "-20%", transform: "rotate(322deg)" }}
+            >
               Sold
             </div>
           )}
         </div>
-        <div className="p-5 flex flex-col flex-1">
-          <h3 className="text-[18px] font-bold text-gray-900 leading-tight">
+
+        {/* Card body */}
+        <div className="flex flex-col flex-1 px-[15px] pb-0 text-start">
+          <h3 className="text-[16px] font-semibold text-[#000] leading-[22px] w-full inline-block mt-0 mb-0 min-h-[50px]">
             {title}
           </h3>
-          <hr className="my-4 border-gray-200" />
+
+          <hr className="border-gray-200" />
+
+          {/* Price and mileage */}
           <div>
-            <p className="text-[26px] font-bold text-gray-900 leading-none">
+            <p className="text-[20px] font-bold text-[#000] leading-8 m-0 p-0">
               ${price.toLocaleString()}.00
             </p>
-            <p className="text-[14px] text-gray-500 mt-2">
+            <p className="text-[12px] text-gray-700 leading-[14px] mt-0 flex-1">
               {km.toLocaleString()} KM &bull; {drivetrain}
             </p>
           </div>
-          <hr className="my-4 border-gray-200" />
-          <div className="text-[14px] text-gray-700 mb-4 flex-1">
-            Stock #: {stock}
-          </div>
-          <div className="bg-[#eaf5ff] w-full py-3 px-4 rounded-xl text-center">
-            <span className="text-[#0070d6] text-[13px] font-bold flex items-center justify-center gap-1 leading-snug">
+
+          <hr className="border-gray-200 my-2" />
+
+          <p className="text-[12px] text-gray-500 mt-1 mb-2">Stock #: {stock}</p>
+
+          {/* Pre-qualify CTA */}
+          <div className="bg-[#e6f4ff] w-full rounded-[12px] text-center p-0 mb-3">
+            <span className="bg-[#e6f4ff] text-[#005dff] text-[11px] font-bold flex items-center justify-center gap-1 leading-snug rounded-[12px] py-[7px] px-[5px]">
               Get pre-qualified to see your personalized bi-weekly payment{" "}
               <span className="text-lg leading-none font-normal">&rarr;</span>
             </span>

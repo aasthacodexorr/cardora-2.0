@@ -1,44 +1,52 @@
+/* =========================
+   Service Page
+   Cardora's vehicle service & repair page.
+   Sections:
+   - Hero with schedule CTA
+   - Location & booking cards
+   - "Take care of your ride" service grid
+   - Additional services grid
+   - "Hit the road with confidence" trust highlights
+   - DreamVehicleCTA → GetInTouch → Footer
+========================= */
+
 "use client";
 
 import {
-  Phone,
-  MapPin,
-  CalendarCheck,
-  Droplets,
-  Disc3,
-  Gauge,
-  BatteryCharging,
-  Wrench,
-  Stethoscope,
-  ThermometerSun,
-  AlertCircle,
-  Cog,
-  Compass,
-  Star,
-  Clock,
-  ShieldCheck,
+  Phone, MapPin, CalendarCheck,
+  Droplets, Disc3, Gauge, BatteryCharging, Wrench,
+  Stethoscope, ThermometerSun, AlertCircle, Cog, Compass,
+  Star, Clock, ShieldCheck,
 } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import GetInTouch from "@/components/GetInTouch";
-import DreamVehicleCTA from "@/components/DreamVehicleCTA";
-import { Button } from "@/components/ui/button";
-import { SITE_CONFIG } from "@/lib/config";
 
+// Layout
+import { Header, Footer } from "@/components/layout";
+
+// Shared components
+import { GetInTouch, DreamVehicleCTA } from "@/components/common";
+
+// UI
+import { Button } from "@/components/ui/button";
+
+// Config
+import { SITE_CONFIG } from "@/lib/config";
+import { PHONE_HREF, PHONE_NUMBER } from "@/constants";
+
+/* ── Static Data ────────────────────────────────────────────── */
 const mainServices = [
-  { icon: Droplets, title: "Oil Change & Lube", body: "Engine oil change, filter, reset oil light" },
-  { icon: Disc3, title: "Tire & Wheel Service", body: "Replacement, flat, rotation, alignment" },
-  { icon: Gauge, title: "Brakes", body: "Issues, pads, rotors, calipers" },
-  { icon: BatteryCharging, title: "Battery", body: "Charge, replacement, testing, starter" },
-  { icon: Wrench, title: "Scheduled Maintenance", body: "Manufacturer service intervals" },
+  { icon: Droplets,       title: "Oil Change & Lube",       body: "Engine oil change, filter, reset oil light" },
+  { icon: Disc3,          title: "Tire & Wheel Service",    body: "Replacement, flat, rotation, alignment" },
+  { icon: Gauge,          title: "Brakes",                  body: "Issues, pads, rotors, calipers" },
+  { icon: BatteryCharging, title: "Battery",                body: "Charge, replacement, testing, starter" },
+  { icon: Wrench,         title: "Scheduled Maintenance",   body: "Manufacturer service intervals" },
 ];
 
 const additionalServices = [
-  { icon: Stethoscope, label: "General Diagnosis" },
+  { icon: Stethoscope,   label: "General Diagnosis" },
   { icon: ThermometerSun, label: "AC / Heating" },
-  { icon: AlertCircle, label: "Check Engine Light" },
-  { icon: Cog, label: "Powertrain & Engine" },
-  { icon: Compass, label: "Steering & Suspension" },
+  { icon: AlertCircle,   label: "Check Engine Light" },
+  { icon: Cog,           label: "Powertrain & Engine" },
+  { icon: Compass,       label: "Steering & Suspension" },
 ];
 
 const trustHighlights = [
@@ -59,43 +67,38 @@ const trustHighlights = [
   },
 ];
 
+/* ── Page Component ────────────────────────────────────────── */
 const Service = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Hero */}
+      {/* ── Hero ─────────────────────────────────────────── */}
       <section className="bg-gradient-to-b from-brand-green/10 via-brand-green/5 to-background py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6 text-center">
           <p className="text-sm md:text-base font-semibold uppercase tracking-[0.25em] text-brand-green">
             Service & Repairs
           </p>
           <h1 className="mt-4 text-4xl md:text-6xl font-extrabold tracking-tight text-foreground">
-            Quality Repairs,
-            <br />
+            Quality Repairs,<br />
             <span className="text-brand-green">Prices you can Trust.</span>
           </h1>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button
-              asChild
-              className="bg-brand-green hover:bg-brand-green/90 text-white rounded-full px-8 h-12 font-semibold"
-            >
+            <Button asChild className="bg-brand-green hover:bg-brand-green/90 text-white rounded-full px-8 h-12 font-semibold">
               <a href="#book">Schedule Online</a>
             </Button>
-            <a
-              href="tel:1-855-514-5500"
-              className="inline-flex items-center gap-2 text-foreground font-bold hover:text-brand-green transition-colors"
-            >
+            <a href={PHONE_HREF} className="inline-flex items-center gap-2 text-foreground font-bold hover:text-brand-green transition-colors">
               <Phone className="h-5 w-5 fill-brand-green text-brand-green" />
-              1-855-514-5500
+              {PHONE_NUMBER}
             </a>
           </div>
         </div>
       </section>
 
-      {/* Location & booking */}
+      {/* ── Location & booking ───────────────────────────── */}
       <section id="book" className="py-16 md:py-20">
         <div className="mx-auto max-w-[1200px] px-6 grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+          {/* Location card */}
           <div className="bg-card border border-border rounded-2xl p-8 md:p-10 shadow-sm">
             <div className="h-12 w-12 rounded-xl bg-brand-green/10 flex items-center justify-center">
               <MapPin className="h-6 w-6 text-brand-green" />
@@ -104,27 +107,18 @@ const Service = () => {
               Call to schedule your Service appointment
             </h3>
             <div className="mt-6">
-              <p className="text-sm uppercase tracking-widest text-muted-foreground font-semibold">
-                Brampton
-              </p>
-              <a
-                href={SITE_CONFIG.urls.googleMapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="block mt-1 text-lg font-semibold text-foreground hover:text-brand-green"
-              >
+              <p className="text-sm uppercase tracking-widest text-muted-foreground font-semibold">Brampton</p>
+              <a href={SITE_CONFIG.urls.googleMapsUrl} target="_blank" rel="noreferrer" className="block mt-1 text-lg font-semibold text-foreground hover:text-brand-green">
                 8050 Dixie Rd
               </a>
-              <a
-                href="tel:1-855-514-5500"
-                className="mt-2 inline-flex items-center gap-2 text-brand-green font-bold text-lg"
-              >
+              <a href={PHONE_HREF} className="mt-2 inline-flex items-center gap-2 text-brand-green font-bold text-lg">
                 <Phone className="h-4 w-4 fill-brand-green" />
-                1-855-514-5500
+                {PHONE_NUMBER}
               </a>
             </div>
           </div>
 
+          {/* Booking card */}
           <div className="bg-card border border-border rounded-2xl p-8 md:p-10 shadow-sm">
             <div className="h-12 w-12 rounded-xl bg-brand-green/10 flex items-center justify-center">
               <CalendarCheck className="h-6 w-6 text-brand-green" />
@@ -135,34 +129,26 @@ const Service = () => {
             <p className="mt-2 text-muted-foreground">
               Book your service slot online and we'll confirm right away.
             </p>
-            <Button
-              asChild
-              className="mt-6 bg-brand-green hover:bg-brand-green/90 text-white rounded-full px-8 h-12 font-semibold"
-            >
-              <a href="tel:1-855-514-5500">Schedule Online</a>
+            <Button asChild className="mt-6 bg-brand-green hover:bg-brand-green/90 text-white rounded-full px-8 h-12 font-semibold">
+              <a href={PHONE_HREF}>Schedule Online</a>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Take care of your ride */}
+      {/* ── Main services grid ───────────────────────────── */}
       <section className="py-16 md:py-20 bg-muted/40">
         <div className="mx-auto max-w-[1200px] px-6">
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
               Let's take care of your ride
             </h2>
-            <p className="mt-3 text-muted-foreground text-base md:text-lg">
-              Great ways to get started
-            </p>
+            <p className="mt-3 text-muted-foreground text-base md:text-lg">Great ways to get started</p>
           </div>
 
           <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {mainServices.map(({ icon: Icon, title, body }) => (
-              <div
-                key={title}
-                className="bg-card border border-border rounded-2xl p-7 hover:shadow-lg hover:border-brand-green/40 transition-all"
-              >
+              <div key={title} className="bg-card border border-border rounded-2xl p-7 hover:shadow-lg hover:border-brand-green/40 transition-all">
                 <div className="h-14 w-14 rounded-xl bg-brand-green/10 flex items-center justify-center">
                   <Icon className="h-7 w-7 text-brand-green" strokeWidth={2.2} />
                 </div>
@@ -174,20 +160,15 @@ const Service = () => {
         </div>
       </section>
 
-      {/* Additional services */}
+      {/* ── Additional services ──────────────────────────── */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6">
           <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
             Additional available services
           </h2>
-
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {additionalServices.map(({ icon: Icon, label }) => (
-              <a
-                key={label}
-                href="tel:1-855-514-5500"
-                className="bg-card border border-border rounded-xl p-5 flex flex-col items-center text-center hover:border-brand-green/50 hover:shadow-md transition-all"
-              >
+              <a key={label} href={PHONE_HREF} className="bg-card border border-border rounded-xl p-5 flex flex-col items-center text-center hover:border-brand-green/50 hover:shadow-md transition-all">
                 <Icon className="h-8 w-8 text-brand-green" strokeWidth={2} />
                 <p className="mt-3 text-sm font-semibold text-foreground">{label}</p>
               </a>
@@ -196,19 +177,15 @@ const Service = () => {
         </div>
       </section>
 
-      {/* Hit the road with confidence */}
+      {/* ── Trust highlights ─────────────────────────────── */}
       <section className="bg-foreground text-background py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6">
           <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight">
             Hit the road with confidence
           </h2>
-
           <div className="mt-12 grid md:grid-cols-3 gap-6">
             {trustHighlights.map(({ icon: Icon, title, body }) => (
-              <div
-                key={title}
-                className="rounded-2xl border border-background/15 bg-background/5 p-7 hover:border-brand-green/50 transition-colors"
-              >
+              <div key={title} className="rounded-2xl border border-background/15 bg-background/5 p-7 hover:border-brand-green/50 transition-colors">
                 <div className="h-12 w-12 rounded-xl bg-brand-green/15 flex items-center justify-center">
                   <Icon className="h-6 w-6 text-brand-green" strokeWidth={2.2} />
                 </div>

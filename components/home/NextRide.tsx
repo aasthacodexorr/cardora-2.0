@@ -1,9 +1,21 @@
+/* =========================
+   NextRide Component (Home)
+   "Let's find your next ride" section on the homepage.
+   Displays three action cards:
+   - Shop all cars → /inventory
+   - Start with a trade-in
+   - Get pre-qualified
+   Each card has an image, title, subtitle, and arrow icon.
+========================= */
+
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import shopCars from "@/assets/card-shop-cars.jpg";
-import tradeIn from "@/assets/card-trade-in.jpg";
-import preQualified from "@/assets/card-pre-qualified.jpg";
 
+import shopCars     from "@/assets/cards/card-shop-cars.jpg";
+import tradeIn      from "@/assets/cards/card-trade-in.jpg";
+import preQualified from "@/assets/cards/card-pre-qualified.jpg";
+
+/* ── Types ──────────────────────────────────────────────────── */
 type Card = {
   image: any;
   alt: string;
@@ -12,6 +24,7 @@ type Card = {
   to: string;
 };
 
+/* ── Static Data ────────────────────────────────────────────── */
 const cards: Card[] = [
   {
     image: shopCars,
@@ -36,11 +49,10 @@ const cards: Card[] = [
   },
 ];
 
+/* ── Component ─────────────────────────────────────────────── */
 const NextRide = () => {
   return (
-    /* next_ride_section: margin-top 50px */
     <section className="w-full bg-background mt-[50px]">
-      {/* next_ride_section .container_box: max-w-[1280px] mx-auto px-[20px] */}
       <div className="max-w-[1280px] mx-auto px-[20px]">
         <h2 className="text-[34px] lg:text-[44px] font-extrabold text-foreground tracking-tight mb-8">
           Let&apos;s find your next ride
@@ -53,6 +65,7 @@ const NextRide = () => {
               href={card.to}
               className="group rounded-2xl border border-border bg-card overflow-hidden flex flex-col hover:shadow-md transition-shadow"
             >
+              {/* Card image */}
               <div className="aspect-[4/4] overflow-hidden bg-muted">
                 <img
                   src={card.image.src}
@@ -63,15 +76,12 @@ const NextRide = () => {
                   className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
                 />
               </div>
+
+              {/* Card content */}
               <div className="flex items-center justify-between gap-4 px-2 py-5">
                 <div className="opacity-70">
-                  <h3 className="text-[18px] font-bold text-foreground">
-                    {card.title}
-                  </h3>
-                  {/* next_ride_section p: font-size 16px */}
-                  <p className="text-[16px]  mt-1">
-                    {card.subtitle}
-                  </p>
+                  <h3 className="text-[18px] font-bold text-foreground">{card.title}</h3>
+                  <p className="text-[16px] mt-1">{card.subtitle}</p>
                 </div>
                 <ArrowRight
                   className="h-6 w-6 text-brand-green shrink-0 group-hover:translate-x-1 transition-transform"

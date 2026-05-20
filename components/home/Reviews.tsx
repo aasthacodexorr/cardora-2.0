@@ -1,23 +1,34 @@
+/* =========================
+   Reviews Component (Home)
+   Customer review carousel on the homepage.
+   - Responsive: shows 1 / 2 / 3 slides based on viewport
+   - Auto-advances every 4 seconds
+   - Manual prev/next navigation buttons
+   - Displays Google Review branding on each card
+========================= */
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Image from "next/image";
 
-import google from "../assets/google.png";
-import google_review from "../assets/Goolge-Review-Logo.jpg";
+import google        from "@/assets/brand/google.png";
+import googleReview  from "@/assets/brand/Goolge-Review-Logo.jpg";
 
+/* ── Types ──────────────────────────────────────────────────── */
 type Review = {
   initial: string;
   name: string;
   text: string;
 };
 
+/* ── Static Data ────────────────────────────────────────────── */
 const reviews: Review[] = [
   {
     initial: "J",
     name: "It's Jerry",
-    text: "So, I recently bought a 2021 Jetta High line from Cardora, and I can confidently say the experience was nothing short of amazing—thanks to Sam! From the very beginning, Sam went above and beyond to make sure everything went smoothly. I encountered a few issues during the deal, but he personally stepped in and resolved everything with professionalism and genuine care.",
+    text: "So, I recently bought a 2021 Jetta High line from Cardora, and I can confidently say the experience was nothing short of amazing—thanks to Sam! From the very beginning, Sam went above and beyond to make sure everything went smoothly.",
   },
   {
     initial: "S",
@@ -27,7 +38,7 @@ const reviews: Review[] = [
   {
     initial: "K",
     name: "Katie McWade",
-    text: "My husband and I recently went through Sam for the purchase of our new family vehicle. He worked very hard for us for the best rate possible and turned what had been a stressful and frustrating process, into something absolutely seamless and enjoyable. He was absolutely wonderful to work with and we are incredibly happy with our newly purchased vehicle. Thank you so much Sam for your fantastic service and a great experience!",
+    text: "My husband and I recently went through Sam for the purchase of our new family vehicle. He worked very hard for us for the best rate possible and turned what had been a stressful and frustrating process, into something absolutely seamless and enjoyable.",
   },
   {
     initial: "A",
@@ -36,89 +47,64 @@ const reviews: Review[] = [
   },
 ];
 
+/* ── Component ─────────────────────────────────────────────── */
 const Reviews = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(3);
 
-  // Detect Screen Size
+  // Responsive: update slides count on resize
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setSlidesToShow(1);
-      } else if (window.innerWidth < 1024) {
-        setSlidesToShow(2);
-      } else {
-        setSlidesToShow(3);
-      }
+      if (window.innerWidth < 768)       setSlidesToShow(1);
+      else if (window.innerWidth < 1024) setSlidesToShow(2);
+      else                               setSlidesToShow(3);
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Auto Slide
+  // Auto-advance carousel
   useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 4000);
-
+    const interval = setInterval(nextSlide, 4000);
     return () => clearInterval(interval);
   }, [currentIndex, slidesToShow]);
 
-  const nextSlide = () => {
+  const nextSlide = () =>
     setCurrentIndex((prev) => (prev + 1 >= reviews.length ? 0 : prev + 1));
-  };
 
-  const prevSlide = () => {
+  const prevSlide = () =>
     setCurrentIndex((prev) => (prev - 1 < 0 ? reviews.length - 1 : prev - 1));
-  };
 
   return (
-    /* bg-review-bg: #eaeff5 */
     <section className="w-full bg-[#eaeff5] overflow-hidden">
-      {/* reviews_section .mx-auto.max-w-[1400px]: max-width 1280px */}
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 py-14">
         <h2 className="text-[30px] md:text-[44px] font-extrabold text-foreground tracking-tight text-center mb-8">
           People love buying with Cardora
         </h2>
 
-        {/* Google Bar — reviews_google_bar styles applied directly */}
+        {/* Google rating bar */}
         <div className="flex justify-center">
           <div className="flex items-center justify-center gap-3 rounded-[20px] overflow-hidden border border-[#e2e2e2] bg-transparent shadow-none py-[10px] px-4 w-[500px] max-w-full flex-wrap">
-            {/* reviews_google_bar img: 85×29 */}
-            <Image
-              src={google}
-              alt="Google"
-              className="h-[29px] w-[85px] object-contain"
-            />
-
+            <Image src={google} alt="Google" className="h-[29px] w-[85px] object-contain" />
             <div className="flex items-center gap-1">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} className="h-4 w-4 fill-star text-star" />
               ))}
             </div>
-
-            <span className="text-[15px] font-medium text-foreground">
-              5.0 (33)
-            </span>
-
-            {/* reviews_google_bar a: font-weight 600, font-size 16px */}
-            <a
-              href="#"
-              className="text-[16px] font-semibold underline text-foreground hover:opacity-80"
-            >
+            <span className="text-[15px] font-medium text-foreground">5.0 (33)</span>
+            <a href="#" className="text-[16px] font-semibold underline text-foreground hover:opacity-80">
               View all
             </a>
           </div>
         </div>
 
-        {/* Slider */}
+        {/* Carousel */}
         <div className="relative mt-8">
-          {/* Prev */}
+          {/* Prev button */}
           <button
             onClick={prevSlide}
-            aria-label="Previous"
+            aria-label="Previous review"
             className="flex absolute left-0 md:-left-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center"
           >
             <ChevronLeft className="h-5 w-5 text-foreground" />
@@ -128,60 +114,40 @@ const Reviews = () => {
           <div className="overflow-hidden">
             <div
               className="flex transition-transform duration-700 ease-in-out"
-              style={{
-                transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)`,
-              }}
+              style={{ transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)` }}
             >
               {[...reviews, ...reviews].map((r, index) => (
                 <div
                   key={`${r.name}-${index}`}
                   className={`flex-shrink-0 px-2 md:px-3 ${
-                    slidesToShow === 1
-                      ? "w-full"
-                      : slidesToShow === 2
-                      ? "w-1/2"
-                      : "w-1/3"
+                    slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
                   }`}
                 >
                   <article className="rounded-2xl bg-card p-5 md:p-6 shadow-sm flex flex-col h-full">
+                    {/* Reviewer avatar + name */}
                     <div className="flex items-center gap-4">
-                      {/* round_pill_reviews: 65×65, font-size 35px, font-weight 500, bg #512da8 */}
                       <div className="h-[65px] w-[65px] rounded-full bg-[#512da8] flex items-center justify-center text-white text-[35px] font-medium flex-shrink-0">
                         {r.initial}
                       </div>
-
                       <div>
-                        {/* reviews_section h3: font-size 20px */}
-                        <h3 className="text-[20px] font-bold text-review-name">
-                          {r.name}
-                        </h3>
-
+                        <h3 className="text-[20px] font-bold text-review-name">{r.name}</h3>
                         <div className="flex gap-0.5 mt-1">
                           {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className="h-4 w-4 fill-star text-star"
-                            />
+                            <Star key={i} className="h-4 w-4 fill-star text-star" />
                           ))}
                         </div>
                       </div>
                     </div>
 
-                    {/* reviews_section p: font-size 16px */}
+                    {/* Review text */}
                     <p className="mt-5 text-[16px] text-foreground/80 leading-relaxed flex-1">
                       {r.text}
                     </p>
 
-                    {/* google_review_logo: img 30×30, span font-size 14px font-weight 700 */}
+                    {/* Google Review badge */}
                     <div className="flex items-center gap-2 mt-6 pt-2">
-                      <Image
-                        src={google_review}
-                        alt="Google"
-                        className="h-[30px] w-[30px] object-contain"
-                      />
-                      <span className="text-[14px] font-bold text-foreground/80">
-                        Google Review
-                      </span>
+                      <Image src={googleReview} alt="Google" className="h-[30px] w-[30px] object-contain" />
+                      <span className="text-[14px] font-bold text-foreground/80">Google Review</span>
                     </div>
                   </article>
                 </div>
@@ -189,10 +155,10 @@ const Reviews = () => {
             </div>
           </div>
 
-          {/* Next */}
+          {/* Next button */}
           <button
             onClick={nextSlide}
-            aria-label="Next"
+            aria-label="Next review"
             className="flex absolute right-0 md:-right-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center"
           >
             <ChevronRight className="h-5 w-5 text-foreground" />
