@@ -1,14 +1,26 @@
+/* =========================
+   Finance / Express Checkout Page
+   Embeds the Cardora express checkout iframe.
+   Accepts an optional `inventory_id` query param
+   to pre-load a specific vehicle in the checkout flow.
+   Wrapped in Suspense to safely use useSearchParams.
+========================= */
+
 "use client";
 
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
+// Layout
+import { Header, Footer } from "@/components/layout";
+
+// Config
 import { SITE_CONFIG } from "@/lib/config";
 
+/* ── Inner component (needs useSearchParams) ─────────────────── */
 const FinanceContent = () => {
   const searchParams = useSearchParams();
-  const inventoryId = searchParams.get("inventory_id") || "";
+  const inventoryId  = searchParams.get("inventory_id") || "";
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
@@ -33,9 +45,16 @@ const FinanceContent = () => {
   );
 };
 
+/* ── Page export: wrapped in Suspense ────────────────────────── */
 export default function FinancePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-lg">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center text-lg">
+          Loading...
+        </div>
+      }
+    >
       <FinanceContent />
     </Suspense>
   );

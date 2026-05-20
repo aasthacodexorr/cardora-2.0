@@ -1,26 +1,46 @@
+/* =========================
+   About Us Page
+   Tells the Cardora brand story.
+   Sections:
+   - Hero with background image overlay
+   - "Cardora Certified" feature grid
+   - After-sale service + reviews cards
+   - "Built in Canada" story with team photo
+   - DreamVehicleCTA → GetInTouch → Footer
+========================= */
+
 "use client";
 
-import { ShieldCheck, Wrench, PhoneCall, RefreshCw, Star, Headphones, Leaf } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import GetInTouch from "@/components/GetInTouch";
-import DreamVehicleCTA from "@/components/DreamVehicleCTA";
-import aboutHero from "@/assets/about-hero.jpg";
-import aboutTeam from "@/assets/about-team.jpg";
+import {
+  ShieldCheck, Wrench, PhoneCall, RefreshCw,
+  Star, Headphones, Leaf,
+} from "lucide-react";
 
+// Layout
+import { Header, Footer } from "@/components/layout";
+
+// Shared components
+import { GetInTouch, DreamVehicleCTA } from "@/components/common";
+
+// Assets
+import aboutHero from "@/assets/pages/about-hero.jpg";
+import aboutTeam from "@/assets/pages/about-team.jpg";
+
+/* ── Static Data ────────────────────────────────────────────── */
 const certified = [
   { icon: ShieldCheck, label: "6-month warranty" },
-  { icon: Wrench, label: "150-point inspection" },
-  { icon: PhoneCall, label: "Roadside assistance" },
-  { icon: RefreshCw, label: "10-day exchange" },
+  { icon: Wrench,      label: "150-point inspection" },
+  { icon: PhoneCall,   label: "Roadside assistance" },
+  { icon: RefreshCw,   label: "10-day exchange" },
 ];
 
+/* ── Page Component ────────────────────────────────────────── */
 const About = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Hero */}
+      {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -44,7 +64,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Cardora Certified */}
+      {/* ── Cardora Certified ────────────────────────────── */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6">
           <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
@@ -64,9 +84,10 @@ const About = () => {
         </div>
       </section>
 
-      {/* After-sale service + Reviews */}
+      {/* ── After-sale service + Reviews ─────────────────── */}
       <section className="bg-muted/40 py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6 grid md:grid-cols-2 gap-10 md:gap-16">
+          {/* After-sale service card */}
           <div className="bg-card border border-border rounded-2xl p-8 md:p-10 shadow-sm">
             <div className="h-14 w-14 rounded-xl bg-brand-green/10 flex items-center justify-center">
               <Headphones className="h-7 w-7 text-brand-green" strokeWidth={2.2} />
@@ -79,6 +100,7 @@ const About = () => {
             </p>
           </div>
 
+          {/* Reviews card */}
           <div className="bg-card border border-border rounded-2xl p-8 md:p-10 shadow-sm">
             <div className="h-14 w-14 rounded-xl bg-brand-green/10 flex items-center justify-center">
               <Star className="h-7 w-7 text-brand-green fill-brand-green" strokeWidth={2.2} />
@@ -98,7 +120,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Built in Canada */}
+      {/* ── Built in Canada ──────────────────────────────── */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>

@@ -1,15 +1,33 @@
+/* =========================
+   Trade-In Page
+   Allows users to get a vehicle valuation offer.
+   Sections:
+   - Hero with quote form (By Vehicle / VIN toggle)
+   - "How it works" step-by-step with image
+   - FAQ accordion
+   - GetInTouch → Footer
+========================= */
+
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Search, FileText, MessageSquareQuote, Mail, CalendarCheck } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import GetInTouch from "@/components/GetInTouch";
+
+// Layout
+import { Header, Footer } from "@/components/layout";
+
+// Shared components
+import { GetInTouch } from "@/components/common";
+
+// UI
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import tradeInHero from "@/assets/trade-in-hero.jpg";
 
+// Assets
+import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
+
+/* ── Static Data ────────────────────────────────────────────── */
 const steps = [
   {
     icon: Search,
@@ -19,20 +37,17 @@ const steps = [
   {
     icon: FileText,
     title: "Tell us about your car",
-    description:
-      "Answer some quick questions about your car and its condition, and provide your details so we can contact you.",
+    description: "Answer some quick questions about your car and its condition, and provide your details so we can contact you.",
   },
   {
     icon: Mail,
     title: "We'll send you an offer",
-    description:
-      "If no additional information is required, you'll receive our offer for your car in one business day.",
+    description: "If no additional information is required, you'll receive our offer for your car in one business day.",
   },
   {
     icon: CalendarCheck,
     title: "Book an inspection and get paid",
-    description:
-      "If you choose to accept our offer, you can book an inspection to confirm your car's condition and get paid.",
+    description: "If you choose to accept our offer, you can book an inspection to confirm your car's condition and get paid.",
   },
 ];
 
@@ -75,17 +90,19 @@ const faqs = [
   },
 ];
 
+/* ── Page Component ────────────────────────────────────────── */
 const TradeIn = () => {
-  const [mode, setMode] = useState<"vehicle" | "vin">("vehicle");
+  const [mode, setMode]       = useState<"vehicle" | "vin">("vehicle");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Hero / Quote section */}
+      {/* ── Hero / Quote form ────────────────────────────── */}
       <section className="w-full bg-[hsl(var(--hero-bg))]">
         <div className="mx-auto grid max-w-[1400px] grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 px-6 py-16 lg:py-24 items-center">
+          {/* Left: headline + estimated offer */}
           <div>
             <h1 className="font-extrabold text-foreground leading-[1.05] tracking-tight text-[44px] lg:text-[64px]">
               Sell my car the easy way.
@@ -93,7 +110,6 @@ const TradeIn = () => {
             <p className="mt-6 text-[18px] lg:text-[22px] font-semibold text-foreground/80 max-w-xl">
               Fast, seamless and secure. It's the way everyone deserves.
             </p>
-
             <div className="mt-8 flex items-center gap-6 text-foreground">
               <div>
                 <div className="text-sm font-semibold text-foreground/60">Estimated offer</div>
@@ -107,48 +123,39 @@ const TradeIn = () => {
             </div>
           </div>
 
-          {/* Quote form card */}
+          {/* Right: quote form card */}
           <div className="bg-card rounded-2xl shadow-xl p-6 lg:p-8 border border-border">
+            {/* By Vehicle / VIN toggle */}
             <div className="flex gap-2 mb-6 bg-muted rounded-full p-1">
-              <button
-                onClick={() => setMode("vehicle")}
-                className={`flex-1 py-2.5 rounded-full text-sm font-bold transition-colors ${
-                  mode === "vehicle"
-                    ? "bg-brand-green text-brand-green-foreground"
-                    : "text-foreground/70"
-                }`}
-              >
-                By Vehicle
-              </button>
-              <button
-                onClick={() => setMode("vin")}
-                className={`flex-1 py-2.5 rounded-full text-sm font-bold transition-colors ${
-                  mode === "vin"
-                    ? "bg-brand-green text-brand-green-foreground"
-                    : "text-foreground/70"
-                }`}
-              >
-                VIN
-              </button>
+              {(["vehicle", "vin"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setMode(m)}
+                  className={`flex-1 py-2.5 rounded-full text-sm font-bold transition-colors ${
+                    mode === m
+                      ? "bg-brand-green text-brand-green-foreground"
+                      : "text-foreground/70"
+                  }`}
+                >
+                  {m === "vehicle" ? "By Vehicle" : "VIN"}
+                </button>
+              ))}
             </div>
 
+            {/* Form fields */}
             {mode === "vehicle" ? (
               <div className="space-y-3">
-                {["Select Year", "Select Make", "Select Model", "Select Trim", "Select Province"].map(
-                  (label) => (
-                    <div key={label} className="relative">
-                      <select
-                        className="w-full appearance-none bg-background border border-border rounded-lg px-4 py-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>
-                          {label}
-                        </option>
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50 pointer-events-none" />
-                    </div>
-                  )
-                )}
+                {["Select Year", "Select Make", "Select Model", "Select Trim", "Select Province"].map((label) => (
+                  <div key={label} className="relative">
+                    <select
+                      className="w-full appearance-none bg-background border border-border rounded-lg px-4 py-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>{label}</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50 pointer-events-none" />
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="space-y-3">
@@ -158,9 +165,7 @@ const TradeIn = () => {
                     className="w-full appearance-none bg-background border border-border rounded-lg px-4 py-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green"
                     defaultValue=""
                   >
-                    <option value="" disabled>
-                      Select Province
-                    </option>
+                    <option value="" disabled>Select Province</option>
                     <option>ON</option>
                     <option>AB</option>
                   </select>
@@ -170,9 +175,7 @@ const TradeIn = () => {
             )}
 
             <div className="flex justify-between gap-3 mt-6">
-              <Button variant="outline" className="flex-1">
-                Back
-              </Button>
+              <Button variant="outline" className="flex-1">Back</Button>
               <Button className="flex-1 bg-brand-green hover:bg-brand-green/90 text-brand-green-foreground">
                 Continue
               </Button>
@@ -181,7 +184,7 @@ const TradeIn = () => {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* ── How it works ─────────────────────────────────── */}
       <section className="w-full">
         <div className="mx-auto max-w-[1400px] px-6 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-12 items-center">
@@ -220,7 +223,7 @@ const TradeIn = () => {
         </div>
       </section>
 
-      {/* FAQs */}
+      {/* ── FAQs ─────────────────────────────────────────── */}
       <section className="w-full bg-[hsl(var(--review-bg))]">
         <div className="mx-auto max-w-[1000px] px-6 py-20">
           <div className="flex items-center gap-3 mb-10">
@@ -232,10 +235,7 @@ const TradeIn = () => {
 
           <div className="space-y-3">
             {faqs.map((faq, i) => (
-              <div
-                key={faq.q}
-                className="bg-card rounded-xl border border-border overflow-hidden"
-              >
+              <div key={faq.q} className="bg-card rounded-xl border border-border overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"

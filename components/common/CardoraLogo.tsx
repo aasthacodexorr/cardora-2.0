@@ -1,3 +1,11 @@
+/* =========================
+   CardoraLogo Component (Common)
+   Renders the Cardora brand logo image.
+   Used in the Header (desktop + mobile)
+   and anywhere else the logo is needed.
+   The image is served from /public/cardora-logo.png.
+========================= */
+
 import Image from "next/image";
 
 const CardoraLogo = () => {
