@@ -32,8 +32,7 @@ const FinanceContent = () => {
         <div className="mx-auto max-w-[1400px] px-6 py-8">
           <iframe
             src={`${SITE_CONFIG.urls.financeBaseUrl}/?inventory_id=${inventoryId}`}
-            className="w-full border-0 rounded-2xl shadow-sm"
-            style={{ minHeight: "calc(100vh - 200px)" }}
+            className="w-full border-0 rounded-2xl shadow-sm min-h-[calc(100vh-200px)]"
             title="Express Checkout - Finance"
             allow="payment"
           />

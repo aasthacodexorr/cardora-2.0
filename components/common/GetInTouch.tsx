@@ -32,7 +32,7 @@ const GetInTouch = () => {
 
   return (
     <section className="w-full bg-[#121319] text-white">
-      <div className="mx-auto max-w-[1600px] px-6 py-16">
+      <div className="mx-auto max-w-[1600px] px-10 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-10">
 
           {/* Left: business hours */}
@@ -50,8 +50,8 @@ const GetInTouch = () => {
                     onClick={() => setTab(t)}
                     className={`px-[30px] py-[5px] rounded-[10px] text-[15px] font-semibold transition-colors border-none cursor-pointer relative z-[11] leading-[1.7em] max-w-full ${
                       tab === t
-                        ? "bg-[#121319] text-brand-green"
-                        : "bg-[#2a2b30] text-white/80 hover:text-white"
+                        ? "bg-[#2a2b30] text-[#01a960]"
+                        : "bg-[#2a2b30] text-white hover:text-white"
                     }`}
                   >
                     {t}
@@ -62,7 +62,7 @@ const GetInTouch = () => {
               {/* Hours table */}
               <div className="mt-5 space-y-3">
                 {Object.values(BUSINESS_HOURS).map(({ label, hours }) => (
-                  <div key={label} className="flex justify-between">
+                  <div key={label} className="grid grid-cols-[1fr_2fr]">
                     <span className="text-[16px] text-white/70">{label}:</span>
                     <span className="text-[16px] text-white">{hours}</span>
                   </div>
@@ -72,7 +72,7 @@ const GetInTouch = () => {
           </div>
 
           {/* Right: contact method cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5" style={{ rowGap: "20px", columnGap: "40px" }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-10">
             {contactCards.map((item) => (
               <a
                 key={item.title}

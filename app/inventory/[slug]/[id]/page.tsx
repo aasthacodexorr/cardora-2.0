@@ -31,6 +31,7 @@ import { stripHtml, parseImageUrls } from "@/utils";
 import expre from "@/assets/icons/expre.svg";
 
 import noimage from "@/assets/cars/no-image-placeholder.jpg";
+import doller from "@/assets/icons/doller-1.png";
 
 
 // Force dynamic rendering — vehicle data changes frequently
@@ -61,17 +62,36 @@ export default async function VehicleDetailsPage({
 
   /* ── Reusable: Price + CTA block (used in both columns) ─── */
   const PriceAndCTA = () => (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-sm">
+    <div className="bg-white rounded-2xl px-5 pb-2 text-center shadow-sm">
       {/* Price */}
-      <p className="text-[32px] font-extrabold text-[#00A651] leading-none">
-        ${vehicle.selling_price.toLocaleString()}.00
-        <span className="inline-block ml-1.5 align-middle">
-          <svg className="w-5 h-5 text-gray-400 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
-            <path strokeLinecap="round" strokeWidth={1.5} d="M12 16v-4m0-4h.01" />
+      <div className="flex items-center justify-center gap-1">
+        <p className="text-[32px] font-extrabold text-[#00A651] leading-none">
+          ${vehicle.selling_price.toLocaleString()}.00
+        </p>
+
+        <div className="relative inline-flex items-center group">
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="w-4 h-4 text-gray-500 cursor-pointer"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
+              clipRule="evenodd"
+            />
           </svg>
-        </span>
-      </p>
+
+          {/* Tooltip */}
+          <div className="absolute left-1/2 top-[-52px] -translate-x-1/2 whitespace-nowrap bg-black text-white text-[14px] font-semibold px-4 py-2 rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 shadow-lg">
+            Listed price does not include taxes and licensing fees.
+
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] w-3 h-3 bg-black rotate-45"></div>
+          </div>
+        </div>
+      </div>
 
       {/* Express checkout badge */}
       <div className="mt-2">
@@ -79,11 +99,12 @@ export default async function VehicleDetailsPage({
       </div>
 
       {/* CTA buttons */}
-      <div className="mt-6 space-y-3">
-        <button className="w-full bg-[#00A651] text-white font-bold py-3.5 rounded-xl hover:bg-[#009347] transition-colors text-[16px] shadow-sm">
+      <div className="mt-4 space-y-3">
+        <button className="mt-3 cursor-pointer font-bold w-full min-w-full block text-center rounded-[10px] sm:rounded-[12px] border border-[#00b066] bg-gradient-to-b from-[#00af66] to-[#00af66]/65 text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[20px] hover:opacity-90 shadow-md transition-opacity"
+>
           Get started
         </button>
-        <button className="w-full bg-white border-2 border-[#00A651] text-[#00A651] font-bold py-3 rounded-xl hover:bg-green-50 transition-colors text-[16px]">
+        <button className="w-full bg-white cursor-pointer hover:bg-[#00af66a6] hover:text-white border-2 border-[#00af66a6] text-[#00A651] font-bold py-3 rounded-xl transition-colors text-[16px] sm:text-[20px]">
           Send message
         </button>
       </div>
@@ -92,39 +113,39 @@ export default async function VehicleDetailsPage({
 
   /* ── Reusable: Vehicle title + quick specs block ─────────── */
   const VehicleHeader = () => (
-    <div className="bg-[#eaf5ff] rounded-2xl p-6 text-center">
-      <h1 className="text-[30px] font-extrabold text-gray-900 leading-tight ">
-        {vehicle.year} {vehicle.make} {vehicle.model}
+    <div className="bg-[#eaf5ff] rounded-t-xl px-3 py-6 text-center">
+      <h1 className="text-[28px] font-extrabold text-gray-900 leading-tight tracking-tighter ">
+        {vehicle.year}{vehicle.make}{vehicle.model}
       </h1>
       <p className="text-[16px] text-gray-500 mt-0.5 text-center">{vehicle.trim}</p>
 
-      <div className="flex items-center justify-center gap-6 mt-4">
+      <div className="flex items-center justify-center gap-6 mt-6 text-black">
         {/* Odometer */}
-        <div className="flex items-center text-center gap-2 text-[14px] text-gray-700">
-          <svg className="w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+        <div className="flex items-center text-center gap-2 text-[16px] text-black/70">
+          <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="">
             <path d="M0 256a256 256 0 1 1 512 0 256 256 0 1 1-512 0zm320 96c0-26.9-16.5-49.9-40-59.3L280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24v172.7c-23.5 9.5-40 32.5-40 59.3 0 35.3 28.7 64 64 64s64-28.7 64-64zM144 176a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm-16 80a32 32 0 1 0-64 0 32 32 0 1 0 64 0zm288 32a32 32 0 1 0 0-64 32 32 0 1 0 0 64zM400 144a32 32 0 1 0-64 0 32 32 0 1 0 64 0z" />
           </svg>
-          <span className="font-semibold text-center">{vehicle.odometer.toLocaleString()} KM</span>
+          <span className="text-center text-black">{vehicle.odometer.toLocaleString()} KM</span>
         </div>
         {/* Drivetrain */}
         <div className="flex items-center gap-2 text-[14px] text-gray-700 text-center">
-          <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="black">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0zM13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m10 0H3m10 0h2m0 0a1 1 0 011-1l2-3h3l1 3a1 1 0 011 1v1h-8v-1z" />
           </svg>
-          <span className="font-semibold">{vehicle.drivetrain || "Other"}</span>
+          <span className="text-black">{vehicle.drivetrain || "Other"}</span>
         </div>
       </div>
     </div>
   );
 
   return (
-    <main className="min-h-screen bg-background flex flex-col">
+    <main className="min-h-screen bg-background flex flex-col overflow-hidden">
       <div className="bg-hero-bg">
         <Header />
       </div>
 
       <section className="w-full bg-background flex-1 pb-16">
-        <div className="mx-auto max-w-[1600px] py-6 lg:pt-[30px] md:px-12 px-5">
+        <div className="mx-auto max-w-[1600px] py-6 lg:pt-[30px] md:px-10  px-5">
 
           <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10 lg:gap-[25px]">
 
@@ -132,6 +153,12 @@ export default async function VehicleDetailsPage({
             <div className="space-y-8 flex flex-col">
               {/* Image gallery */}
               <ImageGallery images={images} title={titleText} isSold={isSold} />
+
+
+              <div className="text-[12px] font-light">
+                <p><strong className="font-medium">STOCK #</strong>: G-148421</p>
+              </div>
+
 
               {/* Specs grid */}
               <div className="bg-card border-none rounded-xl p-0">
@@ -271,8 +298,8 @@ export default async function VehicleDetailsPage({
             </div>
 
             {/* ── Right column: sticky sidebar (desktop) ─── */}
-            <div className="relative lg:mr-[15px]">
-              <div className="sticky top-6 space-y-5">
+            <div className="relative">
+              <div className="sticky top-6 space-y-5 border border-gray-200 rounded-xl">
                 <VehicleHeader />
                 <PriceAndCTA />
               </div>

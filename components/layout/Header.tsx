@@ -42,10 +42,12 @@ const Header = () => {
     };
   }, [isMobileMenuOpen]);
 
+  const isHomePage = pathname === "/";
+
   return (
     <>
       {/* ── Desktop Header ─────────────────────────────────── */}
-      <header className="hidden lg:block w-full bg-[#f9f9f9] shadow-[0_2px_10px_rgba(0,0,0,0.05)] px-8">
+      <header className={`hidden lg:block w-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] px-8 ${!isHomePage ? "bg-[#f9f9f9]" : "bg-transparent"}`} >
         <div className="mx-auto flex max-w-[1600px] items-center justify-between py-[7.4px]">
 
           {/* Logo */}
@@ -65,8 +67,8 @@ const Header = () => {
                 <Link
                   key={item.label}
                   href={item.to}
-                  className={`text-[16px] font-bold transition-colors whitespace-nowrap capitalize tracking-[0px] mt-2 py-[6px] px-5 leading-normal font-[Lato,sans-serif] ${
-                    !isLast ? "border-r border-black/10" : ""
+                  className={` relative text-[16px] font-bold transition-colors whitespace-nowrap capitalize tracking-[0px] mt-2 py-[6px] px-5 leading-normal font-[Lato,sans-serif] ${
+                    !isLast ? "after:content-[''] after:absolute after:right-0 after:top-1/2 after:-translate-y-1/2 after:h-[22px] after:w-[2px] after:bg-[#b5b4b459]" : ""
                   } ${
                     isActive
                       ? "text-brand-green"

@@ -20,10 +20,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
   const title =
     `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${hit.trim || ""}`.trim();
 
-  const price      = Number(hit.selling_price) || 0;
-  const km         = Number(hit.odometer)      || 0;
-  const drivetrain = hit.drivetrain             || "N/A";
-  const stock      = hit.stock_no              || "N/A";
+  const price = Number(hit.selling_price) || 0;
+  const km = Number(hit.odometer) || 0;
+  const drivetrain = hit.drivetrain || "N/A";
+  const stock = hit.stock_no || "N/A";
 
   // Vehicle is "sold" when status is anything other than "instock"
   const isSold = hit.status && hit.status.toLowerCase() !== "instock";
@@ -39,25 +39,22 @@ export const HitCard = ({ hit }: { hit: any }) => {
   }
 
   return (
-    <Link href={hit.page_url || "#"} className="block h-full">
-      <article className="rounded-[20px] border border-gray-200 bg-white overflow-hidden flex flex-col h-full hover:shadow-none transition-none relative">
+    <Link href={hit.page_url || "#"} className="block h-full ">
+      <article className="rounded-[20px] p-[2px] border border-[#ddd] bg-white overflow-hidden flex flex-col h-full hover:shadow-none transition-none relative">
 
         {/* Vehicle image with optional sold overlay */}
         <div className="relative overflow-hidden rounded-xl p-2">
           <img
             src={imageSrc}
             alt={title}
-            className={`w-full object-cover min-h-[240px] max-h-[240px] rounded-xl group-hover:scale-100 transition-transform duration-500 ${
-              isSold ? "grayscale opacity-80" : ""
-            }`}
+            className={`w-full object-cover min-h-[240px] max-h-[240px] rounded-xl transition-transform duration-500 ${isSold ? "grayscale opacity-80" : ""
+              }`}
             loading="lazy"
           />
-          {/* Diagonal "Sold" banner */}
+
+          {/* SOLD Ribbon */}
           {isSold && (
-            <div
-              className="absolute z-[1] bg-[#626262] text-white text-[20px] font-bold w-[150%] py-[7px] text-center uppercase tracking-wider shadow-md"
-              style={{ top: "38%", left: "-20%", transform: "rotate(322deg)" }}
-            >
+            <div className="absolute top-4 -left-10 rotate-[-45deg] bg-[#5f5f5f] text-white text-[14px] font-bold uppercase tracking-[3px] shadow-lg w-[160px] text-center py-[6px] z-10">
               Sold
             </div>
           )}
@@ -65,32 +62,39 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
         {/* Card body */}
         <div className="flex flex-col flex-1 px-[15px] pb-0 text-start">
-          <h3 className="text-[16px] font-semibold text-[#000] leading-[22px] w-full inline-block mt-0 mb-0 min-h-[50px]">
+          <h3 className="text-[16px] font-[600] text-[#000] leading-[22px] tracking-tighter overflow-hidden text-ellipsis line-clamp-2 min-h-[44px]">
             {title}
           </h3>
 
-          <hr className="border-gray-200" />
+          <hr className="border-gray-200 mt-[4px]" />
 
           {/* Price and mileage */}
           <div>
-            <p className="text-[20px] font-bold text-[#000] leading-8 m-0 p-0">
+            <p className="text-[20px] font-bold text-[#000] leading-5 mt-2 py-[3px] px-[0.5px]">
               ${price.toLocaleString()}.00
             </p>
-            <p className="text-[12px] text-gray-700 leading-[14px] mt-0 flex-1">
+            <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
               {km.toLocaleString()} KM &bull; {drivetrain}
             </p>
           </div>
 
           <hr className="border-gray-200 my-2" />
 
-          <p className="text-[12px] text-gray-500 mt-1 mb-2">Stock #: {stock}</p>
+          <p className="text-[12px] mb-2 font-light">Stock #: {stock}</p>
 
           {/* Pre-qualify CTA */}
-          <div className="bg-[#e6f4ff] w-full rounded-[12px] text-center p-0 mb-3">
-            <span className="bg-[#e6f4ff] text-[#005dff] text-[11px] font-bold flex items-center justify-center gap-1 leading-snug rounded-[12px] py-[7px] px-[5px]">
-              Get pre-qualified to see your personalized bi-weekly payment{" "}
-              <span className="text-lg leading-none font-normal">&rarr;</span>
-            </span>
+          <div className="bg-[#e6f4ff] w-full rounded-[12px] mb-3">
+            <div className="text-[#005dff] text-[10px] font-semibold text-center leading-[16px] py-[9px] px-[12px]">
+
+              <span className="inline">
+                Get pre-qualified to see your personalized bi-weekly payment
+              </span>
+
+              <span className="inline ml-[2px] text-[14px] leading-none font-normal">
+                &rarr;
+              </span>
+
+            </div>
           </div>
         </div>
       </article>

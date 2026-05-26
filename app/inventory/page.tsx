@@ -2,7 +2,8 @@
    Inventory Page
    Vehicle listing page powered by react-instantsearch
    and Typesense. Features:
-   - Left sidebar with collapsible filter groups
+   - Left sidebar with smooth animated collapsible filter groups
+   - Only one dropdown open at a time
    - Search box + sort-by dropdown
    - Active refinement chips (CurrentRefinements)
    - Responsive grid of HitCard results
@@ -44,7 +45,7 @@ import { searchClient, TYPESENSE_COLLECTION_NAME } from "@/lib/typesense";
 
 /* ── Shared class name configs for InstantSearch widgets ─────── */
 const refinementListClassNames = {
-  list: "space-y-3 pt-2 pb-4 p-0",
+  list: "space-y-2 pt-2 pb-4 p-0",
   label:
     "flex items-center gap-3 cursor-pointer text-[16px] text-gray-900 transition-colors",
   checkbox:
@@ -63,30 +64,52 @@ const rangeInputClassNames = {
   separator: "text-gray-400 mx-2 font-medium",
 };
 
-/* ── FilterGroup: collapsible sidebar section ────────────────── */
+/* ── FilterGroup: smooth animated accordion ──────────────────── */
 type FilterGroupProps = {
   title: string;
   children: React.ReactNode;
-  defaultOpen?: boolean;
+  isOpen: boolean;
+  onToggle: () => void;
 };
 
-const FilterGroup = ({ title, children, defaultOpen = true }: FilterGroupProps) => {
-  const [open, setOpen] = useState(defaultOpen);
+const FilterGroup = ({
+  title,
+  children,
+  isOpen,
+  onToggle,
+}: FilterGroupProps) => {
   return (
-    <div className="border-b border-border py-[10px] mb-0 last:border-b-0 first:border-t first:border-t-border">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between text-left cursor-pointer"
-      >
-        <span className="text-[17px] font-normal text-[#000] uppercase tracking-[1px] text-left">
-          {title}
-        </span>
-        <ChevronDown
-          className={`h-[23px] w-[23px] text-foreground transition-transform ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-      {open && <div className="mt-3 space-y-2">{children}</div>}
+    <div className="border-b border-border py-[7px] mb-0 last:border-b-0 first:border-t first:border-t-border">
+  <button
+    onClick={onToggle}
+    className="w-full cursor-pointer"
+  >
+    <div className={`flex items-center justify-between rounded-[10px] px-[10px] py-[8px] transition-colors duration-200 hover:bg-gray-50 ${isOpen ? 'bg-gray-100' : ''}`}>
+      
+      <span className="text-[17px] font-normal text-[#000] uppercase tracking-[1px] text-left">
+        {title}
+      </span>
+
+      <ChevronDown
+        className={`h-[20px] w-[20px] text-foreground/70 transition-transform duration-300 ease-in-out ${
+          isOpen ? "rotate-180" : ""
+        }`}
+      />
     </div>
+  </button>
+
+  <div
+    className={`grid transition-all duration-300 ease-in-out ${
+      isOpen
+        ? "grid-rows-[1fr] opacity-100 mt-3"
+        : "grid-rows-[0fr] opacity-0 mt-0"
+    }`}
+  >
+    <div className="overflow-hidden">
+      <div className="space-y-2">{children}</div>
+    </div>
+  </div>
+</div>
   );
 };
 
@@ -103,32 +126,48 @@ const CustomHitsCount = () => {
 /* ── NoResultsHandler: shows message when no hits ────────────── */
 const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
   const { results } = useHits();
+
   if (results && results.nbHits === 0) {
     return (
       <div className="mt-8 text-[15px] text-gray-800">
-        Currently, there are no vehicles that match your criteria.
+        {/* Currently, there are no vehicles that match your criteria. */}
       </div>
     );
   }
+
   return <>{children}</>;
 };
 
-/* ── InventoryContent: main page content (needs useSearchParams) */
+/* ── InventoryContent: main page content ─────────────────────── */
 const InventoryContent = () => {
   const searchParams = useSearchParams();
+
   const q = searchParams?.get("q") || "";
 
-  // Parse URL filter params for initial InstantSearch state
+  /* ── Only one filter open at a time ───────────────────────── */
+  const [openFilter, setOpenFilter] =
+    useState<string | null>("");
+
+  // Parse URL filter params
   const bodyTypeParam = searchParams?.get("body_type");
   const fuelTypeParam = searchParams?.get("fuel_type");
-  const priceParam    = searchParams?.get("price");
+  const priceParam = searchParams?.get("price");
 
   const refinementList: Record<string, string[]> = {};
-  if (bodyTypeParam) refinementList.body_type = bodyTypeParam.split("|");
-  if (fuelTypeParam) refinementList.fuel_type = fuelTypeParam.split("|");
+
+  if (bodyTypeParam) {
+    refinementList.body_type = bodyTypeParam.split("|");
+  }
+
+  if (fuelTypeParam) {
+    refinementList.fuel_type = fuelTypeParam.split("|");
+  }
 
   const range: Record<string, string> = {};
-  if (priceParam) range.selling_price = priceParam;
+
+  if (priceParam) {
+    range.selling_price = priceParam;
+  }
 
   const initialUiState = {
     [TYPESENSE_COLLECTION_NAME]: {
@@ -149,123 +188,306 @@ const InventoryContent = () => {
           searchClient={searchClient}
           indexName={TYPESENSE_COLLECTION_NAME}
           initialUiState={initialUiState}
+          routing={true}
         >
           <Configure hitsPerPage={21} />
+
           <div className="max-w-[1600px] mx-auto px-3 md:px-[24px] pt-[20px] pb-[50px]">
             <div className="flex gap-5 md:px-10">
 
-              {/* ── Left sidebar: filters ──────────────────── */}
-             <aside className="hidden md:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[380px] h-fits">
+              {/* ── Sidebar Filters ───────────────────────── */}
+              <aside className="hidden sticky top-5 self-start max-h-[calc(100vh-40px)] overflow-y-auto md:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[380px] h-fit  [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
                 {/* Hits count + clear filters */}
                 <div className="mt-[10px] flex flex-col items-center gap-4">
                   <div className="bg-[#00af66] text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm">
                     <CustomHitsCount />
                   </div>
-                  <ClearRefinements 
+
+                  <ClearRefinements
                     classNames={{
                       button:
                         "text-[13px] mb-10 cursor-pointer font-bold text-black hover:text-[#00A651] disabled:opacity-50 disabled:cursor-not-allowed",
                     }}
-                    translations={{ resetButtonText: "Clear Filters" }}
+                    translations={{
+                      resetButtonText: "Clear Filters",
+                    }}
                   />
                 </div>
 
                 {/* Filter groups */}
-                <div className="space-y-1">
-                  <FilterGroup title="VEHICLE TYPE">
-                    <RefinementList attribute="vehicle_type" classNames={refinementListClassNames} />
+                <div className="space-y-5">
+
+                  <FilterGroup
+                    title="LOCATION"
+                    isOpen={openFilter === "LOCATION"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "LOCATION"
+                          ? null
+                          : "LOCATION"
+                      )
+                    }
+                  >
+                    <RefinementList
+                      attribute="location"
+                      classNames={refinementListClassNames}
+                    />
                   </FilterGroup>
 
-                  <FilterGroup title="PRICE">
+                  <FilterGroup
+                    title="VEHICLE TYPE"
+                    isOpen={openFilter === "VEHICLE TYPE"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "VEHICLE TYPE"
+                          ? null
+                          : "VEHICLE TYPE"
+                      )
+                    }
+                  >
+                    <RefinementList
+                      attribute="vehicle_type"
+                      classNames={refinementListClassNames}
+                    />
+                  </FilterGroup>
+
+                  <FilterGroup
+                    title="PRICE"
+                    isOpen={openFilter === "PRICE"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "PRICE"
+                          ? null
+                          : "PRICE"
+                      )
+                    }
+                  >
                     <RangeInput
                       attribute="selling_price"
                       classNames={rangeInputClassNames}
-                      translations={{ separatorElementText: "to" }}
+                      translations={{
+                        separatorElementText: "to",
+                      }}
                     />
                   </FilterGroup>
 
-                  <FilterGroup title="YEAR">
-                    <RefinementList attribute="year" sortBy={["name:desc"]} classNames={refinementListClassNames} />
+                  <FilterGroup
+                    title="YEAR"
+                    isOpen={openFilter === "YEAR"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "YEAR"
+                          ? null
+                          : "YEAR"
+                      )
+                    }
+                  >
+                    <RefinementList
+                      attribute="year"
+                      sortBy={["name:desc"]}
+                      classNames={refinementListClassNames}
+                    />
                   </FilterGroup>
 
-                  <FilterGroup title="MAKE">
-                    <RefinementList attribute="make" classNames={refinementListClassNames} />
+                  <FilterGroup
+                    title="MAKE"
+                    isOpen={openFilter === "MAKE"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "MAKE"
+                          ? null
+                          : "MAKE"
+                      )
+                    }
+                  >
+                    <RefinementList
+                      attribute="make"
+                      classNames={refinementListClassNames}
+                    />
                   </FilterGroup>
 
-                  <FilterGroup title="MODEL" defaultOpen={false}>
-                    <RefinementList attribute="model" classNames={refinementListClassNames} />
+                  <FilterGroup
+                    title="MODEL"
+                    isOpen={openFilter === "MODEL"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "MODEL"
+                          ? null
+                          : "MODEL"
+                      )
+                    }
+                  >
+                    <RefinementList
+                      attribute="model"
+                      classNames={refinementListClassNames}
+                    />
                   </FilterGroup>
 
-                  <FilterGroup title="ODOMETER" defaultOpen={false}>
+                  <FilterGroup
+                    title="ODOMETER"
+                    isOpen={openFilter === "ODOMETER"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "ODOMETER"
+                          ? null
+                          : "ODOMETER"
+                      )
+                    }
+                  >
                     <RangeInput
                       attribute="odometer"
                       classNames={rangeInputClassNames}
-                      translations={{ separatorElementText: "to" }}
+                      translations={{
+                        separatorElementText: "to",
+                      }}
                     />
                   </FilterGroup>
 
-                  <FilterGroup title="EXTERIOR COLOR" defaultOpen={false}>
-                    <RefinementList attribute="exterior_color" classNames={refinementListClassNames} />
+                  <FilterGroup
+                    title="EXTERIOR COLOR"
+                    isOpen={openFilter === "EXTERIOR COLOR"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "EXTERIOR COLOR"
+                          ? null
+                          : "EXTERIOR COLOR"
+                      )
+                    }
+                  >
+                    <RefinementList
+                      attribute="exterior_color"
+                      classNames={refinementListClassNames}
+                    />
                   </FilterGroup>
 
-                  <FilterGroup title="BODY TYPE" defaultOpen={false}>
-                    <RefinementList attribute="body_type" classNames={refinementListClassNames} />
+                  <FilterGroup
+                    title="BODY TYPE"
+                    isOpen={openFilter === "BODY TYPE"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "BODY TYPE"
+                          ? null
+                          : "BODY TYPE"
+                      )
+                    }
+                  >
+                    <RefinementList
+                      attribute="body_type"
+                      classNames={refinementListClassNames}
+                    />
                   </FilterGroup>
 
-                  <FilterGroup title="TRANSMISSION" defaultOpen={false}>
-                    <RefinementList attribute="transmission" classNames={refinementListClassNames} />
+                  <FilterGroup
+                    title="TRANSMISSION"
+                    isOpen={openFilter === "TRANSMISSION"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "TRANSMISSION"
+                          ? null
+                          : "TRANSMISSION"
+                      )
+                    }
+                  >
+                    <RefinementList
+                      attribute="transmission"
+                      classNames={refinementListClassNames}
+                    />
                   </FilterGroup>
 
-                  <FilterGroup title="FUEL TYPE" defaultOpen={false}>
-                    <RefinementList attribute="fuel_type" classNames={refinementListClassNames} />
+                  <FilterGroup
+                    title="FUEL TYPE"
+                    isOpen={openFilter === "FUEL TYPE"}
+                    onToggle={() =>
+                      setOpenFilter(
+                        openFilter === "FUEL TYPE"
+                          ? null
+                          : "FUEL TYPE"
+                      )
+                    }
+                  >
+                    <RefinementList
+                      attribute="fuel_type"
+                      classNames={refinementListClassNames}
+                    />
                   </FilterGroup>
+
                 </div>
               </aside>
 
-              {/* ── Right: search bar + results grid ──────── */}
-              <div className=" w-full">
-                {/* Search + sort controls */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-3 px-3">
-                  <div className="relative w-full" style={{ maxWidth: "440px" }}>
+              {/* ── Right Content ─────────────────────────── */}
+              <div className="w-full">
+
+                {/* Search + sort */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb- px-3">
+
+                  <div
+                    className="relative w-full max-w-[440px]"
+                  >
                     <SearchBox
                       classNames={{
                         root: "w-full",
                         form: "relative flex items-center",
                         input:
-                          "w-full pl-[36px] pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[16px] text-[#000] outline-none focus:ring-2 focus:ring-brand-green transition-all",
+                          "w-full pl-[36px] tracking-wide  pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none focus:ring-2 focus:ring-brand-green transition-all",
                         submitIcon: "hidden",
                         resetIcon: "hidden",
+                        loadingIcon: "hidden",
                       }}
                       placeholder="Search for Anything"
                     />
-                    <Search className="h-[16px] w-[16px] absolute left-3 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
+
+                    <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
                   </div>
 
-                  {/* Sort by dropdown (desktop only) */}
+                  {/* Sort */}
                   <div className="md:flex hidden items-center gap-4 self-end md:self-auto mr-3">
+
                     <span className="text-[15px] font-bold text-gray-900 text-nowrap">
                       Sort By
                     </span>
+
                     <SortBy
                       items={[
-                        { label: "Recently Added",    value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc` },
-                        { label: "Price: Low to High", value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:asc` },
-                        { label: "Price: High to Low", value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:desc` },
-                        { label: "KM: Low to High",    value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:asc` },
-                        { label: "KM: High to Low",    value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:desc` },
-                        { label: "Year: New to Old",   value: `${TYPESENSE_COLLECTION_NAME}/sort/year:desc` },
-                        { label: "Year: Old to New",   value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc` },
+                        {
+                          label: "Recently Added",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
+                        },
+                        {
+                          label: "Price: Low to High",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:asc`,
+                        },
+                        {
+                          label: "Price: High to Low",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:desc`,
+                        },
+                        {
+                          label: "KM: Low to High",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:asc`,
+                        },
+                        {
+                          label: "KM: High to Low",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:desc`,
+                        },
+                        {
+                          label: "Year: New to Old",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:desc`,
+                        },
+                        {
+                          label: "Year: Old to New",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
+                        },
                       ]}
                       classNames={{
                         select:
-                          "px-4 py-2 rounded-[12px] border border-gray-300 bg-white text-[13px] font-[800] outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green cursor-pointer w-[212px] h-[42px] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke-width%3D%222%22%20stroke%3D%22%23000%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M8%209l4-4%204%204m0%206l-4%204-4-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10",
+                          "px-4 py-2 tracking-wide rounded-[12px] border border-gray-300 bg-white text-[13px] font-[800] outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green cursor-pointer w-[212px] h-[42px] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke-width%3D%222%22%20stroke%3D%22%23000%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M8%209l4-4%204%204m0%206l-4%204-4-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10",
                       }}
                     />
                   </div>
                 </div>
 
-                {/* Active filter chips */}
-                <div className="">
+                {/* Current refinements */}
+                <div className="ml-3">
                   <CurrentRefinements
                     classNames={{
                       root: "w-full",
@@ -273,28 +495,29 @@ const InventoryContent = () => {
                       item: "flex flex-wrap gap-2",
                       label: "hidden",
                       category:
-                        "flex items-center bg-white rounded-lg px-[15px] py-[6px] shadow-none border border-gray-200 text-[14px] text-gray-700",
-                      categoryLabel: "mr-3 text-[16px]",
+                        "flex items-center bg-white rounded-lg px-[15px] py-[6px] mt-[5px] mb-2 shadow-none border border-gray-200 text-[14px] text-gray-700 font-light",
+                      categoryLabel: "mr-3 text-[16px] cursor-pointer",
                       delete:
-                        "text-gray-500 hover:text-gray-900 focus:outline-none flex items-center justify-center text-[16px]",
+                        "text-gray-500 cursor-pointer hover:text-gray-900 focus:outline-none flex items-center justify-center text-[16px]",
                     }}
                   />
                 </div>
 
-                {/* Results grid */}
-                <div className="mb-4">
+                {/* Results */}
+                <div className="mb-4 mt-3">
                   <NoResultsHandler>
                     <Hits
                       hitComponent={HitCard}
                       classNames={{
-                        list: "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 gap-x-[24px] gap-y-[20px]",
+                        list:
+                          "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 gap-x-[24px] gap-y-[20px]",
                         item: "flex flex-col h-full p-[9px]",
                       }}
                     />
                   </NoResultsHandler>
                 </div>
+
               </div>
-               
             </div>
           </div>
         </InstantSearch>
@@ -306,7 +529,7 @@ const InventoryContent = () => {
   );
 };
 
-/* ── Page export: wrapped in Suspense for useSearchParams ─────── */
+/* ── Page export ─────────────────────────────────────────────── */
 const InventoryPage = () => {
   return (
     <Suspense

@@ -100,7 +100,7 @@ const TradeIn = () => {
       <Header />
 
       {/* ── Hero / Quote form ────────────────────────────── */}
-      <section className="w-full bg-[hsl(var(--hero-bg))]">
+      <section className="w-full bg-hero-bg">
         <div className="mx-auto grid max-w-[1400px] grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 px-6 py-16 lg:py-24 items-center">
           {/* Left: headline + estimated offer */}
           <div>
@@ -224,7 +224,7 @@ const TradeIn = () => {
       </section>
 
       {/* ── FAQs ─────────────────────────────────────────── */}
-      <section className="w-full bg-[hsl(var(--review-bg))]">
+      <section className="w-full bg-review-bg">
         <div className="mx-auto max-w-[1000px] px-6 py-20">
           <div className="flex items-center gap-3 mb-10">
             <MessageSquareQuote className="h-8 w-8 text-brand-green" />
