@@ -78,8 +78,8 @@ const Reviews = () => {
 
   return (
     <section className="w-full bg-[#eaeff5] overflow-hidden">
-      <div className="mx-auto max-w-[1280px] px-4 md:px-6 py-14">
-        <h2 className="text-[30px] md:text-[44px] font-extrabold text-foreground tracking-tight text-center mb-8">
+      <div className="mx-auto max-w-[1280px] px-4 md:px-6 pt-18 pb-9">
+        <h2 className="text-[30px] md:text-[44px] font-bold text-foreground tracking-tight text-center mb-5">
           People love buying with Cardora
         </h2>
 
@@ -111,7 +111,7 @@ const Reviews = () => {
           </button>
 
           {/* Slides */}
-          <div className="overflow-hidden">
+          <div className="overflow-hidden min-h-[500px]">
             <div
               className="flex transition-transform duration-700 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)` }}
@@ -119,11 +119,11 @@ const Reviews = () => {
               {[...reviews, ...reviews].map((r, index) => (
                 <div
                   key={`${r.name}-${index}`}
-                  className={`flex-shrink-0 px-2 md:px-3 ${
+                  className={`flex-shrink-0 px-2 min-h-[450px] md:px-3 ${
                     slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
                   }`}
                 >
-                  <article className="rounded-2xl bg-card p-5 md:p-6 shadow-sm flex flex-col h-full">
+                  <article className="rounded-2xl bg-card p-5 md:p-6 shadow-md flex flex-col h-full">
                     {/* Reviewer avatar + name */}
                     <div className="flex items-center gap-4">
                       <div className="h-[65px] w-[65px] rounded-full bg-[#512da8] flex items-center justify-center text-white text-[35px] font-medium flex-shrink-0">

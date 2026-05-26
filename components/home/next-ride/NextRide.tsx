@@ -15,7 +15,7 @@ const NextRide = () => {
   return (
     <section className="w-full bg-background mt-[50px]">
       <div className={CONTAINER_CLASS}>
-        <h2 className="text-[34px] lg:text-[44px] font-extrabold text-foreground tracking-tight mb-8">
+        <h2 className="text-[34px] lg:text-[44px] font-bold text-foreground tracking-tight mb-8">
           Let&apos;s find your next ride
         </h2>
 
