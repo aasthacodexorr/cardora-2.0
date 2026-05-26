@@ -42,8 +42,8 @@ const columns = [
 /* ── Component ─────────────────────────────────────────────── */
 const Footer = () => {
   return (
-    <footer className="w-full bg-dark-section text-dark-section-foreground border-t-0">
-      <div className="mx-auto max-w-[1600px] px-6 pt-14 pb-14">
+    <footer className="w-full bg-[#121319] border-t-0 -mt-5 ">
+      <div className="mx-auto max-w-[1600px] px-10 pb-5">
 
         {/* Link columns grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10">
@@ -87,8 +87,8 @@ const Footer = () => {
         <div className="mt-12 pt-6 border-t border-dark-border flex flex-col md:flex-row gap-4 justify-between max-[767px]:justify-center max-[767px]:items-center">
           <p className="text-[14px] text-white uppercase">
             © 2026 Cardora Motor Group. <br />
-            <span className="flex items-center gap-2 mt-1">
-              All rights reserved.
+            <span className="flex items-center gap-2">
+              All rights reserved. Powered by
               <a
                 href="https://www.zopdealer.com/"
                 target="_blank"
@@ -98,7 +98,7 @@ const Footer = () => {
               </a>
             </span>
           </p>
-          <p className="text-[14px] text-white/70">
+          <p className="text-[14px] text-white uppercase">
             <a href="#" className="hover:text-white">Privacy Policy</a>
             {" | "}
             <a href="#" className="hover:text-white">Terms &amp; Conditions</a>

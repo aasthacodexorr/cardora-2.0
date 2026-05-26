@@ -61,9 +61,8 @@ const Finance = () => {
               name="iframe_a"
               title="Cardora financing application"
               scrolling="no"
-              className="w-full block transition-[height] duration-300 ease-out"
+              className="w-full block transition-[height] duration-300 ease-out border-0"
               style={{
-                border: "none",
                 minHeight: MIN_HEIGHT,
                 height: `${height}px`,
               }}

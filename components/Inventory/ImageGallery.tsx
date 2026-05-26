@@ -76,10 +76,10 @@ export const ImageGallery = ({
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); goTo(activeIndex - 1); }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white rounded-full p-3 shadow-xl transition-all duration-300 hover:scale-110"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-white/60 hover:bg-white rounded-full p-1 shadow-xl transition-all duration-300 hover:scale-110"
             aria-label="Previous Image"
           >
-            <ChevronLeft className="w-6 h-6 text-gray-500" />
+            <ChevronLeft className="w-9 h-9 text-gray-500/60 cursor-pointer" strokeWidth={3} />
           </button>
         )}
 
@@ -88,10 +88,10 @@ export const ImageGallery = ({
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); goTo(activeIndex + 1); }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-white/90 hover:bg-white rounded-full p-3 shadow-xl transition-all duration-300 hover:scale-110"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-white/60 hover:bg-white rounded-full p-1 shadow-xl transition-all duration-300 hover:scale-110"
             aria-label="Next Image"
           >
-            <ChevronRight className="w-6 h-6 text-gray-500" />
+            <ChevronRight className="w-9 h-9 text-gray-500/60 cursor-pointer" strokeWidth={3} />
           </button>
         )}
 
@@ -139,7 +139,7 @@ export const ImageGallery = ({
       {images.length > 1 ? (
         <div
           ref={thumbRef}
-          className="hidden md:flex flex-col gap-1 overflow-x-hidden overflow-y-auto scroll-smooth w-[155px] h-[440px] pr-1"
+          className="hidden md:flex flex-col overflow-x-hidden overflow-y-auto scroll-smooth w-[165px] h-[432px] pr-1"
         >
           {images.map((img, idx) => (
             <button
@@ -154,7 +154,7 @@ export const ImageGallery = ({
               <img
                 src={img}
                 alt={`Thumbnail ${idx + 1}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-xl"
                 loading="lazy"
               />
             </button>
