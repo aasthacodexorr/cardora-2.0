@@ -57,7 +57,7 @@ const Footer = () => {
                   <li key={link}>
                     <a
                       href="#"
-                      className="text-[15px] uppercase text-white hover:text-brand-green transition-colors"
+                      className="text-[15px] uppercase text-white transition-colors"
                     >
                       {link}
                     </a>
@@ -74,7 +74,7 @@ const Footer = () => {
             </h3>
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-white/85 shrink-0 mt-0.5" />
-              <address className="not-italic text-[15px] leading-relaxed text-white/85">
+              <address className="not-italic text-[15px] leading-relaxed text-white cursor-pointer">
                 8050 Dixie Rd,<br />
                 Brampton, ON<br />
                 L6T 4W6
@@ -83,9 +83,15 @@ const Footer = () => {
           </div>
         </div>
 
+        
+      </div>
+      <div className="mt-12">
+          <hr className="border-dark-border" />
+        </div>
+
         {/* Copyright bar */}
-        <div className="mt-12 pt-6 border-t border-dark-border flex flex-col md:flex-row gap-4 justify-between max-[767px]:justify-center max-[767px]:items-center">
-          <p className="text-[14px] text-white uppercase">
+        <div className="pt-6 px-10 pb-5 flex flex-col md:flex-row gap-4 justify-between max-[767px]:justify-center max-[767px]:items-center">
+          <p className="text-[13px] text-white uppercase">
             © 2026 Cardora Motor Group. <br />
             <span className="flex items-center gap-2">
               All rights reserved. Powered by
@@ -98,15 +104,14 @@ const Footer = () => {
               </a>
             </span>
           </p>
-          <p className="text-[14px] text-white uppercase">
-            <a href="#" className="hover:text-white">Privacy Policy</a>
-            {" | "}
-            <a href="#" className="hover:text-white">Terms &amp; Conditions</a>
-            {" | "}
-            <a href="#" className="hover:text-white">Site Map</a>
+          <p className="text-[12.5px] text-white uppercase">
+            <a href="#" className="hover:text-white">Privacy Policy </a>
+            {"|"}
+            <a href="#" className="hover:text-white"> Terms &amp; Conditions </a>
+            {"|"}
+            <a href="#" className="hover:text-white"> Site Map</a>
           </p>
         </div>
-      </div>
     </footer>
   );
 };

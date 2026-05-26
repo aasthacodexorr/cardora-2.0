@@ -37,7 +37,7 @@ const GetInTouch = () => {
 
           {/* Left: business hours */}
           <div>
-            <h2 className="text-[28px] lg:text-[30px] font-extrabold leading-tight max-[767px]:text-[20px]">
+            <h2 className="text-[28px] lg:text-[30px] font-bold leading-tight max-[767px]:text-[20px]">
               Get in touch with us, we're here to help
             </h2>
 
@@ -63,7 +63,7 @@ const GetInTouch = () => {
               <div className="mt-5 space-y-3">
                 {Object.values(BUSINESS_HOURS).map(({ label, hours }) => (
                   <div key={label} className="grid grid-cols-[1fr_2fr]">
-                    <span className="text-[16px] text-white/70">{label}:</span>
+                    <span className="text-[16px] ">{label}:</span>
                     <span className="text-[16px] text-white">{hours}</span>
                   </div>
                 ))}
@@ -77,12 +77,12 @@ const GetInTouch = () => {
               <a
                 key={item.title}
                 href="#"
-                className="rounded-xl border border-[#2a2b30] bg-transparent p-6 flex items-center justify-between hover:border-brand-green hover:bg-white/10 transition-colors"
+                className="rounded-xl border border-[#2a2b30] bg-transparent p-6 flex items-center justify-between  hover:bg-white/10 transition-colors"
               >
                 <div className="flex items-center justify-between w-full flex-wrap">
                   <div>
                     <h3 className="text-[20px] font-bold text-white">{item.title}</h3>
-                    <p className="text-[16px] text-white/70 mt-[5px] font-[Lato,sans-serif]">
+                    <p className="text-[16px]  mt-[5px] font-[Lato,sans-serif]">
                       {item.subtitle}
                     </p>
                   </div>

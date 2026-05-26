@@ -16,8 +16,8 @@ const PreQualifyForm = ({
   onTradeInValueChange,
 }: PreQualifyFormProps) => {
   return (
-    <div className="w-full">
-      <h2 className="text-[26px] sm:text-[30px] lg:text-[36px] font-extrabold text-[#333] leading-tight tracking-tight">
+    <div className="w-full pb-4">
+      <h2 className="text-[26px] sm:text-[30px] lg:text-[36px] font-bold text-[#333] leading-tight tracking-tight ">
         Pre-qualify with no impact to your credit
       </h2>
 
@@ -98,14 +98,14 @@ const PreQualifyForm = ({
           }`}
         >
           <span
-            className={`inline-block h-5 w-5 transform rounded-full transition-transform ${
+            className={`inline-block h-5 w-5 cursor-pointer transform rounded-full transition-transform ${
               includeTradeIn
                 ? "translate-x-6 bg-[#1bb776]"
                 : "translate-x-1 bg-[#1bb776]"
             }`}
           />
         </button>
-        <span className="text-[16px] font-bold text-foreground">Include Trade-In</span>
+        <span className="text-[16px] font-medium text-foreground">Include Trade-In</span>
       </div>
 
       {/* Trade-in value input (conditional) */}

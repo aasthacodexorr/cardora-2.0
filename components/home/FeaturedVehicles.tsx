@@ -86,7 +86,7 @@ const FeaturedVehicles = () => {
   return (
     <section className="w-full bg-background mt-[40px] mb-[50px] overflow-hidden font-carmax">
       <div className="max-w-[1280px] mx-auto px-[20px] py-12 relative">
-        <h2 className="text-[34px] lg:text-[44px] font-extrabold text-foreground tracking-tight text-center mb-8">
+        <h2 className="text-[34px] lg:text-[44px] font-bold text-foreground tracking-tight text-center mb-8">
           Shop featured vehicles
         </h2>
 

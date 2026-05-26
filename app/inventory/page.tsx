@@ -477,6 +477,22 @@ const InventoryContent = () => {
                           label: "Year: Old to New",
                           value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
                         },
+                        {
+                          label: "Year: Old to New",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
+                        },
+                        {
+                          label: "Year: Old to New",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
+                        },
+                        {
+                          label: "Year: Old to New",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
+                        },
+                        {
+                          label: "Year: Old to New",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
+                        },
                       ]}
                       classNames={{
                         select:
