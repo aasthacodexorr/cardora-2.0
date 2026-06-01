@@ -16,7 +16,7 @@ import callIcon from "@/assets/icons/call_icon.svg";
 import messageIcon from "@/assets/icons/message_icon.svg";
 import envelopIcon from "@/assets/icons/envelop_icon.svg";
 import whatsappIcon from "@/assets/icons/whatsapp_icon.svg";
-import { BUSINESS_HOURS } from "@/constants";
+import { BUSINESS_HOURS_SALES,BUSINESS_HOURS_SERVICES } from "@/constants";
 
 /* ── Static Data ────────────────────────────────────────────── */
 const contactCards = [
@@ -61,7 +61,7 @@ const GetInTouch = () => {
 
               {/* Hours table */}
               <div className="mt-5 space-y-3">
-                {Object.values(BUSINESS_HOURS).map(({ label, hours }) => (
+                {Object.values(tab === "Sales" ? BUSINESS_HOURS_SALES : BUSINESS_HOURS_SERVICES).map(({ label, hours }) => (
                   <div key={label} className="grid grid-cols-[1fr_2fr]">
                     <span className="text-[16px] ">{label}:</span>
                     <span className="text-[16px] text-white">{hours}</span>

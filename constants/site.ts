@@ -34,8 +34,15 @@ export const SOCIAL_LINKS = {
 } as const;
 
 // ── Business Hours ───────────────────────────────────────────
-export const BUSINESS_HOURS = {
+export const BUSINESS_HOURS_SALES = {
   weekdays: { label: "Mon-Fri", hours: "10:00 AM to 8:00 PM" },
   saturday: { label: "Saturday", hours: "10:00 AM to 6:00 PM" },
   sunday: { label: "Sunday", hours: "12:00 PM to 5:00 PM" },
 } as const;
+
+export const BUSINESS_HOURS_SERVICES = {
+  weekdays: { label: "Mon-Fri", hours: "08:30 AM to 06:00 PM" },
+  saturday: { label: "Saturday", hours: "09:00 AM to 02:00 PM" },
+  sunday: { label: "Sunday", hours: "Closed" },
+} as const;
+

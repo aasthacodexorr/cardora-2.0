@@ -124,8 +124,8 @@ const Header = () => {
         </div>
 
         {/* Green action bar: call, directions, menu toggle */}
-        <div className="text-white flex items-center justify-between px-6 py-2.5 relative border-t border-[#dadada] border-b border-b-[#dadada]">
-          <div className="flex items-center gap-5">
+        <div className="text-white flex items-center justify-around px-12 py-2.5 relative border-t border-[#dadada] border-b border-b-[#dadada]">
+          <div className="flex items-center gap-5 border-r border-[#dadada] px-4 top-0">
 
             {/* Call */}
             <a
@@ -151,7 +151,8 @@ const Header = () => {
           </div>
 
           {/* Menu toggle */}
-          <button
+          <div className="flex items-center justify-center">
+            <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="flex flex-col items-center justify-center gap-1 mx-[7%] max-[537px]:mx-[6%] max-[397px]:mx-[4%]"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
@@ -162,9 +163,9 @@ const Header = () => {
               <Menu className="h-[24px] w-[24px] text-black fill-black" />
             )}
           </button>
+          </div>
 
           {/* Vertical divider before menu button */}
-          <span className="absolute border-l border-[#dadada] h-[63px] top-0 right-[20%] pointer-events-none" />
         </div>
 
         {/* Slide-down nav drawer */}
@@ -182,7 +183,7 @@ const Header = () => {
                   key={item.label}
                   href={item.to}
                   className={`py-4 border-b border-gray-100 text-[15px] font-semibold capitalize flex items-center justify-between ${
-                    isActive ? "text-brand-green" : "text-gray-900"
+                    "text-gray-900"
                   }`}
                 >
                   {item.label}
