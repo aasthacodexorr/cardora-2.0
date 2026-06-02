@@ -62,7 +62,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
         {/* Card body */}
         <div className="flex flex-col flex-1 px-[15px] pb-0 text-start">
-          <h3 className="text-[16px] font-[600] text-[#000] leading-[22px] tracking-tighter overflow-hidden text-ellipsis line-clamp-2 min-h-[44px]">
+          <h3 className="text-[16px] font-[600] text-[#000] leading-[22px] overflow-hidden text-ellipsis line-clamp-2 min-h-[44px]">
             {title}
           </h3>
 
@@ -84,7 +84,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
           {/* Pre-qualify CTA */}
           <div className="bg-[#e6f4ff] w-full rounded-[12px] mb-3">
-            <div className="text-[#005dff] text-[10px] font-semibold text-center leading-[16px] py-[9px] px-[12px]">
+            <div className="text-[#005dff] text-[10.5px] font-semibold text-center leading-[16px] py-[9px] px-[12px]">
 
               <span className="inline">
                 Get pre-qualified to see your personalized bi-weekly payment

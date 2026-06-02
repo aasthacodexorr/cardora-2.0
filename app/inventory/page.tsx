@@ -34,6 +34,7 @@ import {
   RefinementList,
   Configure,
   useHits,
+  useInfiniteHits,
   RangeInput,
   ClearRefinements,
   SortBy,
@@ -117,7 +118,7 @@ const FilterGroup = ({
 const CustomHitsCount = () => {
   const { results } = useHits();
   return (
-    <span className="text-[14px] font-normal text-white leading-none uppercase">
+    <span className="text-[13px] font-normal text-white leading-none uppercase p-0">
       {results?.nbHits || 0} Matching Vehicles Found
     </span>
   );
@@ -136,6 +137,33 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
   }
 
   return <>{children}</>;
+};
+
+/* ── CustomInfiniteHits: shows hits and a load more button ───── */
+const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
+  const { hits, isLastPage, showMore } = useInfiniteHits();
+
+  return (
+    <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 gap-y-[20px]">
+        {hits.map((hit) => (
+          <div key={hit.objectID} className="flex flex-col h-full p-[9px]">
+            <HitComponent hit={hit} />
+          </div>
+        ))}
+      </div>
+      {!isLastPage && (
+        <div className="mt-8 flex justify-start pl-[9px]">
+          <button
+            onClick={showMore}
+            className="bg-black text-white px-6 py-3 rounded-xl cursor-pointer font-medium text-[13px] uppercase tracking-wider hover:bg-gray-800 transition-colors"
+          >
+            Show More Results
+          </button>
+        </div>
+      )}
+    </div>
+  );
 };
 
 /* ── InventoryContent: main page content ─────────────────────── */
@@ -192,11 +220,11 @@ const InventoryContent = () => {
         >
           <Configure hitsPerPage={21} />
 
-          <div className="max-w-[1600px] mx-auto px-3 md:px-[24px] pt-[20px] pb-[50px]">
-            <div className="flex gap-5 md:px-10">
+          <div className="max-w-[1600px] mx-auto px-3 lg:px-[24px] pt-[20px] pb-[50px]">
+            <div className="flex flex-col lg:flex-row items-start gap-5 lg:px-10 px-8">
 
               {/* ── Sidebar Filters ───────────────────────── */}
-              <aside className="hidden sticky top-5 self-start max-h-[calc(100vh-40px)] overflow-y-auto md:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[380px] h-fit  [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <aside className="hidden sticky top-5 self-start shrink-0 lg:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[290px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 
                 {/* Hits count + clear filters */}
                 <div className="mt-[10px] flex flex-col items-center gap-4">
@@ -207,7 +235,7 @@ const InventoryContent = () => {
                   <ClearRefinements
                     classNames={{
                       button:
-                        "text-[13px] mb-10 cursor-pointer font-bold text-black hover:text-[#00A651] disabled:opacity-50 disabled:cursor-not-allowed",
+                        "text-[11px] mb-10 cursor-pointer font-bold text-black disabled:cursor-not-allowed",
                     }}
                     translations={{
                       resetButtonText: "Clear Filters",
@@ -416,122 +444,123 @@ const InventoryContent = () => {
               </aside>
 
               {/* ── Right Content ─────────────────────────── */}
-              <div className="w-full">
+              <div className="w-full lg:flex-1">
 
-                {/* Search + sort */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb- px-3">
+                  {/* Search + sort */}
+                  <div className="flex flex-col lg:flex-row lg:items-center items-end  justify-between gap-4 mb- px-3">
 
-                  <div
-                    className="relative w-full max-w-[440px]"
-                  >
-                    <SearchBox
+                    <div
+                      className="relative w-full lg:max-w-[440px]"
+                    >
+                      <SearchBox
+                        classNames={{
+                          root: "w-full",
+                          form: "relative flex items-center",
+                          input:
+                            "w-full pl-[36px] tracking-wide  pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none transition-all",
+                          submitIcon: "hidden",
+                          resetIcon: "hidden",
+                          loadingIcon: "hidden",
+                        }}
+                        placeholder="Search for Anything"
+                      />
+
+                      <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
+                    </div>
+
+                    {/* Sort */}
+                      <div className="md:flex hidden items-center gap-4 self-end md:self-auto mr-3">
+
+                        <span className="text-[15px] font-bold text-gray-900 text-nowrap">
+                          Sort By
+                        </span>
+
+                        <SortBy
+                          items={[
+                            {
+                              label: "Recently Added",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
+                            },
+                            {
+                              label: "Price (Low to High)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:asc`,
+                            },
+                            {
+                              label: "Price (High to Low)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:desc`,
+                            },
+                            {
+                              label: "Odometer (Low to High)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:asc`,
+                            },
+                            {
+                              label: "Odometer (High to Low)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:desc`,
+                            },
+                            {
+                              label: "Make (A - Z)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/make:asc`,
+                            },
+                            {
+                              label: "Make (Z - A)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/make:desc`,
+                            },
+                            {
+                              label: "Model (A - Z)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/model:asc`,
+                            },
+                            {
+                              label: "Model (Z - A)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/model:desc`,
+                            },
+                            {
+                              label: "Year (Low to High)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/year:desc`,
+                            },
+                            {
+                              label: "Year (High to Low)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
+                            },
+                            {
+                              label: "Image Count (Low to High)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:asc`,
+                            },
+                            {
+                              label: "Image Count (High to Low)",
+                              value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:desc`,
+                            },
+                          ]}
+                          classNames={{
+                            select:
+                              "px-4 py-1 tracking-wide rounded-[12px] border border-gray-300 bg-white text-black/80 text-[13px] font-extrabold outline-none  cursor-pointer w-[212px] h-[42px] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke-width%3D%222%22%20stroke%3D%22%23000%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M8%209l4-4%204%204m0%206l-4%204-4-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10",
+                          }}
+                        />
+                      </div>
+                  </div>
+
+                  {/* Current refinements */}
+                  <div className="ml-3">
+                    <CurrentRefinements
                       classNames={{
                         root: "w-full",
-                        form: "relative flex items-center",
-                        input:
-                          "w-full pl-[36px] tracking-wide  pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none focus:ring-2 focus:ring-brand-green transition-all",
-                        submitIcon: "hidden",
-                        resetIcon: "hidden",
-                        loadingIcon: "hidden",
-                      }}
-                      placeholder="Search for Anything"
-                    />
-
-                    <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
-                  </div>
-
-                  {/* Sort */}
-                  <div className="md:flex hidden items-center gap-4 self-end md:self-auto mr-3">
-
-                    <span className="text-[15px] font-bold text-gray-900 text-nowrap">
-                      Sort By
-                    </span>
-
-                    <SortBy
-                      items={[
-                        {
-                          label: "Recently Added",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
-                        },
-                        {
-                          label: "Price: Low to High",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:asc`,
-                        },
-                        {
-                          label: "Price: High to Low",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:desc`,
-                        },
-                        {
-                          label: "KM: Low to High",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:asc`,
-                        },
-                        {
-                          label: "KM: High to Low",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:desc`,
-                        },
-                        {
-                          label: "Year: New to Old",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:desc`,
-                        },
-                        {
-                          label: "Year: Old to New",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
-                        },
-                        {
-                          label: "Year: Old to New",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
-                        },
-                        {
-                          label: "Year: Old to New",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
-                        },
-                        {
-                          label: "Year: Old to New",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
-                        },
-                        {
-                          label: "Year: Old to New",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
-                        },
-                      ]}
-                      classNames={{
-                        select:
-                          "px-4 py-2 tracking-wide rounded-[12px] border border-gray-300 bg-white text-[13px] font-[800] outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green cursor-pointer w-[212px] h-[42px] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke-width%3D%222%22%20stroke%3D%22%23000%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M8%209l4-4%204%204m0%206l-4%204-4-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10",
+                        list: "flex flex-wrap gap-2",
+                        item: "flex flex-wrap gap-2",
+                        label: "hidden",
+                        category:
+                          "flex items-center bg-white rounded-lg px-[15px] py-[6px] mt-[5px] mb-2 shadow-none border border-gray-200 text-[14px] text-gray-700 font-light",
+                        categoryLabel: "mr-3 text-[16px] cursor-pointer",
+                        delete:
+                          "text-gray-500 cursor-pointer hover:text-gray-900 focus:outline-none flex items-center justify-center text-[16px]",
                       }}
                     />
                   </div>
-                </div>
 
-                {/* Current refinements */}
-                <div className="ml-3">
-                  <CurrentRefinements
-                    classNames={{
-                      root: "w-full",
-                      list: "flex flex-wrap gap-2",
-                      item: "flex flex-wrap gap-2",
-                      label: "hidden",
-                      category:
-                        "flex items-center bg-white rounded-lg px-[15px] py-[6px] mt-[5px] mb-2 shadow-none border border-gray-200 text-[14px] text-gray-700 font-light",
-                      categoryLabel: "mr-3 text-[16px] cursor-pointer",
-                      delete:
-                        "text-gray-500 cursor-pointer hover:text-gray-900 focus:outline-none flex items-center justify-center text-[16px]",
-                    }}
-                  />
-                </div>
-
-                {/* Results */}
-                <div className="mb-4 mt-3">
-                  <NoResultsHandler>
-                    <Hits
-                      hitComponent={HitCard}
-                      classNames={{
-                        list:
-                          "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 gap-x-[24px] gap-y-[20px]",
-                        item: "flex flex-col h-full p-[9px]",
-                      }}
-                    />
-                  </NoResultsHandler>
-                </div>
+                  {/* Results */}
+                  <div className="mb-4 mt-3">
+                    <NoResultsHandler>
+                      <CustomInfiniteHits hitComponent={HitCard} />
+                    </NoResultsHandler>
+                  </div>
 
               </div>
             </div>

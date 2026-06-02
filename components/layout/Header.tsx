@@ -98,7 +98,7 @@ const Header = () => {
       <header className="lg:hidden w-full bg-white shadow-none relative z-50">
 
         {/* Top bar: logo + social icons */}
-        <div className="flex items-center justify-between px-[15px] py-[6px]">
+        <div className="flex items-center justify-between pl-[12px] pr-[29px] py-[6px]">
           <Link href="/" aria-label="Cardora home" className="[&_img]:max-w-[165px] [&_img]:h-auto">
             <CardoraLogo />
           </Link>
@@ -124,13 +124,13 @@ const Header = () => {
         </div>
 
         {/* Green action bar: call, directions, menu toggle */}
-        <div className="text-white flex items-center justify-around px-12 py-2.5 relative border-t border-[#dadada] border-b border-b-[#dadada]">
-          <div className="flex items-center gap-5 border-r border-[#dadada] px-4 top-0">
+        <div className="text-white flex items-center justify-between py-2.5 relative border-t border-[#dadada] border-b border-b-[#dadada]">
+          <div className="flex items-center gap-5 px-4 top-0">
 
             {/* Call */}
             <a
               href={PHONE_HREF}
-              className="flex flex-col items-center justify-center gap-1 group text-white bg-[#00af66] rounded-[5px] w-[181px] max-[537px]:w-[150px] max-[480px]:w-[120px] max-[397px]:w-[90px] py-[13px] px-[10px]"
+              className="flex flex-col items-center justify-center gap-1 group text-white bg-[#00af66] rounded-[5px] w-[181px] max-[537px]:w-[150px] max-[480px]:w-[100px] max-[397px]:w-[90px] py-[13px] px-[10px]"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="h-4 w-4 fill-white text-white">
                 <path d="M160.2 25C152.3 6.1 131.7-3.9 112.1 1.4l-5.5 1.5c-64.6 17.6-119.8 80.2-103.7 156.4 37.1 175 174.8 312.7 349.8 349.8 76.3 16.2 138.8-39.1 156.4-103.7l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2C233.9 335.4 177.3 277 144.8 205.3L189 169.3c13.9-11.3 18.6-30.4 11.8-47L160.2 25z" />
@@ -142,7 +142,7 @@ const Header = () => {
               href={SITE_CONFIG.urls.googleMapsUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex flex-col items-center justify-center gap-1 group text-white bg-[#00af66] rounded-[5px] w-[181px] max-[537px]:w-[150px] max-[480px]:w-[120px] max-[397px]:w-[90px] py-[13px] px-[10px]"
+              className="flex flex-col items-center justify-center gap-1 group text-white bg-[#00af66] rounded-[5px] w-[181px] max-[537px]:w-[150px] max-[480px]:w-[100px] max-[397px]:w-[90px] py-[13px] px-[10px]"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" className="h-4 w-4 fill-white text-white">
                 <path d="M0 188.6C0 84.4 86 0 192 0S384 84.4 384 188.6c0 119.3-120.2 262.3-170.4 316.8-11.8 12.8-31.5 12.8-43.3 0-50.2-54.5-170.4-197.5-170.4-316.8zM192 256a64 64 0 1 0 0-128 64 64 0 1 0 0 128z" />
@@ -150,8 +150,12 @@ const Header = () => {
             </a>
           </div>
 
+          <div className="border-r border-[#dadada] min-h-[50px] ml-10">
+            <span className="border-r border-[#dadada]"></span>
+          </div>
+
           {/* Menu toggle */}
-          <div className="flex items-center justify-center">
+          <div className="flex items-start w-full justify-center">
             <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="flex flex-col items-center justify-center gap-1 mx-[7%] max-[537px]:mx-[6%] max-[397px]:mx-[4%]"
@@ -174,7 +178,7 @@ const Header = () => {
             isMobileMenuOpen ? "max-h-[100vh] opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          <nav className="flex flex-col px-6 py-6 pb-24">
+          <nav className="flex flex-col px-6 py-6 pb-2">
             {NAV_ITEMS.map((item) => {
               const isActive =
                 pathname === item.to || pathname?.startsWith(item.to + "/");
@@ -193,7 +197,7 @@ const Header = () => {
             })}
 
             {/* Bottom call-to-action */}
-            <div className="mt-8 pt-6">
+            {/* <div className="mt-8 pt-6">
               <a
                 href={PHONE_HREF}
                 className="w-full flex items-center justify-center gap-2 bg-black text-white px-6 py-4 rounded-xl font-bold text-[16px] shadow-md hover:bg-gray-800 transition-colors"
@@ -201,7 +205,7 @@ const Header = () => {
                 <Phone className="h-5 w-5" />
                 {PHONE_NUMBER}
               </a>
-            </div>
+            </div> */}
           </nav>
         </div>
       </header>

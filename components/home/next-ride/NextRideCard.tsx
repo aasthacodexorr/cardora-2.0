@@ -7,7 +7,7 @@ const NextRideCard = ({ image, alt, title, subtitle, to }: NextRideCardProps) =>
   return (
     <Link
       href={to}
-      className="group rounded-2xl border border-border bg-card overflow-hidden flex flex-col hover:shadow-md transition-shadow w-full max-w-[400px] min-w-[300px]"
+      className="group rounded-2xl border border-border bg-card overflow-hidden flex flex-col hover:shadow-md transition-shadow w-full h-full"
     >
       {/* Card image */}
       <div className="aspect-[4/4] overflow-hidden bg-muted">

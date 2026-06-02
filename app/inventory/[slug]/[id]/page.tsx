@@ -36,6 +36,7 @@ import doller from "@/assets/icons/doller-1.png";
 
 // Force dynamic rendering — vehicle data changes frequently
 export const dynamic = "force-dynamic";
+const showSidebar = true;  
 
 /* ── Page Component ────────────────────────────────────────── */
 export default async function VehicleDetailsPage({
@@ -114,7 +115,7 @@ export default async function VehicleDetailsPage({
   /* ── Reusable: Vehicle title + quick specs block ─────────── */
   const VehicleHeader = () => (
     <div className="bg-[#eaf5ff] rounded-t-xl px-3 py-6 text-center">
-      <h1 className="text-[28px] font-extrabold text-gray-900 leading-tight tracking-tighter ">
+      <h1 className="text-[28px]  font-bold text-gray-900 leading-tight tracking-wide">
         {vehicle.year}{vehicle.make}{vehicle.model}
       </h1>
       <p className="text-[16px] text-gray-500 mt-0.5 text-center">{vehicle.trim}</p>
@@ -144,16 +145,18 @@ export default async function VehicleDetailsPage({
         <Header />
       </div>
 
-      <section className="w-full bg-background flex-1 pb-16">
-        <div className="mx-auto max-w-[1600px] py-6 lg:pt-[30px] md:px-10  px-5">
+      <section className="w-full bg-background flex-1 pb-16  justify-center">
+        <div className="mx-auto max-w-[1600px]  justify-center py-6 lg:pt-[30px] md:px-10 px-5">
 
-          <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10 lg:gap-[25px]">
+          <div className={`flex ${showSidebar ? "justify-start" : "justify-center"}`}>
 
             {/* ── Left column: gallery + specs ──────────── */}
-            <div className="space-y-8 flex flex-col">
+            <div
+              className={`space-y-8 flex flex-col ${showSidebar ? "max-w-[860px]" : "max-w-[1000px]"
+                }`}
+            >
               {/* Image gallery */}
-              <ImageGallery images={images} title={titleText} isSold={isSold} />
-
+              <ImageGallery images={images} title={titleText} isSold={isSold}   centered={!showSidebar} />
 
               <div className="text-[12px] font-light">
                 <p><strong className="font-medium">STOCK #</strong>: G-148421</p>
@@ -161,7 +164,7 @@ export default async function VehicleDetailsPage({
 
 
               {/* Specs grid */}
-              <div className="bg-card border-none rounded-xl p-0">
+              <div className="bg-card border-none rounded-xl p-0 w-full">
                 <h2 className="text-[22px] font-semibold text-black mb-[30px]">
                   About this vehicle
                 </h2>
@@ -298,12 +301,14 @@ export default async function VehicleDetailsPage({
             </div>
 
             {/* ── Right column: sticky sidebar (desktop) ─── */}
-            <div className="relative">
-              <div className="sticky top-6 space-y-5 border border-gray-200 rounded-xl">
-                <VehicleHeader />
-                <PriceAndCTA />
+            {showSidebar && (
+              <div className="relative w-[800px]">
+                <div className="sticky top-6 space-y-5 border border-gray-200 rounded-xl">
+                  <VehicleHeader />
+                  <PriceAndCTA />
+                </div>
               </div>
-            </div>
+            )}
 
           </div>
         </div>
