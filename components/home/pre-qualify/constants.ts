@@ -15,4 +15,4 @@ export const CONTAINER_CLASS = "max-w-[1280px] mx-auto px-[15px]";
 
 export const CARD_CLASS = "rounded-[15px] overflow-hidden border border-black/10 p-[20px] md:p-[30px]";
 
-export const GRID_CLASS = "flex gap-8 lg:gap-14 justify-center";
+export const GRID_CLASS = "flex gap-8 lg:gap-14 justify-center flex-col md:flex-row";

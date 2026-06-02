@@ -18,6 +18,7 @@ type ImageGalleryProps = {
   images: string[];
   title: string;
   isSold?: boolean;
+  centered?: boolean;
 };
 
 /* ── Component ─────────────────────────────────────────────── */
@@ -25,6 +26,7 @@ export const ImageGallery = ({
   images,
   title,
   isSold = false,
+  centered
 }: ImageGalleryProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const thumbRef = useRef<HTMLDivElement>(null);
@@ -49,11 +51,15 @@ export const ImageGallery = ({
   if (!images || images.length === 0) return null;
 
   return (
-    <div className="flex gap-1 h-[320px] md:h-[493px]">
+    <div
+  className={`flex gap-1 h-[320px] md:h-[493px] min-w-[860px] ${
+    centered ? "justify-center" : "justify-start"
+  }`}
+>
 
-<div className="flex flex-col md:flex-row rounded-2xl overflow-hidden">
+<div className="flex flex-col md:flex-row rounded-2xl  overflow-hidden">
 {/* ── Main image ──────────────────────────────────────── */}
-      <div className="flex-1 relative rounded-2xl overflow-hidden bg-gray-100 shadow-sm">
+      <div className="flex-1 relative rounded-2xl min-w-[650px]  overflow-hidden bg-gray-100 shadow-sm">
 
         {/* Sold badge */}
         {isSold && (
@@ -115,7 +121,7 @@ export const ImageGallery = ({
             onClick={() => goTo(idx)}
             className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
               idx === activeIndex
-                ? "border-green-500"
+                ? "border-transparent"
                 : "border-transparent"
             }`}
           >
@@ -146,15 +152,15 @@ export const ImageGallery = ({
               key={idx}
               type="button"
               onClick={() => goTo(idx)}
-              className={`relative max-w-[155px] h-[138px] min-h-[108px] rounded-xl overflow-hidden border-2 transition-all duration-300 ${idx === activeIndex
-                  ? "border-green-500 scale-[0.98]"
-                  : "border-transparent hover:border-gray-300"
+              className={`relative max-w-[155px] h-[138px] cursor-pointer min-h-[108px] rounded-xl overflow-hidden border-2 transition-all duration-300 ${idx === activeIndex
+                  ? "border-transparent scale-[0.98]"
+                  : "border-transparent"
                 }`}
             >
               <img
                 src={img}
                 alt={`Thumbnail ${idx + 1}`}
-                className="w-full h-full object-cover rounded-xl"
+                className="w-full h-full object-cover rounded-md"
                 loading="lazy"
               />
             </button>
@@ -163,7 +169,7 @@ export const ImageGallery = ({
       ) : <img
         src={images[0]}
         alt={`Thumbnail`}
-        className="w-44 h-36 object-cover rounded-2xl"
+        className="w-42 h-34 object-cover rounded-lg"
         loading="lazy"
       />}
     </div>

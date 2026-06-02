@@ -11,7 +11,7 @@ const HeroLine = ({ text, image, imageAlt, reverse = false, tagline }: HeroLineP
           alt={imageAlt || ""}
           width={220}
           height={100}
-          className={`${HERO_IMAGE_CLASS} -ml-[25px] md:ml-0`}
+          className={`${HERO_IMAGE_CLASS} md:ml-0`}
         />
       )}
       {text && <span>{text}</span>}
