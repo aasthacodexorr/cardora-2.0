@@ -66,6 +66,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
             {title}
           </h3>
 
+         
           <hr className="border-gray-200 mt-[4px]" />
 
           {/* Price and mileage */}
@@ -74,8 +75,11 @@ export const HitCard = ({ hit }: { hit: any }) => {
               ${price.toLocaleString()}.00
             </p>
             <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
-              {km.toLocaleString()} KM &bull; {drivetrain}
-            </p>
+  {km.toLocaleString()} KM
+  {drivetrain && drivetrain !== "N/A" && (
+    <> &bull; {drivetrain}</>
+  )}
+</p>
           </div>
 
           <hr className="border-gray-200 my-2" />

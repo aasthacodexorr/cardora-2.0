@@ -6,36 +6,53 @@
    - Copyright bar with privacy/terms links
 ========================= */
 
+"use client";
+
+import Link from "next/link";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
 import zlogo from "@/assets/brand/zlogo.png";
+import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getBodyTypeUrl } from "@/lib/inventoryUrls";
 
 /* ── Static Data ────────────────────────────────────────────── */
 const columns = [
   {
     title: "Popular Makes",
-    links: [
-      "Used Toyota", "Used Hyundai", "Used BMW", "Used Honda",
-      "Used Mercedes", "Used Ford", "Used Dodge", "Used Volkswagen",
-    ],
+    links: POPULAR_MAKES.map(({ label, make }) => ({
+      label,
+      href: getMakeUrl(make),
+      external: false,
+    })),
   },
   {
     title: "Popular Car Types",
-    links: [
-      "Used SUVs", "Used Vans", "Used Hatchbacks", "Used Sedans",
-      "Used Coupes", "Used Convertibles", "Used Pick-up",
-    ],
+    links: POPULAR_CAR_TYPES.map(({ label, bodyType }) => ({
+      label,
+      href: getBodyTypeUrl(bodyType),
+      external: false,
+    })),
   },
   {
     title: "About Us",
     links: [
-      "Home", "Find Your Car", "Sell or Trade In", "Car Finance",
-      "Payment Calculator", "Skip the Dealership", "About Us", "Contact Us",
+      { label: "Home", href: "/", external: false },
+      { label: "Find Your Car", href: "/inventory", external: false },
+      { label: "Sell or Trade In", href: "/trade-in", external: false },
+      { label: "Car Finance", href: "/finance", external: false },
+      { label: "Payment Calculator", href: "/financing", external: false },
+      { label: "Skip the Dealership", href: "/financing", external: false },
+      { label: "About Us", href: "/about-us", external: false },
+      { label: "Contact Us", href: "/", external: false },
     ],
   },
   {
     title: "Follow Us",
-    links: ["Facebook", "Instagram", "TikTok", "YouTube"],
+    links: [
+      { label: "Facebook", href: "https://www.facebook.com/cardorahq", external: true },
+      { label: "Instagram", href: "https://www.instagram.com/cardora.ca/", external: true },
+      { label: "TikTok", href: "/inventory", external: false },
+      { label: "YouTube", href: "/inventory", external: false },
+    ],
   },
 ];
 
@@ -54,13 +71,24 @@ const Footer = () => {
               </h3>
               <ul className="space-y-3">
                 {col.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
-                      className="text-[15px] uppercase text-white transition-colors"
-                    >
-                      {link}
-                    </a>
+                  <li key={link.label}>
+                    {link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[15px] uppercase text-white transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="text-[15px] uppercase text-white transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

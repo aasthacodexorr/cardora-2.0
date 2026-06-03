@@ -13,7 +13,7 @@
 
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown, Search } from "lucide-react";
 
@@ -39,6 +39,7 @@ import {
   ClearRefinements,
   SortBy,
   CurrentRefinements,
+  useRange,
 } from "react-instantsearch";
 
 // Typesense search client
@@ -145,7 +146,7 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[20px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
         {hits.map((hit) => (
           <div key={hit.objectID} className="flex flex-col h-full p-[9px]">
             <HitComponent hit={hit} />
@@ -166,42 +167,208 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   );
 };
 
+
+const PriceRangeFilter = () => {
+  const { start, range, refine } = useRange({
+    attribute: "selling_price",
+  });
+
+  const [min, setMin] = useState(start[0] ?? "");
+  const [max, setMax] = useState(start[1] ?? "");
+
+  useEffect(() => {
+    setMin(start[0] ?? "");
+    setMax(start[1] ?? "");
+  }, [start]);
+
+  const handleApply = () => {
+    const minValue = min ? Number(min) : undefined;
+    const maxValue = max ? Number(max) : undefined;
+
+    refine([minValue, maxValue]);
+
+  };
+
+  return (
+    <div className="pt-2 pb-4">
+      <div className="flex items-center gap-2">
+        <input
+          type="number"
+          value={min}
+          min={range.min}
+          max={range.max}
+          onChange={(e) => setMin(e.target.value)}
+          placeholder="0"
+          className="w-full h-[36px] px-3 border border-[#cfcfcf] rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+
+        <span className="text-[16px]">To</span>
+
+        <input
+          type="number"
+          value={max}
+          min={range.min}
+          max={range.max}
+          onChange={(e) => setMax(e.target.value)}
+          placeholder={String(range.max ?? "")}
+          className="w-full h-[36px] px-3 border border-[#cfcfcf] rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+
+        <button
+          onClick={handleApply}
+          className="h-[36px] px-4 bg-[#00af66] cursor-pointer hover:bg-black text-white rounded-[4px] font-semibold text-[14px] hover:bg-[#00995a] transition"
+        >
+          Go
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const  OdometerRangeFilter=()=> {
+  const { start, refine } = useRange({
+    attribute: "odometer",
+  });
+  const [error, setError] = useState("");
+
+ 
+  const searchParams = useSearchParams();
+
+  const [min, setMin] = useState("");
+  const [max, setMax] = useState("");
+
+  useEffect(() => {
+    setMin(start[0] ? String(start[0]) : "");
+    setMax(start[1] ? String(start[1]) : "");
+  }, [start]);
+
+  const handleApply = () => {
+  const minValue = min ? Number(min) : undefined;
+  const maxValue = max ? Number(max) : undefined;
+
+  setError("");
+
+  if (
+    (minValue !== undefined && minValue < 400) ||
+    (maxValue !== undefined && maxValue < 400)
+  ) {
+    setError("Odometer values must be at least 400");
+    return;
+  }
+
+  if (
+    minValue !== undefined &&
+    maxValue !== undefined &&
+    minValue > maxValue
+  ) {
+    setError("Minimum odometer cannot be greater than maximum odometer");
+    return;
+  }
+
+  refine([minValue, maxValue]);
+};
+
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "Enter") {
+      handleApply();
+    }
+  };
+
+  return (
+    <div className="pt-2 pb-4 relative">
+  <div className="flex items-center gap-2">
+    <input
+      type="number"
+      min={400}
+      value={min}
+      onChange={(e) => setMin(e.target.value)}
+      placeholder="400"
+      className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+        error ? "border-red-500" : "border-[#cfcfcf]"
+      }`}
+    />
+
+    <span className="text-[16px] text-gray-700">To</span>
+
+    <input
+      type="number"
+      min={400}
+      value={max}
+      onChange={(e) => setMax(e.target.value)}
+      placeholder="Max"
+      className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+        error ? "border-red-500" : "border-[#cfcfcf]"
+      }`}
+    />
+
+    <button
+      type="button"
+      onClick={handleApply}
+      className="h-[36px] px-4 bg-[#00AF66] text-white rounded-[4px] cursor-pointer"
+    >
+      Go
+    </button>
+  </div>
+
+ {error && (
+  <div className="mt-1 z-10 rounded   px-2 py-1 text-[12px] text-black shadow-md">
+    {error}
+  </div>
+)}
+</div>
+  );
+}
+
 /* ── InventoryContent: main page content ─────────────────────── */
 const InventoryContent = () => {
   const searchParams = useSearchParams();
-
-  const q = searchParams?.get("q") || "";
+  const [uiState, setUiState] = useState<any>(null);
 
   /* ── Only one filter open at a time ───────────────────────── */
   const [openFilter, setOpenFilter] =
     useState<string | null>("");
 
-  // Parse URL filter params
-  const bodyTypeParam = searchParams?.get("body_type");
-  const fuelTypeParam = searchParams?.get("fuel_type");
-  const priceParam = searchParams?.get("price");
+  // Watch for URL changes and update UI state
+  useEffect(() => {
+    const q = searchParams?.get("q") || "";
 
-  const refinementList: Record<string, string[]> = {};
+    // Parse URL filter params
+    const bodyTypeParam = searchParams?.get("body_type");
+    const fuelTypeParam = searchParams?.get("fuel_type");
+    const priceParam = searchParams?.get("price");
 
-  if (bodyTypeParam) {
-    refinementList.body_type = bodyTypeParam.split("|");
-  }
+    const refinementList: Record<string, string[]> = {};
 
-  if (fuelTypeParam) {
-    refinementList.fuel_type = fuelTypeParam.split("|");
-  }
+    if (bodyTypeParam) {
+      refinementList.body_type = bodyTypeParam.split("|");
+    }
 
-  const range: Record<string, string> = {};
+    if (fuelTypeParam) {
+      refinementList.fuel_type = fuelTypeParam.split("|");
+    }
 
-  if (priceParam) {
-    range.selling_price = priceParam;
-  }
+    const range: Record<string, string> = {};
 
-  const initialUiState = {
+    if (priceParam) {
+      range.selling_price = priceParam;
+    }
+
+    const newUiState = {
+      [TYPESENSE_COLLECTION_NAME]: {
+        query: q,
+        ...(Object.keys(refinementList).length > 0 && { refinementList }),
+        ...(Object.keys(range).length > 0 && { range }),
+      },
+    };
+
+    setUiState(newUiState);
+  }, [searchParams]);
+
+  const initialUiState = uiState || {
     [TYPESENSE_COLLECTION_NAME]: {
-      query: q,
-      ...(Object.keys(refinementList).length > 0 && { refinementList }),
-      ...(Object.keys(range).length > 0 && { range }),
+      query: "",
     },
   };
 
@@ -291,13 +458,7 @@ const InventoryContent = () => {
                       )
                     }
                   >
-                    <RangeInput
-                      attribute="selling_price"
-                      classNames={rangeInputClassNames}
-                      translations={{
-                        separatorElementText: "to",
-                      }}
-                    />
+                    <PriceRangeFilter />
                   </FilterGroup>
 
                   <FilterGroup
@@ -363,13 +524,7 @@ const InventoryContent = () => {
                       )
                     }
                   >
-                    <RangeInput
-                      attribute="odometer"
-                      classNames={rangeInputClassNames}
-                      translations={{
-                        separatorElementText: "to",
-                      }}
-                    />
+                    <OdometerRangeFilter/>
                   </FilterGroup>
 
                   <FilterGroup
