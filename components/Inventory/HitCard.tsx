@@ -47,7 +47,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
           <img
             src={imageSrc}
             alt={title}
-            className={`w-full object-cover min-h-[240px] max-h-[240px] rounded-xl transition-transform duration-500 ${isSold ? "grayscale opacity-80" : ""
+            className={`w-full object-cover min-h-[240px] md:max-h-[240px] rounded-xl transition-transform duration-500 ${isSold ? "grayscale opacity-80" : ""
               }`}
             loading="lazy"
           />
@@ -84,7 +84,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
           {/* Pre-qualify CTA */}
           <div className="bg-[#e6f4ff] w-full rounded-[12px] mb-3">
-            <div className="text-[#005dff] text-[10.5px] font-semibold text-center leading-[16px] py-[9px] px-[12px]">
+            <div className="text-[#005dff] lg:text-[10.5px] text-[10px] font-semibold text-center leading-[16px] py-[9px] lg:px-[12px]">
 
               <span className="inline">
                 Get pre-qualified to see your personalized bi-weekly payment

@@ -145,7 +145,7 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 gap-y-[20px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[20px]">
         {hits.map((hit) => (
           <div key={hit.objectID} className="flex flex-col h-full p-[9px]">
             <HitComponent hit={hit} />
@@ -221,7 +221,7 @@ const InventoryContent = () => {
           <Configure hitsPerPage={21} />
 
           <div className="max-w-[1600px] mx-auto px-3 lg:px-[24px] pt-[20px] pb-[50px]">
-            <div className="flex flex-col lg:flex-row items-start gap-5 lg:px-10 px-8">
+            <div className="flex flex-col lg:flex-row items-start gap-5 lg:px-10 px-">
 
               {/* ── Sidebar Filters ───────────────────────── */}
               <aside className="hidden sticky top-5 self-start shrink-0 lg:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[290px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -444,7 +444,7 @@ const InventoryContent = () => {
               </aside>
 
               {/* ── Right Content ─────────────────────────── */}
-              <div className="w-full lg:flex-1">
+              <div className="w-full lg:flex-1 mt-5 lg:mt-0">
 
                   {/* Search + sort */}
                   <div className="flex flex-col lg:flex-row lg:items-center items-end  justify-between gap-4 mb- px-3">
