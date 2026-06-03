@@ -52,14 +52,14 @@ export const ImageGallery = ({
 
   return (
     <div
-  className={`flex gap-1 h-[320px] md:h-[493px] min-w-[860px] ${
+  className={`flex gap-1 px-1 md:px-0  h-[350px] md:h-[493px] md:min-w-[860px] ${
     centered ? "justify-center" : "justify-start"
   }`}
 >
 
 <div className="flex flex-col md:flex-row rounded-2xl  overflow-hidden">
 {/* ── Main image ──────────────────────────────────────── */}
-      <div className="flex-1 relative rounded-2xl min-w-[650px]  overflow-hidden bg-gray-100 shadow-sm">
+      <div className="flex-1 relative rounded-2xl md:min-w-[650px]  overflow-hidden bg-gray-100 shadow-sm">
 
         {/* Sold badge */}
         {isSold && (
@@ -119,7 +119,7 @@ export const ImageGallery = ({
             key={idx}
             type="button"
             onClick={() => goTo(idx)}
-            className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+            className={`flex-shrink-0 w-22 h-18 mt-1 mx-[0.5px] rounded-xl overflow-hidden border-2 transition-all duration-300 ${
               idx === activeIndex
                 ? "border-transparent"
                 : "border-transparent"
