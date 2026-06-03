@@ -134,7 +134,7 @@ export const ImageGallery = ({
             <>
               {/* Mobile thumbnails */}
               <div className="md:hidden w-full pb-2">
-                <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+                <div className=" flex gap-1 mt-1 md:mt-0 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                   {images.map((img, idx) => (
                     <button
                       key={idx}
@@ -143,7 +143,7 @@ export const ImageGallery = ({
                       }}
                       type="button"
                       onClick={() => goTo(idx)}
-                      className={`relative max-w-[155px] h-[138px] cursor-pointer min-h-[108px] rounded-xl overflow-hidden border-2 transition-all duration-300 ${idx === activeIndex
+                      className={`relative max-w-[155px] min-w-[87px] h-[90px] cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 ${idx === activeIndex
                           ? "border-transparent scale-[0.98]"
                           : "border-transparent"
                         }`}
@@ -168,7 +168,7 @@ export const ImageGallery = ({
       {images.length > 1 ? (
         <div
           ref={thumbRef}
-          className="hidden md:flex flex-col gap-2 overflow-y-auto overflow-x-hidden w-[165px] h-[432px] pr-1 scroll-smooth"        >
+          className="hidden md:flex flex-col overflow-y-auto overflow-x-hidden w-[165px] h-[432px] pr-1 scroll-smooth"        >
           {images.map((img, idx) => (
             <button
               key={idx}
