@@ -93,7 +93,7 @@ const Reviews = () => {
               ))}
             </div>
             <span className="text-[15px] font-medium text-foreground">5.0 (33)</span>
-            <a href="#" className="text-[16px] font-semibold underline text-foreground hover:opacity-80">
+            <a href="https://www.google.com/search?q=cardora&oq=cardora&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIGCAEQRRg8MgYIAhBFGDwyDwgDEC4YChivARjHARiABDILCAQQABgKGAsYgAQyCwgFEAAYChgLGIAEMgsIBhAAGAoYCxiABDIGCAcQRRg80gEIMjgxMGowajeoAgiwAgHxBRTGNHBoyF19&sourceid=chrome&ie=UTF-8&zx=1764666449357&no_sw_cr=1#lrd=" target="_blank" className="text-[16px] font-semibold underline text-foreground hover:opacity-80">
               View all
             </a>
           </div>
