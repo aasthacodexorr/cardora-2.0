@@ -29,13 +29,11 @@ import { GetInTouch } from "@/components/common";
 // react-instantsearch
 import {
   InstantSearch,
-  Hits,
   SearchBox,
   RefinementList,
   Configure,
   useHits,
   useInfiniteHits,
-  RangeInput,
   ClearRefinements,
   SortBy,
   CurrentRefinements,
@@ -65,8 +63,6 @@ const rangeInputClassNames = {
   submit: "hidden",
   separator: "text-gray-400 mx-2 font-medium",
 };
-
-/* ── FilterGroup: smooth animated accordion ──────────────────── */
 type FilterGroupProps = {
   title: string;
   children: React.ReactNode;
@@ -82,36 +78,34 @@ const FilterGroup = ({
 }: FilterGroupProps) => {
   return (
     <div className="border-b border-border py-[7px] mb-0 last:border-b-0 first:border-t first:border-t-border">
-  <button
-    onClick={onToggle}
-    className="w-full cursor-pointer"
-  >
-    <div className={`flex items-center justify-between rounded-[10px] px-[10px] py-[8px] transition-colors duration-200 hover:bg-gray-50 ${isOpen ? 'bg-gray-100' : ''}`}>
-      
-      <span className="text-[17px] font-normal text-[#000] uppercase tracking-[1px] text-left">
-        {title}
-      </span>
+      <button
+        onClick={onToggle}
+        className="w-full cursor-pointer"
+      >
+        <div className={`flex items-center justify-between rounded-[10px] px-[10px] py-[8px] transition-colors duration-200 hover:bg-gray-50 ${isOpen ? 'bg-gray-100' : ''}`}>
 
-      <ChevronDown
-        className={`h-[20px] w-[20px] text-foreground/70 transition-transform duration-300 ease-in-out ${
-          isOpen ? "rotate-180" : ""
-        }`}
-      />
-    </div>
-  </button>
+          <span className="text-[17px] font-normal text-[#000] uppercase tracking-[1px] text-left">
+            {title}
+          </span>
 
-  <div
-    className={`grid transition-all duration-300 ease-in-out ${
-      isOpen
-        ? "grid-rows-[1fr] opacity-100 mt-3"
-        : "grid-rows-[0fr] opacity-0 mt-0"
-    }`}
-  >
-    <div className="overflow-hidden">
-      <div className="space-y-2">{children}</div>
+          <ChevronDown
+            className={`h-[20px] w-[20px] text-foreground/70 transition-transform duration-300 ease-in-out ${isOpen ? "rotate-180" : ""
+              }`}
+          />
+        </div>
+      </button>
+
+      <div
+        className={`grid transition-all duration-300 ease-in-out ${isOpen
+            ? "grid-rows-[1fr] opacity-100 mt-3"
+            : "grid-rows-[0fr] opacity-0 mt-0"
+          }`}
+      >
+        <div className="overflow-hidden">
+          <div className="space-y-2">{children}</div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
   );
 };
 
@@ -225,14 +219,11 @@ const PriceRangeFilter = () => {
   );
 }
 
-const  OdometerRangeFilter=()=> {
+const OdometerRangeFilter = () => {
   const { start, refine } = useRange({
     attribute: "odometer",
   });
   const [error, setError] = useState("");
-
- 
-  const searchParams = useSearchParams();
 
   const [min, setMin] = useState("");
   const [max, setMax] = useState("");
@@ -243,30 +234,30 @@ const  OdometerRangeFilter=()=> {
   }, [start]);
 
   const handleApply = () => {
-  const minValue = min ? Number(min) : undefined;
-  const maxValue = max ? Number(max) : undefined;
+    const minValue = min ? Number(min) : undefined;
+    const maxValue = max ? Number(max) : undefined;
 
-  setError("");
+    setError("");
 
-  if (
-    (minValue !== undefined && minValue < 400) ||
-    (maxValue !== undefined && maxValue < 400)
-  ) {
-    setError("Odometer values must be at least 400");
-    return;
-  }
+    if (
+      (minValue !== undefined && minValue < 400) ||
+      (maxValue !== undefined && maxValue < 400)
+    ) {
+      setError("Odometer values must be at least 400");
+      return;
+    }
 
-  if (
-    minValue !== undefined &&
-    maxValue !== undefined &&
-    minValue > maxValue
-  ) {
-    setError("Minimum odometer cannot be greater than maximum odometer");
-    return;
-  }
+    if (
+      minValue !== undefined &&
+      maxValue !== undefined &&
+      minValue > maxValue
+    ) {
+      setError("Minimum odometer cannot be greater than maximum odometer");
+      return;
+    }
 
-  refine([minValue, maxValue]);
-};
+    refine([minValue, maxValue]);
+  };
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>
@@ -278,46 +269,44 @@ const  OdometerRangeFilter=()=> {
 
   return (
     <div className="pt-2 pb-4 relative">
-  <div className="flex items-center gap-2">
-    <input
-      type="number"
-      min={400}
-      value={min}
-      onChange={(e) => setMin(e.target.value)}
-      placeholder="400"
-      className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
-        error ? "border-red-500" : "border-[#cfcfcf]"
-      }`}
-    />
+      <div className="flex items-center gap-2">
+        <input
+          type="number"
+          min={400}
+          value={min}
+          onChange={(e) => setMin(e.target.value)}
+          placeholder="400"
+          className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? "border-red-500" : "border-[#cfcfcf]"
+            }`}
+        />
 
-    <span className="text-[16px] text-gray-700">To</span>
+        <span className="text-[16px] text-gray-700">To</span>
 
-    <input
-      type="number"
-      min={400}
-      value={max}
-      onChange={(e) => setMax(e.target.value)}
-      placeholder="Max"
-      className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
-        error ? "border-red-500" : "border-[#cfcfcf]"
-      }`}
-    />
+        <input
+          type="number"
+          min={400}
+          value={max}
+          onChange={(e) => setMax(e.target.value)}
+          placeholder="Max"
+          className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? "border-red-500" : "border-[#cfcfcf]"
+            }`}
+        />
 
-    <button
-      type="button"
-      onClick={handleApply}
-      className="h-[36px] px-4 bg-[#00AF66] text-white rounded-[4px] cursor-pointer"
-    >
-      Go
-    </button>
-  </div>
+        <button
+          type="button"
+          onClick={handleApply}
+          className="h-[36px] px-4 bg-[#00AF66] text-white rounded-[4px] cursor-pointer"
+        >
+          Go
+        </button>
+      </div>
 
- {error && (
-  <div className="mt-1 z-10 rounded   px-2 py-1 text-[12px] text-black shadow-md">
-    {error}
-  </div>
-)}
-</div>
+      {error && (
+        <div className="mt-1 z-10 rounded   px-2 py-1 text-[12px] text-black shadow-md">
+          {error}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -325,19 +314,20 @@ const  OdometerRangeFilter=()=> {
 const InventoryContent = () => {
   const searchParams = useSearchParams();
   const [uiState, setUiState] = useState<any>(null);
+  const [key, setKey] = useState(0); // Force remount of InstantSearch component
 
   /* ── Only one filter open at a time ───────────────────────── */
   const [openFilter, setOpenFilter] =
     useState<string | null>("");
 
-  // Watch for URL changes and update UI state
+  // Parse URL params and create initial UI state
   useEffect(() => {
     const q = searchParams?.get("q") || "";
-
-    // Parse URL filter params
     const bodyTypeParam = searchParams?.get("body_type");
     const fuelTypeParam = searchParams?.get("fuel_type");
     const priceParam = searchParams?.get("price");
+
+    console.log("DEBUG - URL params:", { q, bodyTypeParam, fuelTypeParam, priceParam });
 
     const refinementList: Record<string, string[]> = {};
 
@@ -349,28 +339,101 @@ const InventoryContent = () => {
       refinementList.fuel_type = fuelTypeParam.split("|");
     }
 
-    const range: Record<string, string> = {};
-
-    if (priceParam) {
-      range.selling_price = priceParam;
-    }
-
-    const newUiState = {
+    // Build the UI state for InstantSearch
+    const newUiState: any = {
       [TYPESENSE_COLLECTION_NAME]: {
         query: q,
         ...(Object.keys(refinementList).length > 0 && { refinementList }),
-        ...(Object.keys(range).length > 0 && { range }),
       },
     };
 
+    // If there's a price range, we need to apply it
+    if (priceParam) {
+      const [min, max] = priceParam.split(":").map(Number);
+      console.log("DEBUG - Price range parsed:", { min, max });
+      // Store it in a way that we can use it after InstantSearch initializes
+      newUiState[TYPESENSE_COLLECTION_NAME]._priceRange = { min, max };
+    }
+
+    console.log("DEBUG - Final UI state:", newUiState);
     setUiState(newUiState);
+    
+    // Force remount of InstantSearch to reset its internal state
+    setKey(prev => prev + 1);
   }, [searchParams]);
 
-  const initialUiState = uiState || {
-    [TYPESENSE_COLLECTION_NAME]: {
-      query: "",
-    },
-  };
+  // Separate effect to apply price range after a delay (to let InstantSearch initialize)
+  useEffect(() => {
+    const priceParam = searchParams?.get("price");
+    if (priceParam && uiState) {
+      const [min, max] = priceParam.split(":").map(Number);
+      console.log("DEBUG - Applying price range after delay:", { min, max });
+
+      // Use a timeout to wait for components to render
+      const timer = setTimeout(() => {
+        // Find all number inputs (the price filter uses type="number")
+        const allInputs = Array.from(document.querySelectorAll('input[type="number"]'));
+        console.log("DEBUG - Found all number inputs:", allInputs.length);
+
+        // The price range filter typically has two inputs for min and max
+        // Filter by looking for inputs that are likely part of the price filter
+        const priceInputs = allInputs.filter((input: any) => {
+          const placeholder = input.placeholder || '';
+          const value = input.value || '';
+          // Price inputs typically have "0" or numeric placeholders
+          return placeholder === '0' || placeholder === 'Max' || value === '';
+        });
+
+        console.log("DEBUG - Filtered price inputs:", priceInputs.length);
+
+        if (priceInputs.length >= 2) {
+          const minInput = priceInputs[0] as HTMLInputElement;
+          const maxInput = priceInputs[1] as HTMLInputElement;
+
+          console.log("DEBUG - Setting min input to:", min);
+          console.log("DEBUG - Setting max input to:", max);
+
+          minInput.value = String(min);
+          maxInput.value = String(max);
+
+          // Trigger input events (more reliable than change)
+          minInput.dispatchEvent(new Event("input", { bubbles: true }));
+          maxInput.dispatchEvent(new Event("input", { bubbles: true }));
+          minInput.dispatchEvent(new Event("change", { bubbles: true }));
+          maxInput.dispatchEvent(new Event("change", { bubbles: true }));
+
+          // Wait a bit then click the apply button
+          setTimeout(() => {
+            const buttons = Array.from(document.querySelectorAll("button")).filter(
+              (btn) => btn.textContent?.trim().includes("Go") &&
+                btn.textContent?.trim().length < 5
+            );
+
+            console.log("DEBUG - Found Go buttons:", buttons.length);
+
+            if (buttons.length > 0) {
+              const priceApplyBtn = buttons[0] as HTMLButtonElement;
+              console.log("DEBUG - Clicking apply button");
+              priceApplyBtn.click();
+            }
+          }, 100);
+        } else {
+          console.log("DEBUG - Not enough price inputs found");
+        }
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [uiState, searchParams]);
+
+  // Only render InstantSearch after uiState is set from URL params
+  if (!uiState) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <div className="font-bold">Loading inventory...</div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
@@ -380,10 +443,11 @@ const InventoryContent = () => {
 
       <section className="w-full bg-[#efefef] flex-1">
         <InstantSearch
+          key={key}
           searchClient={searchClient}
           indexName={TYPESENSE_COLLECTION_NAME}
-          initialUiState={initialUiState}
-          routing={true}
+          initialUiState={uiState}
+          routing={false}
         >
           <Configure hitsPerPage={21} />
 
@@ -524,7 +588,7 @@ const InventoryContent = () => {
                       )
                     }
                   >
-                    <OdometerRangeFilter/>
+                    <OdometerRangeFilter />
                   </FilterGroup>
 
                   <FilterGroup
@@ -601,121 +665,121 @@ const InventoryContent = () => {
               {/* ── Right Content ─────────────────────────── */}
               <div className="w-full lg:flex-1 mt-5 lg:mt-0">
 
-                  {/* Search + sort */}
-                  <div className="flex flex-col lg:flex-row lg:items-center items-end  justify-between gap-4 mb- px-3">
+                {/* Search + sort */}
+                <div className="flex flex-col lg:flex-row lg:items-center items-end  justify-between gap-4 mb- px-3">
 
-                    <div
-                      className="relative w-full lg:max-w-[440px]"
-                    >
-                      <SearchBox
-                        classNames={{
-                          root: "w-full",
-                          form: "relative flex items-center",
-                          input:
-                            "w-full pl-[36px] tracking-wide  pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none transition-all",
-                          submitIcon: "hidden",
-                          resetIcon: "hidden",
-                          loadingIcon: "hidden",
-                        }}
-                        placeholder="Search for Anything"
-                      />
-
-                      <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
-                    </div>
-
-                    {/* Sort */}
-                      <div className="md:flex hidden items-center gap-4 self-end md:self-auto mr-3">
-
-                        <span className="text-[15px] font-bold text-gray-900 text-nowrap">
-                          Sort By
-                        </span>
-
-                        <SortBy
-                          items={[
-                            {
-                              label: "Recently Added",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
-                            },
-                            {
-                              label: "Price (Low to High)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:asc`,
-                            },
-                            {
-                              label: "Price (High to Low)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:desc`,
-                            },
-                            {
-                              label: "Odometer (Low to High)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:asc`,
-                            },
-                            {
-                              label: "Odometer (High to Low)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:desc`,
-                            },
-                            {
-                              label: "Make (A - Z)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/make:asc`,
-                            },
-                            {
-                              label: "Make (Z - A)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/make:desc`,
-                            },
-                            {
-                              label: "Model (A - Z)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/model:asc`,
-                            },
-                            {
-                              label: "Model (Z - A)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/model:desc`,
-                            },
-                            {
-                              label: "Year (Low to High)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/year:desc`,
-                            },
-                            {
-                              label: "Year (High to Low)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
-                            },
-                            {
-                              label: "Image Count (Low to High)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:asc`,
-                            },
-                            {
-                              label: "Image Count (High to Low)",
-                              value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:desc`,
-                            },
-                          ]}
-                          classNames={{
-                            select:
-                              "px-4 py-1 tracking-wide rounded-[12px] border border-gray-300 bg-white text-black/80 text-[13px] font-extrabold outline-none  cursor-pointer w-[212px] h-[42px] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke-width%3D%222%22%20stroke%3D%22%23000%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M8%209l4-4%204%204m0%206l-4%204-4-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10",
-                          }}
-                        />
-                      </div>
-                  </div>
-
-                  {/* Current refinements */}
-                  <div className="ml-3">
-                    <CurrentRefinements
+                  <div
+                    className="relative w-full lg:max-w-[440px]"
+                  >
+                    <SearchBox
                       classNames={{
                         root: "w-full",
-                        list: "flex flex-wrap gap-2",
-                        item: "flex flex-wrap gap-2",
-                        label: "hidden",
-                        category:
-                          "flex items-center bg-white rounded-lg px-[15px] py-[6px] mt-[5px] mb-2 shadow-none border border-gray-200 text-[14px] text-gray-700 font-light",
-                        categoryLabel: "mr-3 text-[16px] cursor-pointer",
-                        delete:
-                          "text-gray-500 cursor-pointer hover:text-gray-900 focus:outline-none flex items-center justify-center text-[16px]",
+                        form: "relative flex items-center",
+                        input:
+                          "w-full pl-[36px] tracking-wide  pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none transition-all",
+                        submitIcon: "hidden",
+                        resetIcon: "hidden",
+                        loadingIcon: "hidden",
+                      }}
+                      placeholder="Search for Anything"
+                    />
+
+                    <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
+                  </div>
+
+                  {/* Sort */}
+                  <div className="md:flex hidden items-center gap-4 self-end md:self-auto mr-3">
+
+                    <span className="text-[15px] font-bold text-gray-900 text-nowrap">
+                      Sort By
+                    </span>
+
+                    <SortBy
+                      items={[
+                        {
+                          label: "Recently Added",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
+                        },
+                        {
+                          label: "Price (Low to High)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:asc`,
+                        },
+                        {
+                          label: "Price (High to Low)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:desc`,
+                        },
+                        {
+                          label: "Odometer (Low to High)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:asc`,
+                        },
+                        {
+                          label: "Odometer (High to Low)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:desc`,
+                        },
+                        {
+                          label: "Make (A - Z)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/make:asc`,
+                        },
+                        {
+                          label: "Make (Z - A)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/make:desc`,
+                        },
+                        {
+                          label: "Model (A - Z)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/model:asc`,
+                        },
+                        {
+                          label: "Model (Z - A)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/model:desc`,
+                        },
+                        {
+                          label: "Year (Low to High)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:desc`,
+                        },
+                        {
+                          label: "Year (High to Low)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
+                        },
+                        {
+                          label: "Image Count (Low to High)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:asc`,
+                        },
+                        {
+                          label: "Image Count (High to Low)",
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:desc`,
+                        },
+                      ]}
+                      classNames={{
+                        select:
+                          "px-4 py-1 tracking-wide rounded-[12px] border border-gray-300 bg-white text-black/80 text-[13px] font-extrabold outline-none  cursor-pointer w-[212px] h-[42px] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke-width%3D%222%22%20stroke%3D%22%23000%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M8%209l4-4%204%204m0%206l-4%204-4-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10",
                       }}
                     />
                   </div>
+                </div>
 
-                  {/* Results */}
-                  <div className="mb-4 mt-3">
-                    <NoResultsHandler>
-                      <CustomInfiniteHits hitComponent={HitCard} />
-                    </NoResultsHandler>
-                  </div>
+                {/* Current refinements */}
+                <div className="ml-3">
+                  <CurrentRefinements
+                    classNames={{
+                      root: "w-full",
+                      list: "flex flex-wrap gap-2",
+                      item: "flex flex-wrap gap-2",
+                      label: "hidden",
+                      category:
+                        "flex items-center bg-white rounded-lg px-[15px] py-[6px] mt-[5px] mb-2 shadow-none border border-gray-200 text-[14px] text-gray-700 font-light",
+                      categoryLabel: "mr-3 text-[16px] cursor-pointer",
+                      delete:
+                        "text-gray-500 cursor-pointer hover:text-gray-900 focus:outline-none flex items-center justify-center text-[16px]",
+                    }}
+                  />
+                </div>
+
+                {/* Results */}
+                <div className="mb-4 mt-3">
+                  <NoResultsHandler>
+                    <CustomInfiniteHits hitComponent={HitCard} />
+                  </NoResultsHandler>
+                </div>
 
               </div>
             </div>

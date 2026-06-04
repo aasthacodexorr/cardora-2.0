@@ -102,11 +102,13 @@ const Footer = () => {
             </h3>
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-white/85 shrink-0 mt-0.5" />
-              <address className="not-italic text-[15px] leading-relaxed text-white cursor-pointer">
-                8050 Dixie Rd,<br />
-                Brampton, ON<br />
-                L6T 4W6
-              </address>
+              <a href="https://www.google.com/maps/place/Cardora/@43.7019241,-79.7051392,1711m/data=!3m1!1e3!4m6!3m5!1s0x882b3f8957c9a033:0x9a07057d8dafccb0!8m2!3d43.7016063!4d-79.702997!16s%2Fg%2F11x7qxfpfx?entry=ttu&amp;g_ep=EgoyMDI2MDMyMy4xIKXMDSoASAFQAw%3D%3D" target="_blank">
+                <address className="not-italic text-[15px] leading-relaxed text-white cursor-pointer">
+                  8050 Dixie Rd,<br />
+                  Brampton, ON<br />
+                  L6T 4W6
+                </address>
+              </a>
             </div>
           </div>
         </div>

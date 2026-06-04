@@ -85,18 +85,20 @@ const Reviews = () => {
 
         {/* Google rating bar */}
         <div className="flex justify-center">
-          <div className="flex items-center justify-center gap-3 rounded-[20px] overflow-hidden border border-[#e2e2e2] bg-transparent shadow-none py-[10px] px-4 w-[500px] max-w-full flex-wrap">
-            <Image src={google} alt="Google" className="h-[29px] w-[85px] object-contain" />
-            <div className="flex items-center gap-1">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-star text-star" />
-              ))}
+          <a href="https://www.google.com/search?q=cardora&oq=cardora&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIGCAEQRRg8MgYIAhBFGDwyDwgDEC4YChivARjHARiABDILCAQQABgKGAsYgAQyCwgFEAAYChgLGIAEMgsIBhAAGAoYCxiABDIGCAcQRRg80gEIMjgxMGowajeoAgiwAgHxBRTGNHBoyF19&sourceid=chrome&ie=UTF-8&zx=1764666449357&no_sw_cr=1#lrd=" target="_blank" className="text-[16px] font-semibold text-foreground">
+            <div className="flex items-center justify-center gap-3 rounded-[20px] overflow-hidden border border-[#e2e2e2] bg-transparent shadow-none py-[10px] px-4 w-[500px] max-w-full flex-wrap">
+              <Image src={google} alt="Google" className="h-[29px] w-[85px] object-contain" />
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-star text-star" />
+                ))}
+              </div>
+              <span className="text-[15px] font-medium text-foreground">5.0 (33)</span>
+              <span className="underline font-md">View all</span>
+
             </div>
-            <span className="text-[15px] font-medium text-foreground">5.0 (33)</span>
-            <a href="https://www.google.com/search?q=cardora&oq=cardora&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIGCAEQRRg8MgYIAhBFGDwyDwgDEC4YChivARjHARiABDILCAQQABgKGAsYgAQyCwgFEAAYChgLGIAEMgsIBhAAGAoYCxiABDIGCAcQRRg80gEIMjgxMGowajeoAgiwAgHxBRTGNHBoyF19&sourceid=chrome&ie=UTF-8&zx=1764666449357&no_sw_cr=1#lrd=" target="_blank" className="text-[16px] font-semibold underline text-foreground hover:opacity-80">
-              View all
-            </a>
-          </div>
+          </a>
+
         </div>
 
         {/* Carousel */}

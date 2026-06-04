@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -10,11 +9,12 @@ const HeroSearchPanel = () => {
   const router = useRouter();
 
   const handleSearch = () => {
-    router.push(
-      searchQuery.trim()
-        ? `/inventory?q=${encodeURIComponent(searchQuery.trim())}`
-        : "/inventory"
-    );
+    if (!searchQuery.trim()) {
+      router.push("/inventory");
+      return;
+    }
+
+    router.push(`/inventory?q=${encodeURIComponent(searchQuery.trim())}`);
   };
 
   return (
@@ -74,7 +74,7 @@ const HeroSearchPanel = () => {
             href="/financing"
             className="cursor-pointer text-black hover:text-[#00af66] bg-transparent p-2 text-[14.5px]"
           >
-                      Looking to sell your car? Get a valuation
+            Looking to sell your car? Get a valuation
           </Link>
         </p>
       </div>

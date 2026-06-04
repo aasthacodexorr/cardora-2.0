@@ -19,20 +19,14 @@ const COLLECTION_ID = process.env.NEXT_PUBLIC_TYPESENSE_COLLECTION || "";
  * Sets the search query parameter so the search box is pre-populated
  * 
  * Example: Used Toyota
- * URL: /inventory?07cb7c095c0cf712732a976016079e19[query]=Honda
+ * URL: /inventory?q=Honda
  * 
  * @param make - Vehicle make (e.g., "Toyota", "BMW", "Honda")
  * @returns Full inventory URL with search query parameter
  */
 export const getInventoryUrlByMake = (make: string): string => {
-  if (!COLLECTION_ID) {
-    console.warn("NEXT_PUBLIC_TYPESENSE_COLLECTION not set in environment");
-    return `/inventory?q=${encodeURIComponent(make)}`;
-  }
-  
-  // Use the bracket notation format that react-instantsearch expects
-  // This sets the query parameter which populates the search box
-  return `/inventory?${COLLECTION_ID}[query]=${encodeURIComponent(make)}`;
+  // Use standard q parameter that the inventory page expects
+  return `/inventory?q=${encodeURIComponent(make)}`;
 };
 
 /**
@@ -40,19 +34,14 @@ export const getInventoryUrlByMake = (make: string): string => {
  * Sets the search query parameter so the search box is pre-populated
  * 
  * Example: Used SUVs
- * URL: /inventory?07cb7c095c0cf712732a976016079e19[query]=SUV
+ * URL: /inventory?q=SUV
  * 
  * @param bodyType - Single body type value
  * @returns Full inventory URL with search query parameter
  */
 export const getInventoryUrlByBodyType = (bodyType: string): string => {
-  if (!COLLECTION_ID) {
-    console.warn("NEXT_PUBLIC_TYPESENSE_COLLECTION not set in environment");
-    return `/inventory?q=${encodeURIComponent(bodyType)}`;
-  }
-  
-  // Use the bracket notation format that react-instantsearch expects
-  return `/inventory?${COLLECTION_ID}[query]=${encodeURIComponent(bodyType)}`;
+  // Use standard q parameter that the inventory page expects
+  return `/inventory?q=${encodeURIComponent(bodyType)}`;
 };
 
 /**
