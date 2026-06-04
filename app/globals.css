@@ -1,2 +1,44 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
+.finance-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  background: transparent; /* Ensures fallback properties don't hide the dots */
+}
+
+/* Chrome, Safari, Edge, and Opera Track Reset */
+.finance-slider::-webkit-slider-runnable-track {
+  background: transparent;
+}
+
+/* Firefox Track Reset */
+.finance-slider::-moz-range-track {
+  background: transparent;
+  border: none;
+}
+
+/* Custom Thumb Styles (Chrome, Safari, Edge) */
+.finance-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 6px solid #10b981; 
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2), 0 2px 4px rgba(0, 0, 0, 0.08);
+  margin-top: 0px; /* Aligns thumb perfectly on center */
+}
+
+/* Custom Thumb Styles (Firefox) */
+.finance-slider::-moz-range-thumb {
+  width: 20px; 
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 6px solid #10b981;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2), 0 2px 4px rgba(0, 0, 0, 0.08);
+}

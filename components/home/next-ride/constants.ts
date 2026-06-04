@@ -16,14 +16,14 @@ export const CARDS: Card[] = [
     alt: "Person handing over car keys",
     title: "Start with a trade-in",
     subtitle: "Get an offer in under 2 mins.",
-    to: "#",
+    to: "/trade-in",
   },
   {
     image: preQualified,
     alt: "Smiling woman holding phone with approval",
     title: "Get pre-qualified",
     subtitle: "No impact to your credit",
-    to: "#",
+    to: "/financing/",
   },
   
 ];
