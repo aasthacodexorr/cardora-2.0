@@ -4,7 +4,7 @@ import { Fuel, PaintBucket, Palette, Radiation } from "lucide-react";
 const AboutVehicle = ({ vehicle }: any) => {
     return (
         <>
-            <div className="bg-card border-none rounded-xl p-0 w-full mt-5 xl:-mt-28">
+            <div className="bg-card border-none rounded-xl p-0 w-full xl:-mt-28">
                 <h2 className="text-[22px] font-semibold text-black mb-[30px]">
                     About this vehicle
                 </h2>
@@ -25,7 +25,7 @@ const AboutVehicle = ({ vehicle }: any) => {
                                 <span>
                                     Odometer
                                     <p className="font-bold text-[15px] text-black">
-                                        {vehicle?.odometer.toLocaleString()} KM
+                                        {vehicle?.odometer?.toLocaleString()} KM
                                     </p>
                                 </span>
                             </div>

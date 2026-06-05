@@ -7,7 +7,8 @@
    - Search box + sort-by dropdown
    - Active refinement chips (CurrentRefinements)
    - Responsive grid of HitCard results
-   - URL-driven initial state (q, body_type, fuel_type, price params)
+   - URL-driven initial state with collection_id and default sort in query params
+   - Collection ID in URL for tracking which collection data comes from
    Wrapped in Suspense to handle useSearchParams safely.
 ========================= */
 
@@ -322,12 +323,20 @@ const InventoryContent = () => {
 
   // Parse URL params and create initial UI state
   useEffect(() => {
-    const q = searchParams?.get("q") || "";
+    // Get raw query string to parse [query] parameter properly
+    const rawQueryString = typeof window !== 'undefined' ? window.location.search : '';
+    console.log("DEBUG - Raw query string:", rawQueryString);
+    
+    // Parse [query] from raw query string using regex
+    // Match both %5Bquery%5D= (URL-encoded) and [query]= (decoded)
+    const queryMatch = rawQueryString.match(/(?:%5Bquery%5D|\[query\])=([^&]*)/);
+    const q = queryMatch ? decodeURIComponent(queryMatch[1]) : "";
+    
     const bodyTypeParam = searchParams?.get("body_type");
     const fuelTypeParam = searchParams?.get("fuel_type");
     const priceParam = searchParams?.get("price");
 
-    console.log("DEBUG - URL params:", { q, bodyTypeParam, fuelTypeParam, priceParam });
+    console.log("DEBUG - Parsed query from URL:", { q, bodyTypeParam, fuelTypeParam, priceParam });
 
     const refinementList: Record<string, string[]> = {};
 
@@ -355,7 +364,7 @@ const InventoryContent = () => {
       newUiState[TYPESENSE_COLLECTION_NAME]._priceRange = { min, max };
     }
 
-    console.log("DEBUG - Final UI state:", newUiState);
+    console.log("DEBUG - Final UI state with query:", newUiState);
     setUiState(newUiState);
     
     // Force remount of InstantSearch to reset its internal state

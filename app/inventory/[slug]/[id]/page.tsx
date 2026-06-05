@@ -40,6 +40,8 @@ export default async function VehicleDetailsPage({
 }) {
   const resolvedParams = await params;
   const vehicle = await getVehicleById(resolvedParams.id);
+  const description = vehicle?.vehicle_description
+  ?.replace(/_{10,}/g, "<hr />");
 
   if (!vehicle) notFound();
 
@@ -56,42 +58,55 @@ export default async function VehicleDetailsPage({
   const isSold = vehicle.status?.toLowerCase() !== "instock";
   
   return (
-    <main className="min-h-screen bg-background flex flex-col overflow-hidden">
+    // FIX 1: Removed 'overflow-hidden' from main wrapper. 
+    // Any ancestral 'overflow-hidden' or 'overflow-x-hidden' breaks 'position: sticky' calculations down the DOM tree.
+    <main className="min-h-screen bg-background flex flex-col">
       <div className="bg-hero-bg">
         <Header />
       </div>
-
       <section className="w-full bg-background flex-1 justify-center">
-        <div className="mx-auto w-full max-w-[1600px] py-6 lg:pt-[30px] px-5 md:px-8 lg:px-10">
+        <div className="mx-auto w-full max-w-[1600px] py-6 lg:pt-[30px] ">
           
           {/* ── SECTION ROW: Controls the boundaries of the sticky sidebar ── */}
-          <div className="flex flex-col lg:flex-row gap-10 items-start items-stretch">
+          {/* FIX 2: Added layout-level tracks using items-stretch so the columns share an identical height boundary */}
+          <div className="flex flex-col gap-5 lg:flex-row items-stretch px-5 md:px-8 lg:px-10 relative ">
             
             {/* ── Left column: gallery + specs + description ── */}
-            <div className={`flex flex-col gap-8 items-start flex-1 w-full max-w-[1000px] ${showSidebar ? "" : "mx-auto"}`}>
+            <div className={`flex flex-col gap-8 items-start flex-1 w-full ${showSidebar ? "" : "mx-auto"}`}>
               {/* Image gallery */}
               <ImageGallery images={images} title={titleText} isSold={isSold} centered={!showSidebar} />
-
+              
               <div className="text-[12px] font-light">
                 <p><strong className="font-medium">STOCK #</strong>: G-148421</p>
               </div>
 
+              {/* vehicle header on mobile */}
+              <div className={`flex justify-center w-full lg:hidden`}>
+                <div className="w-full">
+                  <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
+                    <VehicleHeader vehicle={vehicle} />
+                    <PriceAndCTA vehicle={vehicle} />
+                  </div>
+                  <Terms vehicle={vehicle} />
+                </div>  
+              </div>
+
               {/* Trade In Banner */}
-              <div className="w-full mb-30">
+              <div className="w-full lg:mb-30 max-w-[860px]">
                 <div className="flex flex-col md:flex-row items-center justify-between border border-gray-200 rounded-2xl p-6 bg-white w-full max-w-4xl gap-6 box-border font-sans">
-                  <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5 flex-1">
+                  <div className="flex sm:flex-row md:gap-5 flex-1">
                     <div className="flex-shrink-0">
                       <img src={doller.src} alt="Trade Icon" className="w-[65px] h-auto block" />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <h4 className="m-0 text-xl md:text-2xl font-semibold text-gray-900">Trade and Upgrade</h4>
-                      <p className="m-0 text-sm text-gray-600 leading-relaxed">Unlock the value of your old car. Get a quick quote today and upgrade to your dream car.</p>
+                      <p className="m-0 text-[14px] text-black md:leading-relaxed">Unlock the value of your old car. Get a quick quote today and upgrade to your dream car.</p>
                     </div>
                   </div>
                   <div className="flex-shrink-0 w-full md:w-auto text-center">
                     <div>
                       <a href="https://www.cardora.ca/trade-in-my-car?inventory_id=2478"
-                        className="inline-block w-full md:w-auto bg-gradient-to-br from-emerald-400 to-emerald-600 hover:from-emerald-500 hover:to-emerald-700 text-white text-lg font-semibold px-7 py-3.5 rounded-xl no-underline transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-600/20 text-center whitespace-nowrap">
+                        className="inline-block w-full md:w-auto bg-gradient-to-b from-[#00af66] to-[#00af66]/65 hover:opacity-90 shadow-md transition-opacity text-white text-lg font-semibold px-7 py-3.5 rounded-xl no-underline transition-all duration-200 text-center whitespace-nowrap">
                         Sell or trade in
                       </a>
                     </div>
@@ -100,11 +115,11 @@ export default async function VehicleDetailsPage({
               </div>
 
               {/* Specs grid & Extended Coverage */}
-              <div className="w-full max-w-[850px]">
+              <div className="w-full max-w-[860px]">
                 <AboutVehicle vehicle={vehicle} />
                 <div className="w-full my-14">
                   <div className="flex flex-col sm:flex-row items-center border border-gray-200 rounded-2xl px-6 py-4 bg-white w-full max-w-4xl mx-auto gap-5 box-border font-sans">
-                    <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5 flex-1">
+                    <div className="flex items-center sm:text-left gap-3">
                       <div className="flex-shrink-0">
                         <img src={protectShield?.src} alt="Protection Shield" className="w-[50px] h-auto block" />
                       </div>
@@ -129,14 +144,14 @@ export default async function VehicleDetailsPage({
                     </h2>
                     <div
                       className="prose prose-sm md:prose-base dark:prose-invert max-w-none text-foreground/80 leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: vehicle.vehicle_description }}
+                      dangerouslySetInnerHTML={{ __html: description }}
                     />
                   </div>
                 )}
               </div>
 
               {/* Accordion list */}
-              <div className="w-full flex justify-start mt-4">
+              <div className="w-full flex justify-start lg:mt-4 mt-0">
                 <VehicleSpecificationsAccordion
                   standardJson={vehicle.standard}
                   techSpecsJson={vehicle.technical_specification}
@@ -148,7 +163,9 @@ export default async function VehicleDetailsPage({
             {/* ── Right column: sticky sidebar (desktop) ── */}
             {showSidebar && (
               <div className="w-full lg:w-[380px] lg:flex-shrink-0 hidden lg:block">
-                <div className="sticky top-6 space-y-5">
+                {/* FIX 3: Added 'h-fit' to the element holding position: sticky. 
+                    This ensures the container doesn't stretch to 100% column height, allowing it room to glide down. */}
+                <div className="sticky top-0 h-fit space-y-5">
                   <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
                     <VehicleHeader vehicle={vehicle} />
                     <PriceAndCTA vehicle={vehicle} />
@@ -160,7 +177,7 @@ export default async function VehicleDetailsPage({
           </div>
 
           {/* ── Out of Bounds Elements ── */}
-          {/* Anything below this row boundary will release the sticky container cleanly */}
+          {/* This sits outside the column-flex context, releasing the sticky lock perfectly */}
           <div className="mt-12 w-full">
             <FinanceCalculator vehiclePrice={vehicle.selling_price} inventoryId={resolvedParams.id} />
           </div>
@@ -168,7 +185,7 @@ export default async function VehicleDetailsPage({
         </div>
       </section>
 
-      <div className="w-full flex justify-center items-center text-[12px] px-10 bg-[#666]/10 pt-10 pb-16 italic text-black">
+      <div className="w-full flex justify-center items-center text-base md:text-[12px] px-5 md:px-10 bg-[#666]/10 pt-10 pb-16 italic text-black">
         Every reasonable effort is made to ensure the accuracy of the information listed above. Vehicle pricing, incentives, options (including standard equipment), and technical specifications listed is for the 2025 Hyundai Elantra Preferred w/ Tech Pkg may not match the exact vehicle displayed. Please confirm with a sales representative the accuracy of this information.
       </div>
 

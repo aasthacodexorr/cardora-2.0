@@ -32,7 +32,7 @@ const GetInTouch = () => {
 
   return (
     <section className="w-full bg-[#121319] text-white">
-      <div className="mx-auto max-w-[1600px] px-10 py-16">
+      <div className="mx-auto max-w-[1600px] md:px-10 px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-10">
 
           {/* Left: business hours */}

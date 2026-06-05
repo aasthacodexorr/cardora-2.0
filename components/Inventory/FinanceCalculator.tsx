@@ -60,9 +60,9 @@ const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: Finan
   const sliderPercent = ((interestRate - 6) / (15 - 6)) * 100;
 
   return (
-    <div className="w-full bg-[#faf9f8] py-14 mt-10 font-sans">
+    <div className="w-full bg-[#faf9f8] md:py-14 py-6 mt-10 font-sans px-2 md:px-0 ">
       <div className="max-w-7xl mx-auto">
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row pl-2 ">
           {/* Left column: Content section */}
           <div className="flex flex-col gap-3 max-w-[700px]">
             <h2 className="text-3xl md:text-[30px] font-semibold text-gray-900 tracking-wider mt-6">
@@ -88,34 +88,34 @@ const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: Finan
             </ul>
 
             <div className="mt-4">
-              <Image src={vdpCar} alt="Vehicle Graphic" className="w-full" />
+              <Image src={vdpCar} alt="Vehicle Graphic" className="xl:max-w-[750px]" />
             </div>
           </div>
 
           {/* Right column: Calculator form */}
-          <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col gap-7">
-            <h3 className="text-xl sm:text-3xl font-semibold text-gray-900">How much do you want to spend?</h3>
+          <div className="bg-white rounded-2xl p-6 sm:p-10 flex flex-col gap-7 shadow-sm">
+            <h3 className="text-3xl font-semibold text-gray-900">How much do you want to spend?</h3>
 
             {/* Purchase Price and Deposit */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+            <div className="grid grid-cols-2 gap-10">
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-gray-500 tracking-wider">Purchase price</label>
+                <label className=" text:text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Purchase price</label>
                 <input
                   type="number"
                   value={purchasePrice}
                   onChange={(e) => handlePurchasePriceChange(e.target.value)}
-                  className="w-full px-4 py-4 rounded-xl border border-gray-200 outline-none focus:border-emerald-500 transition-colors text-gray-800 font-medium text-base"
+                  className="w-full px-4 py-4 rounded-xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border border-gray-200 outline-none focus:border-emerald-500 transition-colors text-gray-800 font-medium text-base"
                   placeholder="$ 25,000"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-gray-500 tracking-wider">Deposit amount</label>
+                <label className=" text:text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Deposit amount</label>
                 <input
                   type="number"
                   value={depositAmount}
                   onChange={(e) => handleDepositAmountChange(e.target.value)}
-                  className="w-full px-4 py-4 rounded-xl border border-gray-200 outline-none focus:border-emerald-500 transition-colors text-gray-800 font-medium text-base"
+                  className="w-full px-4 py-4 rounded-xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border border-gray-200 outline-none focus:border-emerald-500 transition-colors text-gray-800 font-medium text-base"
                   placeholder="$ 0"
                 />
               </div>
@@ -123,13 +123,13 @@ const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: Finan
 
             {/* Term of Loan */}
             <div className="flex flex-col gap-2 mt-4">
-              <label className="text-xs font-semibold text-gray-500 tracking-wider">Term of Loan (years)</label>
+              <label className="text:text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Term of Loan (years)</label>
               <div className="grid grid-cols-5 gap-2">
                 {[4, 5, 6, 7, 8].map((year) => (
                   <button
                     key={year}
                     onClick={() => handleTermClick(year)}
-                    className={`flex items-center justify-center border rounded-xl py-4 font-semibold cursor-pointer text-center transition-colors text-sm sm:text-base ${
+                    className={`flex items-center justify-center border rounded-xl py-4 px-4 font-semibold cursor-pointer text-center transition-colors text-xl sm:text-base ${
                       loanTerm === year
                         ? "border-2 border-emerald-500 text-emerald-600 font-bold"
                         : "border border-emerald-200 text-gray-600 hover:bg-emerald-50"
@@ -142,10 +142,10 @@ const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: Finan
             </div>
 
             {/* Interest Rate Slider */}
-            <div className="border border-gray-100 rounded-2xl p-4 bg-gray-50/50 flex flex-col gap-4">
+            <div className="mt-3 flex flex-col gap-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex flex-col">
-                  <label className="text-sm font-semibold text-gray-400">Interest rate</label>
+                  <label className="text-base text-black">Interest rate</label>
                   <p className="text-base text-black">Slide between 6% and 15%</p>
                 </div>
                 <div className="border border-gray-200 bg-white rounded-xl px-5 py-3 font-bold text-gray-900 flex items-center gap-0.5 shadow-sm text-xl">
@@ -199,17 +199,17 @@ const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: Finan
 
             {/* Bi-weekly Repayment Result */}
             <div className="bg-emerald-50/40 border border-emerald-50/80 rounded-2xl p-5 text-center flex flex-col gap-3">
-              <h4 className="text-xs font-bold text-gray-400 tracking-wide">Your estimated Bi-weekly repayment</h4>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight my-1">
+              <h4 className="text-base font-semibold text-black/50 tracking-wide">Your estimated Bi-weekly repayment</h4>
+              <h2 className="text-5xl sm:text-4xl font-extrabold text-gray-900 tracking-tight my-1">
                 ${biWeeklyPayment.toFixed(2)}
-                <span className="text-3xl sm:text-4xl font-bold">/Bi-weekly*</span>
+                <span className="text-5xl sm:text-4xl font-bold">/Bi-weekly*</span>
               </h2>
-              <div className="text-xs text-black tracking-wide uppercase">
+              <div className="text-base text-black tracking-wide uppercase">
                 <span>O.A.C + HST + licensing</span>
               </div>
               <a
                 href={`https://www.cardora.ca/finance?inventory_id=${inventoryId}`}
-                className="mt-2 block w-full bg-gradient-to-br from-emerald-400 to-emerald-600 hover:from-emerald-500 hover:to-emerald-700 text-white font-bold text-base py-4 px-6 rounded-xl transition-all duration-150 shadow-md shadow-emerald-600/10 hover:shadow-lg hover:-translate-y-0.5 text-center no-underline"
+                className="mt-2 block w-full bg-gradient-to-b from-[#00af66] to-[#00af66]/65 hover:opacity-90 text-white font-bold text-base py-4 px-6 rounded-xl transition-all duration-150 shadow-md shadow-emerald-600/10 text-center no-underline"
               >
                 Get personalised quotes
               </a>
