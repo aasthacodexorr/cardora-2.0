@@ -3,9 +3,17 @@
 import Image from "next/image";
 import expre from "@/assets/icons/expre.svg";
 
-const FuelIcon = () => (
+import checkout from "@/assets/icons/checkout.png"
+
+interface FuelIconProps {
+  size?: number;
+}
+
+
+const FuelIcon = ({ size = 4 }: FuelIconProps) => (
   <svg
-    className="w-5 h-5"
+    width={size}
+    height={size}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 384 512"
     fill="currentColor"
@@ -40,7 +48,7 @@ export const PriceAndCTA = ({ vehicle }:any) => (
           />
         </svg>
 
-        <div className="absolute top-[-52px] -translate-x-[65%] whitespace-nowrap bg-black text-white text-[14px] font-semibold px-4 py-2 rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 shadow-lg">
+        <div className="absolute top-[-52px] -translate-x-[74%] whitespace-nowrap bg-black text-white text-[14px] px-2 py-2 rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 shadow-lg">
           Listed price does not include taxes and licensing fees.
           <div className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
         </div>
@@ -48,7 +56,7 @@ export const PriceAndCTA = ({ vehicle }:any) => (
     </div>
 
     <div className="mt-2">
-      <Image src={expre} alt="Express Checkout" />
+      <Image src={checkout} alt="Express Checkout" />
     </div>
 
     <div className="mt-4 space-y-3">
@@ -77,9 +85,9 @@ export const VehicleHeader = ({ vehicle }:any) => (
     )}
 
     <div className="flex items-center justify-center gap-3 mt-6 text-black flex-wrap px-5">
-      <div className="flex items-center gap-1 text-[16px]">
+      <div className="flex items-center gap-1 text-[14px]">
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
           fill="currentColor"
@@ -91,16 +99,16 @@ export const VehicleHeader = ({ vehicle }:any) => (
       </div>  
 
       {vehicle?.fuel_type && (
-        <div className="flex items-center gap-1 text-[16px]">
-          <FuelIcon />
+        <div className="flex items-center gap-1 text-[14px]">
+          <FuelIcon size={15}/>
           <span>{vehicle?.fuel_type}</span>
         </div>
       )}
 
       {vehicle?.transmission && (
-        <div className="flex items-center gap-1 text-[16px]">
+        <div className="flex items-center gap-1 text-[14px]">
           <svg
-            className="w-5 h-5 text-black"
+            className="w-4 h-4 text-black"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 640 512"
             fill="currentColor"

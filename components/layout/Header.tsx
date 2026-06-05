@@ -191,7 +191,7 @@ const Header = () => {
                   }`}
                 >
                   {item.label}
-                  <span className={isActive ? "text-brand-green" : "text-gray-300"}>→</span>
+                  {/* <span className={isActive ? "text-brand-green" : "text-gray-300"}>→</span> */}
                 </Link>
               );
             })}

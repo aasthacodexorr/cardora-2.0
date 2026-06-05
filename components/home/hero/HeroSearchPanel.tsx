@@ -1,20 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const HeroSearchPanel = () => {
+const HeroSearchPanelContent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
+  // Parse [query] parameter from URL and populate search input
+  useEffect(() => {
+    const rawQueryString = typeof window !== 'undefined' ? window.location.search : '';
+    
+    // Parse [query] from raw query string using regex
+    // Match both %5Bquery%5D= (URL-encoded) and [query]= (decoded)
+    const queryMatch = rawQueryString.match(/(?:%5Bquery%5D|\[query\])=([^&]*)/);
+    const q = queryMatch ? decodeURIComponent(queryMatch[1]) : "";
+    
+    if (q) {
+      setSearchQuery(q);
+    }
+  }, []);
+
   const handleSearch = () => {
     if (!searchQuery.trim()) {
-      router.push("/inventory");
+      const COLLECTION_ID = process.env.NEXT_PUBLIC_TYPESENSE_COLLECTION || "";
+      const DEFAULT_SORT = "status_rank:asc,created_at:desc";
+      const encoded = encodeURIComponent(`${COLLECTION_ID}/sort/${DEFAULT_SORT}`);
+      router.push(`/inventory/?${encoded}`);
       return;
     }
 
-    router.push(`/inventory?q=${encodeURIComponent(searchQuery.trim())}`);
+    const COLLECTION_ID = process.env.NEXT_PUBLIC_TYPESENSE_COLLECTION || "";
+    const DEFAULT_SORT = "status_rank:asc,created_at:desc";
+    const encoded = encodeURIComponent(`${COLLECTION_ID}/sort/${DEFAULT_SORT}`);
+    router.push(`/inventory/?${encoded}%5Bquery%5D=${encodeURIComponent(searchQuery.trim())}`);
   };
 
   return (
@@ -62,7 +82,7 @@ const HeroSearchPanel = () => {
 
         {/* Browse all Cars button */}
         <Link
-          href="/inventory"
+          href={`/inventory/?${encodeURIComponent(process.env.NEXT_PUBLIC_TYPESENSE_COLLECTION + "/sort/status_rank:asc,created_at:desc")}`}
           className="block text-center text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-gradient-to-b from-[#00af66] to-[#00af66a6]"
         >
           Browse all Cars
@@ -79,6 +99,14 @@ const HeroSearchPanel = () => {
         </p>
       </div>
     </div>
+  );
+};
+
+const HeroSearchPanel = () => {
+  return (
+    <Suspense fallback={<div className="w-full max-w-[550px] h-[300px] bg-[#00573326] rounded-[10px]" />}>
+      <HeroSearchPanelContent />
+    </Suspense>
   );
 };
 

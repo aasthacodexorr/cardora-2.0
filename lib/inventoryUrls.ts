@@ -1,66 +1,92 @@
 /* =========================
    Inventory URL Generator
-   Dynamically generates inventory filter URLs
-   using the Typesense collection ID from env vars.
+   Dynamically generates inventory filter URLs with collection_id and default sort
+   as query parameters (not path-based).
    
-   This centralizes all inventory link logic,
-   making it easy to maintain and update.
+   URL Format:
+   /inventory/?{collection_id_encoded}%2Fsort%2F{sort_encoded}[query]={value}
    
-   When clicking footer links:
-   - The search query (make/type) is added to the URL as a parameter
-   - react-instantsearch reads the URL and auto-populates the search box
-   - Cards are filtered based on the search term
+   Example:
+   /inventory/?07cb7c095c0cf712732a976016079e19%2Fsort%2Fstatus_rank%3Aasc%2Ccreated_at%3Adesc[query]=van
+   
+   When clicking footer links or using hero search:
+   - The query parameter includes collection_id and default sort encoded
+   - Additional query params (q, body_type, fuel_type, etc.) are appended
+   - React-instantsearch reads the URL and auto-populates the search box
 ========================= */
 
 const COLLECTION_ID = process.env.NEXT_PUBLIC_TYPESENSE_COLLECTION || "";
 
+// Default sort parameters: recently added (status_rank ascending, created_at descending)
+const DEFAULT_SORT = "status_rank:asc,created_at:desc";
+
 /**
- * Generates a make-filtered inventory URL
- * Sets the search query parameter so the search box is pre-populated
+ * Encodes collection_id and default sort for URL parameter
+ * Converts: 07cb7c...e19/sort/status_rank:asc,created_at:desc
+ * To URL safe: 07cb7c...e19%2Fsort%2Fstatus_rank%3Aasc%2Ccreated_at%3Adesc
  * 
- * Example: Used Toyota
- * URL: /inventory?q=Honda
- * 
- * @param make - Vehicle make (e.g., "Toyota", "BMW", "Honda")
- * @returns Full inventory URL with search query parameter
+ * @returns Encoded collection_id/sort string
  */
-export const getInventoryUrlByMake = (make: string): string => {
-  // Use standard q parameter that the inventory page expects
-  return `/inventory?q=${encodeURIComponent(make)}`;
+const getEncodedCollectionAndSort = (): string => {
+  if (!COLLECTION_ID) {
+    console.warn("NEXT_PUBLIC_TYPESENSE_COLLECTION not set in environment");
+    return "";
+  }
+  
+  const collectionSort = `${COLLECTION_ID}/sort/${DEFAULT_SORT}`;
+  return encodeURIComponent(collectionSort);
 };
 
 /**
- * Generates a body type filtered inventory URL
+ * Generates a make-filtered inventory URL with collection_id and default sort in query params
+ * Sets the search query parameter so the search box is pre-populated
+ * 
+ * Example: Used Toyota
+ * URL: /inventory/?07cb7c...%2Fsort%2F...%5Bquery%5D=Toyota
+ * 
+ * @param make - Vehicle make (e.g., "Toyota", "BMW", "Honda")
+ * @returns Full inventory URL with collection_id, sort, and search query
+ */
+export const getInventoryUrlByMake = (make: string): string => {
+  const encoded = getEncodedCollectionAndSort();
+  if (!encoded) return "/inventory";
+  
+  return `/inventory/?${encoded}%5Bquery%5D=${encodeURIComponent(make)}`;
+};
+
+/**
+ * Generates a body type filtered inventory URL with collection_id and default sort in query params
  * Sets the search query parameter so the search box is pre-populated
  * 
  * Example: Used SUVs
- * URL: /inventory?q=SUV
+ * URL: /inventory/?07cb7c...%2Fsort%2F...%5Bquery%5D=SUV
  * 
  * @param bodyType - Single body type value
- * @returns Full inventory URL with search query parameter
+ * @returns Full inventory URL with collection_id, sort, and search query
  */
 export const getInventoryUrlByBodyType = (bodyType: string): string => {
-  // Use standard q parameter that the inventory page expects
-  return `/inventory?q=${encodeURIComponent(bodyType)}`;
+  const encoded = getEncodedCollectionAndSort();
+  if (!encoded) return "/inventory";
+  
+  return `/inventory/?${encoded}%5Bquery%5D=${encodeURIComponent(bodyType)}`;
 };
 
 /**
  * Generates a generic filtered inventory URL with custom parameters
+ * Includes collection_id and default sort in query params
  * 
  * @param params - Query parameters as key-value pairs
- * @returns Full inventory URL with custom filters
+ * @returns Full inventory URL with collection_id, sort, and custom filters
  */
 export const getInventoryUrlWithParams = (params: Record<string, string>): string => {
-  if (!COLLECTION_ID) {
-    console.warn("NEXT_PUBLIC_TYPESENSE_COLLECTION not set in environment");
-    return "/inventory";
-  }
+  const encoded = getEncodedCollectionAndSort();
+  if (!encoded) return "/inventory";
   
   const queryString = Object.entries(params)
-    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .map(([key, value]) => `%5B${key}%5D=${encodeURIComponent(value)}`)
     .join("&");
   
-  return `/inventory?${queryString}`;
+  return queryString ? `/inventory/?${encoded}&${queryString}` : `/inventory/?${encoded}`;
 };
 
 /* ── Inventory Link Definitions ────────────────────────────────── */

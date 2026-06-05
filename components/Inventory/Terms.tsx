@@ -6,12 +6,12 @@ console.log(vehicle,"vvvvvvvvvv");
     return (
         <>
 
-            <div className="w-full max-w-[380px] font-sans mt-10">
+            <div className="w-full lg:max-w-[380px] font-sans mt-10">
                 {/* Main Container Card */}
                 <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm text-gray-800">
 
                     {/* Features Grid */}
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-4 text-[13px] font-medium tracking-tight">
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-4 text-[14px] font-medium tracking-tight">
 
                         {/* 6-month warranty */}
                         <div className="flex items-center gap-2.5">
