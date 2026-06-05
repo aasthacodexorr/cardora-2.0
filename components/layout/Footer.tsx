@@ -1,0 +1,149 @@
+/* =========================
+   Footer Component (Layout)
+   Renders the site-wide footer with:
+   - Link columns (Popular Makes, Car Types, About Us, Follow Us)
+   - Contact / address block
+   - Copyright bar with privacy/terms links
+========================= */
+
+"use client";
+
+import Link from "next/link";
+import { MapPin } from "lucide-react";
+import Image from "next/image";
+import zlogo from "@/assets/brand/zlogo.png";
+import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getBodyTypeUrl } from "@/lib/inventoryUrls";
+
+/* ── Static Data ────────────────────────────────────────────── */
+const columns = [
+  {
+    title: "Popular Makes",
+    links: POPULAR_MAKES.map(({ label, make }) => ({
+      label,
+      href: getMakeUrl(make),
+      external: false,
+    })),
+  },
+  {
+    title: "Popular Car Types",
+    links: POPULAR_CAR_TYPES.map(({ label, bodyType }) => ({
+      label,
+      href: getBodyTypeUrl(bodyType),
+      external: false,
+    })),
+  },
+  {
+    title: "About Us",
+    links: [
+      { label: "Home", href: "/", external: false },
+      { label: "Find Your Car", href: "/inventory", external: false },
+      { label: "Sell or Trade In", href: "/trade-in", external: false },
+      { label: "Car Finance", href: "/finance", external: false },
+      { label: "Payment Calculator", href: "/financing", external: false },
+      { label: "Skip the Dealership", href: "/financing", external: false },
+      { label: "About Us", href: "/about-us", external: false },
+      { label: "Contact Us", href: "/", external: false },
+    ],
+  },
+  {
+    title: "Follow Us",
+    links: [
+      { label: "Facebook", href: "https://www.facebook.com/cardorahq", external: true },
+      { label: "Instagram", href: "https://www.instagram.com/cardora.ca/", external: true },
+      { label: "TikTok", href: "/inventory", external: false },
+      { label: "YouTube", href: "/inventory", external: false },
+    ],
+  },
+];
+
+/* ── Component ─────────────────────────────────────────────── */
+const Footer = () => {
+  return (
+    <footer className="w-full bg-[#121319] border-t-0 -mt-5 ">
+      <div className="mx-auto max-w-[1600px] px-10 pb-5">
+
+        {/* Link columns grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-10">
+          {columns.map((col) => (
+            <div key={col.title}>
+              <h3 className="text-[18px] font-bold tracking-[1px] uppercase mb-5 text-white">
+                {col.title}
+              </h3>
+              <ul className="space-y-3">
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    {link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[15px] uppercase text-white transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="text-[15px] uppercase text-white transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+          {/* Contact / address column */}
+          <div>
+            <h3 className="text-[18px] font-bold tracking-[1px] uppercase mb-5 text-white">
+              Contact Us
+            </h3>
+            <div className="flex items-start gap-3">
+              <MapPin className="h-5 w-5 text-white/85 shrink-0 mt-0.5" />
+              <a href="https://www.google.com/maps/place/Cardora/@43.7019241,-79.7051392,1711m/data=!3m1!1e3!4m6!3m5!1s0x882b3f8957c9a033:0x9a07057d8dafccb0!8m2!3d43.7016063!4d-79.702997!16s%2Fg%2F11x7qxfpfx?entry=ttu&amp;g_ep=EgoyMDI2MDMyMy4xIKXMDSoASAFQAw%3D%3D" target="_blank">
+                <address className="not-italic text-[15px] leading-relaxed text-white cursor-pointer">
+                  8050 Dixie Rd,<br />
+                  Brampton, ON<br />
+                  L6T 4W6
+                </address>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+      <div className="mt-12">
+          <hr className="border-dark-border" />
+        </div>
+
+        {/* Copyright bar */}
+        <div className="pt-6 px-10 pb-5 flex flex-col md:flex-row gap-4 justify-between max-[767px]:justify-center max-[767px]:items-center">
+          <p className="text-[13px] text-white uppercase">
+            © 2026 Cardora Motor Group. <br />
+            <span className="flex items-center gap-2">
+              All rights reserved. Powered by
+              <a
+                href="https://www.zopdealer.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Image src={zlogo} alt="Zop Dealer" width={20} height={20} />
+              </a>
+            </span>
+          </p>
+          <p className="text-[12.5px] text-white uppercase">
+            <a href="#" className="hover:text-white">Privacy Policy </a>
+            {"|"}
+            <a href="#" className="hover:text-white"> Terms &amp; Conditions </a>
+            {"|"}
+            <a href="#" className="hover:text-white"> Site Map</a>
+          </p>
+        </div>
+    </footer>
+  );
+};
+
+export default Footer;
