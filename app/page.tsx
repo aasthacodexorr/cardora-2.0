@@ -1,24 +1,42 @@
+/* =========================
+   Home Page
+   Root page of the Cardora website.
+   Composes all homepage sections in order:
+   Hero → CategoryPills → PreQualify → NextRide →
+   FeaturedVehicles → Reviews → CardoraDifference →
+   GetInTouch → Footer
+========================= */
+
 "use client";
 
-import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import CategoryPills from "@/components/CategoryPills";
-import PreQualify from "@/components/PreQualify";
-import NextRide from "@/components/NextRide";
-import FeaturedVehicles from "@/components/FeaturedVehicles";
-import Reviews from "@/components/Reviews";
-import CardoraDifference from "@/components/CardoraDifference";
-import GetInTouch from "@/components/GetInTouch";
-import Footer from "@/components/Footer";
+// Layout components
+import { Header, Footer } from "@/components/layout";
 
-const Index = () => {
+// Home-specific sections
+import {
+  Hero,
+  CategoryPills,
+  PreQualify,
+  NextRide,
+  FeaturedVehicles,
+  Reviews,
+  CardoraDifference,
+} from "@/components/home";
+
+// Shared/reusable sections
+import { GetInTouch } from "@/components/common";
+
+/* ── Page Component ────────────────────────────────────────── */
+const HomePage = () => {
   return (
-    // add class home_p
-    <main className="min-h-screen bg-background home_p">
+    <main className="min-h-screen bg-background">
+      {/* Hero section has a blue background that wraps the header */}
       <div className="bg-hero-bg">
         <Header />
         <Hero />
       </div>
+
+      {/* Homepage sections */}
       <CategoryPills />
       <PreQualify />
       <NextRide />
@@ -31,4 +49,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default HomePage;
