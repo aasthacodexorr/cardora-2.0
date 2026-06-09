@@ -65,11 +65,11 @@ export default async function VehicleDetailsPage({
         <Header />
       </div>
       <section className="w-full bg-background flex-1 justify-center">
-        <div className="mx-auto w-full max-w-[1600px] py-6 lg:pt-[30px] ">
+        <div className="mx-auto w-full py-6 lg:pt-[30px]">
           
           {/* ── SECTION ROW: Controls the boundaries of the sticky sidebar ── */}
           {/* FIX 2: Added layout-level tracks using items-stretch so the columns share an identical height boundary */}
-          <div className="flex flex-col gap-5 lg:flex-row items-stretch px-5 md:px-8 lg:px-10 relative ">
+          <div className="flex flex-col gap-5 lg:flex-row items-stretch px-5 md:px-8 lg:px-10 relative w-full ">
             
             {/* ── Left column: gallery + specs + description ── */}
             <div className={`flex flex-col gap-8 items-start flex-1 w-full ${showSidebar ? "" : "mx-auto"}`}>
@@ -162,7 +162,7 @@ export default async function VehicleDetailsPage({
 
             {/* ── Right column: sticky sidebar (desktop) ── */}
             {showSidebar && (
-              <div className="w-full lg:w-[380px] lg:flex-shrink-0 hidden lg:block">
+              <div className="w-full hidden lg:block">
                 {/* FIX 3: Added 'h-fit' to the element holding position: sticky. 
                     This ensures the container doesn't stretch to 100% column height, allowing it room to glide down. */}
                 <div className="sticky top-0 h-fit space-y-5">
