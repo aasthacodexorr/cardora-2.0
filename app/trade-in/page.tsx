@@ -12,7 +12,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Search, FileText, MessageSquareQuote, Mail, CalendarCheck } from "lucide-react";
+import { ChevronDown, Search, FileText, MessageSquareQuote, Mail, CalendarCheck, CarFrontIcon } from "lucide-react";
 
 // Layout
 import { Header, Footer } from "@/components/layout";
@@ -30,7 +30,7 @@ import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
 /* ── Static Data ────────────────────────────────────────────── */
 const steps = [
   {
-    icon: Search,
+    icon: CarFrontIcon,
     title: "Find your car",
     description: "Enter your VIN or vehicle details to find the car you want to sell or trade.",
   },
@@ -100,119 +100,188 @@ const TradeIn = () => {
       <Header />
 
       {/* ── Hero / Quote form ────────────────────────────── */}
-      <section className="w-full bg-hero-bg">
-        <div className="mx-auto grid max-w-[1400px] grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 px-6 py-16 lg:py-24 items-center">
-          {/* Left: headline + estimated offer */}
-          <div>
-            <h1 className="font-extrabold text-foreground leading-[1.05] tracking-tight text-[44px] lg:text-[64px]">
-              Sell my car the easy way.
-            </h1>
-            <p className="mt-6 text-[18px] lg:text-[22px] font-semibold text-foreground/80 max-w-xl">
-              Fast, seamless and secure. It's the way everyone deserves.
-            </p>
-            <div className="mt-8 flex items-center gap-6 text-foreground">
-              <div>
-                <div className="text-sm font-semibold text-foreground/60">Estimated offer</div>
-                <div className="text-3xl font-extrabold">$18,400</div>
-              </div>
-              <div className="h-10 w-px bg-foreground/20" />
-              <div>
-                <div className="text-sm font-semibold text-foreground/60">Valid until</div>
-                <div className="text-lg font-bold">Jan 9, 2026</div>
-              </div>
-            </div>
+      <section className="w-full relative overflow-hidden px-40 ">
+      <div className="mx-auto pt-20 items-start relative z-10 flex justify-between gap-10 pb-5">
+        
+        {/* Left: Heading Typography Only */}
+        <div className="">
+          <h1 className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[44px] lg:text-[66px]">
+            Sell my car the<br />easy way.
+          </h1>
+          <p className="mt-6 text-[18px] lg:text-[20px] font-medium text-gray-600 max-w-xl leading-relaxed">
+            Fast, seamless and secure. It's the way everyone <br/> deserves.
+          </p>
+        </div>
+
+        {/* Right: Quote Form Card matching reference image */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 pb-28 border border-gray-100/80 w-full max-w-[490px] lg:justify-self-end">
+          
+          {/* Flat Underline Mode Switcher */}
+          <div className="flex border-b border-gray-200 mb-6">
+            <button
+              onClick={() => setMode("vehicle")}
+              className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative ${
+                mode === "vehicle" ? "text-gray-900" : "text-gray-900"
+              }`}
+            >
+              By Vehicle
+              {mode === "vehicle" && (
+                <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#00b074] rounded-full" />
+              )}
+            </button>
+            <button
+              onClick={() => setMode("vin")}
+              className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative ${
+                mode === "vin" ? "text-gray-900" : "text-gray-900 "
+              }`}
+            >
+              VIN
+              {mode === "vin" && (
+                <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#00b074] rounded-full" />
+              )}
+            </button>
           </div>
 
-          {/* Right: quote form card */}
-          <div className="bg-card rounded-2xl shadow-xl p-6 lg:p-8 border border-border">
-            {/* By Vehicle / VIN toggle */}
-            <div className="flex gap-2 mb-6 bg-muted rounded-full p-1">
-              {(["vehicle", "vin"] as const).map((m) => (
-                <button
-                  key={m}
-                  onClick={() => setMode(m)}
-                  className={`flex-1 py-2.5 rounded-full text-sm font-bold transition-colors ${
-                    mode === m
-                      ? "bg-brand-green text-brand-green-foreground"
-                      : "text-foreground/70"
-                  }`}
-                >
-                  {m === "vehicle" ? "By Vehicle" : "VIN"}
-                </button>
-              ))}
-            </div>
-
-            {/* Form fields */}
-            {mode === "vehicle" ? (
-              <div className="space-y-3">
-                {["Select Year", "Select Make", "Select Model", "Select Trim", "Select Province"].map((label) => (
-                  <div key={label} className="relative">
-                    <select
-                      className="w-full appearance-none bg-background border border-border rounded-lg px-4 py-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green"
-                      defaultValue=""
-                    >
-                      <option value="" disabled>{label}</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50 pointer-events-none" />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <Input placeholder="Enter VIN (17 characters)" className="h-12" />
-                <div className="relative">
+          {/* Form Context Control Fields */}
+          {mode === "vehicle" ? (
+            <div className="space-y-3.5">
+              {["Select Year", "Select Make", "Select Model", "Select Trim"].map((label) => (
+                <div key={label} className="relative">
                   <select
-                    className="w-full appearance-none bg-background border border-border rounded-lg px-4 py-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-brand-green"
+                    className="w-full appearance-none bg-white border border-gray-300 rounded-xl px-4 py-3.5 text-[15px] font-medium focus:outline-none focus:border-[#00b074] cursor-pointer"
                     defaultValue=""
                   >
-                    <option value="" disabled>Select Province</option>
-                    <option>ON</option>
-                    <option>AB</option>
+                    <option value="" disabled>{label}</option>
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50 pointer-events-none" />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                </div>
+              ))}
+              
+              {/* Regional Split Inputs Row */}
+              <div className="grid grid-cols-2 gap-3.5">
+                <div className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3.5 text-[15px] font-medium text-gray-700">
+                  ontario
+                </div>
+                <div className="relative">
+                  <select 
+                    className="w-full appearance-none bg-white border border-gray-300 rounded-xl px-4 py-3.5 text-[15px] font-medium text-gray-400 focus:outline-none" 
+                    defaultValue=""
+                  >
+                    <option value="" disabled></option>
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
                 </div>
               </div>
-            )}
-
-            <div className="flex justify-between gap-3 mt-6">
-              <Button variant="outline" className="flex-1">Back</Button>
-              <Button className="flex-1 bg-brand-green hover:bg-brand-green/90 text-brand-green-foreground">
-                Continue
-              </Button>
             </div>
+          ) : (
+            <div className="space-y-3.5">
+              <input 
+                type="text" 
+                placeholder="Enter 17-character VIN" 
+                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3.5 text-[15px] font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#00b074]"
+              />
+              <div className="relative">
+                <select 
+                  className="w-full appearance-none bg-white border border-gray-300 rounded-xl px-4 py-3.5 text-[15px] font-medium text-gray-500 focus:outline-none"
+                  defaultValue=""
+                >
+                  <option value="" disabled>Select Province</option>
+                  <option value="ON">Ontario</option>
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+          )}
+
+          {/* Single Action Submit Button */}
+          <button className="w-full mt-6 bg-[#00b074] hover:bg-[#009b65] text-white font-bold py-3.5 px-6 rounded-xl transition-all text-[15px] shadow-sm">
+            Submit
+          </button>
+        </div>
+      </div>
+
+      {/* ── Background Wave & Axis Graphic Overlays ── */}
+      <div className="absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0">
+        
+        {/* Main Landscape Wave Vector */}
+       <div className="absolute bottom-22 w-full">
+         <svg 
+          viewBox="0 0 1440 100" 
+          fill="none" 
+          className="w-full min-w-[1440px]"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            d="M0,70 C340,110 520,30 720,70 C920,110 1120,50 1440,70" 
+            stroke="#00b074" 
+            strokeWidth="10" 
+            strokeLinecap="round"
+            fill="none" 
+          />
+        </svg>
+       </div>
+
+        {/* Center Connected Data Badge Tracker */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-16 flex flex-col items-center">
+          
+          {/* Vertical Transparent Connector Bar */}
+          <div className="w-[42px] h-96 bg-gradient-to-b from-transparent via-[#00b074]/10 to-[#00b074]/20 relative flex items-end justify-center">
+            {/* Center Timeline Node Circle on Wave Boundary */}
+            <div className="w-7 h-7 rounded-full bg-white border-[4px] border-[#00b074] absolute bottom-[21px] z-10 shadow-sm" />
+          </div>
+          
+          {/* Valuation Floating Popup Tag */}
+          <div className="bg-[#cdf5e3] border border-[#a6e4ce] text-center px-6 py-4 rounded-xl shadow-md -translate-y-4">
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
+            <div className="text-2xl font-black text-gray-900 mt-0.5">$18,400</div>
           </div>
         </div>
-      </section>
+
+      </div>
+    </section>
 
       {/* ── How it works ─────────────────────────────────── */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1400px] px-6 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-12 items-center">
-            <img
-              src={tradeInHero.src}
-              alt="Customer trading in their car at Cardora"
-              width={1280}
-              height={896}
-              loading="lazy"
-              className="w-full rounded-3xl object-cover shadow-lg"
-            />
+        <div className="mx-auto max-w-[1300px] px-9 py-16 lg:py-24">
+          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
+            {/* Left Column: Image */}
+            <div className="w-full h-full">
+              <img
+                src={tradeInHero.src}
+                alt="Customer trading in their car at Cardora"
+                width={1280}
+                height={1896}
+                loading="lazy"
+                className="h-full w-full rounded-[32px] object-cover"
+              />
+            </div>
+
+            {/* Right Column: Steps */}
             <div>
-              <h2 className="text-[40px] lg:text-[52px] font-extrabold text-foreground leading-tight">
+              <h2 className="text-[36px] font-bold tracking-tight text-zinc-900 lg:text-[44px]">
                 How it works
               </h2>
-              <div className="mt-8 space-y-6">
-                {steps.map((step, i) => {
+
+              <div className="mt-4 space-y-4">
+                {steps.map((step) => {
                   const Icon = step.icon;
                   return (
-                    <div key={step.title} className="flex gap-4">
-                      <div className="flex-shrink-0 h-12 w-12 rounded-full bg-brand-green/10 text-brand-green flex items-center justify-center font-bold">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-foreground">
-                          {i + 1}. {step.title}
+                    <div
+                      key={step.title}
+                      className="flex items-start justify-between rounded-2xl border border-zinc-100 bg-white px-6 py-4 shadow-lg"
+                    >
+                      <div className="">
+                        <h3 className="text-[22px] font-bold text-zinc-900">
+                          {step.title}
                         </h3>
-                        <p className="mt-1 text-foreground/70 leading-relaxed">{step.description}</p>
+                        <p className="text-[17px] leading-relaxed ">
+                          {step.description}
+                        </p>
+                      </div>
+
+                      {/* Icon on the right side */}
+                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center text-zinc-400">
+                        <Icon className="h-9 w-9 stroke-[1.5]" />
                       </div>
                     </div>
                   );
@@ -224,23 +293,22 @@ const TradeIn = () => {
       </section>
 
       {/* ── FAQs ─────────────────────────────────────────── */}
-      <section className="w-full bg-review-bg">
-        <div className="mx-auto max-w-[1000px] px-6 py-20">
+      <section className="w-full mb-14">
+        <div className="mx-auto max-w-[1300px]  px-9 py-16 lg:py-0">
           <div className="flex items-center gap-3 mb-10">
-            <MessageSquareQuote className="h-8 w-8 text-brand-green" />
-            <h2 className="text-[36px] lg:text-[44px] font-extrabold text-foreground">
+            <h2 className="text-[36px] lg:text-[44px] font-semibold text-foreground">
               Popular sell or trade in questions
             </h2>
           </div>
 
-          <div className="space-y-3">
+          <div className="">
             {faqs.map((faq, i) => (
-              <div key={faq.q} className="bg-card rounded-xl border border-border overflow-hidden">
+              <div key={faq.q} className="bg-card border border-border overflow-hidden ">
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
+                  className={`w-full flex items-center justify-between px-6 py-5 text-left cursor-pointer ${openFaq != i ? "bg-[#f4f4f4]" : null }`}
                 >
-                  <span className="font-bold text-foreground text-[17px]">{faq.q}</span>
+                  <span className={`font-bold ${openFaq != i ? "text-[#666666]" : "text-[#333333]" } text-[20px] leading-none`}>{faq.q}</span>
                   <ChevronDown
                     className={`h-5 w-5 flex-shrink-0 text-foreground/60 transition-transform ${
                       openFaq === i ? "rotate-180" : ""
@@ -248,20 +316,20 @@ const TradeIn = () => {
                   />
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 pb-5 text-foreground/70 leading-relaxed">{faq.a}</div>
+                  <div className="px-6 pb-5 text-foreground/70">{faq.a}</div>
                 )}
               </div>
             ))}
           </div>
 
-          <div className="mt-12 text-center">
+          {/* <div className="mt-12 text-center">
             <p className="text-foreground/70 mb-4">Ready to find your next ride after selling?</p>
             <Link href="/inventory">
               <Button className="bg-brand-green hover:bg-brand-green/90 text-brand-green-foreground px-8 py-6 text-base font-bold">
                 Browse all Cars
               </Button>
             </Link>
-          </div>
+          </div> */}
         </div>
       </section>
 
