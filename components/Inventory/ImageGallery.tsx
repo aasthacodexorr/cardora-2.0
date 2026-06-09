@@ -92,7 +92,7 @@ export const ImageGallery = ({
         {/* ── Main image ──────────────────────────────────────── */}
         <div className="relative rounded-2xl xl:min-w-[700px] xl:max-w-[700px] overflow-hidden bg-gray-100 shadow-sm">
           {/* Image counter badge */}
-          <div className="absolute bottom-4 right-4 z-20 bg-black/60 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
+          <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
             {activeIndex + 1} / {images.length}
           </div>
 
@@ -120,7 +120,7 @@ export const ImageGallery = ({
                 e.stopPropagation();
                 goTo(activeIndex - 1);
               }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-white/60 hover:bg-white rounded-full p-1 shadow-xl transition-all duration-300 hover:scale-110"
+              className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl transition-all duration-300 hover:scale-110"
               aria-label="Previous Image"
             >
               <ChevronLeft className="w-9 h-9 text-gray-500/60" strokeWidth={3} />
@@ -135,7 +135,7 @@ export const ImageGallery = ({
                 e.stopPropagation();
                 goTo(activeIndex + 1);
               }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-white/60 hover:bg-white rounded-full p-1 shadow-xl transition-all duration-300 hover:scale-110"
+              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl transition-all duration-300 hover:scale-110"
               aria-label="Next Image"
             >
               <ChevronRight className="w-9 h-9 text-gray-500/60" strokeWidth={3} />

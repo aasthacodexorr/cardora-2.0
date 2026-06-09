@@ -60,9 +60,9 @@ const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: Finan
   const sliderPercent = ((interestRate - 6) / (15 - 6)) * 100;
 
   return (
-    <div className="w-full bg-[#faf9f8] md:py-14 py-6 mt-10 font-sans px-2 md:px-0 ">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row pl-2 ">
+    <div className="w-full bg-[#faf9f8] md:py-14 py-6 mt-10 font-sans px-2 md:px-10">
+      <div className="w-full mx-auto">
+        <div className="flex flex-col lg:flex-row pl-2 gap-10">
           {/* Left column: Content section */}
           <div className="flex flex-col gap-3 max-w-[700px]">
             <h2 className="text-3xl md:text-[30px] font-semibold text-gray-900 tracking-wider mt-6">
@@ -88,12 +88,12 @@ const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: Finan
             </ul>
 
             <div className="mt-4">
-              <Image src={vdpCar} alt="Vehicle Graphic" className="xl:max-w-[750px]" />
+              <Image src={vdpCar} alt="Vehicle Graphic" />
             </div>
           </div>
 
           {/* Right column: Calculator form */}
-          <div className="bg-white rounded-2xl p-6 sm:p-10 flex flex-col gap-7 shadow-sm">
+          <div className="bg-white rounded-2xl p-6 sm:p-10 flex flex-col gap-7 shadow-sm w-full">
             <h3 className="text-3xl font-semibold text-gray-900">How much do you want to spend?</h3>
 
             {/* Purchase Price and Deposit */}
