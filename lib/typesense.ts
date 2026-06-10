@@ -14,7 +14,7 @@
 
 import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
 
-/* ── Server configuration ───────────────────────────────────── */
+/*  Server configuration */
 export const typesenseServerConfig = {
   apiKey: process.env.NEXT_PUBLIC_TYPESENSE_SEARCH_KEY || "",
   nodes: [
@@ -27,7 +27,7 @@ export const typesenseServerConfig = {
   connectionTimeoutSeconds: 5,
 };
 
-/* ── Adapter + search client ────────────────────────────────── */
+/*  Adapter + search client */
 // Pinned to ~2.8.0 for Typesense v0.23.1 compatibility
 export const typesenseAdapter = new TypesenseInstantSearchAdapter({
   server: typesenseServerConfig,

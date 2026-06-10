@@ -27,7 +27,7 @@ import { Input } from "@/components/ui/input";
 // Assets
 import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
 
-/* ── Static Data ────────────────────────────────────────────── */
+/*  Static Data */
 const steps = [
   {
     icon: CarFrontIcon,
@@ -90,7 +90,7 @@ const faqs = [
   },
 ];
 
-/* ── Page Component ────────────────────────────────────────── */
+/*  Page Component */
 const TradeIn = () => {
   const [mode, setMode]       = useState<"vehicle" | "vin">("vehicle");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -99,7 +99,7 @@ const TradeIn = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* ── Hero / Quote form ────────────────────────────── */}
+      {/*  Hero / Quote form */}
       <section className="w-full relative overflow-hidden px-40 ">
       <div className="mx-auto pt-20 items-start relative z-10 flex justify-between gap-10 pb-5">
         
@@ -108,8 +108,8 @@ const TradeIn = () => {
           <h1 className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[44px] lg:text-[66px]">
             Sell my car the<br />easy way.
           </h1>
-          <p className="mt-6 text-[18px] lg:text-[20px] font-medium text-gray-600 max-w-xl leading-relaxed">
-            Fast, seamless and secure. It's the way everyone <br/> deserves.
+          <p className="mt-6 text-[18px] lg:text-[23px] font-medium text-black/80 max-w-xl leading-relaxed">
+            Fast,seamless and secure. It's the way everyone <br/> deserves.
           </p>
         </div>
 
@@ -194,13 +194,13 @@ const TradeIn = () => {
           )}
 
           {/* Single Action Submit Button */}
-          <button className="w-full mt-6 bg-[#00b074] hover:bg-[#009b65] text-white font-bold py-3.5 px-6 rounded-xl transition-all text-[15px] shadow-sm">
+          <button className="cursor-pointer my-3 px-9 py-3 rounded-xl border border-[#00b066] bg-gradient-to-b from-[#00af66] to-[#00af66]/65 text-white text-[12px] sm:text-[14px] tracking-wider hover:opacity-90 shadow-md transition-opacity">
             Submit
           </button>
         </div>
       </div>
 
-      {/* ── Background Wave & Axis Graphic Overlays ── */}
+      {/*  Background Wave & Axis Graphic Overlays */}
       <div className="absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0">
         
         {/* Main Landscape Wave Vector */}
@@ -231,18 +231,18 @@ const TradeIn = () => {
           </div>
           
           {/* Valuation Floating Popup Tag */}
-          <div className="bg-[#cdf5e3] border border-[#a6e4ce] text-center px-6 py-4 rounded-xl shadow-md -translate-y-4">
-            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
-            <div className="text-2xl font-black text-gray-900 mt-0.5">$18,400</div>
+          <div className="bg-[#cdf5e3] border border-[#a6e4ce] text-center px-9 py-4 rounded-xl shadow-md -translate-y-4">
+            <div className="text-[10px]  text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
+            <div className="text-2xl font-semibold font-black text-gray-900 mt-0.5">$18,400</div>
           </div>
         </div>
 
       </div>
     </section>
 
-      {/* ── How it works ─────────────────────────────────── */}
+      {/*  How it works */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1300px] px-9 py-16 lg:py-24">
+        <div className="mx-auto max-w-[1300px] px-9 py-16 lg:py-20">
           <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
             {/* Left Column: Image */}
             <div className="w-full h-full">
@@ -292,8 +292,8 @@ const TradeIn = () => {
         </div>
       </section>
 
-      {/* ── FAQs ─────────────────────────────────────────── */}
-      <section className="w-full mb-14">
+      {/* FAQs */}
+      <section className="w-full mb-14 mt-10">
         <div className="mx-auto max-w-[1300px]  px-9 py-16 lg:py-0">
           <div className="flex items-center gap-3 mb-10">
             <h2 className="text-[36px] lg:text-[44px] font-semibold text-foreground">

@@ -6,7 +6,7 @@
    and external URLs.
 ========================= */
 
-// ── Navigation ──────────────────────────────────────────────
+//  Navigation 
 export const NAV_ITEMS = [
   { label: "Shop", to: "/inventory" },
   { label: "Sell/Trade", to: "/trade-in" },
@@ -16,7 +16,7 @@ export const NAV_ITEMS = [
   { label: "Why Cardora?", to: "/about-us" },
 ] as const;
 
-// ── Contact ──────────────────────────────────────────────────
+//  Contact 
 export const PHONE_NUMBER = "1-855-514-5500";
 export const PHONE_HREF = "tel:1-855-514-5500";
 
@@ -27,13 +27,13 @@ export const ADDRESS = {
   postalCode: "L6T 4W6",
 } as const;
 
-// ── Social ───────────────────────────────────────────────────
+//  Social 
 export const SOCIAL_LINKS = {
   facebook: "https://facebook.com",
   instagram: "https://instagram.com",
 } as const;
 
-// ── Business Hours ───────────────────────────────────────────
+//  Business Hours 
 export const BUSINESS_HOURS_SALES = {
   weekdays: { label: "Mon-Fri", hours: "10:00 AM to 8:00 PM" },
   saturday: { label: "Saturday", hours: "10:00 AM to 6:00 PM" },

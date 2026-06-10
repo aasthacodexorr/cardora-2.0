@@ -18,7 +18,7 @@ import envelopIcon from "@/assets/icons/envelop_icon.svg";
 import whatsappIcon from "@/assets/icons/whatsapp_icon.svg";
 import { BUSINESS_HOURS_SALES,BUSINESS_HOURS_SERVICES } from "@/constants";
 
-/* ── Static Data ────────────────────────────────────────────── */
+/*  Static Data */
 const contactCards = [
   { title: "Call us",  subtitle: "Call Us Anytime Now",  icon: callIcon },
   { title: "WhatsApp", subtitle: "Chat on WhatsApp",     icon: whatsappIcon },
@@ -26,7 +26,7 @@ const contactCards = [
   { title: "Text",     subtitle: "Text Us Right Now",    icon: messageIcon },
 ];
 
-/* ── Component ─────────────────────────────────────────────── */
+/*  Component */
 const GetInTouch = () => {
   const [tab, setTab] = useState<"Sales" | "Service">("Sales");
 

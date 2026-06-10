@@ -24,7 +24,7 @@ import CardoraLogo from "@/components/common/CardoraLogo";
 import { SITE_CONFIG } from "@/lib/config";
 import { NAV_ITEMS, PHONE_NUMBER, PHONE_HREF } from "@/constants";
 
-/* ── Component ─────────────────────────────────────────────── */
+/*  Component */
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -46,7 +46,7 @@ const Header = () => {
 
   return (
     <>
-      {/* ── Desktop Header ─────────────────────────────────── */}
+      {/*  Desktop Header */}
       <header className={`hidden lg:block w-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] px-8 ${!isHomePage ? "bg-[#f9f9f9]" : "bg-transparent"}`} >
         <div className="mx-auto flex max-w-[1600px] items-center justify-between py-[7.4px]">
 
@@ -94,7 +94,7 @@ const Header = () => {
         </div>
       </header>
 
-      {/* ── Mobile Header ──────────────────────────────────── */}
+      {/*  Mobile Header */}
       <header className="lg:hidden w-full bg-white shadow-none relative z-50">
 
         {/* Top bar: logo + social icons */}

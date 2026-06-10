@@ -13,7 +13,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-/* ── Types ──────────────────────────────────────────────────── */
+/*  Types */
 type ImageGalleryProps = {
   images: string[];
   title: string;
@@ -21,7 +21,7 @@ type ImageGalleryProps = {
   centered?: boolean;
 };
 
-/* ── Component ─────────────────────────────────────────────── */
+/*  Component */
 export const ImageGallery = ({
   images,
   title,
@@ -89,7 +89,7 @@ export const ImageGallery = ({
       }`}
     >
       <div className="flex flex-col md:flex-row rounded-2xl overflow-hidden">
-        {/* ── Main image ──────────────────────────────────────── */}
+        {/*  Main image */}
         <div className="relative rounded-2xl xl:min-w-[700px] xl:max-w-[700px] overflow-hidden bg-gray-100 shadow-sm">
           {/* Image counter badge */}
           <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
@@ -143,7 +143,7 @@ export const ImageGallery = ({
           )}
         </div>
 
-        {/* ── Mobile Thumbnail strip ───────────────────────────── */}
+        {/*  Mobile Thumbnail strip */}
         {images.length > 1 && (
           <div className="md:hidden mt-2 w-full">
             <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -168,7 +168,7 @@ export const ImageGallery = ({
         )}
       </div>
 
-      {/* ── Desktop Thumbnail strip ──────────────────── */}
+      {/*  Desktop Thumbnail strip */}
       {images.length > 1 ? (
         <div
           ref={thumbRef}

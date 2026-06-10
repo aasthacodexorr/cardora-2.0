@@ -26,7 +26,7 @@ import { GetInTouch, DreamVehicleCTA } from "@/components/common";
 import aboutHero from "@/assets/pages/about-hero.jpg";
 import aboutTeam from "@/assets/pages/about-team.jpg";
 
-/* ── Static Data ────────────────────────────────────────────── */
+/*  Static Data */
 const certified = [
   { icon: ShieldCheck, label: "6-month warranty" },
   { icon: Wrench,      label: "150-point inspection" },
@@ -34,13 +34,13 @@ const certified = [
   { icon: RefreshCw,   label: "10-day exchange" },
 ];
 
-/* ── Page Component ────────────────────────────────────────── */
+/*  Page Component */
 const About = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* ── Hero ─────────────────────────────────────────── */}
+      {/*  Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -64,7 +64,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* ── Cardora Certified ────────────────────────────── */}
+      {/*  Cardora Certified */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6">
           <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
@@ -84,7 +84,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* ── After-sale service + Reviews ─────────────────── */}
+      {/*  After-sale service + Reviews */}
       <section className="bg-muted/40 py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6 grid md:grid-cols-2 gap-10 md:gap-16">
           {/* After-sale service card */}
@@ -120,7 +120,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* ── Built in Canada ──────────────────────────────── */}
+      {/*  Built in Canada */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>

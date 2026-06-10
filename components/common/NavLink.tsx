@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
-/* ── Types ──────────────────────────────────────────────────── */
+/*  Types */
 interface NavLinkCompatProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps>,
     LinkProps {
@@ -23,7 +23,7 @@ interface NavLinkCompatProps
   pendingClassName?: string;
 }
 
-/* ── Component ─────────────────────────────────────────────── */
+/*  Component */
 const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
   ({ className, activeClassName, to, href, ...props }, ref) => {
     const pathname = usePathname();

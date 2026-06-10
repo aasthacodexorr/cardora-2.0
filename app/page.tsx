@@ -26,7 +26,7 @@ import {
 // Shared/reusable sections
 import { GetInTouch } from "@/components/common";
 
-/* ── Page Component ────────────────────────────────────────── */
+/*  Page Component */
 const HomePage = () => {
   return (
     <main className="min-h-screen bg-background">

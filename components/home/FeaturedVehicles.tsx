@@ -18,7 +18,7 @@ import car2 from "@/assets/cars/car-featured-2.jpg";
 import car3 from "@/assets/cars/car-featured-3.jpg";
 import car4 from "@/assets/cars/car-featured-4.jpg";
 
-/* ── Types ──────────────────────────────────────────────────── */
+/*  Types */
 type Vehicle = {
   image: any;
   title: string;
@@ -26,7 +26,7 @@ type Vehicle = {
   price: string;
 };
 
-/* ── Static Data ────────────────────────────────────────────── */
+/*  Static Data */
 const vehicles: Vehicle[] = [
   { image: car1, title: "2024 KIA Forte",        km: "61,294 KM", price: "$20,990.00" },
   { image: car2, title: "2023 Hyundai Tucson",   km: "42,180 KM", price: "$28,490.00" },
@@ -37,7 +37,7 @@ const vehicles: Vehicle[] = [
 // Card width + gap in pixels (used for scroll calculations)
 const SCROLL_AMOUNT = 314;
 
-/* ── Component ─────────────────────────────────────────────── */
+/*  Component */
 const FeaturedVehicles = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
