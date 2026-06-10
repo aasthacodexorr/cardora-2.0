@@ -31,6 +31,8 @@ import { Button } from "@/components/ui/button";
 // Config
 import { SITE_CONFIG } from "@/lib/config";
 import { PHONE_HREF, PHONE_NUMBER } from "@/constants";
+import locationIcon from "@/assets/icons/location.png";
+import mapIcon from "@/assets/icons/map-c.png";
 
 /*  Static Data */
 const mainServices = [
@@ -74,65 +76,87 @@ const Service = () => {
       <Header />
 
       {/*  Hero */}
-      <section className="bg-gradient-to-b from-brand-green/10 via-brand-green/5 to-background py-16 md:py-24">
-        <div className="mx-auto max-w-[1200px] px-6 text-center">
-          <p className="text-sm md:text-base font-semibold uppercase tracking-[0.25em] text-brand-green">
+      <section className="pt-16 md:pt-24 pb-10 ">
+        <div className="mx-auto px-28 text-start">
+          <p className="text-base md:text-xl">
             Service & Repairs
           </p>
-          <h1 className="mt-4 text-4xl md:text-6xl font-extrabold tracking-tight text-foreground">
+          <h1 className="mt-4 text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-[60px]">
             Quality Repairs,<br />
-            <span className="text-brand-green">Prices you can Trust.</span>
+            Prices you can Trust. 
           </h1>
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button asChild className="bg-brand-green hover:bg-brand-green/90 text-white rounded-full px-8 h-12 font-semibold">
-              <a href="#book">Schedule Online</a>
-            </Button>
-            <a href={PHONE_HREF} className="inline-flex items-center gap-2 text-foreground font-bold hover:text-brand-green transition-colors">
-              <Phone className="h-5 w-5 fill-brand-green text-brand-green" />
-              {PHONE_NUMBER}
-            </a>
-          </div>
         </div>
       </section>
 
       {/*  Location & booking */}
-      <section id="book" className="py-16 md:py-20">
-        <div className="mx-auto max-w-[1200px] px-6 grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+      <section id="book" className="py-1">
+        <div className="mx-auto max-w-[1200px] px-6 grid md:grid-cols-2 gap-8 lg:gap-8 items-stretch">
+
           {/* Location card */}
-          <div className="bg-card border border-border rounded-2xl p-8 md:p-10 shadow-sm">
-            <div className="h-12 w-12 rounded-xl bg-brand-green/10 flex items-center justify-center">
-              <MapPin className="h-6 w-6 text-brand-green" />
+          <div className="relative bg-white rounded-2xl p-8 md:p-10 shadow-[0_2px_18px_rgba(0,0,0,0.1)] flex flex-col justify-between overflow-hidden min-h-[490px]">
+            {/* Top-right Visual Asset Placement */}
+            <div className="flex items-center justify-center px-14">
+              {/* Replace this div with your actual image component */}
+              <div className="w-full h-full bg-gray-100 rounded-2xl flex items-center justify-center ">
+                <img src={locationIcon?.src} className="w-full h-full object-contain " />
+              </div>
             </div>
-            <h3 className="mt-5 text-xl font-bold text-foreground">
-              Call to schedule your Service appointment
-            </h3>
-            <div className="mt-6">
-              <p className="text-sm uppercase tracking-widest text-muted-foreground font-semibold">Brampton</p>
-              <a href={SITE_CONFIG.urls.googleMapsUrl} target="_blank" rel="noreferrer" className="block mt-1 text-lg font-semibold text-foreground hover:text-brand-green">
-                8050 Dixie Rd
-              </a>
-              <a href={PHONE_HREF} className="mt-2 inline-flex items-center gap-2 text-brand-green font-bold text-lg">
-                <Phone className="h-4 w-4 fill-brand-green" />
-                {PHONE_NUMBER}
-              </a>
+
+            {/* Card Content */}
+            <div className="mt-10 pb-10">
+              <h3 className="text-xl md:text-[35px] font-semibold text-gray-900 tracking-tight leading-none">
+                Call to schedule your Service appointment
+              </h3>
+
+              <div className="mt-6 space-y-4">
+                <p className="text-xl tracking-wide font-bold text-gray-900">Brampton</p>
+
+                <div className="flex items-center gap-2 text-lg">
+                  <MapPin className="h-5 w-5 shrink-0" />
+                  <a
+                    href={locationIcon?.src}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-emerald-500 transition-colors"
+                  >
+                    8050 Dixie Rd
+                  </a>
+                </div>
+
+                <div className="flex items-center gap-2 text-lg">
+                  <Phone className="h-5 w-5 shrink-0" />
+                  <a href={PHONE_HREF} className="hover:text-emerald-500 transition-colors">
+                    {PHONE_NUMBER}
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Booking card */}
-          <div className="bg-card border border-border rounded-2xl p-8 md:p-10 shadow-sm">
-            <div className="h-12 w-12 rounded-xl bg-brand-green/10 flex items-center justify-center">
-              <CalendarCheck className="h-6 w-6 text-brand-green" />
+          <div className="relative bg-white rounded-3xl p-8 md:p-10 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.1)] flex flex-col justify-between overflow-hidden min-h-[380px]">
+            {/* Top-right Visual Asset Placement */}
+            <div className="flex items-center justify-center px-14">
+              {/* Replace this div with your actual image component */}
+              <div className="w-full h-full bg-gray-100 rounded-2xl flex items-center justify-center ">
+                <img src={mapIcon?.src} className="w-full h-full object-contain " />
+              </div>
             </div>
-            <h3 className="mt-5 text-xl font-bold text-foreground">
-              Find the time that works best for you.
-            </h3>
-            <p className="mt-2 text-muted-foreground">
-              Book your service slot online and we'll confirm right away.
-            </p>
-            <Button asChild className="mt-6 bg-brand-green hover:bg-brand-green/90 text-white rounded-full px-8 h-12 font-semibold">
-              <a href={PHONE_HREF}>Schedule Online</a>
-            </Button>
+
+            {/* Card Content */}
+            <div className="mt-10 pb-10 flex flex-col h-full justify-between items-start">
+              <h3 className="text-xl md:text-[34px] font-bold text-gray-900">
+                Find the time that Works best for you.
+              </h3>
+
+              <button className="block text-center text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-gradient-to-b from-[#00af66] to-[#00af66a6]">
+                <a href={PHONE_HREF} className="w-full h-full">
+                  Schedule Online
+                </a>
+              </button>
+            </div>
           </div>
+
         </div>
       </section>
 
