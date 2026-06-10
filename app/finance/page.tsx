@@ -17,7 +17,7 @@ import { Header, Footer } from "@/components/layout";
 // Config
 import { SITE_CONFIG } from "@/lib/config";
 
-/* ── Inner component (needs useSearchParams) ─────────────────── */
+/*  Inner component (needs useSearchParams) */
 const FinanceContent = () => {
   const searchParams = useSearchParams();
   const inventoryId  = searchParams.get("inventory_id") || "";
@@ -44,7 +44,7 @@ const FinanceContent = () => {
   );
 };
 
-/* ── Page export: wrapped in Suspense ────────────────────────── */
+/*  Page export: wrapped in Suspense */
 export default function FinancePage() {
   return (
     <Suspense

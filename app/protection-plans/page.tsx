@@ -29,7 +29,7 @@ import { GetInTouch, DreamVehicleCTA } from "@/components/common";
 import silverCar from "@/assets/cars/protection-car.png";
 import greenCar  from "@/assets/cars/protection-green-car.png";
 
-/* ── Static Data ────────────────────────────────────────────── */
+/*  Static Data */
 const includes = [
   { icon: ShieldCheck, label: "6-month warranty" },
   { icon: Wrench,      label: "150-point inspection" },
@@ -91,13 +91,13 @@ const differences = [
   "6-month or 10,000 km limited warranty (whichever comes first)",
 ];
 
-/* ── Page Component ────────────────────────────────────────── */
+/*  Page Component */
 const ProtectionPlans = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* ── Every Vehicle Includes ───────────────────────── */}
+      {/*  Every Vehicle Includes */}
       <section className="bg-foreground text-background py-16 md:py-20">
         <div className="mx-auto max-w-[1200px] px-6">
           <h1 className="text-center text-3xl md:text-5xl font-extrabold tracking-tight">
@@ -116,7 +116,7 @@ const ProtectionPlans = () => {
         </div>
       </section>
 
-      {/* ── We stand behind our cars ─────────────────────── */}
+      {/*  We stand behind our cars */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
@@ -140,7 +140,7 @@ const ProtectionPlans = () => {
         </div>
       </section>
 
-      {/* ── How Cardora keeps you covered ───────────────── */}
+      {/*  How Cardora keeps you covered */}
       <section className="bg-muted/40 py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6">
           <div className="max-w-3xl">
@@ -162,7 +162,7 @@ const ProtectionPlans = () => {
         </div>
       </section>
 
-      {/* ── What's included ──────────────────────────────── */}
+      {/*  What's included */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6">
           <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
@@ -182,7 +182,7 @@ const ProtectionPlans = () => {
         </div>
       </section>
 
-      {/* ── GAP Coverage ─────────────────────────────────── */}
+      {/*  GAP Coverage */}
       <section className="bg-foreground text-background py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6">
           <div className="max-w-3xl">
@@ -233,7 +233,7 @@ const ProtectionPlans = () => {
         </div>
       </section>
 
-      {/* ── The Cardora difference ───────────────────────── */}
+      {/*  The Cardora difference */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">

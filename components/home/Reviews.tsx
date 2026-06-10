@@ -16,14 +16,14 @@ import Image from "next/image";
 import google        from "@/assets/brand/google.png";
 import googleReview  from "@/assets/brand/Goolge-Review-Logo.jpg";
 
-/* ── Types ──────────────────────────────────────────────────── */
+/*  Types */
 type Review = {
   initial: string;
   name: string;
   text: string;
 };
 
-/* ── Static Data ────────────────────────────────────────────── */
+/*  Static Data */
 const reviews: Review[] = [
   {
     initial: "J",
@@ -47,7 +47,7 @@ const reviews: Review[] = [
   },
 ];
 
-/* ── Component ─────────────────────────────────────────────── */
+/*  Component */
 const Reviews = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(3);

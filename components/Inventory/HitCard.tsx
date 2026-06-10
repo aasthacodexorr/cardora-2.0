@@ -14,7 +14,7 @@ import { SITE_CONFIG } from "@/lib/config";
 // no image placeholder
 import noimage from "@/assets/cars/no-image-placeholder.jpg";
 
-/* ── Component ─────────────────────────────────────────────── */
+/*  Component */
 export const HitCard = ({ hit }: { hit: any }) => {
   // Build display title from Typesense document fields
   const title =
