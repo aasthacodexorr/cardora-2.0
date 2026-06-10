@@ -14,7 +14,7 @@ import Image from "next/image";
 import zlogo from "@/assets/brand/zlogo.png";
 import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getBodyTypeUrl } from "@/lib/inventoryUrls";
 
-/* ── Static Data ────────────────────────────────────────────── */
+/*  Static Data */
 const columns = [
   {
     title: "Popular Makes",
@@ -56,7 +56,7 @@ const columns = [
   },
 ];
 
-/* ── Component ─────────────────────────────────────────────── */
+/*  Component */
 const Footer = () => {
   return (
     <footer className="w-full bg-[#121319] border-t-0 -mt-5 ">

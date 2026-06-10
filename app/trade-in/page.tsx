@@ -27,7 +27,7 @@ import { Input } from "@/components/ui/input";
 // Assets
 import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
 
-/* ── Static Data ────────────────────────────────────────────── */
+/*  Static Data */
 const steps = [
   {
     icon: CarFrontIcon,
@@ -90,7 +90,7 @@ const faqs = [
   },
 ];
 
-/* ── Page Component ────────────────────────────────────────── */
+/*  Page Component */
 const TradeIn = () => {
   const [mode, setMode]       = useState<"vehicle" | "vin">("vehicle");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -99,7 +99,7 @@ const TradeIn = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* ── Hero / Quote form ────────────────────────────── */}
+      {/*  Hero / Quote form */}
       <section className="w-full relative overflow-hidden px-40 ">
       <div className="mx-auto pt-20 items-start relative z-10 flex justify-between gap-10 pb-5">
         
@@ -200,7 +200,7 @@ const TradeIn = () => {
         </div>
       </div>
 
-      {/* ── Background Wave & Axis Graphic Overlays ── */}
+      {/*  Background Wave & Axis Graphic Overlays */}
       <div className="absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0">
         
         {/* Main Landscape Wave Vector */}
@@ -240,7 +240,7 @@ const TradeIn = () => {
       </div>
     </section>
 
-      {/* ── How it works ─────────────────────────────────── */}
+      {/*  How it works */}
       <section className="w-full">
         <div className="mx-auto max-w-[1300px] px-9 py-16 lg:py-24">
           <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
@@ -292,7 +292,7 @@ const TradeIn = () => {
         </div>
       </section>
 
-      {/* ── FAQs ─────────────────────────────────────────── */}
+      {/* FAQs */}
       <section className="w-full mb-14">
         <div className="mx-auto max-w-[1300px]  px-9 py-16 lg:py-0">
           <div className="flex items-center gap-3 mb-10">

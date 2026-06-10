@@ -89,7 +89,7 @@ export const getInventoryUrlWithParams = (params: Record<string, string>): strin
   return queryString ? `/inventory/?${encoded}&${queryString}` : `/inventory/?${encoded}`;
 };
 
-/* ── Inventory Link Definitions ────────────────────────────────── */
+/*  Inventory Link Definitions */
 
 export const POPULAR_MAKES = [
   { label: "Used Toyota", make: "Toyota" },

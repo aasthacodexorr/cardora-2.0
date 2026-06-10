@@ -44,7 +44,7 @@ import {
 // Typesense search client
 import { searchClient, TYPESENSE_COLLECTION_NAME } from "@/lib/typesense";
 
-/* ── Shared class name configs for InstantSearch widgets ─────── */
+/*  Shared class name configs for InstantSearch widgets */
 const refinementListClassNames = {
   list: "space-y-2 pt-2 pb-4 p-0",
   label:
@@ -110,7 +110,7 @@ const FilterGroup = ({
   );
 };
 
-/* ── CustomHitsCount: shows total matching vehicles ──────────── */
+/*  CustomHitsCount: shows total matching vehicles */
 const CustomHitsCount = () => {
   const { results } = useHits();
   return (
@@ -120,7 +120,7 @@ const CustomHitsCount = () => {
   );
 };
 
-/* ── NoResultsHandler: shows message when no hits ────────────── */
+/*  NoResultsHandler: shows message when no hits */
 const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
   const { results } = useHits();
 
@@ -135,7 +135,7 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-/* ── CustomInfiniteHits: shows hits and a load more button ───── */
+/*  CustomInfiniteHits: shows hits and a load more button */
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   const { hits, isLastPage, showMore } = useInfiniteHits();
 
@@ -311,13 +311,13 @@ const OdometerRangeFilter = () => {
   );
 }
 
-/* ── InventoryContent: main page content ─────────────────────── */
+/*  InventoryContent: main page content */
 const InventoryContent = () => {
   const searchParams = useSearchParams();
   const [uiState, setUiState] = useState<any>(null);
   const [key, setKey] = useState(0); // Force remount of InstantSearch component
 
-  /* ── Only one filter open at a time ───────────────────────── */
+  /*  Only one filter open at a time */
   const [openFilter, setOpenFilter] =
     useState<string | null>("");
 
@@ -463,7 +463,7 @@ const InventoryContent = () => {
           <div className="max-w-[1600px] mx-auto px-3 lg:px-[24px] pt-[20px] pb-[50px]">
             <div className="flex flex-col lg:flex-row items-start gap-5 lg:px-10 px-">
 
-              {/* ── Sidebar Filters ───────────────────────── */}
+              {/*  Sidebar Filters */}
               <aside className="hidden sticky top-5 self-start shrink-0 lg:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[290px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 
                 {/* Hits count + clear filters */}
@@ -671,7 +671,7 @@ const InventoryContent = () => {
                 </div>
               </aside>
 
-              {/* ── Right Content ─────────────────────────── */}
+              {/*  Right Content */}
               <div className="w-full lg:flex-1 mt-5 lg:mt-0">
 
                 {/* Search + sort */}
@@ -802,7 +802,7 @@ const InventoryContent = () => {
   );
 };
 
-/* ── Page export ─────────────────────────────────────────────── */
+/*  Page export */
 const InventoryPage = () => {
   return (
     <Suspense

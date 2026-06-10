@@ -32,7 +32,7 @@ import { Button } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/lib/config";
 import { PHONE_HREF, PHONE_NUMBER } from "@/constants";
 
-/* ── Static Data ────────────────────────────────────────────── */
+/*  Static Data */
 const mainServices = [
   { icon: Droplets,       title: "Oil Change & Lube",       body: "Engine oil change, filter, reset oil light" },
   { icon: Disc3,          title: "Tire & Wheel Service",    body: "Replacement, flat, rotation, alignment" },
@@ -67,13 +67,13 @@ const trustHighlights = [
   },
 ];
 
-/* ── Page Component ────────────────────────────────────────── */
+/*  Page Component */
 const Service = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* ── Hero ─────────────────────────────────────────── */}
+      {/*  Hero */}
       <section className="bg-gradient-to-b from-brand-green/10 via-brand-green/5 to-background py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6 text-center">
           <p className="text-sm md:text-base font-semibold uppercase tracking-[0.25em] text-brand-green">
@@ -95,7 +95,7 @@ const Service = () => {
         </div>
       </section>
 
-      {/* ── Location & booking ───────────────────────────── */}
+      {/*  Location & booking */}
       <section id="book" className="py-16 md:py-20">
         <div className="mx-auto max-w-[1200px] px-6 grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Location card */}
@@ -136,7 +136,7 @@ const Service = () => {
         </div>
       </section>
 
-      {/* ── Main services grid ───────────────────────────── */}
+      {/*  Main services grid */}
       <section className="py-16 md:py-20 bg-muted/40">
         <div className="mx-auto max-w-[1200px] px-6">
           <div className="text-center max-w-2xl mx-auto">
@@ -160,7 +160,7 @@ const Service = () => {
         </div>
       </section>
 
-      {/* ── Additional services ──────────────────────────── */}
+      {/*  Additional services */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6">
           <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
@@ -177,7 +177,7 @@ const Service = () => {
         </div>
       </section>
 
-      {/* ── Trust highlights ─────────────────────────────── */}
+      {/*  Trust highlights */}
       <section className="bg-foreground text-background py-16 md:py-24">
         <div className="mx-auto max-w-[1200px] px-6">
           <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight">
