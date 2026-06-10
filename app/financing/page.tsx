@@ -51,7 +51,7 @@ const Finance = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <section className="py-6 md:py-10 pb-16">
+      <section className="py-6 md:py-10 pb-16 mb-52">
         <div className="mx-auto max-w-[1100px] px-4 md:px-6">
           <div className="overflow-hidden">
             <iframe

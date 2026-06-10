@@ -108,8 +108,8 @@ const TradeIn = () => {
           <h1 className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[44px] lg:text-[66px]">
             Sell my car the<br />easy way.
           </h1>
-          <p className="mt-6 text-[18px] lg:text-[20px] font-medium text-gray-600 max-w-xl leading-relaxed">
-            Fast, seamless and secure. It's the way everyone <br/> deserves.
+          <p className="mt-6 text-[18px] lg:text-[23px] font-medium text-black/80 max-w-xl leading-relaxed">
+            Fast,seamless and secure. It's the way everyone <br/> deserves.
           </p>
         </div>
 
@@ -194,7 +194,7 @@ const TradeIn = () => {
           )}
 
           {/* Single Action Submit Button */}
-          <button className="w-full mt-6 bg-[#00b074] hover:bg-[#009b65] text-white font-bold py-3.5 px-6 rounded-xl transition-all text-[15px] shadow-sm">
+          <button className="cursor-pointer my-3 px-9 py-3 rounded-xl border border-[#00b066] bg-gradient-to-b from-[#00af66] to-[#00af66]/65 text-white text-[12px] sm:text-[14px] tracking-wider hover:opacity-90 shadow-md transition-opacity">
             Submit
           </button>
         </div>
@@ -231,9 +231,9 @@ const TradeIn = () => {
           </div>
           
           {/* Valuation Floating Popup Tag */}
-          <div className="bg-[#cdf5e3] border border-[#a6e4ce] text-center px-6 py-4 rounded-xl shadow-md -translate-y-4">
-            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
-            <div className="text-2xl font-black text-gray-900 mt-0.5">$18,400</div>
+          <div className="bg-[#cdf5e3] border border-[#a6e4ce] text-center px-9 py-4 rounded-xl shadow-md -translate-y-4">
+            <div className="text-[10px]  text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
+            <div className="text-2xl font-semibold font-black text-gray-900 mt-0.5">$18,400</div>
           </div>
         </div>
 
@@ -242,7 +242,7 @@ const TradeIn = () => {
 
       {/*  How it works */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1300px] px-9 py-16 lg:py-24">
+        <div className="mx-auto max-w-[1300px] px-9 py-16 lg:py-20">
           <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
             {/* Left Column: Image */}
             <div className="w-full h-full">
@@ -293,7 +293,7 @@ const TradeIn = () => {
       </section>
 
       {/* FAQs */}
-      <section className="w-full mb-14">
+      <section className="w-full mb-14 mt-10">
         <div className="mx-auto max-w-[1300px]  px-9 py-16 lg:py-0">
           <div className="flex items-center gap-3 mb-10">
             <h2 className="text-[36px] lg:text-[44px] font-semibold text-foreground">
