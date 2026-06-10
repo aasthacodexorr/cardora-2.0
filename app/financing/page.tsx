@@ -19,11 +19,11 @@ import { GetInTouch } from "@/components/common";
 // Config
 import { SITE_CONFIG } from "@/lib/config";
 
-/* ── Constants ──────────────────────────────────────────────── */
+/*  Constants */
 const MIN_HEIGHT      = 540;
 const FALLBACK_HEIGHT = 900;
 
-/* ── Page Component ────────────────────────────────────────── */
+/*  Page Component */
 const Finance = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState<number>(FALLBACK_HEIGHT);
@@ -51,7 +51,7 @@ const Finance = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <section className="py-6 md:py-10 pb-16">
+      <section className="py-6 md:py-10 pb-16 mb-52">
         <div className="mx-auto max-w-[1100px] px-4 md:px-6">
           <div className="overflow-hidden">
             <iframe

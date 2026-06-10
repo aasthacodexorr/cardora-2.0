@@ -32,7 +32,7 @@ import { PriceAndCTA, VehicleHeader } from "@/components/Inventory/VehicleInfo";
 export const dynamic = "force-dynamic";
 const showSidebar = true;
 
-/* ── Page Component ────────────────────────────────────────── */
+/*  Page Component */
 export default async function VehicleDetailsPage({
   params,
 }: {
@@ -67,11 +67,11 @@ export default async function VehicleDetailsPage({
       <section className="w-full bg-background flex-1 justify-center">
         <div className="mx-auto w-full py-6 lg:pt-[30px]">
           
-          {/* ── SECTION ROW: Controls the boundaries of the sticky sidebar ── */}
+          {/*  SECTION ROW: Controls the boundaries of the sticky sidebar */}
           {/* FIX 2: Added layout-level tracks using items-stretch so the columns share an identical height boundary */}
           <div className="flex flex-col gap-5 lg:flex-row items-stretch px-5 md:px-8 lg:px-10 relative w-full ">
             
-            {/* ── Left column: gallery + specs + description ── */}
+            {/*  Left column: gallery + specs + description */}
             <div className={`flex flex-col gap-8 items-start flex-1 w-full ${showSidebar ? "" : "mx-auto"}`}>
               {/* Image gallery */}
               <ImageGallery images={images} title={titleText} isSold={isSold} centered={!showSidebar} />
@@ -160,7 +160,7 @@ export default async function VehicleDetailsPage({
               </div>
             </div>
 
-            {/* ── Right column: sticky sidebar (desktop) ── */}
+            {/*  Right column: sticky sidebar (desktop) */}
             {showSidebar && (
               <div className="w-full hidden lg:block">
                 {/* FIX 3: Added 'h-fit' to the element holding position: sticky. 
@@ -176,7 +176,7 @@ export default async function VehicleDetailsPage({
             )}
           </div>
 
-          {/* ── Out of Bounds Elements ── */}
+          {/*  Out of Bounds Elements */}
           {/* This sits outside the column-flex context, releasing the sticky lock perfectly */}
           <div className="mt-12 w-full">
             <FinanceCalculator vehiclePrice={vehicle.selling_price} inventoryId={resolvedParams.id} />
