@@ -101,7 +101,7 @@ const ProtectionPlans = () => {
       <Header />
 
       <section className="relative w-full pt-16 pb-0 md:pt-24 overflow-hidden bg-white">
-        <div className="mx-auto max-w-[1400px] px-6 md:px-12 flex flex-col md:flex-row md:items-center justify-between min-h-[450px]">
+        <div className="mx-auto px-12  flex flex-col md:flex-row md:items-center justify-between min-h-[450px]">
 
           {/* Left Column: Title and Pills */}
           <div className="flex flex-col justify-center space-y-6 max-w-md pb-12 md:pb-16 z-10">
@@ -161,7 +161,7 @@ const ProtectionPlans = () => {
 
       {/*  How Cardora keeps you covered */}
       <section className="bg-[#eaeff5] py-16 md:py-20">
-        <div className="mx-auto  px-28">
+        <div className="mx-auto  px-14">
           <div>
             <h2 className="text-3xl md:text-[45px] font-semibold tracking-tight text-foreground">
               How Cardora keeps you covered
@@ -182,7 +182,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/*  What's included */}
-      <section className="py-16 px-28 md:py-2 bg-[#eaeff5]">
+      <section className="py-16 px-14 md:py-2 bg-[#eaeff5]">
         <div className="mx-auto pb-10">
           <h2 className="text-start text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
             What's included?

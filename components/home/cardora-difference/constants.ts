@@ -12,7 +12,7 @@ export const ITEMS: Omit<DifferenceItem, 'icon'>[] = [
   },
 ];
 
-export const CONTAINER_CLASS = "mx-auto max-w-[1400px] md:px-14 px-5 py-14";
+export const CONTAINER_CLASS = "mx-auto max-w-[1400px] md:px-18 px-5 py-14 ";
 
 export const GRID_CLASS = "flex justify-center gap-[40px] flex-col md:flex-row";
 
