@@ -35,6 +35,7 @@ const CardoraDifference = () => {
               key={idx}
               icon={icons[idx]}
               text={item.text}
+              body=""
             />
           ))}
         </div>
