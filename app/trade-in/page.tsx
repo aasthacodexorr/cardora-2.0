@@ -100,7 +100,7 @@ const TradeIn = () => {
       <Header />
 
       {/*  Hero / Quote form */}
-      <section className="w-full relative overflow-hidden px-40 ">
+      <section className="w-full relative overflow-hidden px-32">
       <div className="mx-auto pt-20 items-start relative z-10 flex justify-between gap-10 pb-5">
         
         {/* Left: Heading Typography Only */}
@@ -114,7 +114,7 @@ const TradeIn = () => {
         </div>
 
         {/* Right: Quote Form Card matching reference image */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 pb-28 border border-gray-100/80 w-full max-w-[490px] lg:justify-self-end">
+        <div className="bg-white rounded-2xl shadow-xl p-8 pb-24 border border-gray-100/80 w-full max-w-[440px] lg:justify-self-end">
           
           {/* Flat Underline Mode Switcher */}
           <div className="flex border-b border-gray-200 mb-6">
