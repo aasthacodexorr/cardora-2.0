@@ -42,7 +42,7 @@ const columns = [
       { label: "Payment Calculator", href: "/financing", external: false },
       { label: "Skip the Dealership", href: "/financing", external: false },
       { label: "About Us", href: "/about-us", external: false },
-      { label: "Contact Us", href: "/", external: false },
+      { label: "Contact Us", href: "/contact-us", external: false },
     ],
   },
   {
