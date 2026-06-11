@@ -17,6 +17,7 @@ import {
   Droplets, Disc3, Gauge, BatteryCharging, Wrench,
   Stethoscope, ThermometerSun, AlertCircle, Cog, Compass,
   Star, Clock, ShieldCheck,
+  ArrowRight,
 } from "lucide-react";
 
 // Layout
@@ -33,14 +34,34 @@ import { SITE_CONFIG } from "@/lib/config";
 import { PHONE_HREF, PHONE_NUMBER } from "@/constants";
 import locationIcon from "@/assets/icons/location.png";
 import mapIcon from "@/assets/icons/map-c.png";
+import BatteryImage from "@/assets/icons/Battery.jpg";
+import OilImage from "@/assets/icons/oil.jpg";
+import tireImage from "@/assets/icons/tire.jpg";
+import breaksImage from "@/assets/icons/breaks.avif";
+import wheelImage from "@/assets/icons/wheel.jpg";
+import Image from "next/image";
+
+import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
+import MapIcon   from "@/assets/icons/MAP-ICON.svg";
+import HeartIcon from "@/assets/icons/HEART-ICON.svg";
+import DifferenceCard from "@/components/home/cardora-difference/DifferenceCard";
+
+
+const icons = [
+  <Image src={CheckIcon} alt="Check Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
+  <Image src={MapIcon} alt="Map Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
+  <Image src={HeartIcon} alt="Heart Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
+];
+
+
 
 /*  Static Data */
 const mainServices = [
-  { icon: Droplets,       title: "Oil Change & Lube",       body: "Engine oil change, filter, reset oil light" },
-  { icon: Disc3,          title: "Tire & Wheel Service",    body: "Replacement, flat, rotation, alignment" },
-  { icon: Gauge,          title: "Brakes",                  body: "Issues, pads, rotors, calipers" },
-  { icon: BatteryCharging, title: "Battery",                body: "Charge, replacement, testing, starter" },
-  { icon: Wrench,         title: "Scheduled Maintenance",   body: "Manufacturer service intervals" },
+  { image: OilImage,       title: "Oil Change & Lube",       body: "Engine oil change, filter, reset oil light" },
+  { image: tireImage,          title: "Tire Service",    body: "Replacement, flat, rotation, alignment" },
+  { image: breaksImage,          title: "Brakes",                  body: "Issues, pads, rotors, calipers" },
+  { image: BatteryImage, title: "Wheel Service",                body: "Charge, replacement, testing, starter" },
+  { image: wheelImage,         title: "Battery",   body: "Manufacturer service intervals" },
 ];
 
 const additionalServices = [
@@ -75,153 +96,194 @@ const Service = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/*  Hero */}
-      <section className="pt-16 md:pt-24 pb-10 ">
-        <div className="mx-auto px-28 text-start">
-          <p className="text-base md:text-xl">
-            Service & Repairs
+      <div className="px-12">
+        {/*  Hero */}
+        <section className="pt-16 md:pt-20 pb-10 ">
+          <div className="mx-auto text-start">
+            <p className="text-base md:text-xl">
+              Service & Repairs
+            </p>
+            <h1 className="mt-4 text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-[60px]">
+              Quality Repairs,<br />
+              Prices you can Trust.
+            </h1>
+          </div>
+        </section>
+
+        {/*  Location & booking */}
+        <section id="book" className="py-1">
+          <div className="mx-auto max-w-[1200px] px-10 grid md:grid-cols-2 gap-8 lg:gap-8 items-stretch">
+
+            {/* Location card */}
+            <div className="relative bg-white rounded-2xl p-8 md:p-10 shadow-[0_2px_18px_rgba(0,0,0,0.1)] flex flex-col justify-between overflow-hidden min-h-[490px]">
+              {/* Top-right Visual Asset Placement */}
+              <div className="flex items-center justify-center px-14">
+                {/* Replace this div with your actual image component */}
+                <div className="w-full h-full bg-gray-100 rounded-2xl flex items-center justify-center ">
+                  <img src={locationIcon?.src} className="w-full h-full object-contain " />
+                </div>
+              </div>
+
+              {/* Card Content */}
+              <div className="mt-10 pb-10">
+                <h3 className="text-xl md:text-[35px] font-semibold text-gray-900 tracking-tight leading-none">
+                  Call to schedule your Service appointment
+                </h3>
+
+                <div className="mt-8 space-y-4">
+                  <p className="text-2xl tracking-wide text-gray-900">Brampton</p>
+
+                  <div className="flex items-center gap-2 text-lg">
+                    <MapPin className="h-5 w-5 shrink-0" />
+                    <a
+                      href={locationIcon?.src}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-emerald-500 transition-colors"
+                    >
+                      8050 Dixie Rd
+                    </a>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-lg">
+                    <Phone className="h-5 w-5 shrink-0" />
+                    <a href={PHONE_HREF} className="hover:text-emerald-500 transition-colors">
+                      {PHONE_NUMBER}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Booking card */}
+            <div className="relative bg-white rounded-3xl p-8 md:p-10 shadow-[0_2px_18px_rgba(0,0,0,0.1)] flex flex-col justify-between overflow-hidden min-h-[380px]">
+              {/* Top-right Visual Asset Placement */}
+              <div className="flex items-center justify-center px-14">
+                {/* Replace this div with your actual image component */}
+                <div className="w-full h-full bg-gray-100 rounded-2xl flex items-center justify-center ">
+                  <img src={mapIcon?.src} className="w-full h-full object-contain " />
+                </div>
+              </div>
+
+              {/* Card Content */}
+              <div className="mt-14 pb-10 flex flex-col h-full gap-8 items-start">
+                <h3 className="text-xl md:text-[30px] font-bold text-gray-900">
+                  Find the time that Works best for you.
+                </h3>
+
+                <button className="block text-center text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-gradient-to-b from-[#00af66] to-[#00af66a6]">
+                  <a href={PHONE_HREF} className="w-full h-full">
+                    Schedule Online
+                  </a>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <section className="pt-18">
+        <div className="text-start">
+          <h2 className="text-3xl md:text-[40px] font-bold tracking-tight text-slate-900">
+            Let's take care of your ride
+          </h2>
+          <p className="mt-2 text-base md:text-[21px] font-medium">
+            Great ways to get started
           </p>
-          <h1 className="mt-4 text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-[60px]">
-            Quality Repairs,<br />
-            Prices you can Trust. 
-          </h1>
         </div>
-      </section>
 
-      {/*  Location & booking */}
-      <section id="book" className="py-1">
-        <div className="mx-auto max-w-[1200px] px-6 grid md:grid-cols-2 gap-8 lg:gap-8 items-stretch">
+        {/* Horizontal scroll on small screens, 5 columns on large screens */}
+          <div className="mt-10 flex flex-wrap gap-3 pb-4">
+            {mainServices.map(({ image, title, body }) => (
+              <div
+                key={title}
+                className="relative w-full sm:w-[48%] md:w-[31%] lg:w-[19%] bg-white border-2 border-gray-200 p-[0.2] rounded-2xl overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer"
+              >
+                {/* Full Card Overlay */}
+                <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
 
-          {/* Location card */}
-          <div className="relative bg-white rounded-2xl p-8 md:p-10 shadow-[0_2px_18px_rgba(0,0,0,0.1)] flex flex-col justify-between overflow-hidden min-h-[490px]">
-            {/* Top-right Visual Asset Placement */}
-            <div className="flex items-center justify-center px-14">
-              {/* Replace this div with your actual image component */}
-              <div className="w-full h-full bg-gray-100 rounded-2xl flex items-center justify-center ">
-                <img src={locationIcon?.src} className="w-full h-full object-contain " />
-              </div>
-            </div>
+                {/* Card Content */}
+                <div className="relative z-20 pb-5">
+                  <div className="h-40 w-full overflow-hidden">
+                    <img
+                      src={image?.src}
+                      alt={title}
+                      className="w-full h-full object-cover rounded-t-2xl transition-transform duration-300"
+                    />
+                  </div>
 
-            {/* Card Content */}
-            <div className="mt-10 pb-10">
-              <h3 className="text-xl md:text-[35px] font-semibold text-gray-900 tracking-tight leading-none">
-                Call to schedule your Service appointment
-              </h3>
+                  <div className="flex justify-center items-center">
+                    <div className="py-4 px-2">
+                      <h3 className="text-[17px] font-bold text-gray-600">{title}</h3>
+                      <p className="mt-1 text-base text-black/70 font-normal leading-relaxed">
+                        {body}
+                      </p>
+                    </div>
 
-              <div className="mt-6 space-y-4">
-                <p className="text-xl tracking-wide font-bold text-gray-900">Brampton</p>
-
-                <div className="flex items-center gap-2 text-lg">
-                  <MapPin className="h-5 w-5 shrink-0" />
-                  <a
-                    href={locationIcon?.src}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-emerald-500 transition-colors"
-                  >
-                    8050 Dixie Rd
-                  </a>
+                    <div className="pb-4 pr-2">
+                      <ArrowRight
+                        className="h-5 w-5 text-emerald-600 opacity-80 transition-all"
+                        strokeWidth={3}
+                      />
+                    </div>
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-2 text-lg">
-                  <Phone className="h-5 w-5 shrink-0" />
-                  <a href={PHONE_HREF} className="hover:text-emerald-500 transition-colors">
-                    {PHONE_NUMBER}
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Booking card */}
-          <div className="relative bg-white rounded-3xl p-8 md:p-10 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.1)] flex flex-col justify-between overflow-hidden min-h-[380px]">
-            {/* Top-right Visual Asset Placement */}
-            <div className="flex items-center justify-center px-14">
-              {/* Replace this div with your actual image component */}
-              <div className="w-full h-full bg-gray-100 rounded-2xl flex items-center justify-center ">
-                <img src={mapIcon?.src} className="w-full h-full object-contain " />
-              </div>
-            </div>
-
-            {/* Card Content */}
-            <div className="mt-10 pb-10 flex flex-col h-full justify-between items-start">
-              <h3 className="text-xl md:text-[34px] font-bold text-gray-900">
-                Find the time that Works best for you.
-              </h3>
-
-              <button className="block text-center text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-gradient-to-b from-[#00af66] to-[#00af66a6]">
-                <a href={PHONE_HREF} className="w-full h-full">
-                  Schedule Online
-                </a>
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/*  Main services grid */}
-      <section className="py-16 md:py-20 bg-muted/40">
-        <div className="mx-auto max-w-[1200px] px-6">
-          <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
-              Let's take care of your ride
-            </h2>
-            <p className="mt-3 text-muted-foreground text-base md:text-lg">Great ways to get started</p>
-          </div>
-
-          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mainServices.map(({ icon: Icon, title, body }) => (
-              <div key={title} className="bg-card border border-border rounded-2xl p-7 hover:shadow-lg hover:border-brand-green/40 transition-all">
-                <div className="h-14 w-14 rounded-xl bg-brand-green/10 flex items-center justify-center">
-                  <Icon className="h-7 w-7 text-brand-green" strokeWidth={2.2} />
-                </div>
-                <h3 className="mt-5 text-lg font-bold text-foreground">{title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{body}</p>
               </div>
             ))}
           </div>
-        </div>
       </section>
 
-      {/*  Additional services */}
-      <section className="py-16 md:py-24">
-        <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
-            Additional available services
-          </h2>
-          <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      {/* Additional services section */}
+      <section className="py-8">
+        <div className="flex flex-col lg:flex-row items-start">
+          
+          {/* Section Title */}
+          <div className="mb-6 lg:mb-0 max-w-xs shrink-0">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900 leading-none">
+              Additional available services
+            </h2>
+          </div>
+
+          {/* Action pills wrapper */}
+          <div className="flex flex-wrap gap-2 items-center">
             {additionalServices.map(({ icon: Icon, label }) => (
-              <a key={label} href={PHONE_HREF} className="bg-card border border-border rounded-xl p-5 flex flex-col items-center text-center hover:border-brand-green/50 hover:shadow-md transition-all">
-                <Icon className="h-8 w-8 text-brand-green" strokeWidth={2} />
-                <p className="mt-3 text-sm font-semibold text-foreground">{label}</p>
+              <a 
+                key={label} 
+                href={PHONE_HREF} 
+                className="inline-flex items-center gap-2 bg-white border border-[#00b066] hover:bg-[#00af66a6] hover:opacity-90 transition-opacity hover:text-white text-[#00b066] rounded-xl px-4 py-3 transition-all duration-150"
+              >
+                <Icon className="h-4 w-4 shrink-0" strokeWidth={2} />
+                <span className="text-sm">{label}</span>
               </a>
             ))}
           </div>
+
         </div>
       </section>
 
-      {/*  Trust highlights */}
-      <section className="bg-foreground text-background py-16 md:py-24">
-        <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight">
-            Hit the road with confidence
-          </h2>
-          <div className="mt-12 grid md:grid-cols-3 gap-6">
-            {trustHighlights.map(({ icon: Icon, title, body }) => (
-              <div key={title} className="rounded-2xl border border-background/15 bg-background/5 p-7 hover:border-brand-green/50 transition-colors">
-                <div className="h-12 w-12 rounded-xl bg-brand-green/15 flex items-center justify-center">
-                  <Icon className="h-6 w-6 text-brand-green" strokeWidth={2.2} />
-                </div>
-                <h3 className="mt-5 text-lg font-bold">{title}</h3>
-                <p className="mt-2 text-sm text-background/75 leading-relaxed">{body}</p>
-              </div>
-            ))}
+        {/*  Trust highlights */}
+        <section className="w-full bg-background">
+          <div className="mx-auto py-14">
+            <h2 className="text-[34px] lg:text-[44px] font-bold text-foreground tracking-tight mb-10">
+              Hit the road with confidence
+            </h2>
+
+            {/* Three value-prop cards */}
+            <div className="flex justify-center gap-[40px] flex-col md:flex-row">
+              {trustHighlights?.map((item, idx) => (
+                <DifferenceCard
+                  key={idx}
+                  icon={icons[idx]}
+                  text={item.title}
+                  body={item.body}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
-      <DreamVehicleCTA />
+      {/* <DreamVehicleCTA /> */}
       <GetInTouch />
       <Footer />
     </div>
