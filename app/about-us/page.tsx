@@ -175,7 +175,7 @@ const About = () => {
       </section>
 
       {/* 3. Built in Canada Section */}
-      <section className="bg-white py-16 md:py-12 px-6 md:px-12 border-t border-neutral-100">
+      <section className="bg-white py-16 md:py-12 px-6 md:px-12">
         <div className="mx-auto flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16">
           
           {/* Left: Graphic Illustration */}
