@@ -53,10 +53,10 @@ const About = () => {
 
           {/* Left Column: Text Content */}
           <div className="w-full text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight text-neutral-900 leading-none">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-none">
               Pre-Owned, Without Compromise.
             </h1>
-            <p className="mt-6 text-base md:text-2xl text-neutral-800 leading-relaxed font-normal">
+            <p className="mt-6 text-base md:text-xl text-neutral-800 leading-relaxed font-normal">
               Only the best cars, backed by expertise and a customer- <br/>first experience.
               That&apos;s how Cardora does it.
             </p>
@@ -191,7 +191,7 @@ const About = () => {
 
           {/* Right: Text Block */}
           <div className="w-full text-left">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-950">
+            <h2 className="text-3xl md:text-4xl lg:text-4xl font-bold tracking-tight text-neutral-950">
               Built in Canada, for Canadians
             </h2>
             <p className="mt-3 text-lg md:text-xl font-semibold text-neutral-900">
