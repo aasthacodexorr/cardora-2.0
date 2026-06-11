@@ -269,7 +269,7 @@ const Service = () => {
             </h2>
 
             {/* Three value-prop cards */}
-            <div className="flex justify-center gap-[40px] flex-col md:flex-row">
+            <div className="flex justify-start gap-[40px] flex-col md:flex-row">
               {trustHighlights?.map((item, idx) => (
                 <DifferenceCard
                   key={idx}
