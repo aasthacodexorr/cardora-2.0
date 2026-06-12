@@ -45,4 +45,3 @@ export const BUSINESS_HOURS_SERVICES = {
   saturday: { label: "Saturday", hours: "09:00 AM to 02:00 PM" },
   sunday: { label: "Sunday", hours: "Closed" },
 } as const;
-
