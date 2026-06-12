@@ -38,7 +38,7 @@ const columns = [
       { label: "Home", href: "/", external: false },
       { label: "Find Your Car", href: "/inventory", external: false },
       { label: "Sell or Trade In", href: "/trade-in", external: false },
-      { label: "Car Finance", href: "/finance", external: false },
+      { label: "Car Finance", href: "/financing", external: false },
       { label: "Payment Calculator", href: "/financing", external: false },
       { label: "Skip the Dealership", href: "/financing", external: false },
       { label: "About Us", href: "/about-us", external: false },
