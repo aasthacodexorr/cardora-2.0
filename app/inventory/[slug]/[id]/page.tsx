@@ -65,11 +65,11 @@ export default async function VehicleDetailsPage({
         <Header />
       </div>
       <section className="w-full bg-background flex-1 justify-center">
-        <div className="mx-auto w-full py-6 lg:pt-[30px]">
+        <div className="mx-auto w-full lg:pt-[30px]">
           
           {/*  SECTION ROW: Controls the boundaries of the sticky sidebar */}
           {/* FIX 2: Added layout-level tracks using items-stretch so the columns share an identical height boundary */}
-          <div className="flex flex-col gap-5 lg:flex-row items-stretch px-5 md:px-8 lg:px-10 relative w-full ">
+          <div className="flex flex-col gap-8 lg:flex-row items-stretch px-5 md:px-8 lg:px-10 relative w-full ">
             
             {/*  Left column: gallery + specs + description */}
             <div className={`flex flex-col gap-8 items-start flex-1 w-full ${showSidebar ? "" : "mx-auto"}`}>
@@ -94,19 +94,19 @@ export default async function VehicleDetailsPage({
               {/* Trade In Banner */}
               <div className="w-full lg:mb-30 max-w-[860px]">
                 <div className="flex flex-col md:flex-row items-center justify-between border border-gray-200 rounded-2xl p-6 bg-white w-full max-w-4xl gap-6 box-border font-sans">
-                  <div className="flex sm:flex-row md:gap-5 flex-1">
+                  <div className="flex sm:flex-row md:gap- flex-1">
                     <div className="flex-shrink-0">
                       <img src={doller.src} alt="Trade Icon" className="w-[65px] h-auto block" />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <h4 className="m-0 text-xl md:text-2xl font-semibold text-gray-900">Trade and Upgrade</h4>
-                      <p className="m-0 text-[14px] text-black md:leading-relaxed">Unlock the value of your old car. Get a quick quote today and upgrade to your dream car.</p>
+                      <p className="m-0 text-[14px] text-black/70 md:leading-relaxed">Unlock the value of your old car. Get a quick quote today and upgrade to your dream car.</p>
                     </div>
                   </div>
                   <div className="flex-shrink-0 w-full md:w-auto text-center">
                     <div>
                       <a href="https://www.cardora.ca/trade-in-my-car?inventory_id=2478"
-                        className="inline-block w-full md:w-auto bg-gradient-to-b from-[#00af66] to-[#00af66]/65 hover:opacity-90 shadow-md transition-opacity text-white text-lg font-semibold px-7 py-3.5 rounded-xl no-underline transition-all duration-200 text-center whitespace-nowrap">
+                        className="inline-block w-full md:w-auto bg-gradient-to-b from-[#00af66] to-[#00af66]/65 hover:opacity-90 shadow-md transition-opacity text-white text-lg font-semibold px-9 py-3.5 rounded-xl no-underline transition-all duration-200 text-center whitespace-nowrap">
                         Sell or trade in
                       </a>
                     </div>
