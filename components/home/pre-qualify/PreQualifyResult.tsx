@@ -4,13 +4,13 @@ const PreQualifyResult = ({ biWeeklyPayment, rate, loanAmount }: PreQualifyResul
   return (
     <div className="flex flex-col items-center  mt-6 lg:mt-6 min-w-[229px]">
       <div className="w-full rounded-[10px] bg-[#e6f4ff] px-[15px] sm:px-[15px] pt-4 sm:pt-4 pb-[25px] sm:pb-[32px] text-center overflow-hidden border border-blue-100">
-        <p className="text-[14px] sm:text-[16px] font-medium text-gray-800 tracking-wider mb-0 capitalize">
+        <p className="text-[14px] sm:text-[15px] font-medium text-gray-800 tracking-wider mb-0 capitalize">
           Est. Bi-Weekly
         </p>
-        <div className="mt-[5px] text-[40px] sm:text-[50px] font-semibold text-[#333] leading-none tracking-wide text-center font-[Poppins,sans-serif]">
+        <div className="mt-[5px] text-[40px] sm:text-[50px] font-semibold text-[#333] leading-none text-center font-[Poppins,sans-serif]">
           ${loanAmount > 0 ? biWeeklyPayment.toFixed(2) : "0.00"}
         </div>
-        <div className="mt-3 sm:mt-4 inline-block rounded-md bg-[#00AF66] text-white px-3 sm:px-6 py-[4px] text-[14px] sm:text-[15px] font-semibold shadow-sm font-[Poppins,sans-serif]">
+        <div className="mt-3 sm:mt-3 inline-block rounded-md bg-[#00AF66] text-white px-3 sm:px-5 py-[3px] text-[14px] sm:text-[15px] font-semibold shadow-sm font-[Poppins,sans-serif]">
           at {rate.toFixed(2)}% APR
         </div>
       </div>

@@ -38,7 +38,7 @@ const HeroSearchPanelContent = () => {
   };
 
   return (
-    <div className="w-full max-w-[550px] flex justify-center bg-[#00573326] rounded-[10px]">
+    <div className="w-full max-w-[550px] flex justify-center bg-[#00573326] rounded-[10px] mt-4 pt-2">
       <div className="overflow-hidden rounded-[10px] p-[30px_25px_18px] w-full">
         {/* Search input */}
         <div className="flex items-center bg-white overflow-hidden shadow relative rounded-[10px]">
@@ -74,7 +74,7 @@ const HeroSearchPanelContent = () => {
         </div>
 
         {/* OR divider */}
-        <div className="flex items-center gap-4 my-6">
+        <div className="flex items-center gap-4 my-5">
           <div className="h-px bg-black/20 flex-1" />
           <span className="text-md text-black">or</span>
           <div className="h-px bg-black/20 flex-1" />
