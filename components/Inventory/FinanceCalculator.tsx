@@ -156,42 +156,39 @@ const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: Finan
 
               <div className="relative py-4">
                 <div className="relative w-full h-9 flex items-center">
-        
-        {/* Visual Track Layer (Handles the dynamic green/gray fill background) */}
-        <div 
-          className="absolute inset-0 rounded-full pointer-events-none"
-          style={{
-            background: `linear-gradient(
-              to right,
-              #52C498 0%,
-              #52C498 ${sliderPercent}%,
-              #E2F3EB ${sliderPercent}%,
-              #E2F3EB 100%
-            )`,
-          }}
-        />
+                  {/* Gray Track */}
+                  <div className="absolute inset-0 rounded-full bg-[#DCEBE6]" />
 
-        {/* Dots Layer (Sits ON TOP of the track fill, but under the interactive thumb) */}
-        <div className="absolute inset-0 flex justify-between items-center px-4 pointer-events-none z-10">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <span
-              key={i}
-              className="h-1.5 w-1.5 rounded-full bg-emerald-700 opacity-60"
-            />
-          ))}
-        </div>
+                  {/* Green Fill */}
+                  <div
+                    className="absolute left-0 top-0 h-full rounded-full"
+                    style={{
+                      width: `${sliderPercent}%`,
+                      background:
+                        "linear-gradient(90deg, #A8E5CC 0%, #85DBB8 50%, #05B169 100%)",
+                    }}
+                  />
 
-        {/* The Native Range Input (Completely transparent track, only the thumb is visible) */}
-        <input
-          type="range"
-          min={6}
-          max={15}
-          step="0.01"
-          value={interestRate}
-          onChange={handleSliderChange}
-          className="finance-slider relative z-20 w-full h-9 appearance-none bg-transparent cursor-pointer"
-        />
-      </div>
+                  {/* Dots */}
+                  <div className="absolute inset-0 flex justify-between items-center px-4 pointer-events-none z-10">
+                    {Array.from({ length: 10 }).map((_, i) => (
+                      <span
+                        key={i}
+                        className="h-1.5 w-1.5 rounded-full bg-[#1D8B68]/60"
+                      />
+                    ))}
+                  </div>
+
+                  <input
+                    type="range"
+                    min={6}
+                    max={15}
+                    step="0.01"
+                    value={interestRate}
+                    onChange={handleSliderChange}
+                    className="finance-slider absolute inset-0 z-20 w-full h-9"
+                  />
+                </div>  
                 </div>
  
  
