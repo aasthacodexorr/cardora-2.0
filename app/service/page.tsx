@@ -4,7 +4,7 @@
    Sections:
    - Hero with schedule CTA
    - Location & booking cards
-   - "Take care of your ride" service grid
+   - "Take care of your ride" service grid (dynamic from serviceData)
    - Additional services grid
    - "Hit the road with confidence" trust highlights
    - DreamVehicleCTA → GetInTouch → Footer
@@ -12,6 +12,7 @@
 
 "use client";
 
+import Link from "next/link";
 import {
   Phone, MapPin, CalendarCheck,
   Droplets, Disc3, Gauge, BatteryCharging, Wrench,
@@ -32,13 +33,9 @@ import { Button } from "@/components/ui/button";
 // Config
 import { SITE_CONFIG } from "@/lib/config";
 import { PHONE_HREF, PHONE_NUMBER } from "@/constants";
+import { servicesData } from "@/constants/serviceData";
 import locationIcon from "@/assets/icons/location.png";
 import mapIcon from "@/assets/icons/map-c.png";
-import BatteryImage from "@/assets/icons/Battery.jpg";
-import OilImage from "@/assets/icons/oil.jpg";
-import tireImage from "@/assets/icons/tire.jpg";
-import breaksImage from "@/assets/icons/breaks.avif";
-import wheelImage from "@/assets/icons/wheel.jpg";
 import Image from "next/image";
 
 import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
@@ -51,17 +48,6 @@ const icons = [
   <Image src={CheckIcon} alt="Check Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
   <Image src={MapIcon} alt="Map Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
   <Image src={HeartIcon} alt="Heart Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
-];
-
-
-
-/*  Static Data */
-const mainServices = [
-  { image: OilImage,       title: "Oil Change & Lube",       body: "Engine oil change, filter, reset oil light" },
-  { image: tireImage,          title: "Tire Service",    body: "Replacement, flat, rotation, alignment" },
-  { image: breaksImage,          title: "Brakes",                  body: "Issues, pads, rotors, calipers" },
-  { image: BatteryImage, title: "Wheel Service",                body: "Charge, replacement, testing, starter" },
-  { image: wheelImage,         title: "Battery",   body: "Manufacturer service intervals" },
 ];
 
 const additionalServices = [
@@ -194,9 +180,10 @@ const Service = () => {
 
         {/* Horizontal scroll on small screens, 5 columns on large screens */}
           <div className="mt-10 flex flex-wrap gap-3 pb-4">
-            {mainServices.map(({ image, title, body }) => (
-              <div
-                key={title}
+            {Object.values(servicesData).map(({ id, cardText, section2Img }) => (
+              <Link
+                key={id}
+                href={`/service/${id}`}
                 className="relative w-full sm:w-[48%] md:w-[31%] lg:w-[19%] bg-white border-2 border-gray-200 p-[0.2] rounded-2xl overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer"
               >
                 {/* Full Card Overlay */}
@@ -206,17 +193,17 @@ const Service = () => {
                 <div className="relative z-20 pb-5">
                   <div className="h-40 w-full overflow-hidden">
                     <img
-                      src={image?.src}
-                      alt={title}
+                      src={section2Img}
+                      alt={id}
                       className="w-full h-full object-cover rounded-t-2xl transition-transform duration-300"
                     />
                   </div>
 
                   <div className="flex justify-center items-center">
                     <div className="py-4 px-2">
-                      <h3 className="text-[17px] font-bold text-gray-600">{title}</h3>
+                      <h3 className="text-[17px] font-bold text-gray-600 capitalize">{id.replace('-', ' ')}</h3>
                       <p className="mt-1 text-base text-black/70 font-normal leading-relaxed">
-                        {body}
+                        {cardText}
                       </p>
                     </div>
 
@@ -228,7 +215,7 @@ const Service = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
       </section>
