@@ -114,7 +114,7 @@ const FilterGroup = ({
 const CustomHitsCount = () => {
   const { results } = useHits();
   return (
-    <span className="text-[13px] font-normal text-white leading-none uppercase p-0">
+    <span className="text-[13px] font-normal text-white leading-none uppercase p-0 tracking-tight">
       {results?.nbHits || 0} Matching Vehicles Found
     </span>
   );
@@ -475,7 +475,7 @@ const InventoryContent = () => {
                   <ClearRefinements
                     classNames={{
                       button:
-                        "text-[11px] mb-10 cursor-pointer font-bold text-black disabled:cursor-not-allowed",
+                        "text-[12px] mb-9 cursor-pointer font-bold text-black disabled:cursor-not-allowed",
                     }}
                     translations={{
                       resetButtonText: "Clear Filters",

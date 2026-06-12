@@ -120,7 +120,7 @@ const TradeIn = () => {
           <div className="flex border-b border-gray-200 mb-6">
             <button
               onClick={() => setMode("vehicle")}
-              className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative ${
+              className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative cursor-pointer ${
                 mode === "vehicle" ? "text-gray-900" : "text-gray-900"
               }`}
             >
@@ -131,7 +131,7 @@ const TradeIn = () => {
             </button>
             <button
               onClick={() => setMode("vin")}
-              className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative ${
+              className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative cursor-pointer ${
                 mode === "vin" ? "text-gray-900" : "text-gray-900 "
               }`}
             >
@@ -204,7 +204,7 @@ const TradeIn = () => {
       <div className="absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0">
         
         {/* Main Landscape Wave Vector */}
-       <div className="absolute bottom-22 w-full">
+       <div className="absolute bottom-20 w-full">
          <svg 
           viewBox="0 0 1440 100" 
           fill="none" 
@@ -213,7 +213,7 @@ const TradeIn = () => {
         >
           <path 
             d="M0,70 C340,110 520,30 720,70 C920,110 1120,50 1440,70" 
-            stroke="#00b074" 
+            stroke="#00af66" 
             strokeWidth="10" 
             strokeLinecap="round"
             fill="none" 
@@ -231,7 +231,7 @@ const TradeIn = () => {
           </div>
           
           {/* Valuation Floating Popup Tag */}
-          <div className="bg-[#cdf5e3] border border-[#a6e4ce] text-center px-9 py-4 rounded-xl shadow-md -translate-y-4">
+          <div className="bg-[#cdf5e3] text-center px-9 py-4 rounded-xl shadow-md -translate-y-4">
             <div className="text-[10px]  text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
             <div className="text-2xl font-semibold font-black text-gray-900 mt-0.5">$18,400</div>
           </div>
@@ -241,7 +241,7 @@ const TradeIn = () => {
     </section>
 
       {/*  How it works */}
-      <section className="w-full">
+      <section className="w-full px-24">
         <div className="mx-auto max-w-[1300px] px-9 py-16 lg:py-20">
           <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
             {/* Left Column: Image */}
@@ -293,7 +293,7 @@ const TradeIn = () => {
       </section>
 
       {/* FAQs */}
-      <section className="w-full mb-14 mt-10">
+      <section className="w-full mb-14 mt-10 px-24">
         <div className="mx-auto max-w-[1300px]  px-9 py-16 lg:py-0">
           <div className="flex items-center gap-3 mb-10">
             <h2 className="text-[36px] lg:text-[44px] font-semibold text-foreground">

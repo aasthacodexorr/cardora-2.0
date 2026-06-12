@@ -6,7 +6,7 @@ console.log(vehicle,"vvvvvvvvvv");
     return (
         <>
 
-            <div className="w-full   font-sans mt-10">
+            <div className="w-full   font-sans mt-8">
                 {/* Main Container Card */}
                 <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm text-gray-800">
 

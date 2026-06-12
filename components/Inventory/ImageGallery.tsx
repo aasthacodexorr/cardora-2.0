@@ -84,17 +84,17 @@ export const ImageGallery = ({
 
   return (
     <div
-      className={`flex flex-col lg:flex-row gap-2 w-full max-w-full  xl:max-h-[500px] overflow-hidden ${
+      className={`flex flex-col lg:flex-row gap-[2px] w-full max-w-full  xl:max-h-[500px] overflow-hidden ${
         centered ? "justify-center" : "justify-start"
       }`}
     >
-      <div className="flex flex-col md:flex-row rounded-2xl overflow-hidden">
+      <div className="flex flex-col rounded-2xl overflow-hidden">
         {/*  Main image */}
-        <div className="relative rounded-2xl xl:min-w-[700px] xl:max-w-[700px] overflow-hidden bg-gray-100 shadow-sm">
+        <div className="relative rounded-2xl xl:min-w-[640px] xl:max-w-[700px] overflow-hidden bg-gray-100 shadow-sm">
           {/* Image counter badge */}
-          <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
+          {/* <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
             {activeIndex + 1} / {images.length}
-          </div>
+          </div> */}
 
           {/* Sold badge */}
           {isSold && (
@@ -179,7 +179,7 @@ export const ImageGallery = ({
               key={idx}
               type="button"
               onClick={() => goTo(idx)}
-              className={`w-[155px] h-[117px] my-1 flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 ${
+              className={`w-[155px] h-[125px] flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 ${
                 idx === activeIndex
                   ? " border-transparent"
                   : "border-transparent  "
