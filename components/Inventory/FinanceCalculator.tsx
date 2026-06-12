@@ -198,7 +198,7 @@ const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: Finan
             </div>
 
             {/* Bi-weekly Repayment Result */}
-            <div className="bg-emerald-50/40 border border-emerald-50/80 rounded-2xl p-5 text-center flex flex-col gap-3">
+            <div className="bg-[#faf9f8] border border-emerald-50/80 rounded-2xl p-5 text-center flex flex-col gap-3">
               <h4 className="text-base font-semibold text-black/50 tracking-wide">Your estimated Bi-weekly repayment</h4>
               <h2 className="text-5xl sm:text-4xl font-extrabold text-gray-900 tracking-tight my-1">
                 ${biWeeklyPayment.toFixed(2)}

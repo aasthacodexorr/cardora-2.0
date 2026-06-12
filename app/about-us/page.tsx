@@ -56,7 +56,7 @@ const About = () => {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-none">
               Pre-Owned, Without Compromise.
             </h1>
-            <p className="mt-6 text-base md:text-xl text-neutral-800 leading-relaxed font-normal">
+            <p className="mt-6 text-base md:text-[23px] text-neutral-800 leading-relaxed font-normal">
               Only the best cars, backed by expertise and a customer- <br/>first experience.
               That&apos;s how Cardora does it.
             </p>
@@ -84,12 +84,12 @@ const About = () => {
           </h2>
       <div className="mx-auto flex flex-col md:flex-row items-center justify-between">
         {/* Left Column: Title & Badge List */}
-        <div className="w-full flex flex-col items-start">
+        <div className="flex flex-col items-start ">
           <div className="mt-12 flex flex-col gap-4">
             {certified.map(({ icon: Icon, label }, index) => (
               <div 
                 key={index} 
-                className="flex items-center gap-3 bg-[#e6f4ff] rounded-full px-5 py-4 w-full sm:w-96 shadow-[0_2px_18px_rgba(0,0,0,0.05)]"
+                className="flex items-center  gap-3 bg-[#e6f4ff] rounded-full px-5 py-4 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.05)]"
               >
                 <Check className="h-5 w-5 text-emerald-600 flex-shrink-0" strokeWidth={2.5} />
                 <span className="text-sm md:text-base font-medium text-neutral-800">
@@ -101,11 +101,11 @@ const About = () => {
         </div>
 
         {/* Right Column: Car Image */}
-        <div className="w-full md:max-w-[1500px] pb-24 flex justify-center md:justify-end relative">
+        <div className="w-full md:max-w-[700px] p-32 mt-28 flex justify-center md:justify-end relative">
           <img
             src={blueCar?.src}
             alt="Blue Honda Civic Sedan showcasing Cardora Certified quality"
-            className="w-full h-auto object-contain drop-shadow-xl -top-18 absolute -left-18"
+            className="w-full h-auto object-contain drop-shadow-xl -top-18 absolute -left-1"
             width={1000}
             height={500}
           />
@@ -115,7 +115,7 @@ const About = () => {
     </section>
 
       {/* 1. After-Sale Service Section */}
-      <section className="bg-[#eaeff5] py-16 md:py-20 px-6 md:px-12 my-24">
+      <section className="bg-[#eaeff5] py-16 md:py-18 px-6 md:px-12 my-14">
         <div className="mx-auto flex flex-col md:flex-row items-center justify-between gap-10 md:gap-9">
           
           {/* Left: Image Card Container */}
@@ -136,7 +136,7 @@ const About = () => {
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-950">
               After-Sale Service
             </h2>
-            <p className="mt-5 text-base md:text-[22px] text-neutral-700 leading-relaxed font-normal">
+            <p className="mt-5 text-base md:text-[19px] text-neutral-800 leading-relaxed font-normal">
               We&apos;re here for you long after you drive away. Our team is dedicated to 
               fast, efficient support and making sure every concern is handled with care.
             </p>
@@ -150,11 +150,11 @@ const About = () => {
         <div className="mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-10 md:gap-12">
           
           {/* Left: Text Block */}
-          <div className="w-full md:w-[1200px]">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-950 leading-tight">
+          <div className="w-full md:w-[1300px]">
+            <h2 className="text-3xl md:text-[42px] lg:text-5xl font-bold tracking-tight text-neutral-950 leading-tight">
               Hundreds of Five-Star Reviews — and Counting
             </h2>
-            <p className="mt-5 text-base md:text-xl text-neutral-800 leading-relaxed font-medium">
+            <p className="mt-3 text-base md:text-[20px] text-neutral-800 leading-relaxed font-medium">
               Hundreds of five-star Google reviews and counting—because a great 
               experience is never accidental. 
             </p>
@@ -175,7 +175,7 @@ const About = () => {
       </section>
 
       {/* 3. Built in Canada Section */}
-      <section className="bg-white py-16 md:py-12 px-6 md:px-12">
+      <section className="bg-white py-16 md:py-10 px-6 md:px-12">
         <div className="mx-auto flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16">
           
           {/* Left: Graphic Illustration */}
@@ -191,13 +191,13 @@ const About = () => {
 
           {/* Right: Text Block */}
           <div className="w-full text-left">
-            <h2 className="text-3xl md:text-4xl lg:text-4xl font-bold tracking-tight text-neutral-950">
+            <h2 className="text-3xl md:text-4xl lg:text-[43px] font-bold tracking-tight text-neutral-950">
               Built in Canada, for Canadians
             </h2>
-            <p className="mt-3 text-lg md:text-xl font-semibold text-neutral-900">
+            <p className="mt-3 text-lg md:text-xl text-neutral-900">
               A proudly homegrown success story
             </p>
-            <p className="mt-4 text-base md:text-lg text-neutral-800 leading-relaxed font-normal">
+            <p className="mt-4 text-base md:text-md text-neutral-900 leading-relaxed font-normal">
               Cardora was founded on a simple belief: Canadians deserve a better 
               pre-owned car experience. So we built one.
             </p>

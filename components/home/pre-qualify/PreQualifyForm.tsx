@@ -16,12 +16,12 @@ const PreQualifyForm = ({
   onTradeInValueChange,
 }: PreQualifyFormProps) => {
   return (
-    <div className="w-full pb-4">
+    <div className="w-full">
       <h2 className="text-[26px] sm:text-[30px] lg:text-[36px] font-bold text-[#333] leading-tight tracking-tight ">
         Pre-qualify with no impact to your credit
       </h2>
 
-      <div className="mt-6 sm:mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <div className="mt-6 sm:mt-7 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
         {/* Vehicle Price */}
         <div>
           <label className={LABEL_CLASS}>

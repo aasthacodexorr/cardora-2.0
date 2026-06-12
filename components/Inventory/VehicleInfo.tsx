@@ -4,6 +4,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import checkout from "@/assets/icons/checkout.png";
+import { Fuel } from "lucide-react";
 
 interface FuelIconProps {
   size?: number;
@@ -27,10 +28,15 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
   return (
     <div className="bg-white rounded-2xl px-5 pb-2 text-center shadow-sm">
-      <p className="text-[12px] font-extrabold text-black line-through leading-none mt-2 mb-4">
-        ${vehicle?.price?.toLocaleString()}.00
-      </p>
-      <div className="flex items-center justify-center gap-1">
+      {
+        vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString()
+          ? null :
+          <p className="text-[12px] font-extrabold text-black line-through leading-none my-3">
+            ${vehicle?.price?.toLocaleString()}.00
+          </p>
+      }
+      
+      <div className="flex items-center justify-center gap-1 my-3">
         <p className="text-[32px] font-extrabold text-[#00A651] leading-none">
           ${vehicle?.selling_price?.toLocaleString()}.00
         </p>
@@ -56,11 +62,11 @@ export const PriceAndCTA = ({ vehicle }: any) => {
         </div>
       </div>
 
-      <div className="mt-2">
+      <div className="mt-1">
         <Image src={checkout} alt="Express Checkout" />
       </div>
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-1 space-y-3">
         <a href={`/finance/?inventory_id=${vehicle?.id}`}>
           <button className="cursor-pointer my-3 font-bold w-full rounded-[10px] sm:rounded-[12px] border border-[#00b066] bg-gradient-to-b from-[#00af66] to-[#00af66]/65 text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[20px] hover:opacity-90 shadow-md transition-opacity">
             Get started
@@ -90,14 +96,14 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 export const VehicleHeader = ({ vehicle }: any) => (
   <div className="bg-[#eaf5ff] rounded-t-xl px-5 py-6 text-center w-full">
     <h1 className="text-[28px] font-bold text-gray-900 leading-tight tracking-wide">
-      {vehicle?.year} {vehicle?.make} {vehicle?.model}
+      {vehicle?.year}{vehicle?.make}{vehicle?.model}
     </h1>
 
     {vehicle?.trim && (
       <p className="text-[16px] text-gray-500 mt-0.5">{vehicle?.trim}</p>
     )}
 
-    <div className="flex items-center justify-center gap-3 mt-6 text-black flex-wrap px-5">
+    <div className="flex items-center justify-center gap-3 mt-4 text-black flex-wrap">
       <div className="flex items-center gap-1 text-[14px]">
         <svg
           className="w-4 h-4"
@@ -112,7 +118,7 @@ export const VehicleHeader = ({ vehicle }: any) => (
 
       {vehicle?.fuel_type && (
         <div className="flex items-center gap-1 text-[14px]">
-          <FuelIcon size={15} />
+          <Fuel size={15} />
           <span>{vehicle?.fuel_type}</span>
         </div>
       )}

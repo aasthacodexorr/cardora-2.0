@@ -30,4 +30,4 @@ export const CARDS: Card[] = [
 
 export const CONTAINER_CLASS = "max-w-[1280px] mx-auto px-[20px]";
 
-export const GRID_CLASS = "flex flex-col md:flex-row justify-center gap-6";
+export const GRID_CLASS = "flex flex-col md:flex-row justify-center gap-10";
