@@ -7,17 +7,20 @@ const NextRideCard = ({ image, alt, title, subtitle, to }: NextRideCardProps) =>
   return (
     <Link
       href={to}
-      className="group rounded-2xl border border-border bg-card overflow-hidden flex flex-col hover:shadow-md transition-shadow w-full h-full"
+      className="group rounded-2xl relative border-2 border-border bg-card overflow-hidden flex flex-col hover:shadow-md transition-shadow w-full h-full"
     >
+      <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+
       {/* Card image */}
-      <div className="aspect-[4/4] overflow-hidden bg-muted">
+      <div className="aspect-[4/4] overflow-hidden bg-muted ">
+        {/* Overlay */}
         <Image
           src={image.src}
           alt={alt}
           width={768}
           height={960}
           loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+          className="w-full h-full object-cover transition-transform duration-300"
         />
       </div>
 
@@ -28,7 +31,7 @@ const NextRideCard = ({ image, alt, title, subtitle, to }: NextRideCardProps) =>
           <p className="text-[16px] mt-1">{subtitle}</p>
         </div>
         <ArrowRight
-          className="h-6 w-6 text-brand-green shrink-0 group-hover:translate-x-1 transition-transform"
+          className="h-6 w-6 text-brand-green shrink-0 transition-transform"
           strokeWidth={2.5}
         />
       </div>
