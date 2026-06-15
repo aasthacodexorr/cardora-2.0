@@ -160,24 +160,26 @@ export default function PaymentCalculator() {
                         </div>
 
                         {/* Term Radio Toggle Buttons */}
-                        <div className="sm:col-span-2">
-                            <label className="block text-base font-lg mb-2">Term (Months)</label>
-                            <div className="flex flex-wrap gap-2">
-                                {[12, 24, 36, 48, 60, 72, 84, 96].map((m) => (
-                                    <button
-                                        key={m}
-                                        type="button"
-                                        onClick={() => setTerm(m)}
-                                        className={`px-6 py-3 border border-slate-300 rounded-xl text-sm font-medium transition-colors cursor-pointer shadow-[0_0_10px_rgba(0,0,0,0.1)] ${term === m
-                                                ? 'bg-emerald-500 text-white border-emerald-500'
-                                                : 'bg-white text-gray-700 hover:bg-gray-50'
-                                            }`}
-                                    >
-                                        {m}
-                                    </button>
-                                ))}
+                            <div className="sm:col-span-2">
+                                <label className="block text-base font-medium mb-3 text-slate-700">Term (Months)</label>
+                                <div className="flex flex-wrap gap-1 p-1">
+                                    {[12, 24, 36, 48, 60, 72, 84, 96].map((m) => {
+                                        return (
+                                            <button
+                                                key={m}
+                                                type="button"
+                                                onClick={() => setTerm(m)}
+                                                className={`px-7 py-3 text-sm font-medium rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] cursor-pointer border transition-all duration-200 border-slate-300 text-gray-700 hover:border-slate-400 hover:shadow-[0_4px_0_0_#00af66] ${term === m
+                                                    ? 'border-[#00af66] bg-gradient-to-b from-[#00af66] to-[#00af66a6] text-white'
+                                                    : ''
+                                                    }`}
+                                            >
+                                                {m}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
 
                         <div>
                             <label className="block text-base font-lg mb-1">Trade-In Value</label>
@@ -217,14 +219,14 @@ export default function PaymentCalculator() {
                                         type="button"
                                         onClick={() => {
                                             setCreditScore(score);
-                                            // Match estimated APR shifts based on credit tier
+                                            // Match estimated APR shifts based on credit tir
                                             if (score === 'Excellent') setApr(4.99);
                                             if (score === 'Good') setApr(5.99);
                                             if (score === 'Fair') setApr(9.99);
                                             if (score === 'Poor') setApr(14.99);
                                         }}
                                         className={`px-6 py-2 border border-slate-300 rounded-xl text-sm font-medium transition-colors  cursor-pointer ${creditScore === score
-                                                ? 'bg-emerald-500 text-white border-emerald-500'
+                                                ? 'bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:bg-[#0f9f6e] text-white'
                                                 : 'bg-white text-gray-700 hover:bg-gray-50'
                                             }`}
                                     >

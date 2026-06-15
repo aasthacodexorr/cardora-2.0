@@ -205,7 +205,7 @@ const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: Finan
                 <span>O.A.C + HST + licensing</span>
               </div>
               <a
-                href={`https://www.cardora.ca/finance?inventory_id=${inventoryId}`}
+                href={`/finance?inventory_id=${inventoryId}`}
                 className="mt-2 block w-full bg-gradient-to-b from-[#00af66] to-[#00af66]/65 hover:opacity-90 text-white font-bold text-base py-4 px-6 rounded-xl transition-all duration-150 shadow-md shadow-emerald-600/10 text-center no-underline"
               >
                 Get personalised quotes
