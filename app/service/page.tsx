@@ -157,11 +157,11 @@ const Service = () => {
                   Find the time that Works best for you.
                 </h3>
 
-                <button className="block text-center text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-gradient-to-b from-[#00af66] to-[#00af66a6]">
-                  <a href={PHONE_HREF} className="w-full h-full">
+                <Link href={"/book-an-appointment"} className="block text-center cursor-pointer text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-gradient-to-b from-[#00af66] to-[#00af66a6]">
+                  <button  className="w-full h-full cursor-pointer">
                     Schedule Online
-                  </a>
-                </button>
+                  </button>
+                </Link>
               </div>
             </div>
 
@@ -234,14 +234,14 @@ const Service = () => {
           {/* Action pills wrapper */}
           <div className="flex flex-wrap gap-2 items-center">
             {additionalServices.map(({ icon: Icon, label }) => (
-              <a 
+              <Link 
                 key={label} 
-                href={PHONE_HREF} 
+                href={"/book-an-appointment"}
                 className="inline-flex items-center gap-2 bg-white border border-[#00b066] hover:bg-[#00af66a6] hover:opacity-90 transition-opacity hover:text-white text-[#00b066] rounded-xl px-4 py-3 transition-all duration-150"
               >
                 <Icon className="h-4 w-4 shrink-0" strokeWidth={2} />
                 <span className="text-sm">{label}</span>
-              </a>
+              </Link>
             ))}
           </div>
 
