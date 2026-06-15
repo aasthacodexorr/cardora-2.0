@@ -59,8 +59,8 @@ export default async function ServicePage({ params }: PageProps) {
               <div className="w-full max-w-[4540px] bg-white border border-dashed border-[#10b981] p-6 shadow-[0_0_30px_rgba(244, 249, 252, 0.5)] rounded-xl">
 
                 {/* Top Label */}
-                <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700 tracking-wide mb-2 uppercase">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <div className="flex items-center gap-1 text-[21px] tracking-wide mb-2 uppercase">
+                  <svg className="w-5.5 h-5.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 11-4.243-4.243 3 3 0 014.243 4.243z" />
                   </svg>
                   Limited Time Offer!
@@ -118,10 +118,10 @@ export default async function ServicePage({ params }: PageProps) {
       {/* SECTION 3: Why Regular Changes Matter */}
       <section className="w-full bg-white py-12 md:py-20">
         <div className="mx-auto px-4 md:px-14">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          <div className="flex flex-col md:flex-row gap-28 items-start">
 
             {/* Left Column Content */}
-            <div className="lg:col-span-6 space-y-5">
+            <div className=" w-full max-w-[50%] space-y-5">
               <h2 className="text-3xl md:text-[44px] font-bold text-black tracking-tight leading-[1.15]">
                 {currentData.section2Title || "Why Regular Oil Changes Matter"}
               </h2>
@@ -157,7 +157,7 @@ export default async function ServicePage({ params }: PageProps) {
             </div>
 
             {/* Right Column Image */}
-            <div className="lg:col-span-6">
+            <div className="">
               <div className="w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[11/15] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-slate-100 bg-slate-50">
                 <img
                   src={currentData.section2Img || "image_862620.jpg"}
@@ -260,15 +260,15 @@ export default async function ServicePage({ params }: PageProps) {
       {/* SECTION 5: Premium Service Highlight (Flipped Mirror Layout) */}
       <section className="w-full bg-white py-12 md:py-20 md:px-24">
         <div className="">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          <div className="flex flex-col md:flex-row gap-10 lg:gap-16 items-start">
 
             {/* Left Column Image */}
-            <div className="lg:col-span-6 order-last lg:order-first">
-              <div className="w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[7/10] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-slate-100 bg-slate-50">
+            <div className="w-full max-w-[45%] order-last lg:order-first">
+              <div className=" w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[7/10] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)]">
                 <img
                   src={currentData.premiumImg || "image_85aa7b.jpg"}
                   alt="Premium synthetic oil change service execution"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover p-3 rounded-3xl"
                 />
               </div>
             </div>
@@ -319,11 +319,11 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 6: Why Drivers Choose Us Content Split */}
       <section className="w-full bg-[#f5f5f7] py-12 md:py-20">
-        <div className="px-4 md:px-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+        <div className="px-4 md:px-12">
+          <div className="flex flex-col md:flex-row gap-10 lg:gap-16 items-start">
 
             {/* Left Text Grid Features */}
-            <div className="lg:col-span-6 space-y-6">
+            <div className="w-full max-w-[45%]  space-y-6">
               <h2 className="text-3xl md:text-[40px] font-bold text-black tracking-tight leading-[1.15]">
                 Why Drivers in Brampton Choose Cardora
               </h2>
@@ -358,12 +358,12 @@ export default async function ServicePage({ params }: PageProps) {
             </div>
 
             {/* Right Side Facility Showcase Image */}
-            <div className="lg:col-span-6">
+            <div className="w-full">
               <div className="w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[11/9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
                 <img
                   src={currentData?.premiumImg}
                   alt="Cardora Brampton Facility Storefront with parked vehicles"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover max-h-[88%] rounded-2xl"
                 />
               </div>
             </div>
