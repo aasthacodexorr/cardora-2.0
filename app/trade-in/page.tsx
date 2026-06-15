@@ -96,11 +96,11 @@ const TradeIn = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-hidden">
       <Header />
 
       {/*  Hero / Quote form */}
-      <section className="w-full relative overflow-hidden px-32">
+      <section className="w-full relative px-32">
       <div className="mx-auto pt-20 items-start relative z-10 flex justify-between gap-10 pb-5">
         
         {/* Left: Heading Typography Only */}
@@ -225,10 +225,31 @@ const TradeIn = () => {
         <div className="absolute bottom-0 left-1/2 -translate-x-16 flex flex-col items-center">
           
           {/* Vertical Transparent Connector Bar */}
-          <div className="w-[42px] h-96 bg-gradient-to-b from-transparent via-[#00b074]/10 to-[#00b074]/20 relative flex items-end justify-center">
-            {/* Center Timeline Node Circle on Wave Boundary */}
-            <div className="w-7 h-7 rounded-full bg-white border-[4px] border-[#00b074] absolute bottom-[21px] z-10 shadow-sm" />
-          </div>
+            <div className="relative h-96 w-[44px] flex items-end justify-center">
+              {/* Green glow background */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent via-[#00b074]/15 to-[#00b074]/20" />
+
+              {/* Main green progress line */}
+              <div className="absolute inset-y-0 rounded-full bg-gradient-to-b from-[#dff8ed] via-[#a8ebc9] to-[#7ee0af]" />
+
+              {/* White dashed center line */}
+              <div className="absolute inset-y-6 w-[2px]">
+                <div
+                  className="h-full w-full opacity-80"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(to bottom, white 0px, white 6px, transparent 6px, transparent 12px)",
+                  }}
+                />
+              </div>
+
+              {/* Marker */}
+              <div className="absolute bottom-[21px] z-20 flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full bg-white border-[4px] border-[#00b074] shadow-md" />
+              </div>
+            </div>
+
+            <div className="absolute top-full left-1/2 -mt-5 -translate-x-1/2 w-[44px] h-32 bg-gradient-to-b from-[#a8ebc9]/50 to-transparent" />
           
           {/* Valuation Floating Popup Tag */}
           <div className="bg-[#cdf5e3] text-center px-9 py-4 rounded-xl shadow-md -translate-y-4">

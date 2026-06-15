@@ -73,7 +73,7 @@ export default function SkipTheDealership() {
                             </p>
                         </div>
 
-                        <div className="relative h-[350px] md:h-[450px] w-full rounded-2xl overflow-hidden shadow-lg">
+                        <div className="relative h-[350px] md:h-[420px] w-full rounded-2xl overflow-hidden shadow-lg">
                             <Image
                                 src={skipDeal?.src}
                                 alt="Buy car online Canada"
@@ -87,18 +87,18 @@ export default function SkipTheDealership() {
                 </section>
 
                 {/* 3. The New Way to Buy a Car Section */}
-                <section className="bg-[#EBF5FF] py-16 px-4">
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <section className="bg-[#EBF5FF] py-1 px-4">
+                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-6 items-center">
 
                         {/* Order adjustment for responsive layout (Image first on mobile, left side on desktop) */}
-                        <div className="relative h-[450px] md:h-[550px] w-full rounded-2xl overflow-hidden shadow-md order-2 md:order-1">
-                            <Image
-                                src={newWay?.src}
-                                alt="Skip dealership car buying"
-                                fill
-                                sizes="(max-w-768px) 100vw, 50vw"
-                                className="object-cover"
-                            />
+                        <div className="relative h-[450px] md:h-[750px] w-full rounded-2xl overflow-hidden order-2 md:order-1">
+                            <div className="p-20 h-full">
+                                <img
+                                    src={newWay?.src}
+                                    alt="Skip dealership car buying"
+                                    className="w-full h-full object-cover rounded-2xl"
+                                />
+                            </div>
                         </div>
 
                         <div className="order-1 md:order-2">
