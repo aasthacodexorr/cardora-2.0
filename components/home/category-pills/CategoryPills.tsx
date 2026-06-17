@@ -7,7 +7,7 @@
 ========================= */
 
 import CategoryPill from "./CategoryPill";
-import { CATEGORIES, CONTAINER_CLASS } from "./constants";
+import { CATEGORIES, CONTAINER_CLASS } from "./constants"
 
 const CategoryPills = () => {
   return (

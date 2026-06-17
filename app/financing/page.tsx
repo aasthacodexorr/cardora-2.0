@@ -17,7 +17,7 @@ import { Header, Footer } from "@/components/layout";
 import { GetInTouch } from "@/components/common";
 
 // Config
-import { SITE_CONFIG } from "@/lib/config";
+import { SITE_CONFIG } from "@/constants";
 
 /*  Constants */
 const MIN_HEIGHT      = 540;

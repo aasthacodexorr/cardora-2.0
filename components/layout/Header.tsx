@@ -13,7 +13,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Phone, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Image from "next/image";
 
 import facebook from "@/assets/social/fb.png";
@@ -21,8 +21,7 @@ import instagram from "@/assets/social/insta-1.png";
 import famicons from "@/assets/icons/famicons_call.svg";
 
 import CardoraLogo from "@/components/common/CardoraLogo";
-import { SITE_CONFIG } from "@/lib/config";
-import { NAV_ITEMS, PHONE_NUMBER, PHONE_HREF } from "@/constants";
+import { SITE_CONFIG, NAV_ITEMS, PHONE_NUMBER, PHONE_HREF } from "@/constants";
 
 /*  Component */
 const Header = () => {
@@ -47,7 +46,7 @@ const Header = () => {
   return (
     <>
       {/*  Desktop Header */}
-      <header className={`hidden lg:block w-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] px-8 ${!isHomePage ? "bg-[#f9f9f9]" : "bg-transparent"}`} >
+      <header className={`hidden lg:block w-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] px-8 ${!isHomePage ? "bg-[#f9f9f9]" : "bg-[#f9f9f9]"}`} >
         <div className="mx-auto flex max-w-[1600px] items-center justify-between py-[7.4px]">
 
           {/* Logo */}

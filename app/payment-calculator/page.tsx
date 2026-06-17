@@ -2,14 +2,15 @@
 
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
+import { appConfig } from '@/lib/appConfig';
 import Link from 'next/link';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function PaymentCalculator() {
     // Input States
-    const [vehiclePrice, setVehiclePrice] = useState<number>(25000);
-    const [downPayment, setDownPayment] = useState<number>(0);
-    const [additionalFees, setAdditionalFees] = useState<number>(999);
+    const [vehiclePrice, setVehiclePrice] = useState<number>(appConfig?.payment_calculator?.vehicle_price);
+    const [downPayment, setDownPayment] = useState<number>(appConfig?.payment_calculator?.downpayment);
+    const [additionalFees, setAdditionalFees] = useState<number>(appConfig?.payment_calculator?.additional_fees);
     const [financeFee, setFinanceFee] = useState<number>(999);
     const [gapFee, setGapFee] = useState<number>(1999);
     const [warrantyCost, setWarrantyCost] = useState<number>(0);
@@ -113,6 +114,7 @@ export default function PaymentCalculator() {
                                 <input
                                     type="number"
                                     value={additionalFees || ''}
+                                    placeholder="0.00"
                                     onChange={(e) => setAdditionalFees(Number(e.target.value))}
                                     className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
@@ -126,6 +128,7 @@ export default function PaymentCalculator() {
                                 <input
                                     type="number"
                                     value={financeFee || ''}
+                                    placeholder="0.00"
                                     onChange={(e) => setFinanceFee(Number(e.target.value))}
                                     className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />

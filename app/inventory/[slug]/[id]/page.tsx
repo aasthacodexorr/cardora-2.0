@@ -16,11 +16,11 @@ import FinanceCalculator from "@/components/Inventory/FinanceCalculator";
 import { GetInTouch } from "@/components/common";
 
 // Config, assets & services
-import { SITE_CONFIG } from "@/lib/config";
-import { getVehicleById } from "@/services";
-import { stripHtml, parseImageUrls } from "@/utils";
+import { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
+import { getVehicleById } from "@/lib/vehicleService";
+import { stripHtml, parseImageUrls } from "@/utils/formatters";
+import { appConfig } from "@/lib/appConfig";
 
-import noimage from "@/assets/cars/no-image-placeholder.jpg";
 import doller from "@/assets/icons/doller-1.png";
 import protectShield from "@/assets/icons/trade-shield.png";
 import VehicleSpecificationsAccordion from "@/components/Inventory/Faq";
@@ -53,7 +53,7 @@ export default async function VehicleDetailsPage({
   // Parse semicolon-separated image URLs; prepend CDN domain for relative paths
   const images = vehicle.image_urls
     ? parseImageUrls(vehicle.image_urls, SITE_CONFIG.urls.assetBaseUrl)
-    : [noimage.src];
+    : [DEFAULT_PLACEHOLDER_IMAGE || `${SITE_CONFIG.urls.assetBaseUrl}/image/default-placeholder.jpg`];
 
   const isSold = vehicle.status?.toLowerCase() !== "instock";
 
@@ -186,7 +186,7 @@ export default async function VehicleDetailsPage({
       </section>
 
       <div className="w-full flex justify-center items-center text-base md:text-[12px] px-5 md:px-10 bg-[#666]/10 pt-10 pb-16 italic text-black">
-        Every reasonable effort is made to ensure the accuracy of the information listed above. Vehicle pricing, incentives, options (including standard equipment), and technical specifications listed is for the 2025 Hyundai Elantra Preferred w/ Tech Pkg may not match the exact vehicle displayed. Please confirm with a sales representative the accuracy of this information.
+        Every reasonable effort is made to ensure the accuracy of the information listed above. Vehicle pricing, incentives, options (including standard equipment), and technical specifications listed for the {vehicle.year} {vehicle.make} {vehicle.model} {vehicle.trim} may not match the exact vehicle displayed. {appConfig.site.inventory_pricing_verbage} Please confirm with a sales representative the accuracy of this information.
       </div>
 
       <GetInTouch />
