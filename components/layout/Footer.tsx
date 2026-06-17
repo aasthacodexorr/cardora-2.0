@@ -13,6 +13,7 @@ import { MapPin } from "lucide-react";
 import Image from "next/image";
 import zlogo from "@/assets/brand/zlogo.png";
 import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getBodyTypeUrl } from "@/lib/inventoryUrls";
+import { appConfig } from "@/lib/appConfig";
 
 /*  Static Data */
 const columns = [
@@ -40,7 +41,7 @@ const columns = [
       { label: "Sell or Trade In", href: "/trade-in", external: false },
       { label: "Car Finance", href: "/financing", external: false },
       { label: "Payment Calculator", href: "/payment-calculator", external: false },
-      { label:"Skip the Dealership", href: "/skip-the-dealership", external: false },
+      { label: "Skip the Dealership", href: "/skip-the-dealership", external: false },
       { label: "About Us", href: "/about-us", external: false },
       { label: "Contact Us", href: "/contact-us", external: false },
     ],
@@ -48,16 +49,19 @@ const columns = [
   {
     title: "Follow Us",
     links: [
-      { label: "Facebook", href: "https://www.facebook.com/cardorahq", external: true },
-      { label: "Instagram", href: "https://www.instagram.com/cardora.ca/", external: true },
-      { label: "TikTok", href: "/inventory", external: false },
-      { label: "YouTube", href: "/inventory", external: false },
+      { label: "Facebook", href: appConfig.dealership.social_media_facebook, external: true },
+      { label: "Instagram", href: appConfig.dealership.social_media_instagram, external: true },
+      { label: "TikTok", href: appConfig.dealership.social_media_tiktok, external: true },
+      { label: "YouTube", href: appConfig.dealership.social_media_youtube, external: true },
     ],
   },
 ];
 
 /*  Component */
 const Footer = () => {
+  const d = appConfig.dealership;
+  const mapsUrl = d.address_map_url_1 || d.address_1_bar;
+
   return (
     <footer className="w-full bg-[#121319] border-t-0 -mt-5 ">
       <div className="mx-auto max-w-[1600px] px-10 pb-5">
@@ -102,48 +106,48 @@ const Footer = () => {
             </h3>
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-white/85 shrink-0 mt-0.5" />
-              <a href="https://www.google.com/maps/place/Cardora/@43.7019241,-79.7051392,1711m/data=!3m1!1e3!4m6!3m5!1s0x882b3f8957c9a033:0x9a07057d8dafccb0!8m2!3d43.7016063!4d-79.702997!16s%2Fg%2F11x7qxfpfx?entry=ttu&amp;g_ep=EgoyMDI2MDMyMy4xIKXMDSoASAFQAw%3D%3D" target="_blank">
+              <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
                 <address className="not-italic text-[15px] leading-relaxed text-white cursor-pointer">
-                  8050 Dixie Rd,<br />
-                  Brampton, ON<br />
-                  L6T 4W6
+                  {d.full_address_1},<br />
+                  {d.city_1}, {d.province_1}<br />
+                  {d.postal_code_1} {d.country_1}
                 </address>
               </a>
             </div>
           </div>
         </div>
 
-        
+
       </div>
       <div className="mt-12">
-          <hr className="border-dark-border" />
-        </div>
+        <hr className="border-dark-border" />
+      </div>
 
-        {/* Copyright bar */}
-        <div className="pt-6 px-10 pb-5 flex flex-col md:flex-row gap-4 justify-between max-[767px]:justify-center max-[767px]:items-center">
-          <p className="text-[13px] text-white uppercase">
-            © 2026 Cardora Motor Group. <br />
-            <span className="flex items-center gap-2">
-              All rights reserved. Powered by
-              <a
-                href="https://www.zopdealer.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Image src={zlogo} alt="Zop Dealer" width={20} height={20} />
-              </a>
-            </span>
-          </p>
-          <p className="text-[12.5px] text-white uppercase">
-            <a href="#" className="hover:text-white">Privacy Policy </a>
-            {"|"}
-            <a href="#" className="hover:text-white"> Terms &amp; Conditions </a>
-            {"|"}
-            <a href="#" className="hover:text-white"> Site Map</a>
-          </p>
-        </div>
+      {/* Copyright bar */}
+      <div className="pt-6 px-10 pb-5 flex flex-col md:flex-row gap-4 justify-between max-[767px]:justify-center max-[767px]:items-center">
+        <p className="text-[13px] text-white uppercase">
+          © {new Date().getFullYear()} {d.dealership_name}. <br />
+          <span className="flex items-center gap-2">
+            All rights reserved. Powered by
+            <a
+              href="https://www.zopdealer.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image src={zlogo} alt="Zop Dealer" width={20} height={20} />
+            </a>
+          </span>
+        </p>
+        <p className="text-[12.5px] text-white uppercase">
+          <Link href="/privacy-policy" className="hover:text-white">Privacy Policy</Link>
+          {"|"}
+          <Link href="/terms-and-conditions" className="hover:text-white">Terms &amp; Conditions</Link>
+          {"|"}
+          <Link href="/sitemap" className="hover:text-white">Site Map</Link>
+        </p>
+      </div>
     </footer>
   );
 };
-
+  
 export default Footer;

@@ -5,6 +5,8 @@
    Import SITE_CONFIG wherever external URLs are needed.
 ========================= */
 
+import { appConfig } from "@/lib/appConfig";
+
 export const SITE_CONFIG = {
   urls: {
     /** Base URL for the financing application iframe */
@@ -14,15 +16,58 @@ export const SITE_CONFIG = {
     financeRenderApiUrl: "https://cardora.zopsoftware.com/api/templates/render/15",
 
     /** CDN base URL for vehicle images from Typesense */
-    assetBaseUrl: "https://zopsoftware-asset.b-cdn.net",
+    assetBaseUrl: appConfig.site.cdn_api,
 
     /** Google Maps link to the Cardora dealership */
-    googleMapsUrl:
-      "https://www.google.com/maps/place/Cardora/@43.7019241,-79.7051392,1711m/data=!3m1!1e3!4m6!3m5!1s0x882b3f8957c9a033:0x9a07057d8dafccb0!8m2!3d43.7016063!4d-79.702997",
+    googleMapsUrl: appConfig.dealership.address_map_url_1 || appConfig.dealership.address_1_bar,
+  },
+
+  api: {
+    /** SaaS API endpoint */
+    saasApi: appConfig.site.saas_api,
+    
+    /** CDN API endpoint */
+    cdnApi: appConfig.site.cdn_api,
+  },
+
+  inventory: {
+    /** Default sort parameter for inventory */
+    defaultSort: appConfig.site.default_sort,
+    
+    /** Collection ID for the inventory */
+    collectionId: appConfig.site.collection,
+    
+    /** Inventory slug for URLs */
+    slug: appConfig.site.inventory_slug,
+    
+    /** Pricing disclaimer text */
+    pricingVerbage: appConfig.site.inventory_pricing_verbage,
+  },
+
+  typesense: {
+    /** Typesense host */
+    host: appConfig.site.typesense_host,
+    
+    /** Typesense port */
+    port: appConfig.site.typesense_port,
+    
+    /** Typesense protocol */
+    protocol: appConfig.site.typesense_protocol,
   },
 
   social: {
-    facebook:  "https://facebook.com",
-    instagram: "https://instagram.com",
+    facebook: appConfig.dealership.social_media_facebook,
+    instagram: appConfig.dealership.social_media_instagram,
+  },
+
+  dealership: {
+    /** Dealership name */
+    name: appConfig.dealership.dealership_name,
+    
+    /** Dealership logo URL */
+    logo: appConfig.dealership.dealership_logo,
+    
+    /** Default placeholder image for missing car images */
+    placeholderImage: appConfig.dealership.default_placeholder_image,
   },
 } as const;

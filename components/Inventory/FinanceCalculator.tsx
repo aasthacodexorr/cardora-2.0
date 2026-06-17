@@ -7,17 +7,19 @@ import onlineIcon from "@/assets/icons/online-icon.png";
 import yearIcon from "@/assets/icons/year-icon.png";
 import vdpCar from "@/assets/icons/vdp-car.png";
 
+import { appConfig } from "@/lib/appConfig";
+
 interface FinanceCalculatorProps {
   vehiclePrice?: number;
   inventoryId?: string;
 }
 
-const FinanceCalculator = ({ vehiclePrice = 24990, inventoryId = "2851" }: FinanceCalculatorProps) => {
+const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalculatorProps) => {
   // State management
-  const [purchasePrice, setPurchasePrice] = useState<number>(vehiclePrice);
-  const [depositAmount, setDepositAmount] = useState<number>(0);
-  const [loanTerm, setLoanTerm] = useState<number>(5); // in years
-  const [interestRate, setInterestRate] = useState<number>(7.99); // percentage
+  const [purchasePrice, setPurchasePrice] = useState<number>(vehiclePrice || appConfig.payment_calculator.vehicle_price);
+  const [depositAmount, setDepositAmount] = useState<number>(appConfig.payment_calculator.downpayment);
+  const [loanTerm, setLoanTerm] = useState<number>(appConfig.payment_calculator.duration / 12); // in years
+  const [interestRate, setInterestRate] = useState<number>(appConfig.payment_calculator.interest_rate); // percentage
 
   // Calculation logic
   const loanAmount = Math.max(0, purchasePrice - depositAmount);

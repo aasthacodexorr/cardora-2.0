@@ -37,6 +37,7 @@ import { servicesData } from "@/constants/serviceData";
 import locationIcon from "@/assets/icons/location.png";
 import mapIcon from "@/assets/icons/map-c.png";
 import Image from "next/image";
+import { appConfig } from "@/lib/appConfig";
 
 import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
 import MapIcon   from "@/assets/icons/MAP-ICON.svg";
@@ -117,17 +118,17 @@ const Service = () => {
                 </h3>
 
                 <div className="mt-8 space-y-4">
-                  <p className="text-2xl tracking-wide text-gray-900">Brampton</p>
+                  <p className="text-2xl tracking-wide text-gray-900">{appConfig.dealership.city_1}</p>
 
                   <div className="flex items-center gap-2 text-lg">
                     <MapPin className="h-5 w-5 shrink-0" />
                     <a
-                      href={locationIcon?.src}
+                      href={appConfig.dealership.address_map_url_1 || appConfig.dealership.address_1_bar}
                       target="_blank"
                       rel="noreferrer"
                       className="hover:text-emerald-500 transition-colors"
                     >
-                      8050 Dixie Rd
+                      {appConfig.dealership.full_address_1}
                     </a>
                   </div>
 

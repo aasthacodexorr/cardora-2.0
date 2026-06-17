@@ -7,8 +7,28 @@ const nextConfig: NextConfig = {
     // your project has type errors.
     ignoreBuildErrors: true,
   },
-
+  allowedDevOrigins: ['192.168.1.14'],
   devIndicators: false,
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "zopsoftware-asset.b-cdn.net",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cardora.ca",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.cardora.ca",
+        pathname: "/**",
+      },
+    ],
+  },
 
   // eslint: {
   //   ignoreDuringBuilds: true,

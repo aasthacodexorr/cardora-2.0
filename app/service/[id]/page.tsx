@@ -5,6 +5,7 @@ import FaqAccordion from '@/components/ui/FaqAccordian';
 import { Footer, Header } from '@/components/layout';
 import { Reviews } from '@/components/home';
 import { GetInTouch } from '@/components/common';
+import { appConfig } from "@/lib/appConfig";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -34,7 +35,7 @@ export default async function ServicePage({ params }: PageProps) {
             {/* Left: Title and Checklist */}
             <div className="lg:col-span-6 space-y-8 pt-4">
               <h1 className="text-4xl md:text-[62px] font-bold text-black tracking-tight leading-[1.1]">
-                {currentData.cityTitle || "Oil Change in Brampton, ON"}
+                {currentData.cityTitle || `Oil Change in ${appConfig.dealership.city_1}, ${appConfig.dealership.province_1}`}
               </h1>
 
               <ul className="w-full divide-y divide-slate-200/60 border-b border-slate-200/60">
@@ -305,7 +306,7 @@ export default async function ServicePage({ params }: PageProps) {
               {/* Bottom Body Copy */}
               <div className="space-y-2 text-[18px] leading-[1.6] font-medium tracking-wide">
                 <p>
-                  {currentData.premiumBody || "Modern vehicles are designed to perform best with synthetic oil, especially for drivers dealing with daily commuting, stop-and-go traffic, and changing weather conditions around Brampton and the GTA."}
+                  {currentData.premiumBody || `Modern vehicles are designed to perform best with synthetic oil, especially for drivers dealing with daily commuting, stop-and-go traffic, and changing weather conditions around ${appConfig.dealership.city_1} and the GTA.`}
                 </p>
                 <p>
                   Our technicians will ensure your vehicle receives the correct synthetic oil and filter recommended for your engine.
@@ -325,7 +326,7 @@ export default async function ServicePage({ params }: PageProps) {
             {/* Left Text Grid Features */}
             <div className="w-full max-w-[45%]  space-y-6">
               <h2 className="text-3xl md:text-[40px] font-bold text-black tracking-tight leading-[1.15]">
-                Why Drivers in Brampton Choose Cardora
+                Why Drivers in {appConfig.dealership.city_1} Choose {appConfig.dealership.dealership_name}
               </h2>
 
               {/* Right-Aligned Split Row Checklist */}
@@ -335,7 +336,7 @@ export default async function ServicePage({ params }: PageProps) {
                   "Experienced technicians",
                   "Quick turnaround times",
                   "Transparent pricing",
-                  "Convenient Brampton location",
+                  `Convenient ${appConfig.dealership.city_1} location`,
                   "Trusted customer service experience"
                 ]).map((feature, idx) => (
                   <li key={idx} className="flex items-center justify-between py-3.5">
@@ -362,7 +363,7 @@ export default async function ServicePage({ params }: PageProps) {
               <div className="w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[11/9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
                 <img
                   src={currentData?.premiumImg}
-                  alt="Cardora Brampton Facility Storefront with parked vehicles"
+                  alt={`${appConfig.dealership.dealership_name} ${appConfig.dealership.city_1} Facility Storefront with parked vehicles`}
                   className="w-full h-full object-cover max-h-[88%] rounded-2xl"
                 />
               </div>
@@ -449,7 +450,7 @@ export default async function ServicePage({ params }: PageProps) {
       <section className="w-full bg-[#eaeff5] border-t border-slate-100 py-8 text-center">
         <div className="  px-4 md:px-28 py-14 space-y-3">
           <p className="text-base md:text-3xl ">
-            Book your oil change service today at Cardora Brampton and keep your vehicle performing at its best.
+            Book your oil change service today at {appConfig.dealership.dealership_name} {appConfig.dealership.city_1} and keep your vehicle performing at its best.
           </p>
           <div>
             <Link href="/book-an-appointment" className="inline-block border border-[#00b066] py-3 px-10 rounded-lg transition duration-200 text-xs md:text-lg text-[#00b066] bg-white">
