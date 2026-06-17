@@ -14,8 +14,7 @@
 
 import Link from "next/link";
 import {
-  Phone, MapPin, CalendarCheck,
-  Droplets, Disc3, Gauge, BatteryCharging, Wrench,
+  Phone, MapPin,
   Stethoscope, ThermometerSun, AlertCircle, Cog, Compass,
   Star, Clock, ShieldCheck,
   ArrowRight,
@@ -25,13 +24,9 @@ import {
 import { Header, Footer } from "@/components/layout";
 
 // Shared components
-import { GetInTouch, DreamVehicleCTA } from "@/components/common";
-
-// UI
-import { Button } from "@/components/ui/button";
+import { GetInTouch } from "@/components/common";
 
 // Config
-import { SITE_CONFIG } from "@/lib/config";
 import { PHONE_HREF, PHONE_NUMBER } from "@/constants";
 import { servicesData } from "@/constants/serviceData";
 import locationIcon from "@/assets/icons/location.png";
@@ -42,7 +37,7 @@ import { appConfig } from "@/lib/appConfig";
 import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
 import MapIcon   from "@/assets/icons/MAP-ICON.svg";
 import HeartIcon from "@/assets/icons/HEART-ICON.svg";
-import DifferenceCard from "@/components/home/cardora-difference/DifferenceCard";
+import DifferenceCard from "@/components/Home/cardora-difference/DifferenceCard";
 
 
 const icons = [

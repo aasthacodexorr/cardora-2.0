@@ -16,19 +16,19 @@ import PreQualifyResult from "./PreQualifyResult";
 import { APR_MAP, CARD_CLASS, CONTAINER_CLASS, GRID_CLASS } from "./constants";
 
 const PreQualify = () => {
-  const [vehiclePrice,    setVehiclePrice]    = useState("25000");
-  const [downPayment,     setDownPayment]     = useState("0");
-  const [loanTerm,        setLoanTerm]        = useState("96");
-  const [creditScore,     setCreditScore]     = useState("Good");
-  const [includeTradeIn,  setIncludeTradeIn]  = useState(false);
-  const [tradeInValue,    setTradeInValue]    = useState("0");
+  const [vehiclePrice, setVehiclePrice] = useState("25000");
+  const [downPayment, setDownPayment] = useState("0");
+  const [loanTerm, setLoanTerm] = useState("96");
+  const [creditScore, setCreditScore] = useState("Good");
+  const [includeTradeIn, setIncludeTradeIn] = useState(false);
+  const [tradeInValue, setTradeInValue] = useState("0");
 
   // Derived values
-  const rate        = APR_MAP[creditScore] ?? 7.99;
-  const price       = parseFloat(vehiclePrice) || 0;
-  const down        = parseFloat(downPayment)  || 0;
-  const tradeIn     = includeTradeIn ? (parseFloat(tradeInValue) || 0) : 0;
-  const loanAmount  = price - down - tradeIn;
+  const rate = APR_MAP[creditScore] ?? 7.99;
+  const price = parseFloat(vehiclePrice) || 0;
+  const down = parseFloat(downPayment) || 0;
+  const tradeIn = includeTradeIn ? (parseFloat(tradeInValue) || 0) : 0;
+  const loanAmount = price - down - tradeIn;
 
   // Bi-weekly amortization: 26 periods per year
   const termPeriods = (parseInt(loanTerm) || 0) / 12 * 26;

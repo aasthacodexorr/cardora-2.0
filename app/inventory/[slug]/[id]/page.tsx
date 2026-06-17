@@ -16,10 +16,9 @@ import FinanceCalculator from "@/components/Inventory/FinanceCalculator";
 import { GetInTouch } from "@/components/common";
 
 // Config, assets & services
-import { SITE_CONFIG } from "@/lib/config";
-import { DEFAULT_PLACEHOLDER_IMAGE } from "@/constants/site";
-import { getVehicleById } from "@/services";
-import { stripHtml, parseImageUrls } from "@/utils";
+import { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
+import { getVehicleById } from "@/lib/vehicleService";
+import { stripHtml, parseImageUrls } from "@/utils/formatters";
 import { appConfig } from "@/lib/appConfig";
 
 import doller from "@/assets/icons/doller-1.png";
@@ -32,38 +31,6 @@ import { PriceAndCTA, VehicleHeader } from "@/components/Inventory/VehicleInfo";
 // Force dynamic rendering — vehicle data changes frequently
 export const dynamic = "force-dynamic";
 const showSidebar = true;
-
-// Generate metadata dynamically using the config template and vehicle data
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params;
-  const vehicle = await getVehicleById(resolvedParams.id);
-
-  if (!vehicle) {
-    return { title: "Vehicle Not Found" };
-  }
-
-  const title = appConfig.site.vdp_page_title_template
-    .replace("%year", vehicle.year || "")
-    .replace("%make", vehicle.make || "")
-    .replace("%model", vehicle.model || "")
-    .replace("%dealership_name", appConfig.dealership.dealership_name)
-    .replace("%city_1", appConfig.dealership.city_1)
-    .replace("%province_1", appConfig.dealership.province_1);
-
-  const priceFormatted = new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(vehicle.selling_price || 0);
-
-  const description = appConfig.site.vdp_page_description_template
-    .replace("%year", vehicle.year || "")
-    .replace("%make", vehicle.make || "")
-    .replace("%model", vehicle.model || "")
-    .replace("%trim", vehicle.trim || "")
-    .replace("%dynamic_price_placeholder", priceFormatted)
-    .replace("%dealership_name", appConfig.dealership.dealership_name)
-    .replace("%city_1", appConfig.dealership.city_1)
-    .replace("%province_1", appConfig.dealership.province_1);
-
-  return { title, description };
-}
 
 /*  Page Component */
 export default async function VehicleDetailsPage({

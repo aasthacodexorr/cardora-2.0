@@ -8,10 +8,10 @@
 
 "use client";
 
+import { cn } from "@/utils/formatters";
 import Link, { LinkProps } from "next/link";
 import { usePathname } from "next/navigation";
 import { forwardRef } from "react";
-import { cn } from "@/lib/utils";
 
 /*  Types */
 interface NavLinkCompatProps

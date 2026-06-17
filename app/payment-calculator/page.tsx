@@ -4,7 +4,7 @@ import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
 import { appConfig } from '@/lib/appConfig';
 import Link from 'next/link';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function PaymentCalculator() {
     // Input States

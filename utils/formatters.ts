@@ -1,25 +1,8 @@
 /* =========================
-   Formatters Utility
    Pure helper functions for formatting
    data values used across the UI:
    currency, mileage, dates, etc.
 ========================= */
-
-/**
- * Formats a number as a Canadian dollar price string.
- * e.g. 20990 → "$20,990.00"
- */
-export function formatPrice(value: number): string {
-  return `$${value.toLocaleString("en-CA")}.00`;
-}
-
-/**
- * Formats a mileage number with KM suffix.
- * e.g. 61294 → "61,294 KM"
- */
-export function formatKm(value: number): string {
-  return `${value.toLocaleString("en-CA")} KM`;
-}
 
 /**
  * Strips all HTML tags from a string.
@@ -51,4 +34,28 @@ export function parseImageUrls(
     .split(";")
     .map((url) => resolveImageUrl(url, assetBaseUrl))
     .filter(Boolean);
+}
+
+
+/* =========================
+   cn() Utility
+   Merges Tailwind CSS class names using
+   clsx (conditional classes) and tailwind-merge
+   (deduplication of conflicting Tailwind utilities).
+   Used throughout the component library.
+========================= */
+
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+/**
+ * Combines multiple class values and resolves
+ * Tailwind conflicts via tailwind-merge.
+ *
+ * @example
+ * cn("px-4 py-2", isActive && "bg-green-500", "px-6")
+ * // → "py-2 bg-green-500 px-6"  (px-4 overridden by px-6)
+ */
+export function cn(...inputs: ClassValue[]): string {
+  return twMerge(clsx(inputs));
 }
