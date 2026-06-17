@@ -38,7 +38,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
       
       <div className="flex items-center justify-center gap-1 my-3">
         <p className="text-[32px] font-extrabold text-[#00A651] leading-none">
-          ${vehicle?.selling_price?.toLocaleString()}.00
+          ${Number(vehicle?.selling_price || 0).toLocaleString("en-CA")}.00
         </p>
 
         <div className="relative inline-flex items-center group">

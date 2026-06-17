@@ -11,8 +11,7 @@
 import React from "react";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/config";
-// no image placeholder
-import noimage from "@/assets/cars/no-image-placeholder.jpg";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/constants/site";
 
 /*  Component */
 export const HitCard = ({ hit }: { hit: any }) => {
@@ -30,7 +29,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
   // Parse semicolon-separated image URLs; prepend CDN domain for relative paths
   const imageUrls = hit.image_urls ? hit.image_urls.split(";") : [];
-  let imageSrc = noimage.src;
+  let imageSrc = DEFAULT_PLACEHOLDER_IMAGE || `${SITE_CONFIG.urls.assetBaseUrl}/image/default-placeholder.jpg`;
   if (imageUrls.length > 0) {
     const firstUrl = imageUrls[0].trim();
     imageSrc = firstUrl.startsWith("/")

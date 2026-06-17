@@ -1,7 +1,7 @@
 "use client";
+import { appConfig } from "@/lib/appConfig";
 
 const Terms = ({vehicle}:any) => {
-console.log(vehicle,"vvvvvvvvvv");
 
     return (
         <>
@@ -62,7 +62,7 @@ console.log(vehicle,"vvvvvvvvvv");
                         <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-[340px] bg-black text-white text-[11px] font-normal leading-normal px-4 py-3 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-left shadow-xl pointer-events-none">
                             <p className="font-bold mb-1 text-[12px] text-white">Buy with confidence.</p>
                             <p className="text-gray-200">
-                                Every Cardora vehicle includes a 6-month powertrain warranty,
+                                Every {appConfig.dealership.dealership_name} vehicle includes a 6-month powertrain warranty,
                                 10-day exchange policy, 150-point inspection,
                                 complimentary CARFAX® vehicle history report,
                                 inspection report, and roadside assistance. Certain conditions, limitations,
@@ -106,7 +106,7 @@ console.log(vehicle,"vvvvvvvvvv");
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </div>
-                    <span>{vehicle?.location || "Cardora Brampton"}</span>
+                    <span>{vehicle?.location || `${appConfig.dealership.dealership_name} ${appConfig.dealership.city_1}`}</span>
                 </div>
             </div>
 
