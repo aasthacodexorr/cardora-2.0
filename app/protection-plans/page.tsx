@@ -23,14 +23,12 @@ import {
 import { Header, Footer } from "@/components/layout";
 
 // Shared components
-import { GetInTouch, DreamVehicleCTA } from "@/components/common";
+import { GetInTouch } from "@/components/common";
 
 // Assets
-import silverCar from "@/assets/cars/protection-car.png";
-// import greenCar from "@/assets/cars/protection-green-car.png";
 import rotateCar from "@/assets/cars/rotate-car.png";
 import greenCar from "@/assets/cars/green-car.png";
-import { CardoraDifference } from "@/components/home";
+import { CardoraDifference } from "@/components/Home";
 
 /*  Static Data */
 const includes = [

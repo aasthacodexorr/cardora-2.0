@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import { appConfig } from "@/lib/appConfig";
 
 export const metadata: Metadata = {
-  title: "Cardora",
-  description: "Find Your Dream Ride",
+  title: appConfig.site.home_page_title
+    .replace("%city_1", appConfig.dealership.city_1)
+    .replace("%province_1", appConfig.dealership.province_1),
+  description: appConfig.site.home_page_description
+    .replace("%dealership_name", appConfig.dealership.dealership_name)
+    .replace("%city_1", appConfig.dealership.city_1)
+    .replace("%province_1", appConfig.dealership.province_1),
 };
 
 export default function RootLayout({

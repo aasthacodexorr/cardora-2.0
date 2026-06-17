@@ -16,19 +16,41 @@ import callIcon from "@/assets/icons/call_icon.svg";
 import messageIcon from "@/assets/icons/message_icon.svg";
 import envelopIcon from "@/assets/icons/envelop_icon.svg";
 import whatsappIcon from "@/assets/icons/whatsapp_icon.svg";
-import { BUSINESS_HOURS_SALES,BUSINESS_HOURS_SERVICES } from "@/constants";
-
-/*  Static Data */
-const contactCards = [
-  { title: "Call us",  subtitle: "Call Us Anytime Now",  icon: callIcon },
-  { title: "WhatsApp", subtitle: "Chat on WhatsApp",     icon: whatsappIcon },
-  { title: "Email",    subtitle: "Send Us an Email",     icon: envelopIcon },
-  { title: "Text",     subtitle: "Text Us Right Now",    icon: messageIcon },
-];
+import { BUSINESS_HOURS_SALES, BUSINESS_HOURS_SERVICES } from "@/constants";
+import { appConfig } from "@/lib/appConfig";
 
 /*  Component */
 const GetInTouch = () => {
   const [tab, setTab] = useState<"Sales" | "Service">("Sales");
+  const d = appConfig.dealership;
+
+  /* Contact cards with mapped values from config */
+  const contactCards = [
+    { 
+      title: "Call us",  
+      subtitle: "Call Us Anytime Now",  
+      icon: callIcon,
+      href: `tel:${d.sales_number_1}` 
+    },
+    { 
+      title: "WhatsApp", 
+      subtitle: "Chat on WhatsApp",     
+      icon: whatsappIcon,
+      href: `https://wa.me/${d.sales_number_1?.replace(/\D/g, '')}` 
+    },
+    { 
+      title: "Email",    
+      subtitle: "Send Us an Email",     
+      icon: envelopIcon,
+      href: `mailto:${d.email_1}` 
+    },
+    { 
+      title: "Text",     
+      subtitle: "Text Us Right Now",    
+      icon: messageIcon,
+      href: `sms:${d.sales_number_1}` 
+    },
+  ];
 
   return (
     <section className="w-full bg-[#121319] text-white">
@@ -76,7 +98,7 @@ const GetInTouch = () => {
             {contactCards.map((item) => (
               <a
                 key={item.title}
-                href="#"
+                href={item.href}
                 className="rounded-xl border border-[#2a2b30] bg-transparent p-6 flex items-center justify-between  hover:bg-white/10 transition-colors"
               >
                 <div className="flex items-center justify-between w-full flex-wrap">

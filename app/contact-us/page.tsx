@@ -3,7 +3,7 @@
 
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import callIcon from "@/assets/icons/call_icon.svg";
 import envelopIcon from "@/assets/icons/envelop_icon.svg";
 

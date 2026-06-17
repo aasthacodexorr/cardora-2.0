@@ -7,12 +7,13 @@
 ========================= */
 
 import Image from "next/image";
+import { appConfig } from "@/lib/appConfig";
 
 const CardoraLogo = () => {
   return (
     <Image
-      src="/cardora-logo.png"
-      alt="Cardora — A Robinson Motor Company"
+      src={appConfig.dealership.dealership_logo || "/cardora-logo.png"}
+      alt={`${appConfig.dealership.dealership_name} Logo`}
       width={200}
       height={60}
       priority

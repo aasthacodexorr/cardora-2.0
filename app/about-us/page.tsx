@@ -12,20 +12,11 @@
 "use client";
 
 import {
-  ShieldCheck, Wrench, PhoneCall, RefreshCw,
-  Star, Headphones, Leaf,
-  Check,
-} from "lucide-react";
-
+  ShieldCheck, Wrench, PhoneCall, RefreshCw,Check} from "lucide-react";
 // Layout
 import { Header, Footer } from "@/components/layout";
-
 // Shared components
-import { GetInTouch, DreamVehicleCTA } from "@/components/common";
-
-// Assets
-import aboutHero from "@/assets/pages/about-hero.jpg";
-import aboutTeam from "@/assets/pages/about-team.jpg";
+import { GetInTouch, } from "@/components/common";
 import about from "@/assets/icons/about.png";
 import blueCar from "@/assets/icons/cardora-blue-car.png";
 import saleServices from "@/assets/icons/sale-services.jpg";

@@ -15,7 +15,9 @@
    - React-instantsearch reads the URL and auto-populates the search box
 ========================= */
 
-const COLLECTION_ID = process.env.NEXT_PUBLIC_TYPESENSE_COLLECTION || "";
+import { appConfig } from "@/lib/appConfig";
+
+const COLLECTION_ID = appConfig.site.collection || "";
 
 // Default sort parameters: recently added (status_rank ascending, created_at descending)
 const DEFAULT_SORT = "status_rank:asc,created_at:desc";

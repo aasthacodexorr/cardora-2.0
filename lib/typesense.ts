@@ -13,15 +13,16 @@
 ========================= */
 
 import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
+import { appConfig } from "@/lib/appConfig";
 
 /*  Server configuration */
 export const typesenseServerConfig = {
-  apiKey: process.env.NEXT_PUBLIC_TYPESENSE_SEARCH_KEY || "",
+  apiKey: appConfig.site.inventory_search_only_key,
   nodes: [
     {
-      host:     process.env.NEXT_PUBLIC_TYPESENSE_HOST     || "",
-      port:     Number(process.env.NEXT_PUBLIC_TYPESENSE_PORT) || 443,
-      protocol: process.env.NEXT_PUBLIC_TYPESENSE_PROTOCOL || "https",
+      host:     appConfig.site.typesense_host,
+      port:     Number(appConfig.site.typesense_port) || 443,
+      protocol: appConfig.site.typesense_protocol || "https",
     },
   ],
   connectionTimeoutSeconds: 5,
@@ -42,5 +43,4 @@ export const typesenseAdapter = new TypesenseInstantSearchAdapter({
 export const searchClient = typesenseAdapter.searchClient;
 
 /** Typesense collection name used as the InstantSearch index name */
-export const TYPESENSE_COLLECTION_NAME =
-  process.env.NEXT_PUBLIC_TYPESENSE_COLLECTION || "";
+export const TYPESENSE_COLLECTION_NAME = appConfig.site.collection;
