@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { CARD_CLASS } from "./constants";
+import { CARD_CLASS } from "./constants"
 
 interface DifferenceCardProps {
   icon: ReactNode;

@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
     // your project has type errors.
-    ignoreBuildErrors: true,
+    // ignoreBuildErrors: true,
   },
   allowedDevOrigins: ['192.168.1.14'],
   devIndicators: false,

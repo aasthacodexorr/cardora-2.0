@@ -11,11 +11,8 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-// Layout
-import { Header, Footer } from "@/components/layout";
-
 // Config
-import { SITE_CONFIG } from "@/lib/config";
+import { SITE_CONFIG } from "@/constants";
 
 /*  Inner component (needs useSearchParams) */
 const FinanceContent = () => {
@@ -24,10 +21,6 @@ const FinanceContent = () => {
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
-      {/* <div className="bg-hero-bg">
-        <Header />
-      </div> */}
-
       <section className="flex-1 w-full">
         <div className="mx-auto max-w-[1400px">
           <iframe
@@ -38,8 +31,6 @@ const FinanceContent = () => {
           />
         </div>
       </section>
-
-      {/* <Footer /> */}
     </main>
   );
 };

@@ -13,7 +13,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Phone, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Image from "next/image";
 
 import facebook from "@/assets/social/fb.png";
@@ -21,8 +21,7 @@ import instagram from "@/assets/social/insta-1.png";
 import famicons from "@/assets/icons/famicons_call.svg";
 
 import CardoraLogo from "@/components/common/CardoraLogo";
-import { SITE_CONFIG } from "@/lib/config";
-import { NAV_ITEMS, PHONE_NUMBER, PHONE_HREF } from "@/constants";
+import { SITE_CONFIG, NAV_ITEMS, PHONE_NUMBER, PHONE_HREF } from "@/constants";
 
 /*  Component */
 const Header = () => {

@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { servicesData } from '@/constants/serviceData';
-import FaqAccordion from '@/components/ui/FaqAccordian';
+import FaqAccordion from '@/components/common/FaqAccordion';
 import { Footer, Header } from '@/components/layout';
-import { Reviews } from '@/components/home';
+import { Reviews } from '@/components/Home';
 import { GetInTouch } from '@/components/common';
 import { appConfig } from "@/lib/appConfig";
 

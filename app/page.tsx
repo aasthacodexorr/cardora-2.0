@@ -21,7 +21,7 @@ import {
   FeaturedVehicles,
   Reviews,
   CardoraDifference,
-} from "@/components/home";
+} from "@/components/Home";
 
 // Shared/reusable sections
 import { GetInTouch } from "@/components/common";

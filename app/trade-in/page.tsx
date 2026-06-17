@@ -11,18 +11,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ChevronDown, Search, FileText, MessageSquareQuote, Mail, CalendarCheck, CarFrontIcon } from "lucide-react";
+import { ChevronDown, FileText, Mail, CalendarCheck, CarFrontIcon } from "lucide-react";
 
 // Layout
 import { Header, Footer } from "@/components/layout";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
-
-// UI
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 // Assets
 import tradeInHero from "@/assets/pages/trade-in-hero.jpg";

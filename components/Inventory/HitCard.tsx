@@ -10,8 +10,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { SITE_CONFIG } from "@/lib/config";
-import { DEFAULT_PLACEHOLDER_IMAGE } from "@/constants/site";
+import { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
 
 /*  Component */
 export const HitCard = ({ hit }: { hit: any }) => {

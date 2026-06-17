@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { COLLECTION_ID, DEFAULT_SORT } from "@/constants/site";
+import { COLLECTION_ID, DEFAULT_SORT } from "@/constants";
 
 const HeroSearchPanelContent = () => {
   const [searchQuery, setSearchQuery] = useState("");
