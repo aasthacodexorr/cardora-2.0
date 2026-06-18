@@ -18,7 +18,7 @@ import { GetInTouch } from "@/components/common";
 // Config, assets & services
 import { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
 import { getVehicleById } from "@/lib/vehicleService";
-import { stripHtml, parseImageUrls } from "@/utils/formatters";
+import { stripHtml, parseImageUrls } from "@/lib/formatters";
 import { appConfig } from "@/lib/appConfig";
 
 import doller from "@/assets/icons/doller-1.png";
