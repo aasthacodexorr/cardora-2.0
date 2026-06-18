@@ -9,8 +9,8 @@ import { notFound } from "next/navigation";
 import { Header, Footer } from "@/components/layout";
 
 // Inventory components
-import { ImageGallery } from "@/components/Inventory";
-import FinanceCalculator from "@/components/Inventory/FinanceCalculator";
+import { ImageGallery } from "@/components/inventory";
+import FinanceCalculator from "@/components/inventory/FinanceCalculator";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
@@ -18,16 +18,16 @@ import { GetInTouch } from "@/components/common";
 // Config, assets & services
 import { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
 import { getVehicleById } from "@/lib/inventoryUrls";
-import { stripHtml, parseImageUrls } from "@/lib/formatters";
+import { stripHtml, parseImageUrls } from "@/utils/formatters";
 import { appConfig } from "@/lib/appConfig";
 
 import doller from "@/assets/icons/doller-1.png";
 import protectShield from "@/assets/icons/trade-shield.png";
 import Image from "next/image";
-import VehicleSpecificationsAccordion from "@/components/Inventory/Faq";
-import Terms from "@/components/Inventory/Terms";
-import AboutVehicle from "@/components/Inventory/AboutVehicle";
-import { PriceAndCTA, VehicleHeader } from "@/components/Inventory/VehicleInfo";
+import VehicleSpecificationsAccordion from "@/components/inventory/Faq";
+import Terms from "@/components/inventory/Terms";
+import AboutVehicle from "@/components/inventory/AboutVehicle";
+import { PriceAndCTA, VehicleHeader } from "@/components/inventory/VehicleInfo";
 
 // Force dynamic rendering — vehicle data changes frequently
 export const dynamic = "force-dynamic";
