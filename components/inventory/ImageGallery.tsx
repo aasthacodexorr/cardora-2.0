@@ -12,6 +12,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 /*  Types */
 type ImageGalleryProps = {
@@ -104,9 +105,12 @@ export const ImageGallery = ({
           )}
 
           {/* Active image */}
-          <img
+          <Image
             src={images[activeIndex]}
             alt={`${title} - Image ${activeIndex + 1}`}
+            width={800}
+            height={600}
+            priority
             className={`w-full aspect-[4/3] md:h-full object-cover transition-opacity duration-500 ease-in-out ${
               isSold ? "grayscale opacity-90" : ""
             }`}
@@ -156,9 +160,11 @@ export const ImageGallery = ({
                     idx === activeIndex ? "ring-2 ring-blue-500" : "border-gray-200"
                   }`}
                 >
-                  <img
+                  <Image
                     src={img}
                     alt={`Thumbnail ${idx + 1}`}
+                    width={80}
+                    height={60}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -185,22 +191,24 @@ export const ImageGallery = ({
                   : "border-transparent  "
               }`}
             >
-              <img
+              <Image
                 src={img}
                 alt={`Thumbnail ${idx + 1}`}
+                width={155}
+                height={125}
                 className="w-full h-full object-cover rounded-md"
-                loading="lazy"
               />
             </button>
           ))}
         </div>
       ) : (
         <div className="hidden md:block w-[165px]">
-          <img
+          <Image
             src={images[0]}
             alt={`Thumbnail`}
+            width={168}
+            height={136}
             className="w-42 h-34 object-cover rounded-lg"
-            loading="lazy"
           />
         </div>
       )}
