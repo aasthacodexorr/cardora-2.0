@@ -11,6 +11,7 @@
 import React from "react";
 import Link from "next/link";
 import { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
+import Image from "next/image";
 
 /*  Component */
 export const HitCard = ({ hit }: { hit: any }) => {
@@ -42,12 +43,13 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
         {/* Vehicle image with optional sold overlay */}
         <div className="relative overflow-hidden rounded-xl p-2">
-          <img
+          <Image
             src={imageSrc}
             alt={title}
+            width={600}
+            height={400}
             className={`w-full object-cover min-h-[240px] md:max-h-[240px] rounded-xl transition-transform duration-500 ${isSold ? "grayscale opacity-80" : ""
               }`}
-            loading="lazy"
           />
 
           {/* SOLD Ribbon */}

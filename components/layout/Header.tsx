@@ -109,7 +109,17 @@ const Header = () => {
               rel="noreferrer"
               aria-label="Facebook"
             >
-              <Image src={facebook} alt="Facebook" className="w-[25px]" />
+              <Image 
+                src={facebook} 
+                alt="Facebook" 
+                width={25}
+                height={25}
+                style={{
+                  width: "auto",
+                  height: "auto",
+                  maxWidth: "100%",
+                }}
+              />
             </a>
             <a
               href={SITE_CONFIG.social?.instagram ?? "https://instagram.com"}
@@ -117,7 +127,17 @@ const Header = () => {
               rel="noreferrer"
               aria-label="Instagram"
             >
-              <Image src={instagram} alt="Instagram" className="w-[25px]" />
+              <Image 
+                src={instagram} 
+                alt="Instagram" 
+                width={25}
+                height={25}
+                style={{
+                  width: "auto",
+                  height: "auto",
+                  maxWidth: "100%",
+                }}
+              />
             </a>
           </div>
         </div>

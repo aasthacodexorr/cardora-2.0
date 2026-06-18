@@ -23,6 +23,7 @@ import { appConfig } from "@/lib/appConfig";
 
 import doller from "@/assets/icons/doller-1.png";
 import protectShield from "@/assets/icons/trade-shield.png";
+import Image from "next/image";
 import VehicleSpecificationsAccordion from "@/components/Inventory/Faq";
 import Terms from "@/components/Inventory/Terms";
 import AboutVehicle from "@/components/Inventory/AboutVehicle";
@@ -96,7 +97,7 @@ export default async function VehicleDetailsPage({
                 <div className="flex flex-col md:flex-row items-center justify-between border border-gray-200 rounded-2xl p-6 bg-white w-full max-w-4xl gap-6 box-border font-sans">
                   <div className="flex sm:flex-row md:gap- flex-1">
                     <div className="flex-shrink-0">
-                      <img src={doller.src} alt="Trade Icon" className="w-[65px] h-auto block" />
+                      <Image src={doller} alt="Trade Icon" className="w-[65px] h-auto block" />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <h4 className="m-0 text-xl md:text-2xl font-semibold text-gray-900">Trade and Upgrade</h4>
@@ -121,7 +122,7 @@ export default async function VehicleDetailsPage({
                   <div className="flex flex-col sm:flex-row items-center border border-gray-200 rounded-2xl px-6 py-4 bg-white w-full max-w-4xl mx-auto gap-5 box-border font-sans">
                     <div className="flex items-center sm:text-left gap-3">
                       <div className="flex-shrink-0">
-                        <img src={protectShield?.src} alt="Protection Shield" className="w-[50px] h-auto block" />
+                        <Image src={protectShield} alt="Protection Shield" className="w-[50px] h-auto block" />
                       </div>
                       <div>
                         <p className="m-0 text-[15px] text-gray-800 font-normal leading-relaxed">
