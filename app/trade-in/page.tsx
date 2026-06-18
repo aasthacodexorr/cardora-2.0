@@ -21,6 +21,7 @@ import { GetInTouch } from "@/components/common";
 
 // Assets
 import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
+import Image from "next/image";
 
 /*  Static Data */
 const steps = [
@@ -262,8 +263,8 @@ const TradeIn = () => {
           <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
             {/* Left Column: Image */}
             <div className="w-full h-full">
-              <img
-                src={tradeInHero.src}
+              <Image
+                src={tradeInHero}
                 alt="Customer trading in their car at Cardora"
                 width={1280}
                 height={1896}

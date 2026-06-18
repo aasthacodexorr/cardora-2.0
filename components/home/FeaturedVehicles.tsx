@@ -17,6 +17,7 @@ import car1 from "@/assets/cars/car-kia-forte.jpg";
 import car2 from "@/assets/cars/car-featured-2.jpg";
 import car3 from "@/assets/cars/car-featured-3.jpg";
 import car4 from "@/assets/cars/car-featured-4.jpg";
+import Image from "next/image";
 
 /*  Types */
 type Vehicle = {
@@ -112,12 +113,11 @@ const FeaturedVehicles = () => {
               >
                 {/* Square vehicle image */}
                 <div className="aspect-square bg-muted">
-                  <img
-                    src={v.image.src}
+                  <Image
+                    src={v.image}
                     alt={v.title}
                     width={1024}
                     height={768}
-                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 </div>

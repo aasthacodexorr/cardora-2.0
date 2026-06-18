@@ -17,6 +17,7 @@ import {
 import { Header, Footer } from "@/components/layout";
 // Shared components
 import { GetInTouch, } from "@/components/common";
+import Image from "next/image";
 import about from "@/assets/icons/about.png";
 import blueCar from "@/assets/icons/cardora-blue-car.png";
 import saleServices from "@/assets/icons/sale-services.jpg";
@@ -55,8 +56,8 @@ const About = () => {
 
           {/* Right Column: Image */}
           <div className="w-full flex justify-center md:justify-end">
-            <img
-              src={about?.src}
+            <Image
+              src={about}
               alt="Cardora dealership illustration with flatbed delivery truck carrying a blue SUV"
               className="w-full max-w-[750px] h-auto object-contain"
               width={550}
@@ -93,8 +94,8 @@ const About = () => {
 
         {/* Right Column: Car Image */}
         <div className="w-full md:max-w-[700px] p-32 mt-28 flex justify-center md:justify-end relative">
-          <img
-            src={blueCar?.src}
+          <Image
+            src={blueCar}
             alt="Blue Honda Civic Sedan showcasing Cardora Certified quality"
             className="w-full h-auto object-contain drop-shadow-xl -top-18 absolute -left-1"
             width={1000}
@@ -112,8 +113,8 @@ const About = () => {
           {/* Left: Image Card Container */}
           <div className="w-full flex justify-center md:justify-start">
             <div className="overflow-hidden rounded-2xl bg-white shadow-sm w-full">
-              <img
-                src={saleServices?.src}
+              <Image
+                src={saleServices}
                 alt="Cardora service team standing proudly inside the dealership lot"
                 className="w-full h-auto object-cover"
                 width={540}
@@ -153,8 +154,8 @@ const About = () => {
 
           {/* Right: Graphic Cloud */}
           <div className="w-full flex justify-center md:justify-end">
-            <img
-              src={reviews?.src}
+            <Image
+              src={reviews}
               alt="100+ Five-Star Reviews from Happy Customers illustration with Google logo"
               className="w-full h-auto object-contain"
               width={520}
@@ -171,8 +172,8 @@ const About = () => {
           
           {/* Left: Graphic Illustration */}
           <div className="w-full flex justify-center md:justify-start">
-            <img
-              src={forCanada?.src}
+            <Image
+              src={forCanada}
               alt="Cardora dealership illustration featuring the Canadian flag and map silhouette"
               className="w-full h-auto object-contain"
               width={540}

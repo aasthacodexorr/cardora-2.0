@@ -3,9 +3,10 @@ import { notFound } from 'next/navigation';
 import { servicesData } from '@/constants/serviceData';
 import FaqAccordion from '@/components/common/FaqAccordion';
 import { Footer, Header } from '@/components/layout';
-import { Reviews } from '@/components/Home';
+import { Reviews } from '@/components/home';
 import { GetInTouch } from '@/components/common';
 import { appConfig } from "@/lib/appConfig";
+import Image from "next/image";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -74,10 +75,12 @@ export default async function ServicePage({ params }: PageProps) {
 
                 {/* Main Image Container */}
                 <div className="w-full rounded-md overflow-hidden bg-slate-50 border border-slate-100">
-                  <img
+                  <Image
                     src={currentData.couponImg || "image_92f420.png"}
                     alt="Save $20 Oil Change Coupon"
                     className="w-full h-auto object-cover"
+                    width={500}
+                    height={300}
                   />
                 </div>
 
@@ -159,11 +162,12 @@ export default async function ServicePage({ params }: PageProps) {
 
             {/* Right Column Image */}
             <div className="">
-              <div className="w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[11/15] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-slate-100 bg-slate-50">
-                <img
+              <div className="w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[11/15] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-slate-100 bg-slate-50 relative">
+                <Image
                   src={currentData.section2Img || "image_862620.jpg"}
                   alt="Pouring fresh engine oil from container"
                   className="w-full h-full object-cover"
+                  fill
                 />
               </div>
             </div>
@@ -265,11 +269,12 @@ export default async function ServicePage({ params }: PageProps) {
 
             {/* Left Column Image */}
             <div className="w-full max-w-[45%] order-last lg:order-first">
-              <div className=" w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[7/10] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)]">
-                <img
+              <div className=" w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[7/10] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] relative">
+                <Image
                   src={currentData.premiumImg || "image_85aa7b.jpg"}
                   alt="Premium synthetic oil change service execution"
                   className="w-full h-full object-cover p-3 rounded-3xl"
+                  fill
                 />
               </div>
             </div>
@@ -360,11 +365,12 @@ export default async function ServicePage({ params }: PageProps) {
 
             {/* Right Side Facility Showcase Image */}
             <div className="w-full">
-              <div className="w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[11/9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
-                <img
-                  src={currentData?.premiumImg}
+              <div className="w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[11/9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)] relative">
+                <Image
+                  src={currentData?.premiumImg || "image_85aa7b.jpg"}
                   alt={`${appConfig.dealership.dealership_name} ${appConfig.dealership.city_1} Facility Storefront with parked vehicles`}
                   className="w-full h-full object-cover max-h-[88%] rounded-2xl"
+                  fill
                 />
               </div>
             </div>
@@ -374,60 +380,61 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 7: Related Services Grid */}
-<section className="w-full bg-white py-12 md:py-20">
-  <div className="  px-4 md:px-16">
-    
-    {/* Left-Aligned Header Container */}
-    <div className="text-left mb-10 space-y-1.5">
-      <h2 className="text-3xl md:text-[40px] font-bold text-black tracking-tight">
-        Let's take care of your ride
-      </h2>
-      <p className="text-slate-900 text-[20px] font-medium tracking-wide">
-        Great ways to get started
-      </p>
-    </div>
-    
-    {/* 4-Column Card Grid Container */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-5">
-      {otherCards.slice(0, 4).map((card) => (
-        <Link 
-          key={card.id} 
-          href={`/service/${card.id}`} 
-          className="group bg-white pb-6 border-2 border-slate-200/70 rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col h-full"
-        >
-          {/* Image Wrapper Block */}
-          <div className="aspect-[16/11] bg-slate-50 overflow-hidden w-full">
-            <img 
-              src={card.section2Img || "image_85493b.jpg"} 
-              alt={card.id} 
-              className="w-full h-full object-cover" 
-            />
-          </div>
-          
-          {/* Inner Content Block */}
-          <div className="p-4 flex-1 flex flex-col justify-start space-y-1">
-            {/* Title & Action Arrow Row */}
-            <div className="flex items-center justify-between gap-2 w-full">
-              <h4 className="text-[17px] font-bold text-slate-900 capitalize tracking-tight">
-                {card.id.replace('-', ' ')}
-              </h4>
-              {/* Green Right-Facing Chevron Arrow */}
-              <svg className="w-4 h-4 text-[#10b981] flex-shrink-0 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </div>
-            
-            {/* Short Service Details Text */}
-            <p className=" text-[15px] leading-snug font-medium tracking-wide line-clamp-2">
-              {card.cardText || "Issues, pads, rotors, calipers"}
+      <section className="w-full bg-white py-12 md:py-20">
+        <div className="  px-4 md:px-16">
+
+          {/* Left-Aligned Header Container */}
+          <div className="text-left mb-10 space-y-1.5">
+            <h2 className="text-3xl md:text-[40px] font-bold text-black tracking-tight">
+              Let's take care of your ride
+            </h2>
+            <p className="text-slate-900 text-[20px] font-medium tracking-wide">
+              Great ways to get started
             </p>
           </div>
-        </Link>
-      ))}
-    </div>
 
-  </div>
-</section>
+          {/* 4-Column Card Grid Container */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-5">
+            {otherCards.slice(0, 4).map((card) => (
+              <Link
+                key={card.id}
+                href={`/service/${card.id}`}
+                className="group bg-white pb-6 border-2 border-slate-200/70 rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col h-full"
+              >
+                {/* Image Wrapper Block */}
+                <div className="aspect-[16/11] bg-slate-50 overflow-hidden w-full relative">
+                  <Image
+                    src={card.section2Img || "image_85493b.jpg"}
+                    alt={card.id}
+                    className="w-full h-full object-cover"
+                    fill
+                  />
+                </div>
+
+                {/* Inner Content Block */}
+                <div className="p-4 flex-1 flex flex-col justify-start space-y-1">
+                  {/* Title & Action Arrow Row */}
+                  <div className="flex items-center justify-between gap-2 w-full">
+                    <h4 className="text-[17px] font-bold text-slate-900 capitalize tracking-tight">
+                      {card.id.replace('-', ' ')}
+                    </h4>
+                    {/* Green Right-Facing Chevron Arrow */}
+                    <svg className="w-4 h-4 text-[#10b981] flex-shrink-0 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </div>
+
+                  {/* Short Service Details Text */}
+                  <p className=" text-[15px] leading-snug font-medium tracking-wide line-clamp-2">
+                    {card.cardText || "Issues, pads, rotors, calipers"}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+        </div>
+      </section>
 
       {/* SECTION 8: Google Reviews Grid Block */}
       <section className="w-full bg-[#eaeff5] border-t border-slate-100">

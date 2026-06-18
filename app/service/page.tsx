@@ -37,7 +37,7 @@ import { appConfig } from "@/lib/appConfig";
 import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
 import MapIcon   from "@/assets/icons/MAP-ICON.svg";
 import HeartIcon from "@/assets/icons/HEART-ICON.svg";
-import DifferenceCard from "@/components/Home/cardora-difference/DifferenceCard";
+import DifferenceCard from "@/components/home/cardora-difference/DifferenceCard";
 
 
 const icons = [
@@ -102,7 +102,7 @@ const Service = () => {
               <div className="flex items-center justify-center px-14">
                 {/* Replace this div with your actual image component */}
                 <div className="w-full h-full bg-gray-100 rounded-2xl flex items-center justify-center ">
-                  <img src={locationIcon?.src} className="w-full h-full object-contain " />
+                  <Image src={locationIcon} alt="Location Icon" className="w-full h-full object-contain " />
                 </div>
               </div>
 
@@ -143,7 +143,7 @@ const Service = () => {
               <div className="flex items-center justify-center px-14">
                 {/* Replace this div with your actual image component */}
                 <div className="w-full h-full bg-gray-100 rounded-2xl flex items-center justify-center ">
-                  <img src={mapIcon?.src} className="w-full h-full object-contain " />
+                  <Image src={mapIcon} alt="Map Icon" className="w-full h-full object-contain " />
                 </div>
               </div>
 
@@ -187,11 +187,12 @@ const Service = () => {
 
                 {/* Card Content */}
                 <div className="relative z-20 pb-5">
-                  <div className="h-40 w-full overflow-hidden">
-                    <img
-                      src={section2Img}
+                  <div className="h-40 w-full overflow-hidden relative">
+                    <Image
+                      src={section2Img || "/placeholder.jpg"}
                       alt={id}
                       className="w-full h-full object-cover rounded-t-2xl transition-transform duration-300"
+                      fill
                     />
                   </div>
 
