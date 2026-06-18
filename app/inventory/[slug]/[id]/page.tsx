@@ -17,7 +17,7 @@ import { GetInTouch } from "@/components/common";
 
 // Config, assets & services
 import { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
-import { getVehicleById } from "@/lib/vehicleService";
+import { getVehicleById } from "@/lib/inventoryUrls";
 import { stripHtml, parseImageUrls } from "@/lib/formatters";
 import { appConfig } from "@/lib/appConfig";
 
