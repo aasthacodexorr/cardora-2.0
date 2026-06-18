@@ -22,7 +22,7 @@ import { ChevronDown, Search } from "lucide-react";
 import { Header, Footer } from "@/components/layout";
 
 // Inventory components
-import { HitCard } from "@/components/Inventory";
+import { HitCard } from "@/components/inventory";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
@@ -56,14 +56,6 @@ const refinementListClassNames = {
     "bg-[#e6f7ec] text-gray-900 font-bold px-[8px] py-[2px] rounded-md text-[11px] ml-auto",
 };
 
-const rangeInputClassNames = {
-  root: "w-full pt-2 pb-4 p-0",
-  form: "flex items-center gap-2",
-  input:
-    "w-full px-3 py-2.5 rounded-xl border border-[#d0d0d0] bg-white text-[16px] font-normal outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green text-[#000] transition-all mx-[2%]",
-  submit: "hidden",
-  separator: "text-gray-400 mx-2 font-medium",
-};
 type FilterGroupProps = {
   title: string;
   children: React.ReactNode;
@@ -325,7 +317,6 @@ const InventoryContent = () => {
   useEffect(() => {
     // Get raw query string to parse [query] parameter properly
     const rawQueryString = typeof window !== 'undefined' ? window.location.search : '';
-    console.log("DEBUG - Raw query string:", rawQueryString);
     
     // Parse [query] from raw query string using regex
     // Match both %5Bquery%5D= (URL-encoded) and [query]= (decoded)
@@ -335,8 +326,6 @@ const InventoryContent = () => {
     const bodyTypeParam = searchParams?.get("body_type");
     const fuelTypeParam = searchParams?.get("fuel_type");
     const priceParam = searchParams?.get("price");
-
-    console.log("DEBUG - Parsed query from URL:", { q, bodyTypeParam, fuelTypeParam, priceParam });
 
     const refinementList: Record<string, string[]> = {};
 
@@ -359,12 +348,10 @@ const InventoryContent = () => {
     // If there's a price range, we need to apply it
     if (priceParam) {
       const [min, max] = priceParam.split(":").map(Number);
-      console.log("DEBUG - Price range parsed:", { min, max });
       // Store it in a way that we can use it after InstantSearch initializes
       newUiState[TYPESENSE_COLLECTION_NAME]._priceRange = { min, max };
     }
 
-    console.log("DEBUG - Final UI state with query:", newUiState);
     setUiState(newUiState);
     
     // Force remount of InstantSearch to reset its internal state
@@ -376,14 +363,10 @@ const InventoryContent = () => {
     const priceParam = searchParams?.get("price");
     if (priceParam && uiState) {
       const [min, max] = priceParam.split(":").map(Number);
-      console.log("DEBUG - Applying price range after delay:", { min, max });
-
       // Use a timeout to wait for components to render
       const timer = setTimeout(() => {
         // Find all number inputs (the price filter uses type="number")
         const allInputs = Array.from(document.querySelectorAll('input[type="number"]'));
-        console.log("DEBUG - Found all number inputs:", allInputs.length);
-
         // The price range filter typically has two inputs for min and max
         // Filter by looking for inputs that are likely part of the price filter
         const priceInputs = allInputs.filter((input: any) => {
@@ -393,15 +376,9 @@ const InventoryContent = () => {
           return placeholder === '0' || placeholder === 'Max' || value === '';
         });
 
-        console.log("DEBUG - Filtered price inputs:", priceInputs.length);
-
         if (priceInputs.length >= 2) {
           const minInput = priceInputs[0] as HTMLInputElement;
           const maxInput = priceInputs[1] as HTMLInputElement;
-
-          console.log("DEBUG - Setting min input to:", min);
-          console.log("DEBUG - Setting max input to:", max);
-
           minInput.value = String(min);
           maxInput.value = String(max);
 
@@ -418,16 +395,12 @@ const InventoryContent = () => {
                 btn.textContent?.trim().length < 5
             );
 
-            console.log("DEBUG - Found Go buttons:", buttons.length);
-
             if (buttons.length > 0) {
               const priceApplyBtn = buttons[0] as HTMLButtonElement;
-              console.log("DEBUG - Clicking apply button");
               priceApplyBtn.click();
             }
           }, 100);
         } else {
-          console.log("DEBUG - Not enough price inputs found");
         }
       }, 500);
 

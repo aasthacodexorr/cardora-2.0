@@ -37,7 +37,7 @@ import { appConfig } from "@/lib/appConfig";
 import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
 import MapIcon   from "@/assets/icons/MAP-ICON.svg";
 import HeartIcon from "@/assets/icons/HEART-ICON.svg";
-import DifferenceCard from "@/components/Home/cardora-difference/DifferenceCard";
+import DifferenceCard from "@/components/home/cardora-difference/DifferenceCard";
 
 
 const icons = [

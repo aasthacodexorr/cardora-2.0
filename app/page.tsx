@@ -21,7 +21,7 @@ import {
   FeaturedVehicles,
   Reviews,
   CardoraDifference,
-} from "@/components/Home";
+} from "@/components/home";
 
 // Shared/reusable sections
 import { GetInTouch } from "@/components/common";
@@ -30,7 +30,7 @@ import { GetInTouch } from "@/components/common";
 const HomePage = () => {
   return (
     <main className="min-h-screen bg-background">
-      {/* Hero section has a blue background that wraps the header */}
+      {/* Hero section has a blue background */}
       <div className="bg-hero-bg">
         <Header />
         <Hero />

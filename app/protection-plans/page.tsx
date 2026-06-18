@@ -28,7 +28,7 @@ import { GetInTouch } from "@/components/common";
 // Assets
 import rotateCar from "@/assets/cars/rotate-car.png";
 import greenCar from "@/assets/cars/green-car.png";
-import { CardoraDifference } from "@/components/Home";
+import { CardoraDifference } from "@/components/home";
 import Image from "next/image";
 
 /*  Static Data */
