@@ -4,6 +4,7 @@
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
 import { useState } from 'react';
+import Image from 'next/image';
 import callIcon from "@/assets/icons/call_icon.svg";
 import envelopIcon from "@/assets/icons/envelop_icon.svg";
 
@@ -74,8 +75,8 @@ export default function ContactUs() {
                                 </div>
 
                                 <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-[#00af66] flex items-center justify-center">
-                                    <img
-                                        src={callIcon?.src}
+                                    <Image
+                                        src={callIcon}
                                         alt=""
                                         width={27}
                                         height={27}
@@ -93,8 +94,8 @@ export default function ContactUs() {
                                 </div>
 
                                 <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-[#00af66] flex items-center justify-center">
-                                    <img
-                                        src={envelopIcon?.src}
+                                    <Image
+                                        src={envelopIcon}
                                         alt=""
                                         width={27}
                                         height={27}

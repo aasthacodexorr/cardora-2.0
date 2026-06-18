@@ -74,7 +74,7 @@ export default function SkipTheDealership() {
 
                         <div className="relative h-[350px] md:h-[420px] w-full rounded-2xl overflow-hidden shadow-lg">
                             <Image
-                                src={skipDeal?.src}
+                                src={skipDeal}
                                 alt="Buy car online Canada"
                                 fill
                                 sizes="(max-w-768px) 100vw, 50vw"
@@ -91,11 +91,12 @@ export default function SkipTheDealership() {
 
                         {/* Order adjustment for responsive layout (Image first on mobile, left side on desktop) */}
                         <div className="relative h-[450px] md:h-[750px] w-full rounded-2xl overflow-hidden order-2 md:order-1">
-                            <div className="p-20 h-full">
-                                <img
-                                    src={newWay?.src}
+                            <div className="p-20 h-full relative">
+                                <Image
+                                    src={newWay}
                                     alt="Skip dealership car buying"
                                     className="w-full h-full object-cover rounded-2xl"
+                                    fill
                                 />
                             </div>
                         </div>

@@ -29,6 +29,7 @@ import { GetInTouch } from "@/components/common";
 import rotateCar from "@/assets/cars/rotate-car.png";
 import greenCar from "@/assets/cars/green-car.png";
 import { CardoraDifference } from "@/components/Home";
+import Image from "next/image";
 
 /*  Static Data */
 const includes = [
@@ -122,8 +123,8 @@ const ProtectionPlans = () => {
 
           {/* Right Column: Car Image (Positioned at the absolute bottom right on desktop) */}
           <div className="w-full md:absolute md:bottom-0 md:right-0 md:w-1/2 lg:w-[55%] flex justify-end items-end pointer-events-none">
-            <img
-              src={rotateCar.src}
+            <Image
+              src={rotateCar}
               alt="Silver Toyota Camry Sedan"
               loading="eager"
               className="object-contain w-full h-auto max-h-[300px] md:max-h-[400px] lg:max-h-[480px] object-bottom"
@@ -249,8 +250,8 @@ const ProtectionPlans = () => {
 
         {/* Visual Asset Graphic */}
         <div className="mt-10 flex justify-center">
-          <img 
-            src={greenCar?.src} 
+          <Image 
+            src={greenCar} 
             alt="Vehicle visualization split with checklist indicators" 
             className="w-full h-auto"
           />

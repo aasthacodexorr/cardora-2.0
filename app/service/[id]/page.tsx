@@ -6,6 +6,7 @@ import { Footer, Header } from '@/components/layout';
 import { Reviews } from '@/components/Home';
 import { GetInTouch } from '@/components/common';
 import { appConfig } from "@/lib/appConfig";
+import Image from "next/image";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -74,10 +75,12 @@ export default async function ServicePage({ params }: PageProps) {
 
                 {/* Main Image Container */}
                 <div className="w-full rounded-md overflow-hidden bg-slate-50 border border-slate-100">
-                  <img
+                  <Image
                     src={currentData.couponImg || "image_92f420.png"}
                     alt="Save $20 Oil Change Coupon"
                     className="w-full h-auto object-cover"
+                    width={500}
+                    height={300}
                   />
                 </div>
 
@@ -159,11 +162,12 @@ export default async function ServicePage({ params }: PageProps) {
 
             {/* Right Column Image */}
             <div className="">
-              <div className="w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[11/15] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-slate-100 bg-slate-50">
-                <img
+              <div className="w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[11/15] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-slate-100 bg-slate-50 relative">
+                <Image
                   src={currentData.section2Img || "image_862620.jpg"}
                   alt="Pouring fresh engine oil from container"
                   className="w-full h-full object-cover"
+                  fill
                 />
               </div>
             </div>
@@ -265,11 +269,12 @@ export default async function ServicePage({ params }: PageProps) {
 
             {/* Left Column Image */}
             <div className="w-full max-w-[45%] order-last lg:order-first">
-              <div className=" w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[7/10] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)]">
-                <img
+              <div className=" w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[7/10] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] relative">
+                <Image
                   src={currentData.premiumImg || "image_85aa7b.jpg"}
                   alt="Premium synthetic oil change service execution"
                   className="w-full h-full object-cover p-3 rounded-3xl"
+                  fill
                 />
               </div>
             </div>
@@ -360,11 +365,12 @@ export default async function ServicePage({ params }: PageProps) {
 
             {/* Right Side Facility Showcase Image */}
             <div className="w-full">
-              <div className="w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[11/9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
-                <img
-                  src={currentData?.premiumImg}
+              <div className="w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[11/9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)] relative">
+                <Image
+                  src={currentData?.premiumImg || "image_85aa7b.jpg"}
                   alt={`${appConfig.dealership.dealership_name} ${appConfig.dealership.city_1} Facility Storefront with parked vehicles`}
                   className="w-full h-full object-cover max-h-[88%] rounded-2xl"
+                  fill
                 />
               </div>
             </div>
@@ -396,11 +402,12 @@ export default async function ServicePage({ params }: PageProps) {
           className="group bg-white pb-6 border-2 border-slate-200/70 rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col h-full"
         >
           {/* Image Wrapper Block */}
-          <div className="aspect-[16/11] bg-slate-50 overflow-hidden w-full">
-            <img 
+          <div className="aspect-[16/11] bg-slate-50 overflow-hidden w-full relative">
+            <Image 
               src={card.section2Img || "image_85493b.jpg"} 
               alt={card.id} 
               className="w-full h-full object-cover" 
+              fill
             />
           </div>
           

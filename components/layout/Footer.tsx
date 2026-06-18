@@ -134,7 +134,17 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Image src={zlogo} alt="Zop Dealer" width={20} height={20} />
+              <Image 
+                src={zlogo} 
+                alt="Zop Dealer" 
+                width={20} 
+                height={20}
+                style={{
+                  width: "auto",
+                  height: "auto",
+                  maxWidth: "100%",
+                }}
+              />
             </a>
           </span>
         </p>
