@@ -144,8 +144,10 @@ export const inventoryStateMapping = {
       route.range = indexState.range;
     }
 
-    // sortBy is intentionally NOT persisted to the URL - the URL always
-    // keeps the constant default-sort prefix regardless of selection.
+    if (indexState.sortBy) {
+      route.sortBy = indexState.sortBy;
+    }
+ 
 
     return route;
   },
@@ -163,6 +165,9 @@ export const inventoryStateMapping = {
       query: safeRouteState.query || "",
       refinementList: safeRouteState.refinementList || {},
       range: safeRouteState.range || {},
+      sortBy:
+        safeRouteState.sortBy ||
+        `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
     };
 
     return {
