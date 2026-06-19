@@ -118,6 +118,10 @@ export const SITE_CONFIG = {
 
     /** Google Maps link to the Cardora dealership */
     googleMapsUrl: appConfig.dealership.address_map_url_1 || appConfig.dealership.address_1_bar,
+
+    tradeFormByVehicle:"https://cardora.zopsoftware.com/api/templates/render/17",
+
+    tradeFormByVin:"https://cardora.zopsoftware.com/api/templates/render/18"
   },
 
   api: {
