@@ -22,6 +22,7 @@ import { GetInTouch } from "@/components/common";
 // Assets
 import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
 import Image from "next/image";
+import { SITE_CONFIG } from "@/constants";
 
 /*  Static Data */
 const steps = [
@@ -86,6 +87,17 @@ const faqs = [
   },
 ];
 
+const TRADE_FORMS = {
+  vehicle: {
+    url: SITE_CONFIG.urls.tradeFormByVehicle,
+    minHeight: 447,
+  },
+  vin: {
+    url: SITE_CONFIG.urls.tradeFormByVin,
+    minHeight: 327,
+  },
+} as const;
+
 /*  Page Component */
 const TradeIn = () => {
   const [mode, setMode]       = useState<"vehicle" | "vin">("vehicle");
@@ -110,90 +122,43 @@ const TradeIn = () => {
         </div>
 
         {/* Right: Quote Form Card matching reference image */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 pb-24 border border-gray-100/80 w-full max-w-[440px] lg:justify-self-end">
-          
-          {/* Flat Underline Mode Switcher */}
-          <div className="flex border-b border-gray-200 mb-6">
-            <button
-              onClick={() => setMode("vehicle")}
-              className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative cursor-pointer ${
-                mode === "vehicle" ? "text-gray-900" : "text-gray-900"
-              }`}
-            >
-              By Vehicle
-              {mode === "vehicle" && (
-                <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#00b074] rounded-full" />
-              )}
-            </button>
-            <button
-              onClick={() => setMode("vin")}
-              className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative cursor-pointer ${
-                mode === "vin" ? "text-gray-900" : "text-gray-900 "
-              }`}
-            >
-              VIN
-              {mode === "vin" && (
-                <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#00b074] rounded-full" />
-              )}
-            </button>
+          <div className="bg-white rounded-2xl shadow-xl p-8 pb-24 border border-gray-100/80 w-full max-w-[440px] lg:justify-self-end">
+
+            <div className="flex border-b border-gray-200 mb-6 cursor-pointer">
+              <button
+                onClick={() => setMode("vehicle")}
+                className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative cursor-pointer ${mode === "vehicle" ? "text-gray-900" : "text-gray-900"
+                  }`}
+              >
+                By Vehicle
+                {mode === "vehicle" && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#00b074] rounded-full" />
+                )}
+              </button>
+
+              <button
+                onClick={() => setMode("vin")}
+                className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative cursor-pointer ${mode === "vin" ? "text-gray-900" : "text-gray-900"
+                  }`}
+              >
+                VIN
+                {mode === "vin" && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#00b074] rounded-full" />
+                )}
+              </button>
+            </div>
+
+            <iframe
+              key={mode}
+              src={TRADE_FORMS[mode].url}
+              title={mode === "vehicle" ? "Trade Form By Vehicle" : "Trade Form By VIN"}
+              width="100%"
+              className="border-0 cursor-pointer"
+              style={{
+                minHeight: `${TRADE_FORMS[mode].minHeight}px`,
+              }}
+            />
           </div>
-
-          {/* Form Context Control Fields */}
-          {mode === "vehicle" ? (
-            <div className="space-y-3.5">
-              {["Select Year", "Select Make", "Select Model", "Select Trim"].map((label) => (
-                <div key={label} className="relative">
-                  <select
-                    className="w-full appearance-none bg-white border border-gray-300 rounded-xl px-4 py-3.5 text-[15px] font-medium focus:outline-none focus:border-[#00b074] cursor-pointer"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>{label}</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-                </div>
-              ))}
-              
-              {/* Regional Split Inputs Row */}
-              <div className="grid grid-cols-2 gap-3.5">
-                <div className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3.5 text-[15px] font-medium text-gray-700">
-                  ontario
-                </div>
-                <div className="relative">
-                  <select 
-                    className="w-full appearance-none bg-white border border-gray-300 rounded-xl px-4 py-3.5 text-[15px] font-medium text-gray-400 focus:outline-none" 
-                    defaultValue=""
-                  >
-                    <option value="" disabled></option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3.5">
-              <input 
-                type="text" 
-                placeholder="Enter 17-character VIN" 
-                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3.5 text-[15px] font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#00b074]"
-              />
-              <div className="relative">
-                <select 
-                  className="w-full appearance-none bg-white border border-gray-300 rounded-xl px-4 py-3.5 text-[15px] font-medium text-gray-500 focus:outline-none"
-                  defaultValue=""
-                >
-                  <option value="" disabled>Select Province</option>
-                  <option value="ON">Ontario</option>
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-              </div>
-            </div>
-          )}
-
-          {/* Single Action Submit Button */}
-          <button className="cursor-pointer my-3 px-9 py-3 rounded-xl border border-[#00b066] bg-gradient-to-b from-[#00af66] to-[#00af66]/65 text-white text-[12px] sm:text-[14px] tracking-wider hover:opacity-90 shadow-md transition-opacity">
-            Submit
-          </button>
-        </div>
       </div>
 
       {/*  Background Wave & Axis Graphic Overlays */}
