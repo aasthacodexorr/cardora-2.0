@@ -15,7 +15,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Search } from "lucide-react";
 
 // Layout
@@ -39,6 +39,7 @@ import {
   SortBy,
   CurrentRefinements,
   useRange,
+  useInstantSearch,
 } from "react-instantsearch";
 
 // Typesense search client
@@ -113,6 +114,26 @@ const CustomHitsCount = () => {
       {results?.nbHits || 0} Matching Vehicles Found
     </span>
   );
+};
+
+const ScrollToTopOnSearch = () => {
+  const { results } = useInstantSearch();
+  const firstLoad = useRef(true);
+
+  useEffect(() => {
+    // Skip initial page load
+    if (firstLoad.current) {
+      firstLoad.current = false;
+      return;
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [results?.__isArtificial, results?.nbHits]);
+
+  return null;
 };
 
 /*  NoResultsHandler: shows message when no hits */
@@ -352,6 +373,7 @@ const InventoryContent = () => {
             stateMapping: inventoryStateMapping,
           }}
         >
+          <ScrollToTopOnSearch />
           <Configure hitsPerPage={21} />
 
           <div className="max-w-[1600px] mx-auto px-3 lg:px-[24px] pt-[20px] pb-[50px]">
