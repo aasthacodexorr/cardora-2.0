@@ -7,15 +7,15 @@
    - Search box + sort-by dropdown
    - Active refinement chips (CurrentRefinements)
    - Responsive grid of HitCard results
-   - URL-driven initial state with collection_id and default sort in query params
-   - Collection ID in URL for tracking which collection data comes from
-   Wrapped in Suspense to handle useSearchParams safely.
+   - URL-driven state via custom InstantSearch router:
+     selected filters/search are written back into the URL in the
+     client-required format, and reset whenever a fresh footer/home
+     link is navigated to.
 ========================= */
 
 "use client";
 
-import { useState, Suspense, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { ChevronDown, Search } from "lucide-react";
 
 // Layout
@@ -43,6 +43,9 @@ import {
 
 // Typesense search client
 import { searchClient, TYPESENSE_COLLECTION_NAME } from "@/lib/typesense";
+
+// Custom router/stateMapping that produces the client-required URL format
+import { createInventoryRouter, inventoryStateMapping } from "@/lib/inventoryRouting";
 
 /*  Shared class name configs for InstantSearch widgets */
 const refinementListClassNames = {
@@ -163,10 +166,10 @@ const PriceRangeFilter = () => {
   const [min, setMin] = useState(start[0] ?? "");
   const [max, setMax] = useState(start[1] ?? "");
 
-  useEffect(() => {
-    setMin(start[0] ?? "");
-    setMax(start[1] ?? "");
-  }, [start]);
+  // Keep local inputs in sync whenever the underlying range state changes
+  // externally (e.g. loaded from the URL on first render, or cleared via
+  // "Clear Filters").
+  useStartSync(start, setMin, setMax);
 
   const handleApply = () => {
     const minValue = min ? Number(min) : undefined;
@@ -221,10 +224,7 @@ const OdometerRangeFilter = () => {
   const [min, setMin] = useState("");
   const [max, setMax] = useState("");
 
-  useEffect(() => {
-    setMin(start[0] ? String(start[0]) : "");
-    setMax(start[1] ? String(start[1]) : "");
-  }, [start]);
+  useStartSync(start, setMin, setMax, true);
 
   const handleApply = () => {
     const minValue = min ? Number(min) : undefined;
@@ -268,6 +268,7 @@ const OdometerRangeFilter = () => {
           min={400}
           value={min}
           onChange={(e) => setMin(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="400"
           className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? "border-red-500" : "border-[#cfcfcf]"
             }`}
@@ -280,6 +281,7 @@ const OdometerRangeFilter = () => {
           min={400}
           value={max}
           onChange={(e) => setMax(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Max"
           className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? "border-red-500" : "border-[#cfcfcf]"
             }`}
@@ -303,120 +305,37 @@ const OdometerRangeFilter = () => {
   );
 }
 
+/*  useStartSync: small shared hook so PriceRangeFilter/OdometerRangeFilter
+    keep their local text-input state in sync with the InstantSearch
+    `useRange` `start` tuple (e.g. when loaded from the URL on first
+    render, or reset via "Clear Filters"). asStrings=true mirrors the
+    OdometerRangeFilter's original String() coercion. */
+function useStartSync(
+  start: readonly [number | undefined, number | undefined],
+  setMin: (v: any) => void,
+  setMax: (v: any) => void,
+  asStrings = false
+) {
+  useEffect(() => {
+    if (asStrings) {
+      setMin(start[0] !== undefined ? String(start[0]) : "");
+      setMax(start[1] !== undefined ? String(start[1]) : "");
+    } else {
+      setMin(start[0] ?? "");
+      setMax(start[1] ?? "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [start[0], start[1]]);
+}
+
 /*  InventoryContent: main page content */
 const InventoryContent = () => {
-  const searchParams = useSearchParams();
-  const [uiState, setUiState] = useState<any>(null);
-  const [key, setKey] = useState(0); // Force remount of InstantSearch component
-
   /*  Only one filter open at a time */
   const [openFilter, setOpenFilter] =
     useState<string | null>("");
 
-  // Parse URL params and create initial UI state
-  useEffect(() => {
-    // Get raw query string to parse [query] parameter properly
-    const rawQueryString = typeof window !== 'undefined' ? window.location.search : '';
+
     
-    // Parse [query] from raw query string using regex
-    // Match both %5Bquery%5D= (URL-encoded) and [query]= (decoded)
-    const queryMatch = rawQueryString.match(/(?:%5Bquery%5D|\[query\])=([^&]*)/);
-    const q = queryMatch ? decodeURIComponent(queryMatch[1]) : "";
-    
-    const bodyTypeParam = searchParams?.get("body_type");
-    const fuelTypeParam = searchParams?.get("fuel_type");
-    const priceParam = searchParams?.get("price");
-
-    const refinementList: Record<string, string[]> = {};
-
-    if (bodyTypeParam) {
-      refinementList.body_type = bodyTypeParam.split("|");
-    }
-
-    if (fuelTypeParam) {
-      refinementList.fuel_type = fuelTypeParam.split("|");
-    }
-
-    // Build the UI state for InstantSearch
-    const newUiState: any = {
-      [TYPESENSE_COLLECTION_NAME]: {
-        query: q,
-        ...(Object.keys(refinementList).length > 0 && { refinementList }),
-      },
-    };
-
-    // If there's a price range, we need to apply it
-    if (priceParam) {
-      const [min, max] = priceParam.split(":").map(Number);
-      // Store it in a way that we can use it after InstantSearch initializes
-      newUiState[TYPESENSE_COLLECTION_NAME]._priceRange = { min, max };
-    }
-
-    setUiState(newUiState);
-    
-    // Force remount of InstantSearch to reset its internal state
-    setKey(prev => prev + 1);
-  }, [searchParams]);
-
-  // Separate effect to apply price range after a delay (to let InstantSearch initialize)
-  useEffect(() => {
-    const priceParam = searchParams?.get("price");
-    if (priceParam && uiState) {
-      const [min, max] = priceParam.split(":").map(Number);
-      // Use a timeout to wait for components to render
-      const timer = setTimeout(() => {
-        // Find all number inputs (the price filter uses type="number")
-        const allInputs = Array.from(document.querySelectorAll('input[type="number"]'));
-        // The price range filter typically has two inputs for min and max
-        // Filter by looking for inputs that are likely part of the price filter
-        const priceInputs = allInputs.filter((input: any) => {
-          const placeholder = input.placeholder || '';
-          const value = input.value || '';
-          // Price inputs typically have "0" or numeric placeholders
-          return placeholder === '0' || placeholder === 'Max' || value === '';
-        });
-
-        if (priceInputs.length >= 2) {
-          const minInput = priceInputs[0] as HTMLInputElement;
-          const maxInput = priceInputs[1] as HTMLInputElement;
-          minInput.value = String(min);
-          maxInput.value = String(max);
-
-          // Trigger input events (more reliable than change)
-          minInput.dispatchEvent(new Event("input", { bubbles: true }));
-          maxInput.dispatchEvent(new Event("input", { bubbles: true }));
-          minInput.dispatchEvent(new Event("change", { bubbles: true }));
-          maxInput.dispatchEvent(new Event("change", { bubbles: true }));
-
-          // Wait a bit then click the apply button
-          setTimeout(() => {
-            const buttons = Array.from(document.querySelectorAll("button")).filter(
-              (btn) => btn.textContent?.trim().includes("Go") &&
-                btn.textContent?.trim().length < 5
-            );
-
-            if (buttons.length > 0) {
-              const priceApplyBtn = buttons[0] as HTMLButtonElement;
-              priceApplyBtn.click();
-            }
-          }, 100);
-        } else {
-        }
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [uiState, searchParams]);
-
-  // Only render InstantSearch after uiState is set from URL params
-  if (!uiState) {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
-        <div className="font-bold">Loading inventory...</div>
-      </main>
-    );
-  }
-
   return (
     <main className="min-h-screen bg-background flex flex-col">
       <div className="bg-hero-bg">
@@ -424,12 +343,14 @@ const InventoryContent = () => {
       </div>
 
       <section className="w-full bg-[#efefef] flex-1">
+
         <InstantSearch
-          key={key}
           searchClient={searchClient}
           indexName={TYPESENSE_COLLECTION_NAME}
-          initialUiState={uiState}
-          routing={false}
+          routing={{
+            router: createInventoryRouter(),
+            stateMapping: inventoryStateMapping,
+          }}
         >
           <Configure hitsPerPage={21} />
 
@@ -700,19 +621,19 @@ const InventoryContent = () => {
                         },
                         {
                           label: "Make (A - Z)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/make:asc`,
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/make_rank:asc`,
                         },
                         {
                           label: "Make (Z - A)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/make:desc`,
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/make_rank:desc`,
                         },
                         {
                           label: "Model (A - Z)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/model:asc`,
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/model_rank:asc`,
                         },
                         {
                           label: "Model (Z - A)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/model:desc`,
+                          value: `${TYPESENSE_COLLECTION_NAME}/sort/model_rank:desc`,
                         },
                         {
                           label: "Year (Low to High)",
@@ -777,17 +698,7 @@ const InventoryContent = () => {
 
 /*  Page export */
 const InventoryPage = () => {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-background flex items-center justify-center font-bold">
-          Loading inventory...
-        </div>
-      }
-    >
-      <InventoryContent />
-    </Suspense>
-  );
+  return <InventoryContent />;
 };
 
 export default InventoryPage;
