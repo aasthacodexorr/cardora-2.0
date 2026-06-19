@@ -25,13 +25,11 @@ const HeroSearchPanelContent = () => {
 
   const handleSearch = () => {
     if (!searchQuery.trim()) {
-      const encoded = encodeURIComponent(`${COLLECTION_ID}/sort/${DEFAULT_SORT}`);
-      router.push(`/inventory/?${encoded}`);
+      router.push(`/inventory/`);
       return;
     }
 
-    const encoded = encodeURIComponent(`${COLLECTION_ID}/sort/${DEFAULT_SORT}`);
-    router.push(`/inventory/?${encoded}%5Bquery%5D=${encodeURIComponent(searchQuery.trim())}`);
+    router.push(`/inventory/?${encodeURIComponent(`${COLLECTION_ID}${DEFAULT_SORT}`)}%5Bquery%5D=${encodeURIComponent(searchQuery.trim())}`);
   };
 
   return (
@@ -79,7 +77,7 @@ const HeroSearchPanelContent = () => {
 
         {/* Browse all Cars button */}
         <Link
-          href={`/inventory/?${encodeURIComponent(`${COLLECTION_ID}/sort/${DEFAULT_SORT}`)}`}
+          href={`/inventory/`}
           className="block text-center text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-gradient-to-b from-[#00af66] to-[#00af66a6]"
         >
           Browse all Cars

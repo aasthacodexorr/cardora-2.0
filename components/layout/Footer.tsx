@@ -14,6 +14,8 @@ import Image from "next/image";
 import zlogo from "@/assets/brand/zlogo.png";
 import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getBodyTypeUrl } from "@/lib/inventoryUrls";
 import { appConfig } from "@/lib/appConfig";
+import { usePathname } from "next/navigation";
+
 
 /*  Static Data */
 const columns = [
@@ -61,6 +63,7 @@ const columns = [
 const Footer = () => {
   const d = appConfig.dealership;
   const mapsUrl = d.address_map_url_1 || d.address_1_bar;
+  const pathname = usePathname();
 
   return (
     <footer className="w-full bg-[#121319] border-t-0 -mt-5 ">
@@ -89,6 +92,15 @@ const Footer = () => {
                       <Link
                         href={link.href}
                         className="text-[15px] uppercase text-white transition-colors"
+                        onClick={(e) => {
+                          if (
+                            pathname === "/inventory" &&
+                            link.href.startsWith("/inventory")
+                          ) {
+                            e.preventDefault();
+                            window.location.href = link.href;
+                          }
+                        }}
                       >
                         {link.label}
                       </Link>
