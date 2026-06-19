@@ -13,12 +13,12 @@ const CategoryPills = () => {
   return (
     <section className="w-full bg-background">
       <div className={CONTAINER_CLASS}>
-        {CATEGORIES.map(({ label, icon, queryParams }) => (
+        {CATEGORIES.map(({ label, icon, href }) => (
           <CategoryPill
             key={label}
             label={label}
             icon={icon}
-            href={`/inventory${queryParams ? `?${queryParams}` : ""}`}
+            href={href}
           />
         ))}
       </div>
