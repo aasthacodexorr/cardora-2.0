@@ -66,6 +66,13 @@ const Header = () => {
                 <Link
                   key={item.label}
                   href={item.to}
+                  onClick={(e) => {
+                    if (item.to === "/inventory") {
+                      e.preventDefault();
+                      // Force a clean page load with no query parameters
+                      window.location.href = "/inventory";
+                    }
+                  }}
                   className={` relative text-[16px] font-bold transition-colors whitespace-nowrap capitalize tracking-[0px] mt-2 py-[6px] px-5 leading-normal font-[Lato,sans-serif] ${
                     !isLast ? "after:content-[''] after:absolute after:right-0 after:top-1/2 after:-translate-y-1/2 after:h-[22px] after:w-[2px] after:bg-[#b5b4b459]" : ""
                   } ${
@@ -205,6 +212,13 @@ const Header = () => {
                 <Link
                   key={item.label}
                   href={item.to}
+                  onClick={(e) => {
+                    if (item.to === "/inventory") {
+                      e.preventDefault();
+                      // Force a clean page load with no query parameters
+                      window.location.href = "/inventory";
+                    }
+                  }}
                   className={`py-4 border-b border-gray-100 text-[15px] font-semibold capitalize flex items-center justify-between ${
                     "text-gray-900"
                   }`}

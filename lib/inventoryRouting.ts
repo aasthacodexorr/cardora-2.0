@@ -144,7 +144,9 @@ export const inventoryStateMapping = {
       route.range = indexState.range;
     }
 
-    if (indexState.sortBy) {
+    // ONLY add sortBy if it's different from the default
+    // This prevents the default sort from being written to the URL on initial load
+    if (indexState.sortBy && indexState.sortBy !== `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`) {
       route.sortBy = indexState.sortBy;
     }
  
@@ -165,9 +167,8 @@ export const inventoryStateMapping = {
       query: safeRouteState.query || "",
       refinementList: safeRouteState.refinementList || {},
       range: safeRouteState.range || {},
-      sortBy:
-        safeRouteState.sortBy ||
-        `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
+      // Don't set default sortBy from URL - only use it if it's explicitly in the URL
+      sortBy: safeRouteState.sortBy || `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
     };
 
     return {
@@ -186,11 +187,22 @@ export const inventoryStateMapping = {
      - dispose(): void
 ------------------------------------------------------- */
 
+// Track if we just navigated to a clean inventory URL from the nav
+let preserveCleanUrl = false;
+
+export function setPreserveCleanInventoryUrl() {
+  preserveCleanUrl = true;
+}
+
 function parseUrlToRouteState(): PlainObject {
   if (typeof window === "undefined") return {};
 
   const search = window.location.search.replace(/^\?/, "");
-  if (!search) return {};
+  
+  // If URL has no query params, return clean state
+  if (!search) {
+    return {};
+  }
 
   const rawPairs = search.split("&").filter(Boolean);
   const encodedPrefix = encodeURIComponent(PREFIX);
