@@ -1,7 +1,7 @@
 export interface Category {
   label: string;
   icon?: any;
-  queryParams?: string;
+  href?: any;
 }
 
 export interface CategoryPillProps {

@@ -164,3 +164,10 @@ export async function getVehicleById(id: string): Promise<Record<string, any> | 
   const data = await res.json();
   return data.hits?.[0]?.document ?? null;
 }
+
+
+export const getInventoryUrlByQuery = (query: string) => {
+  const encoded = getEncodedCollectionAndSort();
+
+  return `/inventory/?${encoded}%5Bquery%5D=${encodeURIComponent(query)}`;
+};
