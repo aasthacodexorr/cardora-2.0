@@ -48,7 +48,7 @@ import { searchClient, TYPESENSE_COLLECTION_NAME } from "@/lib/typesense";
 // Custom router/stateMapping that produces the client-required URL format
 import { createInventoryRouter, inventoryStateMapping } from "@/lib/inventoryRouting";
 
-/*  Shared class name configs for InstantSearch widgets */
+/* Shared class name configs for InstantSearch widgets */
 const refinementListClassNames = {
   list: "space-y-2 pt-2 pb-4 p-0",
   label:
@@ -106,7 +106,7 @@ const FilterGroup = ({
   );
 };
 
-/*  CustomHitsCount: shows total matching vehicles */
+/* CustomHitsCount: shows total matching vehicles */
 const CustomHitsCount = () => {
   const { results } = useHits();
   return (
@@ -136,7 +136,7 @@ const ScrollToTopOnSearch = () => {
   return null;
 };
 
-/*  NoResultsHandler: shows message when no hits */
+/* NoResultsHandler: shows message when no hits */
 const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
   const { results } = useHits();
 
@@ -151,7 +151,7 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-/*  CustomInfiniteHits: shows hits and a load more button */
+/* CustomInfiniteHits: shows hits and a load more button */
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   const { hits, isLastPage, showMore } = useInfiniteHits();
 
@@ -326,7 +326,7 @@ const OdometerRangeFilter = () => {
   );
 }
 
-/*  useStartSync: small shared hook so PriceRangeFilter/OdometerRangeFilter
+/* useStartSync: small shared hook so PriceRangeFilter/OdometerRangeFilter
     keep their local text-input state in sync with the InstantSearch
     `useRange` `start` tuple (e.g. when loaded from the URL on first
     render, or reset via "Clear Filters"). asStrings=true mirrors the
@@ -349,9 +349,9 @@ function useStartSync(
   }, [start[0], start[1]]);
 }
 
-/*  InventoryContent: main page content */
+/* InventoryContent: main page content */
 const InventoryContent = () => {
-  /*  Only one filter open at a time */
+  /* Only one filter open at a time */
   const [openFilter, setOpenFilter] =
     useState<string | null>("");
 
@@ -379,8 +379,8 @@ const InventoryContent = () => {
           <div className="max-w-[1600px] mx-auto px-3 lg:px-[24px] pt-[20px] pb-[50px]">
             <div className="flex flex-col lg:flex-row items-start gap-5 lg:px-10 px-">
 
-              {/*  Sidebar Filters */}
-              <aside className="hidden sticky top-5 self-start shrink-0 lg:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[290px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {/* Sidebar Filters (Modified sticky position to flow up on first scroll) */}
+              <aside className="hidden sticky top-[-180px] self-start shrink-0 lg:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[290px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 
                 {/* Hits count + clear filters */}
                 <div className="mt-[10px] flex flex-col items-center gap-4">
@@ -587,11 +587,11 @@ const InventoryContent = () => {
                 </div>
               </aside>
 
-              {/*  Right Content */}
+              {/* Right Content */}
               <div className="w-full lg:flex-1 mt-5 lg:mt-0">
 
                 {/* Search + sort */}
-                <div className="flex flex-col lg:flex-row lg:items-center items-end  justify-between gap-4 mb- px-3">
+                <div className="flex flex-col lg:flex-row lg:items-center items-end   justify-between gap-4 mb- px-3">
 
                   <div
                     className="relative w-full lg:max-w-[440px]"
@@ -718,7 +718,7 @@ const InventoryContent = () => {
   );
 };
 
-/*  Page export */
+/* Page export */
 const InventoryPage = () => {
   return <InventoryContent />;
 };
