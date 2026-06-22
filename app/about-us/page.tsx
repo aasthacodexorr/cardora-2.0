@@ -39,7 +39,7 @@ const About = () => {
 
       <div className="flex-1 w-full overflow-hidden">
         {/* Hero Section */}
-        <section className="bg-white pb-12">
+        <section className="bg-white pb-12 mt-4">
           <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
 
             {/* Left Column: Text Content */}
@@ -144,7 +144,7 @@ const About = () => {
         </section>
 
         {/* 2. Reviews Section */}
-        <section className="bg-white py-1 md:my-12">
+        <section className="bg-white py-1 md:my-12 mt-9">
           <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col md:flex-row items-center justify-between gap-10 md:gap-12">
 
             {/* Left: Text Block */}
