@@ -9,21 +9,21 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Image from "next/image";
 
-import google        from "@/assets/brand/google.png";
-import googleReview  from "@/assets/brand/Goolge-Review-Logo.jpg";
+import google from "@/assets/brand/google.png";
+import googleReview from "@/assets/brand/Goolge-Review-Logo.jpg";
 
-/*  Types */
+/* Types */
 type Review = {
   initial: string;
   name: string;
   text: string;
 };
 
-/*  Static Data */
+/* Static Data */
 const reviews: Review[] = [
   {
     initial: "J",
@@ -47,34 +47,90 @@ const reviews: Review[] = [
   },
 ];
 
-/*  Component */
 const Reviews = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const isResetting = useRef(false);
   const [slidesToShow, setSlidesToShow] = useState(3);
 
-  // Responsive: update slides count on resize
+  // Triple the array so we can loop seamlessly
+  const duplicatedReviews = [...reviews, ...reviews, ...reviews];
+
+  // 1. Dynamic Responsive Slides Handler
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768)       setSlidesToShow(1);
-      else if (window.innerWidth < 1024) setSlidesToShow(2);
-      else                               setSlidesToShow(3);
+      if (window.innerWidth < 640) {
+        setSlidesToShow(1); // Mobile
+      } else if (window.innerWidth < 1024) {
+        setSlidesToShow(2); // Tablet
+      } else {
+        setSlidesToShow(3); // Desktop
+      }
     };
-    handleResize();
+
+    handleResize(); // Run on mount
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Auto-advance carousel
+  // Helper to safely get the current width of a single slide
+  const getScrollAmount = () => {
+    if (!scrollRef.current) return 0;
+    const firstChild = scrollRef.current.querySelector("[data-slide]");
+    return firstChild ? firstChild.clientWidth : scrollRef.current.clientWidth / slidesToShow;
+  };
+
+  // 2. Manual scroll handler using dynamic widths
+  const scroll = (dir: "left" | "right") => {
+    if (!scrollRef.current || isResetting.current) return;
+
+    const scrollAmount = getScrollAmount();
+    scrollRef.current.scrollBy({
+      left: dir === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
+
+  // 3. Infinite loop reset handler
   useEffect(() => {
-    const interval = setInterval(nextSlide, 4000);
-    return () => clearInterval(interval);
-  }, [currentIndex, slidesToShow]);
+    const container = scrollRef.current;
+    if (!container) return;
 
-  const nextSlide = () =>
-    setCurrentIndex((prev) => (prev + 1 >= reviews.length ? 0 : prev + 1));
+    const scrollAmount = getScrollAmount();
+    const singleSetWidth = scrollAmount * reviews.length;
 
-  const prevSlide = () =>
-    setCurrentIndex((prev) => (prev - 1 < 0 ? reviews.length - 1 : prev - 1));
+    // Initialize position to the start of the middle set
+    container.scrollLeft = singleSetWidth;
+
+    const handleScrollEnd = () => {
+      if (!container) return;
+
+      const currentScrollAmount = getScrollAmount();
+      const currentSetWidth = currentScrollAmount * reviews.length;
+
+      // If we've scrolled into the third set, snap back to the middle set instantly
+      if (container.scrollLeft >= currentSetWidth * 2 - 10) {
+        isResetting.current = true;
+        container.style.scrollBehavior = "auto";
+        container.scrollLeft = container.scrollLeft - currentSetWidth;
+        container.style.scrollBehavior = "smooth";
+        isResetting.current = false;
+      }
+
+      // If we've scrolled into the first set, snap forward to the middle set instantly
+      if (container.scrollLeft <= currentScrollAmount) {
+        isResetting.current = true;
+        container.style.scrollBehavior = "auto";
+        container.scrollLeft = container.scrollLeft + currentSetWidth;
+        container.style.scrollBehavior = "smooth";
+        isResetting.current = false;
+      }
+    };
+
+    container.addEventListener("scrollend", handleScrollEnd);
+    return () => {
+      container.removeEventListener("scrollend", handleScrollEnd);
+    };
+  }, [slidesToShow]); // Re-bind if layout changes
 
   return (
     <section className="w-full bg-[#eaeff5] overflow-hidden">
@@ -85,7 +141,12 @@ const Reviews = () => {
 
         {/* Google rating bar */}
         <div className="flex justify-center">
-          <a href="https://www.google.com/search?q=cardora&oq=cardora&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIGCAEQRRg8MgYIAhBFGDwyDwgDEC4YChivARjHARiABDILCAQQABgKGAsYgAQyCwgFEAAYChgLGIAEMgsIBhAAGAoYCxiABDIGCAcQRRg80gEIMjgxMGowajeoAgiwAgHxBRTGNHBoyF19&sourceid=chrome&ie=UTF-8&zx=1764666449357&no_sw_cr=1#lrd=" target="_blank" className="text-[16px] font-semibold text-foreground">
+          <a
+            href="https://www.google.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[16px] font-semibold text-foreground"
+          >
             <div className="flex items-center justify-center gap-3 rounded-[20px] overflow-hidden border border-[#e2e2e2] bg-transparent shadow-none py-[10px] px-4 w-[500px] max-w-full flex-wrap">
               <Image src={google} alt="Google" className="h-[29px] w-[85px] object-contain" />
               <div className="flex items-center gap-1">
@@ -95,37 +156,37 @@ const Reviews = () => {
               </div>
               <span className="text-[15px] font-medium text-foreground">5.0 (33)</span>
               <span className="underline font-md">View all</span>
-
             </div>
           </a>
-
         </div>
 
-        {/* Carousel */}
-        <div className="relative mt-8">
+        {/* Carousel Container */}
+        <div className="relative mt-8 px-8">
           {/* Prev button */}
           <button
-            onClick={prevSlide}
+            onClick={() => scroll("left")}
             aria-label="Previous review"
-            className="flex absolute left-0 md:-left-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center"
+            className="flex absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-card border border-border shadow-md items-center justify-center cursor-pointer hover:bg-accent transition-colors"
           >
             <ChevronLeft className="h-5 w-5 text-foreground" />
           </button>
 
-          {/* Slides */}
-          <div className="overflow-hidden min-h-[500px]">
-            <div
-              className="flex transition-transform duration-700 ease-in-out"
-              style={{ transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)` }}
-            >
-              {[...reviews, ...reviews].map((r, index) => (
+          {/* Scrollable Window viewport */}
+          <div
+            ref={scrollRef}
+            className="overflow-x-hidden scrollbar-none min-h-[500px] w-full"
+          >
+            {/* The Track element containing the items */}
+            <div className="flex py-4">
+              {duplicatedReviews.map((r, index) => (
                 <div
                   key={`${r.name}-${index}`}
+                  data-slide
                   className={`flex-shrink-0 px-2 min-h-[450px] md:px-3 ${
                     slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
                   }`}
                 >
-                  <article className="rounded-2xl bg-card p-5 md:p-6 shadow-md flex flex-col h-full">
+                  <article className="rounded-2xl bg-card p-5 md:p-6 shadow-md flex flex-col h-full border border-border">
                     {/* Reviewer avatar + name */}
                     <div className="flex items-center gap-4">
                       <div className="h-[65px] w-[65px] rounded-full bg-[#512da8] flex items-center justify-center text-white text-[35px] font-medium flex-shrink-0">
@@ -159,9 +220,9 @@ const Reviews = () => {
 
           {/* Next button */}
           <button
-            onClick={nextSlide}
+            onClick={() => scroll("right")}
             aria-label="Next review"
-            className="flex absolute right-0 md:-right-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center"
+            className="flex absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-card border border-border shadow-md items-center justify-center cursor-pointer hover:bg-accent transition-colors"
           >
             <ChevronRight className="h-5 w-5 text-foreground" />
           </button>

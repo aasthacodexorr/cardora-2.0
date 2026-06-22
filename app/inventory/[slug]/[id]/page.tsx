@@ -28,12 +28,13 @@ import VehicleSpecificationsAccordion from "@/components/inventory/Faq";
 import Terms from "@/components/inventory/Terms";
 import AboutVehicle from "@/components/inventory/AboutVehicle";
 import { PriceAndCTA, VehicleHeader } from "@/components/inventory/VehicleInfo";
+import CoverageModal from "@/components/inventory/CoverageModal";
 
 // Force dynamic rendering — vehicle data changes frequently
 export const dynamic = "force-dynamic";
 const showSidebar = true;
 
-/*  Page Component */
+/* Page Component */
 export default async function VehicleDetailsPage({
   params,
 }: {
@@ -59,21 +60,24 @@ export default async function VehicleDetailsPage({
   const isSold = vehicle.status?.toLowerCase() !== "instock";
 
   return (
-    // FIX 1: Removed 'overflow-hidden' from main wrapper. 
-    // Any ancestral 'overflow-hidden' or 'overflow-x-hidden' breaks 'position: sticky' calculations down the DOM tree.
-    <main className="min-h-screen bg-background flex flex-col">
-      <div className="bg-hero-bg">
+    <main className="min-h-screen bg-background flex flex-col items-center">
+      {/* Header spanning 100% viewport, inside contents are usually centered natively */}
+      <div className="w-full bg-hero-bg">
         <Header />
       </div>
-      <section className="w-full bg-background flex-1 justify-center">
-        <div className="mx-auto w-full lg:pt-[30px]">
+      
+      {/* CRITICAL FIX: 
+        We added 'max-w-[1440px] xl:max-w-[1600px] w-full mx-auto' to control the core structure 
+        so that on large monitors the entire layout centers like the design.
+      */}
+      <section className="w-full bg-background flex-1 max-w-[1440px] xl:max-w-[1600px] mx-auto">
+        <div className="w-full lg:pt-[30px]">
           
-          {/*  SECTION ROW: Controls the boundaries of the sticky sidebar */}
-          {/* FIX 2: Added layout-level tracks using items-stretch so the columns share an identical height boundary */}
-          <div className="flex flex-col gap-8 lg:flex-row items-stretch px-5 md:px-8 lg:px-10 relative w-full ">
+          {/* SECTION ROW: Controls the boundaries of the sticky sidebar */}
+          <div className="flex flex-col gap-8 lg:flex-row items-stretch px-5 md:px-8 lg:px-10 relative w-full">
             
-            {/*  Left column: gallery + specs + description */}
-            <div className={`flex flex-col gap-8 items-start flex-1 w-full ${showSidebar ? "" : "mx-auto"}`}>
+            {/* Left column: gallery + specs + description */}
+            <div className={`flex flex-col gap-8 items-start flex-1 w-full ${showSidebar ? "lg:flex-1" : "mx-auto"}`}>
               {/* Image gallery */}
               <ImageGallery images={images} title={titleText} isSold={isSold} centered={!showSidebar} />
               
@@ -93,8 +97,8 @@ export default async function VehicleDetailsPage({
               </div>
 
               {/* Trade In Banner */}
-              <div className="w-full lg:mb-30 max-w-[860px]">
-                <div className="flex flex-col md:flex-row items-center justify-between border border-gray-200 rounded-2xl p-6 bg-white w-full max-w-4xl gap-6 box-border font-sans">
+              <div className="w-full lg:mb-30 max-w-[900px]">
+                <div className="flex flex-col md:flex-row items-center justify-between border border-gray-200 rounded-2xl p-6 bg-white w-full gap-6 box-border font-sans">
                   <div className="flex sm:flex-row md:gap- flex-1">
                     <div className="flex-shrink-0">
                       <Image src={doller} alt="Trade Icon" className="w-[65px] h-auto block" />
@@ -116,22 +120,22 @@ export default async function VehicleDetailsPage({
               </div>
 
               {/* Specs grid & Extended Coverage */}
-              <div className="w-full max-w-[860px]">
+              <div className="w-full max-w-[900px]">
                 <AboutVehicle vehicle={vehicle} />
                 <div className="w-full my-14">
-                  <div className="flex flex-col sm:flex-row items-center border border-gray-200 rounded-2xl px-6 py-4 bg-white w-full max-w-4xl mx-auto gap-5 box-border font-sans">
+                  <div className="flex flex-col sm:flex-row items-center border border-gray-200 rounded-2xl px-6 py-4 bg-white w-full mx-auto gap-5 box-border font-sans">
                     <div className="flex items-center sm:text-left gap-3">
                       <div className="flex-shrink-0">
                         <Image src={protectShield} alt="Protection Shield" className="w-[50px] h-auto block" />
                       </div>
                       <div>
-                        <p className="m-0 text-[15px] text-gray-800 font-normal leading-relaxed">
+                        <div className="m-0 text-[15px] text-gray-800 font-normal leading-relaxed">
                           Get mechanical protection plus 24/7 roadside assistance with Cardora Extended Coverage.
                           <a data-toggle="modal" data-target="#exampleModalCenter"
-                            className="font-semibold text-black underline cursor-pointer hover:text-emerald-500 transition-colors duration-150 inline-block ml-1">
-                            Learn more
+                            className="font-semibold text-black underline cursor-pointer hover:text-emerald-500 transition-colors duration-150">
+                            <CoverageModal /> 
                           </a>
-                        </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -152,7 +156,7 @@ export default async function VehicleDetailsPage({
               </div>
 
               {/* Accordion list */}
-              <div className="w-full flex justify-start lg:mt-4 mt-0">
+              <div className="w-full flex justify-start lg:mt-4 mt-0 max-w-[860px]">
                 <VehicleSpecificationsAccordion
                   standardJson={vehicle.standard}
                   techSpecsJson={vehicle.technical_specification}
@@ -161,12 +165,10 @@ export default async function VehicleDetailsPage({
               </div>
             </div>
 
-            {/*  Right column: sticky sidebar (desktop) */}
+            {/* Right column: sticky sidebar (desktop) */}
             {showSidebar && (
-              <div className="w-full hidden lg:block">
-                {/* FIX 3: Added 'h-fit' to the element holding position: sticky. 
-                    This ensures the container doesn't stretch to 100% column height, allowing it room to glide down. */}
-                <div className="sticky top-0 h-fit space-y-5">
+              <div className="hidden lg:block lg:w-[400px] xl:w-[490px]">
+                <div className="sticky top-6 h-fit space-y-5">
                   <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
                     <VehicleHeader vehicle={vehicle} />
                     <PriceAndCTA vehicle={vehicle} />
@@ -177,21 +179,27 @@ export default async function VehicleDetailsPage({
             )}
           </div>
 
-          {/*  Out of Bounds Elements */}
-          {/* This sits outside the column-flex context, releasing the sticky lock perfectly */}
-          <div className="mt-12 w-full">
+          {/* Finance Calculator - Now spans full responsive width within the centralized container bounds */}
+          <div className="mt-12 w-full px-5 md:px-8 lg:px-10">
             <FinanceCalculator vehiclePrice={vehicle.selling_price} inventoryId={resolvedParams.id} />
           </div>
 
         </div>
       </section>
 
-      <div className="w-full flex justify-center items-center text-base md:text-[12px] px-5 md:px-10 bg-[#666]/10 pt-10 pb-16 italic text-black">
-        Every reasonable effort is made to ensure the accuracy of the information listed above. Vehicle pricing, incentives, options (including standard equipment), and technical specifications listed for the {vehicle.year} {vehicle.make} {vehicle.model} {vehicle.trim} may not match the exact vehicle displayed. {appConfig.site.inventory_pricing_verbage} Please confirm with a sales representative the accuracy of this information.
+      {/* Disclaimers & Info banner footer base */}
+      <div className="w-full text-center text-base md:text-[12px] px-5 md:px-10 bg-[#666]/10 pt-10 pb-16 italic text-black mt-12">
+        <div className="max-w-[1440px] xl:max-w-[1600px] mx-auto">
+          Every reasonable effort is made to ensure the accuracy of the information listed above. Vehicle pricing, incentives, options (including standard equipment), and technical specifications listed for the {vehicle.year} {vehicle.make} {vehicle.model} {vehicle.trim} may not match the exact vehicle displayed. {appConfig.site.inventory_pricing_verbage} Please confirm with a sales representative the accuracy of this information.
+        </div>
       </div>
 
-      <GetInTouch />
-      <Footer />
+      <div className="w-full bg-black">
+        <div className="max-w-[1440px] xl:max-w-[1600px] mx-auto w-full">
+          <GetInTouch />
+          <Footer />
+        </div>
+      </div>
     </main>
   );
 }
