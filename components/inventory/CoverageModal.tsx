@@ -24,7 +24,7 @@ export default function CoverageModal() {
       >
         {/* Modal Window with "Top to Center" Slide & Fade transition */}
         <div
-          className={`bg-white rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-2xl relative border border-gray-100 transition-all duration-300 transform ${
+          className={`bg-white rounded-2xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative border border-gray-100 transition-all duration-300 transform ${
             isOpen ? "translate-y-0 scale-100 opacity-100" : "-translate-y-12 scale-95 opacity-0"
           }`}
           onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside
@@ -32,7 +32,7 @@ export default function CoverageModal() {
           {/* Close Button */}
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors p-1"
+            className="absolute top-5 right-5 text-gray-400 hover:text-black transition-colors p-1 cursor-pointer"
             aria-label="Close modal"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -44,7 +44,7 @@ export default function CoverageModal() {
           <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-2">
             Cardora Extended Coverage
           </h3>
-          <p className="text-gray-600 text-sm md:text-base mb-6 leading-relaxed">
+          <p className="text-black font-normal  md:text-base mb-6 leading-relaxed">
             Purchase Cardora Extended Coverage and drive with confidence knowing your car is protected.
           </p>
 
@@ -53,7 +53,7 @@ export default function CoverageModal() {
             {/* Perk 1 */}
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 mt-0.5 bg-emerald-500 text-white rounded-full p-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
               </div>
@@ -61,7 +61,7 @@ export default function CoverageModal() {
                 <h4 className="text-base md:text-lg font-bold text-gray-900 leading-tight">
                   Premium mechanical protection
                 </h4>
-                <p className="text-gray-600 text-sm mt-1 leading-relaxed">
+                <p className="text-black  font-normal  mt-1 leading-relaxed">
                   Platinum mechanical protection, equivalent to a new car coverage. With higher claims - up to the purchase price of the vehicle.
                 </p>
               </div>
@@ -70,7 +70,7 @@ export default function CoverageModal() {
             {/* Perk 2 */}
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 mt-0.5 bg-emerald-500 text-white rounded-full p-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
               </div>
@@ -78,7 +78,7 @@ export default function CoverageModal() {
                 <h4 className="text-base md:text-lg font-bold text-gray-900 leading-tight">
                   Premium Roadside Assist
                 </h4>
-                <p className="text-gray-600 text-sm mt-1 leading-relaxed">
+                <p className="text-black font-normal   mt-1 leading-relaxed">
                   Nationwide breakdown help for the life of your coverage. Also includes extra such as a courtesy car.
                 </p>
               </div>
@@ -87,7 +87,7 @@ export default function CoverageModal() {
             {/* Perk 3 */}
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 mt-0.5 bg-emerald-500 text-white rounded-full p-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
               </div>
@@ -95,7 +95,7 @@ export default function CoverageModal() {
                 <h4 className="text-base md:text-lg font-bold text-gray-900 leading-tight">
                   Choice of term
                 </h4>
-                <p className="text-gray-600 text-sm mt-1 leading-relaxed">
+                <p className="text-black font-normal mt-1 leading-relaxed">
                   Choose from either 1, 3 or 5 years coverage.
                 </p>
               </div>
