@@ -24,7 +24,7 @@ import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
 import Image from "next/image";
 import { SITE_CONFIG } from "@/constants";
 
-/*  Static Data */
+/* Static Data */
 const steps = [
   {
     icon: CarFrontIcon,
@@ -98,7 +98,7 @@ const TRADE_FORMS = {
   },
 } as const;
 
-/*  Page Component */
+/* Page Component */
 const TradeIn = () => {
   const [mode, setMode]       = useState<"vehicle" | "vin">("vehicle");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -107,28 +107,90 @@ const TradeIn = () => {
     <div className="min-h-screen bg-background overflow-hidden">
       <Header />
 
-      {/*  Hero / Quote form */}
-      <section className="w-full relative px-32">
-      <div className="mx-auto pt-20 items-start relative z-10 flex justify-between gap-10 pb-5">
-        
-        {/* Left: Heading Typography Only */}
-        <div className="">
-          <h1 className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[44px] lg:text-[66px]">
-            Sell my car the<br />easy way.
-          </h1>
-          <p className="mt-6 text-[18px] lg:text-[23px] font-medium text-black/80 max-w-xl leading-relaxed">
-            Fast,seamless and secure. It's the way everyone <br/> deserves.
-          </p>
-        </div>
+      {/* Hero / Quote form */}
+      <section className="w-full relative px-4 md:px-32">
+        <div className="mx-auto pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
 
-        {/* Right: Quote Form Card matching reference image */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 pb-24 border border-gray-100/80 w-full max-w-[440px] lg:justify-self-end">
+          {/* Left: Heading Typography Only */}
+          <div className="w-full lg:w-auto text-left">
+            <h1 className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[38px] md:text-[44px] lg:text-[66px]">
+              Sell my car the<br />easy way.
+            </h1>
+            <p className="mt-4 lg:mt-6 text-[16px] md:text-[18px] lg:text-[23px] font-medium text-black/80 max-w-xl leading-relaxed">
+              Fast, seamless and secure. It's the way everyone <br className="hidden lg:inline" /> deserves.
+            </p>
+          </div>
 
+          {/* Dynamic Wave, Axis Tracking Graphic and Tag for Mobile View */}
+          <div className="block lg:hidden w-full relative pointer-events-none px-4">
+            <div className="w-full h-[180px] relative overflow-visible flex flex-col items-center justify-center">
+
+              {/* Background Landscape Wave Line Vector */}
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-full flex justify-center z-0">
+                <svg
+                  viewBox="0 0 360 60"
+                  fill="none"
+                  className="w-full overflow-visible"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M -20,30 C 90,45 120,5 180,20 C 240,35 270,10 380,20"
+                    stroke="#00af66"
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                </svg>
+              </div>
+
+              {/* Center Connected Data Badge Tracker Complex */}
+              <div className="relative z-10 flex flex-col items-center">
+
+                {/* Vertical Transparent Connector Bar Structure */}
+                <div className="relative h-28 w-[38px] flex items-center justify-center">
+                  {/* Green glow background */}
+                  <div className="absolute inset-0  bg-gradient-to-b from-transparent via-[#00b074]/15 to-[#00b074]/20" />
+
+                  {/* Main green progress line */}
+                  <div className="absolute inset-y-0 w-full bg-gradient-to-b from-[#dff8ed] via-[#a8ebc9] to-[#7ee0af]" />
+
+                  {/* White dashed center line */}
+                  <div className="absolute inset-y-4 w-[2px]">
+                    <div
+                      className="h-full w-full opacity-80"
+                      style={{
+                        backgroundImage:
+                          "repeating-linear-gradient(to bottom, white 0px, white 4px, transparent 4px, transparent 8px)",
+                      }}
+                    />
+                  </div>
+
+                  {/* Anchor Marker Circle Dot */}
+                  <div className="absolute top-[44%] z-20 flex items-center justify-center">
+                    <div className="h-6 w-6 rounded-full bg-white border-[3.5px] border-[#00b074] shadow-md" />
+                  </div>
+                </div>
+
+                {/* Valuation Floating Popup Tag matching original desktop styles */}
+                <div className="bg-[#cdf5e3] text-center px-8 py-3 rounded-xl shadow-md border border-[#b2edd1]/40 mt-1">
+                  <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Jan 9, 2026</div>
+                  <div className="text-xl font-black text-gray-900 mt-0.5">$18,400</div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+          {/* Right: Quote Form Card Container */}
+          <div className="bg-white rounded-2xl shadow-xl p-5 md:p-8 pb-12 md:pb-24 border border-gray-100/80 w-full max-w-[440px] lg:justify-self-end z-10">
             <div className="flex border-b border-gray-200 mb-6 cursor-pointer">
               <button
                 onClick={() => setMode("vehicle")}
-                className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative cursor-pointer ${mode === "vehicle" ? "text-gray-900" : "text-gray-900"
-                  }`}
+                className={`flex-1 text-center pb-3 text-[16px] md:text-[18px] font-bold transition-all relative cursor-pointer ${
+                  mode === "vehicle" ? "text-gray-900" : "text-gray-900"
+                }`}
               >
                 By Vehicle
                 {mode === "vehicle" && (
@@ -138,8 +200,9 @@ const TradeIn = () => {
 
               <button
                 onClick={() => setMode("vin")}
-                className={`flex-1 text-center pb-3 text-[18px] font-bold transition-all relative cursor-pointer ${mode === "vin" ? "text-gray-900" : "text-gray-900"
-                  }`}
+                className={`flex-1 text-center pb-3 text-[16px] md:text-[18px] font-bold transition-all relative cursor-pointer ${
+                  mode === "vin" ? "text-gray-900" : "text-gray-900"
+                }`}
               >
                 VIN
                 {mode === "vin" && (
@@ -159,33 +222,31 @@ const TradeIn = () => {
               }}
             />
           </div>
-      </div>
+        </div>
 
-      {/*  Background Wave & Axis Graphic Overlays */}
-      <div className="absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0">
-        
-        {/* Main Landscape Wave Vector */}
-       <div className="absolute bottom-20 w-full">
-         <svg 
-          viewBox="0 0 1440 100" 
-          fill="none" 
-          className="w-full min-w-[1440px]"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path 
-            d="M0,70 C340,110 520,30 720,70 C920,110 1120,50 1440,70" 
-            stroke="#00af66" 
-            strokeWidth="10" 
-            strokeLinecap="round"
-            fill="none" 
-          />
-        </svg>
-       </div>
+        {/* Desktop Only Background Wave & Axis Graphic Overlays */}
+        <div className="hidden lg:block absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0">
+          {/* Main Landscape Wave Vector */}
+          <div className="absolute bottom-20 w-full">
+            <svg 
+              viewBox="0 0 1440 100" 
+              fill="none" 
+              className="w-full min-w-[1440px]"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path 
+                d="M0,70 C340,110 520,30 720,70 C920,110 1120,50 1440,70" 
+                stroke="#00af66" 
+                strokeWidth="10" 
+                strokeLinecap="round"
+                fill="none" 
+              />
+            </svg>
+          </div>
 
-        {/* Center Connected Data Badge Tracker */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-16 flex flex-col items-center">
-          
-          {/* Vertical Transparent Connector Bar */}
+          {/* Center Connected Data Badge Tracker */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-16 flex flex-col items-center">
+            {/* Vertical Transparent Connector Bar */}
             <div className="relative h-96 w-[44px] flex items-end justify-center">
               {/* Green glow background */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent via-[#00b074]/15 to-[#00b074]/20" />
@@ -211,36 +272,35 @@ const TradeIn = () => {
             </div>
 
             <div className="absolute top-full left-1/2 -mt-5 -translate-x-1/2 w-[44px] h-32 bg-gradient-to-b from-[#a8ebc9]/50 to-transparent" />
-          
-          {/* Valuation Floating Popup Tag */}
-          <div className="bg-[#cdf5e3] text-center px-9 py-4 rounded-xl shadow-md -translate-y-4">
-            <div className="text-[10px]  text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
-            <div className="text-2xl font-semibold font-black text-gray-900 mt-0.5">$18,400</div>
+            
+            {/* Valuation Floating Popup Tag */}
+            <div className="bg-[#cdf5e3] text-center px-9 py-4 rounded-xl shadow-md -translate-y-4">
+              <div className="text-[10px] text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
+              <div className="text-2xl font-semibold font-black text-gray-900 mt-0.5">$18,400</div>
+            </div>
           </div>
         </div>
+      </section>
 
-      </div>
-    </section>
-
-      {/*  How it works */}
-      <section className="w-full px-24">
-        <div className="mx-auto max-w-[1300px] px-9 py-16 lg:py-20">
-          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
+      {/* How it works */}
+      <section className="w-full px-4 md:px-24">
+        <div className="mx-auto max-w-[1300px] px-2 md:px-9 py-12 lg:py-20">
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
             {/* Left Column: Image */}
-            <div className="w-full h-full">
+            <div className="w-full h-64 md:h-96 lg:h-full">
               <Image
                 src={tradeInHero}
                 alt="Customer trading in their car at Cardora"
                 width={1280}
                 height={1896}
                 loading="lazy"
-                className="h-full w-full rounded-[32px] object-cover"
+                className="h-full w-full rounded-[24px] md:rounded-[32px] object-cover"
               />
             </div>
 
             {/* Right Column: Steps */}
             <div>
-              <h2 className="text-[36px] font-bold tracking-tight text-zinc-900 lg:text-[44px]">
+              <h2 className="text-[28px] md:text-[36px] font-bold tracking-tight text-zinc-900 lg:text-[44px]">
                 How it works
               </h2>
 
@@ -250,20 +310,20 @@ const TradeIn = () => {
                   return (
                     <div
                       key={step.title}
-                      className="flex items-start justify-between rounded-2xl border border-zinc-100 bg-white px-6 py-4 shadow-lg"
+                      className="flex items-start justify-between rounded-2xl border border-zinc-100 bg-white px-4 md:px-6 py-4 shadow-lg gap-4"
                     >
-                      <div className="">
-                        <h3 className="text-[22px] font-bold text-zinc-900">
+                      <div>
+                        <h3 className="text-[18px] md:text-[22px] font-bold text-zinc-900">
                           {step.title}
                         </h3>
-                        <p className="text-[17px] leading-relaxed ">
+                        <p className="text-[14px] md:text-[17px] leading-relaxed text-zinc-600 mt-1">
                           {step.description}
                         </p>
                       </div>
 
                       {/* Icon on the right side */}
-                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center text-zinc-400">
-                        <Icon className="h-9 w-9 stroke-[1.5]" />
+                      <div className="flex h-8 w-8 md:h-9 md:w-9 flex-shrink-0 items-center justify-center text-zinc-400">
+                        <Icon className="h-full w-full stroke-[1.5]" />
                       </div>
                     </div>
                   );
@@ -275,43 +335,40 @@ const TradeIn = () => {
       </section>
 
       {/* FAQs */}
-      <section className="w-full mb-14 mt-10 px-24">
-        <div className="mx-auto max-w-[1300px]  px-9 py-16 lg:py-0">
-          <div className="flex items-center gap-3 mb-10">
-            <h2 className="text-[36px] lg:text-[44px] font-semibold text-foreground">
+      <section className="w-full mb-14 mt-6 lg:mt-10 px-4 md:px-24">
+        <div className="mx-auto max-w-[1300px] px-2 md:px-9 py-8 lg:py-0">
+          <div className="flex items-center gap-3 mb-6 md:mb-10">
+            <h2 className="text-[28px] md:text-[36px] lg:text-[44px] font-semibold text-foreground leading-tight">
               Popular sell or trade in questions
             </h2>
           </div>
 
-          <div className="">
+          <div className="space-y-1">
             {faqs.map((faq, i) => (
-              <div key={faq.q} className="bg-card border border-border overflow-hidden ">
+              <div key={faq.q} className="bg-card border border-border overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className={`w-full flex items-center justify-between px-6 py-5 text-left cursor-pointer ${openFaq != i ? "bg-[#f4f4f4]" : null }`}
+                  className={`w-full flex items-center justify-between px-4 md:px-6 py-4 md:py-5 text-left cursor-pointer transition-colors ${
+                    openFaq !== i ? "bg-[#f4f4f4]" : "bg-white"
+                  }`}
                 >
-                  <span className={`font-bold ${openFaq != i ? "text-[#666666]" : "text-[#333333]" } text-[20px] leading-none`}>{faq.q}</span>
+                  <span className={`font-bold ${openFaq !== i ? "text-[#666666]" : "text-[#333333]"} text-[16px] md:text-[20px] pr-4`}>
+                    {faq.q}
+                  </span>
                   <ChevronDown
-                    className={`h-5 w-5 flex-shrink-0 text-foreground/60 transition-transform ${
+                    className={`h-5 w-5 flex-shrink-0 text-foreground/60 transition-transform duration-200 ${
                       openFaq === i ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 pb-5 text-foreground/70">{faq.a}</div>
+                  <div className="px-4 md:px-6 pb-5 pt-2 text-foreground/70 text-[14px] md:text-[16px] leading-relaxed border-t border-gray-100 bg-white">
+                    {faq.a}
+                  </div>
                 )}
               </div>
             ))}
           </div>
-
-          {/* <div className="mt-12 text-center">
-            <p className="text-foreground/70 mb-4">Ready to find your next ride after selling?</p>
-            <Link href="/inventory">
-              <Button className="bg-brand-green hover:bg-brand-green/90 text-brand-green-foreground px-8 py-6 text-base font-bold">
-                Browse all Cars
-              </Button>
-            </Link>
-          </div> */}
         </div>
       </section>
 

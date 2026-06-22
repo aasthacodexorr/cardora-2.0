@@ -10,11 +10,31 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
-/*  Types */
+import LightGallery from "lightgallery/react";
+import type { LightGallery as LightGalleryInstance } from "lightgallery/lightgallery";
+
+// Core and standard plugin CSS
+import "lightgallery/css/lightgallery.css";
+import "lightgallery/css/lg-zoom.css";
+import "lightgallery/css/lg-thumbnail.css";
+import "lightgallery/css/lg-fullscreen.css";
+import "lightgallery/css/lg-autoplay.css";
+import "lightgallery/css/lg-share.css";
+import "lightgallery/css/lg-rotate.css"; 
+
+// Core and plugin modules
+import lgThumbnail from "lightgallery/plugins/thumbnail";
+import lgZoom from "lightgallery/plugins/zoom";
+import lgHash from "lightgallery/plugins/hash";
+import lgFullscreen from "lightgallery/plugins/fullscreen";
+import lgAutoplay from "lightgallery/plugins/autoplay";
+import lgShare from "lightgallery/plugins/share";
+import lgRotate from "lightgallery/plugins/rotate";  
+
 type ImageGalleryProps = {
   images: string[];
   title: string;
@@ -22,116 +42,89 @@ type ImageGalleryProps = {
   centered?: boolean;
 };
 
-/*  Component */
-export const ImageGallery = ({
-  images,
-  title,
-  isSold = false,
-  centered
-}: ImageGalleryProps) => {
+export const ImageGallery = ({ images, title, isSold = false, centered }: ImageGalleryProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const thumbRef = useRef<HTMLDivElement>(null);
+  const lightboxRef = useRef<LightGalleryInstance | null>(null);
 
-  // Navigate to a specific image index with boundary wrapping
   const goTo = (index: number) => {
     if (images.length === 0) return;
-    // Boundary wrapping logic
-    if (index < 0) {
-      setActiveIndex(images.length - 1);
-    } else if (index >= images.length) {
-      setActiveIndex(0);
-    } else {
-      setActiveIndex(index);
-    }
+    if (index < 0) setActiveIndex(images.length - 1);
+    else if (index >= images.length) setActiveIndex(0);
+    else setActiveIndex(index);
   };
-
-  // Handles smooth, calculated vertical scrolling on Desktop
-  useEffect(() => {
-    const container = thumbRef.current;
-    if (!container || images.length <= 1) return;
-
-    // 500px total container height / 4 visible thumbnails = 125px per item slot
-    const itemHeight = 125; 
-    
-    // Calculate the current top scroll position of the container
-    const currentScrollTop = container.scrollTop;
-    
-    // Determine the visible window boundary
-    const minVisibleY = currentScrollTop;
-    const maxVisibleY = currentScrollTop + 500 - itemHeight;
-
-    // Target vertical pixel position for the current active item
-    const itemTargetY = activeIndex * itemHeight;
-
-    if (itemTargetY < minVisibleY) {
-      // If moving up out of view, scroll up to align item perfectly to top
-      container.scrollTo({
-        top: itemTargetY,
-        behavior: "smooth",
-      });
-    } else if (itemTargetY > maxVisibleY) {
-      // If moving down out of view, scroll down so item aligns perfectly to bottom
-      container.scrollTo({
-        top: itemTargetY - 500 + itemHeight,
-        behavior: "smooth",
-      });
-    } else if (activeIndex === 0) {
-      // Reset back to top if wrapped back to start
-      container.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, [activeIndex, images.length]);
 
   if (!images || images.length === 0) return null;
 
-  return (
-    <div
-      className={`flex flex-col lg:flex-row gap-[2px] w-full max-w-full  xl:max-h-[500px] overflow-hidden ${
-        centered ? "justify-center" : "justify-start"
-      }`}
-    >
-      <div className="flex flex-col rounded-2xl overflow-hidden">
-        {/*  Main image */}
-        <div className="relative rounded-2xl xl:min-w-[640px] xl:max-w-[700px] overflow-hidden bg-gray-100 shadow-sm">
-          {/* Image counter badge */}
-          {/* <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
-            {activeIndex + 1} / {images.length}
-          </div> */}
+  // Formats images into the object array structure lightGallery expects
+  const dynamicEl = images.map((img) => ({
+    src: img,
+    thumb: img,
+    alt: title,
+  }));
 
-          {/* Sold badge */}
+
+  
+
+  return (
+    <div className={`flex flex-col lg:flex-row gap-[2px] w-full max-w-full xl:max-h-[500px] overflow-hidden ${centered ? "justify-center" : "justify-start"}`}>
+      <LightGallery
+        onInit={(detail) => {
+          lightboxRef.current = detail.instance;
+        }}
+        dynamic={true}
+        dynamicEl={dynamicEl}
+        plugins={[lgThumbnail, lgZoom, lgHash, lgFullscreen, lgAutoplay, lgShare]}
+        hash={true}
+        galleryId="1"
+        speed={400}
+        download={false}
+        share={true}
+        autoplay={true}
+        fullScreen={true}
+        zoom={true}
+        toggleThumb={false}
+        actualSize={false}
+        slideShowAutoplay={false}
+        elementClassNames="hidden"
+      />
+
+      <div className="flex flex-col rounded-2xl overflow-hidden">
+        {/* Clickable Main view triggers lightGallery */}
+        <div
+          onClick={() => {
+            // Open lightGallery immediately at the correct slide index
+            lightboxRef.current?.openGallery(activeIndex);
+          }}
+          className="relative rounded-2xl xl:min-w-[750px] xl:max-w-[750px] overflow-hidden bg-gray-100 shadow-sm cursor-zoom-in"
+        >
           {isSold && (
             <div className="absolute top-4 right-4 z-20 bg-red-600 text-white text-sm font-bold px-4 py-2 rounded-md shadow-lg uppercase">
               Sold
             </div>
           )}
 
-          {/* Active image */}
           <Image
             src={images[activeIndex]}
             alt={`${title} - Image ${activeIndex + 1}`}
             width={800}
             height={600}
             priority
-            className={`w-full aspect-[4/3] md:h-full object-cover transition-opacity duration-500 ease-in-out ${
-              isSold ? "grayscale opacity-90" : ""
-            }`}
+            className={`w-full aspect-[4/3] md:h-full object-cover transition-opacity duration-500 ease-in-out ${isSold ? "grayscale opacity-90" : ""}`}
           />
 
-          {/* Previous button */}
           {images.length > 1 && (
             <button
               type="button"
               onClick={(e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // Prevents launching lightbox when choosing arrows
                 goTo(activeIndex - 1);
               }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl transition-all duration-300 hover:scale-110"
-              aria-label="Previous Image"
+              className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl z-10"
             >
               <ChevronLeft className="w-9 h-9 text-gray-500/60" strokeWidth={3} />
             </button>
           )}
 
-          {/* Next button */}
           {images.length > 1 && (
             <button
               type="button"
@@ -139,8 +132,7 @@ export const ImageGallery = ({
                 e.stopPropagation();
                 goTo(activeIndex + 1);
               }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl transition-all duration-300 hover:scale-110"
-              aria-label="Next Image"
+              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl z-10"
             >
               <ChevronRight className="w-9 h-9 text-gray-500/60" strokeWidth={3} />
             </button>
@@ -174,42 +166,19 @@ export const ImageGallery = ({
         )}
       </div>
 
-      {/*  Desktop Thumbnail strip */}
-      {images.length > 1 ? (
-        <div
-          ref={thumbRef}
-          className="hidden md:flex flex-col overflow-y-auto overflow-x-hidden w-[165px] h-[500px] pr-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-        >
+      {/* Desktop Thumbnail Strip (Unchanged) */}
+      {images.length > 1 && (
+        <div className="hidden md:flex flex-col overflow-y-auto w-[165px] h-[500px] pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {images.map((img, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => goTo(idx)}
-              className={`w-[155px] h-[125px] flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 ${
-                idx === activeIndex
-                  ? " border-transparent"
-                  : "border-transparent  "
-              }`}
+              className={`w-[155px] h-[119px] flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 mb-2 ${idx === activeIndex ? "border-blue-500" : "border-transparent"}`}
             >
-              <Image
-                src={img}
-                alt={`Thumbnail ${idx + 1}`}
-                width={155}
-                height={125}
-                className="w-full h-full object-cover rounded-md"
-              />
+              <Image src={img} alt={`Thumbnail ${idx + 1}`} width={155} height={125} className="w-full h-full object-cover rounded-md" />
             </button>
           ))}
-        </div>
-      ) : (
-        <div className="hidden md:block w-[165px]">
-          <Image
-            src={images[0]}
-            alt={`Thumbnail`}
-            width={168}
-            height={136}
-            className="w-42 h-34 object-cover rounded-lg"
-          />
         </div>
       )}
     </div>

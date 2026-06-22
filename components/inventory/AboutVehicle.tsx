@@ -25,7 +25,7 @@ const AboutVehicle = ({ vehicle }: any) => {
                                 <span>
                                     Odometer
                                     <p className="font-bold text-[15px] text-black">
-                                        {vehicle?.odometer?.toLocaleString()} KM
+                                        {Number(vehicle?.odometer).toLocaleString("en-CA")} KM
                                     </p>
                                 </span>
                             </div>
