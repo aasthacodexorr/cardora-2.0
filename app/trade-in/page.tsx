@@ -108,13 +108,13 @@ const TradeIn = () => {
       <Header />
 
       {/* Hero / Quote form */}
-      <section className="w-full relative px-4 md:px-32">
-        <div className="mx-auto pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
+      <section className="w-full relative px-4 md:px-24">
+        <div className="mx-auto max-w-[1300px] px-2 md:px-9 pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
 
           {/* Left: Heading Typography Only */}
           <div className="w-full lg:w-auto text-left">
-            <h1 className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[38px] md:text-[44px] lg:text-[66px]">
-              Sell my car the<br />easy way.
+            <h1 className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[38px] md:text-[44px] lg:text-[66px] md:w-xl">
+              Sell my car the easy way.
             </h1>
             <p className="mt-4 lg:mt-6 text-[16px] md:text-[18px] lg:text-[23px] font-medium text-black/80 max-w-xl leading-relaxed">
               Fast, seamless and secure. It's the way everyone <br className="hidden lg:inline" /> deserves.
@@ -126,7 +126,7 @@ const TradeIn = () => {
             <div className="w-full h-[180px] relative overflow-visible flex flex-col items-center justify-center">
 
               {/* Background Landscape Wave Line Vector */}
-              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-full flex justify-center z-0">
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-full flex justify-center z-10">
                 <svg
                   viewBox="0 0 360 60"
                   fill="none"
@@ -145,12 +145,12 @@ const TradeIn = () => {
               </div>
 
               {/* Center Connected Data Badge Tracker Complex */}
-              <div className="relative z-10 flex flex-col items-center">
+              <div className="relative flex flex-col items-center">
 
                 {/* Vertical Transparent Connector Bar Structure */}
-                <div className="relative h-28 w-[38px] flex items-center justify-center">
+                <div className="relative h-28 w-[38px] flex items-center justify-center z-0">
                   {/* Green glow background */}
-                  <div className="absolute inset-0  bg-gradient-to-b from-transparent via-[#00b074]/15 to-[#00b074]/20" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00b074]/15 to-[#00b074]/20" />
 
                   {/* Main green progress line */}
                   <div className="absolute inset-y-0 w-full bg-gradient-to-b from-[#dff8ed] via-[#a8ebc9] to-[#7ee0af]" />
@@ -165,15 +165,16 @@ const TradeIn = () => {
                       }}
                     />
                   </div>
+                </div>
+                
 
-                  {/* Anchor Marker Circle Dot */}
-                  <div className="absolute top-[44%] z-20 flex items-center justify-center">
-                    <div className="h-6 w-6 rounded-full bg-white border-[3.5px] border-[#00b074] shadow-md" />
-                  </div>
+                {/* Anchor Marker Circle Dot */}
+                <div className="absolute top-[37%] z-20 flex items-center justify-center">
+                  <div className="h-6 w-6 rounded-full bg-white border-[3.5px] border-[#00b074] shadow-md" />
                 </div>
 
                 {/* Valuation Floating Popup Tag matching original desktop styles */}
-                <div className="bg-[#cdf5e3] text-center px-8 py-3 rounded-xl shadow-md border border-[#b2edd1]/40 mt-1">
+                <div className="bg-[#cdf5e3] text-center px-8 py-3 rounded-xl shadow-md border border-[#b2edd1]/40 mt-1 z-20">
                   <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Jan 9, 2026</div>
                   <div className="text-xl font-black text-gray-900 mt-0.5">$18,400</div>
                 </div>
@@ -227,7 +228,7 @@ const TradeIn = () => {
         {/* Desktop Only Background Wave & Axis Graphic Overlays */}
         <div className="hidden lg:block absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0">
           {/* Main Landscape Wave Vector */}
-          <div className="absolute bottom-20 w-full">
+          <div className="absolute bottom-30 w-full z-10">
             <svg 
               viewBox="0 0 1440 100" 
               fill="none" 
@@ -244,10 +245,11 @@ const TradeIn = () => {
             </svg>
           </div>
 
-          {/* Center Connected Data Badge Tracker */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-16 flex flex-col items-center">
+          {/* Added z-10 to the main outer container to lift everything above the wave line */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-16 flex flex-col items-center z-10">
+
             {/* Vertical Transparent Connector Bar */}
-            <div className="relative h-96 w-[44px] flex items-end justify-center">
+            <div className="relative h-96 w-[44px] flex items-end justify-center ">
               {/* Green glow background */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent via-[#00b074]/15 to-[#00b074]/20" />
 
@@ -264,17 +266,17 @@ const TradeIn = () => {
                   }}
                 />
               </div>
+            </div>
 
-              {/* Marker */}
-              <div className="absolute bottom-[21px] z-20 flex items-center justify-center">
-                <div className="h-8 w-8 rounded-full bg-white border-[4px] border-[#00b074] shadow-md" />
-              </div>
+            {/* Marker */}
+            <div className="absolute bottom-[29%] z-20 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-full bg-white border-[4px] border-[#00b074] shadow-md" />
             </div>
 
             <div className="absolute top-full left-1/2 -mt-5 -translate-x-1/2 w-[44px] h-32 bg-gradient-to-b from-[#a8ebc9]/50 to-transparent" />
-            
+
             {/* Valuation Floating Popup Tag */}
-            <div className="bg-[#cdf5e3] text-center px-9 py-4 rounded-xl shadow-md -translate-y-4">
+            <div className="bg-[#cdf5e3] text-center px-9 py-4 rounded-xl shadow-md -translate-y-4 z-20">
               <div className="text-[10px] text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
               <div className="text-2xl font-semibold font-black text-gray-900 mt-0.5">$18,400</div>
             </div>

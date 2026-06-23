@@ -37,13 +37,13 @@ const About = () => {
     <div className="min-h-screen bg-background flex flex-col justify-between">
       <Header />
 
-      <div className="flex-1 w-full overflow-hidden">
+      <div className="flex-1 w-full overflow-hidden px-5 lg:px-0">
         {/* Hero Section */}
         <section className="bg-white pb-12 mt-4">
-          <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+          <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12">
 
             {/* Left Column: Text Content */}
-            <div className="w-full text-left">
+            <div className="w-full text-left md:w-2xl md:pt-5   lg:w-full ">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-none">
                 Pre-Owned, Without Compromise.
               </h1>
@@ -78,10 +78,10 @@ const About = () => {
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-950 text-left">
               All our cars are Cardora Certified
             </h2>
-            <div className="flex flex-col md:flex-row items-center justify-between mt-12">
+            <div className="flex flex-col lg:flex-row items-center justify-between mt-12">
 
               {/* Left Column: Badge List */}
-              <div className="flex flex-col items-start w-full md:w-auto">
+              <div className="flex flex-col items-start w-full lg:w-auto">
                 <div className="flex flex-col gap-4 w-full">
                   {certified.map(({ label }, index) => (
                     <div
@@ -113,12 +113,12 @@ const About = () => {
         </section>
 
         {/* 1. After-Sale Service Section (Full-Bleed Background Layout) */}
-        <section className="bg-[#eaeff5] py-16 md:py-20">
-          <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col md:flex-row items-center justify-between gap-10 md:gap-12">
+        <section className="bg-[#eaeff5] py-16 md:py-20 px-4 lg:px-0">
+          <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-12">
 
             {/* Left: Image Card Container */}
             <div className="w-full flex justify-center md:justify-start">
-              <div className="overflow-hidden rounded-2xl bg-white shadow-sm w-full max-w-[540px]">
+              <div className="overflow-hidden rounded-2xl bg-white shadow-sm w-full lg:max-w-[540px] max-w-full">
                 <Image
                   src={saleServices}
                   alt="Cardora service team standing proudly inside the dealership lot"
@@ -144,8 +144,8 @@ const About = () => {
         </section>
 
         {/* 2. Reviews Section */}
-        <section className="bg-white py-1 md:my-12 mt-9">
-          <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col md:flex-row items-center justify-between gap-10 md:gap-12">
+        <section className="bg-white py-1 lg:my-12 mt-9">
+          <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-12">
 
             {/* Left: Text Block */}
             <div className="w-full lg:max-w-2xl">
@@ -163,7 +163,7 @@ const About = () => {
               <Image
                 src={reviews}
                 alt="100+ Five-Star Reviews from Happy Customers illustration with Google logo"
-                className="w-full max-w-[520px] h-auto object-contain"
+                className="w-full lg:max-w-[520px] h-auto object-contain"
                 width={520}
                 height={340}
               />
@@ -174,21 +174,21 @@ const About = () => {
 
         {/* 3. Built in Canada Section */}
         <section className="bg-white py-1 pb-12 md:py-0">
-          <div className="mx-auto max-w-[1280px] px-5 md:px-1 flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16">
+          <div className="mx-auto max-w-[1280px] px-5 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-16">
 
             {/* Left: Graphic Illustration */}
             <div className="w-full flex justify-center md:justify-start">
               <Image
                 src={forCanada}
                 alt="Cardora dealership illustration featuring the Canadian flag and map silhouette"
-                className="w-full max-w-[540px] h-auto object-contain"
+                className="w-full lg:max-w-[540px] h-auto object-contain"
                 width={540}
                 height={320}
               />
             </div>
 
             {/* Right: Text Block */}
-            <div className="w-full text-left">
+            <div className="w-full text-left pb-10 max-w-2xl lg:max-w-full">
               <h2 className="text-[25px] md:text-4xl lg:text-[43px] font-bold tracking-tight text-neutral-950">
                 Built in Canada, for Canadians
               </h2>

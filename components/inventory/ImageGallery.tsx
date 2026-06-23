@@ -1,18 +1,14 @@
 /* =========================
    ImageGallery Component (Inventory / VDP)
    Full-featured image gallery for the Vehicle Detail Page.
-   - Main large image with prev/next arrow buttons
-   - Vertical thumbnail strip (desktop only)
-   - Image counter badge (current / total)
-   - "Sold" grayscale overlay when isSold is true
-   - Smooth thumbnail scroll-into-view on navigation
 ========================= */
 
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 import LightGallery from "lightgallery/react";
 import type { LightGallery as LightGalleryInstance } from "lightgallery/lightgallery";
@@ -33,7 +29,6 @@ import lgHash from "lightgallery/plugins/hash";
 import lgFullscreen from "lightgallery/plugins/fullscreen";
 import lgAutoplay from "lightgallery/plugins/autoplay";
 import lgShare from "lightgallery/plugins/share";
-import lgRotate from "lightgallery/plugins/rotate";  
 
 type ImageGalleryProps = {
   images: string[];
@@ -44,26 +39,72 @@ type ImageGalleryProps = {
 
 export const ImageGallery = ({ images, title, isSold = false, centered }: ImageGalleryProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  
   const lightboxRef = useRef<LightGalleryInstance | null>(null);
+  const desktopThumbsRef = useRef<HTMLDivElement | null>(null);
+  const thumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // Smooth scroll thumbnail into view, handling loop-to-top scenario
+  useEffect(() => {
+    const container = desktopThumbsRef.current;
+    if (!container) return;
+
+    if (activeIndex === 0) {
+      // If it loops back to the first image, snap cleanly back to the top
+      container.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } else {
+      const activeThumb = thumbRefs.current[activeIndex];
+      if (activeThumb) {
+        container.scrollTo({
+          top: activeThumb.offsetTop - container.offsetTop - 12, // 12px padding offset
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [activeIndex]);
 
   const goTo = (index: number) => {
     if (images.length === 0) return;
-    if (index < 0) setActiveIndex(images.length - 1);
-    else if (index >= images.length) setActiveIndex(0);
-    else setActiveIndex(index);
+
+    if (index < 0) {
+      setDirection(-1);
+      setActiveIndex(images.length - 1);
+    } else if (index >= images.length) {
+      setDirection(1);
+      setActiveIndex(0); // This triggers the loop back to top
+    } else {
+      setDirection(index > activeIndex ? 1 : -1);
+      setActiveIndex(index);
+    }
   };
 
   if (!images || images.length === 0) return null;
 
-  // Formats images into the object array structure lightGallery expects
   const dynamicEl = images.map((img) => ({
     src: img,
     thumb: img,
     alt: title,
   }));
 
-
-  
+  // Highly-optimized transition configurations for silky smooth movement
+  const slideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? "100%" : "-100%",
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? "-100%" : "100%",
+      opacity: 0,
+    }),
+  };
 
   return (
     <div className={`flex flex-col lg:flex-row gap-[2px] w-full max-w-full xl:max-h-[500px] overflow-hidden ${centered ? "justify-center" : "justify-start"}`}>
@@ -92,10 +133,9 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
         {/* Clickable Main view triggers lightGallery */}
         <div
           onClick={() => {
-            // Open lightGallery immediately at the correct slide index
             lightboxRef.current?.openGallery(activeIndex);
           }}
-          className="relative rounded-2xl xl:min-w-[750px] xl:max-w-[750px] overflow-hidden bg-gray-100 shadow-sm cursor-zoom-in"
+          className="relative rounded-2xl xl:min-w-[775px] xl:max-w-[750px] overflow-hidden bg-gray-100 shadow-sm cursor-zoom-in aspect-[4/3] w-full"
         >
           {isSold && (
             <div className="absolute top-4 right-4 z-20 bg-red-600 text-white text-sm font-bold px-4 py-2 rounded-md shadow-lg uppercase">
@@ -103,20 +143,38 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
             </div>
           )}
 
-          <Image
-            src={images[activeIndex]}
-            alt={`${title} - Image ${activeIndex + 1}`}
-            width={800}
-            height={600}
-            priority
-            className={`w-full aspect-[4/3] md:h-full object-cover transition-opacity duration-500 ease-in-out ${isSold ? "grayscale opacity-90" : ""}`}
-          />
+          {/* Animating the main image swap smoothly */}
+          <div className="absolute inset-0 w-full h-full overflow-hidden">
+            <AnimatePresence initial={false} custom={direction}>
+              <motion.div
+                key={activeIndex}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: "spring", stiffness: 260, damping: 28 },
+                  opacity: { duration: 0.25, ease: "easeInOut" }
+                }}
+                className="absolute inset-0 w-full h-full"
+              >
+                <Image
+                  src={images[activeIndex]}
+                  alt={`${title} - Image ${activeIndex + 1}`}
+                  fill
+                  priority
+                  className={`object-cover ${isSold ? "grayscale opacity-90" : ""}`}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
           {images.length > 1 && (
             <button
               type="button"
               onClick={(e) => {
-                e.stopPropagation(); // Prevents launching lightbox when choosing arrows
+                e.stopPropagation();
                 goTo(activeIndex - 1);
               }}
               className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl z-10"
@@ -139,7 +197,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
           )}
         </div>
 
-        {/*  Mobile Thumbnail strip */}
+        {/* Mobile Thumbnail strip */}
         {images.length > 1 && (
           <div className="md:hidden mt-2 w-full">
             <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -166,17 +224,29 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
         )}
       </div>
 
-      {/* Desktop Thumbnail Strip (Unchanged) */}
+      {/* Desktop Thumbnail Strip */}
       {images.length > 1 && (
-        <div className="hidden md:flex flex-col overflow-y-auto w-[165px] h-[500px] pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div 
+          ref={desktopThumbsRef}
+          className="hidden md:flex flex-col overflow-y-auto w-[165px] h-[500px] pr-1 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
           {images.map((img, idx) => (
             <button
               key={idx}
+              ref={(el) => { thumbRefs.current[idx] = el; }}
               type="button"
               onClick={() => goTo(idx)}
-              className={`w-[155px] h-[119px] flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 mb-2 ${idx === activeIndex ? "border-blue-500" : "border-transparent"}`}
+              className={`w-[155px] h-[121px] flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 mb-1 transition-all duration-200 ${
+                idx === activeIndex ? "border-blue-500 scale-[0.98]" : "border-transparent"
+              }`}
             >
-              <Image src={img} alt={`Thumbnail ${idx + 1}`} width={155} height={125} className="w-full h-full object-cover rounded-md" />
+              <Image 
+                src={img} 
+                alt={`Thumbnail ${idx + 1}`} 
+                width={155} 
+                height={125} 
+                className="w-full h-full object-cover rounded-md" 
+              />
             </button>
           ))}
         </div>
