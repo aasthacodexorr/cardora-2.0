@@ -14,6 +14,6 @@ export const ITEMS: Omit<DifferenceItem, 'icon'>[] = [
 
 export const CONTAINER_CLASS = "mx-auto max-w-[1400px] md:px-12 px-5 py-14 ";
 
-export const GRID_CLASS = "flex justify-center gap-[40px] flex-col md:flex-row";
+export const GRID_CLASS = "flex justify-center gap-[40px] flex-col lg:flex-row";
 
-export const CARD_CLASS = "rounded-[15px] overflow-hidden min-h-[280px] bg-[#e6f4ff] pt-[40px] pr-[25px] pb-[40px] pl-[25px] w-full max-w-[400px] min-w-[300px]";
+export const CARD_CLASS = "rounded-[15px] overflow-hidden min-h-[280px] bg-[#e6f4ff] pt-[40px] pr-[25px] pb-[40px] pl-[25px] w-full lg:max-w-[400px] lg:min-w-[300px]";

@@ -251,7 +251,7 @@ const Service = () => {
             </h2>
 
             {/* Three value-prop cards */}
-            <div className="flex justify-start gap-[40px] flex-col md:flex-row">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[40px]">
               {trustHighlights?.map((item, idx) => (
                 <DifferenceCard
                   key={idx}

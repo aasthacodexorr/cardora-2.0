@@ -100,13 +100,13 @@ const ProtectionPlans = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-16 pb-0 md:pt-24 overflow-hidden bg-white">
-        <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col md:flex-row md:items-center justify-between min-h-[450px]">
+      <section className="relative w-full pt-16 pb-0 md:pt-24 overflow-hidden bg-white px-4 lg:px-0">
+        <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col lg:flex-row lg:items-center justify-between min-h-[450px]">
 
           {/* Left Column: Title and Pills */}
           <div className="flex flex-col justify-center space-y-6 max-w-md pb-12 md:pb-16 z-10">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-neutral-900 leading-tight">
-              Every Vehicle<br />Includes
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-neutral-900 leading-tight md:w-xl">
+              Every Vehicle Includes
             </h1>
 
             <div className="flex flex-col gap-4 pt-4">
@@ -123,7 +123,7 @@ const ProtectionPlans = () => {
           </div>
 
           {/* Right Column: Car Image */}
-          <div className="w-full md:absolute md:bottom-0 md:right-0 md:w-1/2 lg:w-[55%] flex justify-end items-end pointer-events-none">
+          <div className="w-full lg:absolute lg:bottom-0 lg:right-0 lg:w-1/2 lg:w-[55%] flex justify-end items-end pointer-events-none">
             <Image
               src={rotateCar}
               alt="Silver Toyota Camry Sedan"
@@ -160,7 +160,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/* How Cardora keeps you covered (Full-Bleed Background, Centered Content) */}
-      <section className="bg-[#eaeff5] py-16 md:py-20">
+      <section className="bg-[#eaeff5] py-16 md:py-20 px-4 lg:px-0">
         <div className="mx-auto max-w-[1280px] px-6 md:px-1">
           <div>
             <h2 className="text-3xl md:text-[45px] font-semibold tracking-tight text-foreground">
@@ -182,7 +182,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/* What's included (Full-Bleed Background, Centered Content) */}
-      <section className="py-16 bg-[#eaeff5]">
+      <section className="py-16 bg-[#eaeff5] px-4 lg:px-0">
         <div className="mx-auto max-w-[1280px] px-6 md:px-1 pb-10">
           <h2 className="text-start text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
             What's included?
@@ -204,7 +204,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/* GAP Coverage */}
-      <section className="bg-white text-gray-900 pt-18 py-16 px-4 font-sans">
+      <section className="text-gray-900 pt-18 py-1 px-4 font-sans ">
         <div className="max-w-[1280px] mx-auto px-6 md:px-1 text-center">
           {/* Header Section */}
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-black">
@@ -215,23 +215,23 @@ const ProtectionPlans = () => {
               Optional
             </span>
           </div>
-          <p className="mt-4 text-base mx-auto max-w-2xl leading-relaxed">
+          <p className="mt-4 text-base mx-auto max-w-5xl leading-relaxed">
             Life doesn't wait. If your vehicle is totaled or stolen, insurance may not cover what you still owe. 
             GAP coverage protects you by covering the remaining balance — so you're not left paying for a 
             car you no longer have.
           </p>
 
           {/* Breakdown Section */}
-          <div className="mt-12 max-w-3xl mx-auto">
+          <div className="mt-12 max-w-4xl mx-auto">
             <span className="uppercase tracking-wide font-bold block mb-1">
               Example
             </span>
             <p className="text-xl font-normal my-1 ">If You Owed on Your Vehicle</p>
             <p className="text-3xl md:text-3xl font-black text-emerald-600 mt-1">$15,000</p>
             
-            <hr className="mt-7 border-gray-300 mx-auto" />
+            <hr className="mt-12 border-gray-300 mx-auto" />
 
-            <div className="grid grid-cols-2 gap-4 mx-auto items-start text-center">
+            <div className="grid grid-cols-2 gap-4 mx-auto items-start text-center ">
               {/* Left Column: Payout */}
               <div className="pt-10">
                 <p className="text-lg font-bold text-gray-800">Insurance Payout</p>
@@ -254,14 +254,14 @@ const ProtectionPlans = () => {
             <Image 
               src={greenCar} 
               alt="Vehicle visualization split with checklist indicators" 
-              className="w-full h-auto max-w-3xl"
+              className="w-full h-auto max-w-4xl"
             />
           </div>
         </div>
       </section>
 
       {/* The Cardora Difference Section */}
-      <div className="w-full mx-auto max-w-[1280px] px-6 md:px-1">
+      <div className="w-full mx-auto px-6 md:px-1 -mt-20">
         <CardoraDifference />
       </div>
 

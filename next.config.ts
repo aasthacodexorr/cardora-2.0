@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     // your project has type errors.
     // ignoreBuildErrors: true,
   },
-  allowedDevOrigins: ['192.168.1.14'],
+  allowedDevOrigins: ['192.168.1.10'],
   devIndicators: false,
 
   images: {
