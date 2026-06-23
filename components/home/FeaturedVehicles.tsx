@@ -114,8 +114,8 @@ export default function FeaturedVehicles() {
 
   return (
     <section className="w-full bg-background mt-[40px] mb-[50px] overflow-hidden font-carmax">
-      <div className="max-w-[1280px] mx-auto px-[20px] py-12 relative">
-        <h2 className="text-[34px] lg:text-[44px] font-bold text-foreground tracking-tight text-center mb-8">
+      <div className="max-w-[1280px] mx-auto px-[23px] lg:px-[20px] py-10 lg:py-12 relative">
+        <h2 className="text-[28px] lg:text-[44px] lg:font-bold text-foreground tracking-tight text-center mb-12 lg:mb-8">
           Shop featured vehicles
         </h2>
 
@@ -135,7 +135,7 @@ export default function FeaturedVehicles() {
             {duplicatedVehicles.map((v, index) => (
               <article
                 key={`${v.id}-${index}`}
-                className="snap-start shrink-0 w-[290px] rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
+                className="snap-start shrink-0 w-full lg:w-[290px] rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
               >
                 <div className="aspect-square bg-muted">
                   <Image

@@ -134,8 +134,8 @@ const Reviews = () => {
 
   return (
     <section className="w-full bg-[#eaeff5] overflow-hidden">
-      <div className="mx-auto max-w-[1280px] px-4 md:px-6 pt-18 pb-9">
-        <h2 className="text-[30px] md:text-[44px] font-bold text-foreground tracking-tight text-center mb-5">
+      <div className="mx-auto max-w-[1280px] px-4 md:px-6 pt-12 lg:pt-18 lg:pb-9">
+        <h2 className="text-[26px] md:text-[44px] font-bold text-foreground tracking-tight leading-none text-center mb-5">
           People love buying with Cardora
         </h2>
 
@@ -147,7 +147,7 @@ const Reviews = () => {
             rel="noopener noreferrer"
             className="text-[16px] font-semibold text-foreground"
           >
-            <div className="flex items-center justify-center gap-3 rounded-[20px] overflow-hidden border border-[#e2e2e2] bg-transparent shadow-none py-[10px] px-4 w-[500px] max-w-full flex-wrap">
+            <div className="flex items-center justify-center gap-3 rounded-[40px] overflow-hidden border border-[#e2e2e2] bg-transparent shadow-none py-[10px] lg:px-4 px-6 lg:w-[500px] max-w-full flex-wrap">
               <Image src={google} alt="Google" className="h-[29px] w-[85px] object-contain" />
               <div className="flex items-center gap-1">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -161,7 +161,7 @@ const Reviews = () => {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative mt-8 px-8">
+        <div className="relative mt-5 lg:mt-0 lg:px-8">
           {/* Prev button */}
           <button
             onClick={() => scroll("left")}
@@ -174,15 +174,16 @@ const Reviews = () => {
           {/* Scrollable Window viewport */}
           <div
             ref={scrollRef}
-            className="overflow-x-hidden scrollbar-none min-h-[500px] w-full"
+            className="overflow-x-hidden scrollbar-none min-h-[500px] w-full snap-x mandatory"
           >
             {/* The Track element containing the items */}
-            <div className="flex py-4">
+            <div className="flex w-full">
               {duplicatedReviews.map((r, index) => (
                 <div
                   key={`${r.name}-${index}`}
                   data-slide
-                  className={`flex-shrink-0 px-2 min-h-[450px] md:px-3 ${
+                  /* CHANGED: snap-start to snap-center */
+                  className={`snap-center shrink-0 lg:flex-shrink-0 px-2 min-h-[470px] lg:min-h-[450px] md:px-3 ${
                     slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
                   }`}
                 >

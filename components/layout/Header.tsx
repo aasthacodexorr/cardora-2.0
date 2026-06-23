@@ -105,7 +105,7 @@ const Header = () => {
 
         {/* Top bar: logo + social icons */}
         <div className="flex items-center justify-between pl-[12px] pr-[29px] py-[6px]">
-          <Link href="/" aria-label="Cardora home" className="[&_img]:max-w-[165px] [&_img]:h-auto">
+          <Link href="/" aria-label="Cardora home" className="[&_img]:max-w-[125px] [&_img]:h-auto">
             <CardoraLogo />
           </Link>
 
@@ -150,7 +150,7 @@ const Header = () => {
         </div>
 
         {/* Green action bar: call, directions, menu toggle */}
-        <div className="text-white flex items-center justify-between py-2.5 relative border-t border-[#dadada] border-b border-b-[#dadada]">
+        <div className="text-white flex items-center justify-between py-2 relative border-t border-[#dadada] border-b border-b-[#dadada]">
           <div className="flex items-center gap-5 px-4 top-0">
 
             {/* Call */}
@@ -165,8 +165,8 @@ const Header = () => {
 
             {/* Directions */}
             <a
-              href={SITE_CONFIG.urls.googleMapsUrl}
-              target="_blank"
+              href={"/contact-us"}
+              // target="_blank"
               rel="noreferrer"
               className="flex flex-col items-center justify-center gap-1 group text-white bg-[#00af66] rounded-[5px] w-[181px] max-[537px]:w-[150px] max-[480px]:w-[100px] max-[397px]:w-[90px] py-[13px] px-[10px]"
             >

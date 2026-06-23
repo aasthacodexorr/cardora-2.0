@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { COLLECTION_ID, DEFAULT_SORT } from "@/constants";
+import { Search } from "lucide-react";
 
 const HeroSearchPanelContent = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,24 +34,12 @@ const HeroSearchPanelContent = () => {
   };
 
   return (
-    <div className="w-full max-w-[550px] flex justify-center bg-[#00573326] rounded-[10px] mt-4 pt-2">
-      <div className="overflow-hidden rounded-[10px] p-[30px_25px_18px] w-full">
+    <div className="w-full max-w-[550px] flex justify-center bg-[#00573326] rounded-[10px] lg:mt-4 lg:pt-2">
+      <div className="overflow-hidden rounded-[10px] p-4 lg:p-[30px_25px_18px] w-full">
         {/* Search input */}
         <div className="flex items-center bg-white overflow-hidden shadow relative rounded-[10px]">
           <div className="relative bg-white overflow-hidden rounded-[10px] left-3 w-6 ">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-[15px] h-[15px] text-black "
-            >
-              <circle cx="10.1" cy="10.1" r="8.5" />
-              <path d="m23 23-9-9" />
-            </svg>
+           <Search size={15} fontWeight="normal"/>
           </div>
           <input
             type="text"
@@ -69,7 +58,7 @@ const HeroSearchPanelContent = () => {
         </div>
 
         {/* OR divider */}
-        <div className="flex items-center gap-4 my-5">
+        <div className="flex items-center gap-4 lg:my-5 my-4">
           <div className="h-px bg-black/20 flex-1" />
           <span className="text-md text-black">or</span>
           <div className="h-px bg-black/20 flex-1" />
