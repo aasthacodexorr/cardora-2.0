@@ -57,15 +57,15 @@ export default function ContactUs() {
     return (
         <>
             <Header />
-            <div className="min-h-screen flex items-center justify-center p-6 sm:p-12 font-sans text-gray-900">
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 ">
+            <div className="min-h-screen flex items-center justify-center p-6 lg:p-12 font-sans text-gray-900">
+                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12">
 
                     {/* Left Side */}
                     <div className="space-y-8">
                         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight lg:mt-28">
                             Got a question? We’re here to help.
                         </h1>
-                        <div className="space-y-4 w-[480px]">
+                        <div className="space-y-4 lg:w-[480px]">
                             <div className="group relative bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between overflow-hidden cursor-pointer">
                                 <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -107,7 +107,7 @@ export default function ContactUs() {
                     </div>
 
                     {/* Right Side: Form Container */}
-                    <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-[0_2px_18px_rgba(0,0,0,0.1)] border border-gray-100">
+                    <div className=" bg-white p-8 sm:p-10 rounded-3xl shadow-[0_2px_18px_rgba(0,0,0,0.1)] border border-gray-100">
                         <h2 className="text-2xl sm:text-3xl font-bold mb-6">Let’s Get You on the Road</h2>
 
                         {/* Conditional UI based on Success State */}
