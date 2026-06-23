@@ -97,7 +97,7 @@ export default async function VehicleDetailsPage({
               </div>
 
               {/* Trade In Banner */}
-              <div className="w-full lg:mb-30 max-w-[900px]">
+              <div className="w-full lg:mb-30 max-w-[925px]">
                 <div className="flex flex-col md:flex-row items-center justify-between border border-gray-200 rounded-2xl p-6 bg-white w-full gap-6 box-border font-sans">
                   <div className="flex sm:flex-row md:gap- flex-1">
                     <div className="flex-shrink-0">
@@ -120,7 +120,7 @@ export default async function VehicleDetailsPage({
               </div>
 
               {/* Specs grid & Extended Coverage */}
-              <div className="w-full max-w-[900px]">
+              <div className="w-full max-w-[925px]">
                 <AboutVehicle vehicle={vehicle} />
                 <div className="w-full my-14">
                   <div className="flex flex-col sm:flex-row items-center border border-gray-200 rounded-2xl px-6 py-4 bg-white w-full mx-auto gap-5 box-border font-sans">
@@ -167,7 +167,7 @@ export default async function VehicleDetailsPage({
 
             {/* Right column: sticky sidebar (desktop) */}
             {showSidebar && (
-              <div className="hidden lg:block lg:w-[400px] xl:w-[490px]">
+              <div className="hidden lg:block lg:w-[450px] xl:w-[450px]">
                 <div className="sticky top-6 h-fit space-y-5">
                   <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
                     <VehicleHeader vehicle={vehicle} />

@@ -16,7 +16,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search, Settings2, X } from "lucide-react";
 
 // Layout
 import { Header, Footer } from "@/components/layout";
@@ -60,6 +60,64 @@ const refinementListClassNames = {
     "bg-[#e6f7ec] text-gray-900 font-bold px-[8px] py-[2px] rounded-md text-[11px] ml-auto",
 };
 
+/* Shared Sort Options array to avoid repetition */
+const sortItems = [
+  {
+    label: "Recently Added",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
+  },
+  {
+    label: "Price (Low to High)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:asc`,
+  },
+  {
+    label: "Price (High to Low)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:desc`,
+  },
+  {
+    label: "Odometer (Low to High)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:asc`,
+  },
+  {
+    label: "Odometer (High to Low)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:desc`,
+  },
+  {
+    label: "Make (A - Z)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/make_rank:asc`,
+  },
+  {
+    label: "Make (Z - A)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/make_rank:desc`,
+  },
+  {
+    label: "Model (A - Z)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/model_rank:asc`,
+  },
+  {
+    label: "Model (Z - A)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/model_rank:desc`,
+  },
+  {
+    label: "Year (Low to High)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/year:desc`,
+  },
+  {
+    label: "Year (High to Low)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
+  },
+  {
+    label: "Image Count (Low to High)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:asc`,
+  },
+  {
+    label: "Image Count (High to Low)",
+    value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:desc`,
+  },
+];
+
+const selectClasses = "px-4 py-1 tracking-wide rounded-[12px] border border-gray-300 bg-white text-black/80 text-[13px] font-extrabold outline-none cursor-pointer h-[42px] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke-width%3D%222%22%20stroke%3D%22%23000%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M8%209l4-4%204%204m0%206l-4%204-4-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10";
+
 type FilterGroupProps = {
   title: string;
   children: React.ReactNode;
@@ -80,11 +138,9 @@ const FilterGroup = ({
         className="w-full cursor-pointer"
       >
         <div className={`flex items-center justify-between rounded-[10px] px-[10px] py-[8px] transition-colors duration-200 hover:bg-gray-50 ${isOpen ? 'bg-gray-100' : ''}`}>
-
           <span className="text-[17px] font-normal text-[#000] uppercase tracking-[1px] text-left">
             {title}
           </span>
-
           <ChevronDown
             className={`h-[20px] w-[20px] text-foreground/70 transition-transform duration-300 ease-in-out ${isOpen ? "rotate-180" : ""
               }`}
@@ -121,12 +177,10 @@ const ScrollToTopOnSearch = () => {
   const firstLoad = useRef(true);
 
   useEffect(() => {
-    // Skip initial page load
     if (firstLoad.current) {
       firstLoad.current = false;
       return;
     }
-
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -139,7 +193,6 @@ const ScrollToTopOnSearch = () => {
 /* NoResultsHandler: shows message when no hits */
 const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
   const { results } = useHits();
-
   if (results && results.nbHits === 0) {
     return (
       <div className="mt-8 text-[15px] text-gray-800">
@@ -147,7 +200,6 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
-
   return <>{children}</>;
 };
 
@@ -178,70 +230,178 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   );
 };
 
-
 const PriceRangeFilter = () => {
   const { start, range, refine } = useRange({
     attribute: "selling_price",
   });
+  
+  const { hits } = useHits();
 
-  const [min, setMin] = useState(start[0] ?? "");
-  const [max, setMax] = useState(start[1] ?? "");
+  // 1. Keep the global absolute boundaries for the slider track
+  const absoluteMin = range.min ?? 0;
+  const absoluteMax = range.max ?? 100000;
 
-  // Keep local inputs in sync whenever the underlying range state changes
-  // externally (e.g. loaded from the URL on first render, or cleared via
-  // "Clear Filters").
-  useStartSync(start, setMin, setMax);
+  // Extract all current matching numeric prices from the loaded hits for the histogram distribution
+  const currentPrices = hits
+    .map((hit: any) => Number(hit.selling_price))
+    .filter((price) => !isNaN(price))
+    .sort((a, b) => a - b);
 
-  const handleApply = () => {
-    const minValue = min ? Number(min) : undefined;
-    const maxValue = max ? Number(max) : undefined;
+  const [minInput, setMinInput] = useState<string>("");
+  const [maxInput, setMaxInput] = useState<string>("");
 
-    refine([minValue, maxValue]);
+  // 2. Sync values correctly with current refinement states
+  useEffect(() => {
+    setMinInput(start[0] !== undefined ? String(start[0]) : String(absoluteMin));
+    setMaxInput(start[1] !== undefined ? String(start[1]) : String(absoluteMax));
+  }, [start, absoluteMin, absoluteMax]);
 
+  // Generate histogram distribution bins based on current prices loaded
+  const generateHistogramBins = () => {
+    const binCount = 40; 
+    const bins = Array(binCount).fill(0);
+    if (currentPrices.length === 0) return bins;
+
+    // Use absolute boundaries so bins don't shift positions when filtering
+    const rangeDiff = absoluteMax - absoluteMin;
+    if (rangeDiff === 0) {
+      bins[0] = currentPrices.length;
+      return bins;
+    }
+
+    currentPrices.forEach((price) => {
+      let binIndex = Math.floor(((price - absoluteMin) / rangeDiff) * binCount);
+      if (binIndex >= binCount) binIndex = binCount - 1;
+      if (binIndex < 0) binIndex = 0;
+      bins[binIndex]++;
+    });
+
+    const maxBinValue = Math.max(...bins);
+    return bins.map((count) => (maxBinValue > 0 ? (count / maxBinValue) * 100 : 0));
   };
 
+  const histogramBars = generateHistogramBins();
+
+  const handleApply = () => {
+    const minValue = minInput !== "" ? Number(minInput) : undefined;
+    const maxValue = maxInput !== "" ? Number(maxInput) : undefined;
+    refine([minValue, maxValue]);
+  };
+
+  const handleInputChange = (type: "min" | "max", value: string) => {
+    if (type === "min") setMinInput(value);
+    if (type === "max") setMaxInput(value);
+  };
+
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>, target: "min" | "max") => {
+    const val = e.target.value;
+    if (target === "min") {
+      setMinInput(val);
+      refine([Number(val), maxInput ? Number(maxInput) : undefined]);
+    } else {
+      setMaxInput(val);
+      refine([minInput ? Number(minInput) : undefined, Number(val)]);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleApply();
+    }
+  };
+
+  // Percentages calculated against stable global boundaries
+  const minPercent = absoluteMax !== absoluteMin ? ((Number(minInput || absoluteMin) - absoluteMin) / (absoluteMax - absoluteMin)) * 100 : 0;
+  const maxPercent = absoluteMax !== absoluteMin ? ((Number(maxInput || absoluteMax) - absoluteMin) / (absoluteMax - absoluteMin)) * 100 : 100;
+
   return (
-    <div className="pt-2 pb-4">
-      <div className="flex items-center gap-2">
+    <div className="pt-2 pb-4 select-none">
+      <div className="mb-2 text-[13px] font-bold text-gray-700 uppercase tracking-wide">
+        Price Range
+      </div>
+
+      {/* Input Boxes Grid */}
+      <div className="flex items-center gap-2 mb-4">
         <input
           type="number"
-          value={min}
-          min={range.min}
-          max={range.max}
-          onChange={(e) => setMin(e.target.value)}
-          placeholder="0"
-          className="w-full h-[36px] px-3 border border-[#cfcfcf] rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          value={minInput}
+          placeholder={String(absoluteMin)}
+          onChange={(e) => handleInputChange("min", e.target.value)}
+          onBlur={handleApply}
+          onKeyDown={handleKeyDown}
+          className="w-full h-[40px] px-3 border border-[#cfcfcf] rounded-[6px] text-[14px] font-medium outline-none text-center"
         />
-
-        <span className="text-[16px]">To</span>
-
+        <span className="text-gray-400 font-medium">—</span>
         <input
           type="number"
-          value={max}
-          min={range.min}
-          max={range.max}
-          onChange={(e) => setMax(e.target.value)}
-          placeholder={String(range.max ?? "")}
-          className="w-full h-[36px] px-3 border border-[#cfcfcf] rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          value={maxInput}
+          placeholder={String(absoluteMax)}
+          onChange={(e) => handleInputChange("max", e.target.value)}
+          onBlur={handleApply}
+          onKeyDown={handleKeyDown}
+          className="w-full h-[40px] px-3 border border-[#cfcfcf] rounded-[6px] text-[14px] font-medium outline-none text-center"
         />
+      </div>
 
-        <button
-          onClick={handleApply}
-          className="h-[36px] px-4 bg-[#00af66] cursor-pointer hover:bg-black text-white rounded-[4px] font-semibold text-[14px] hover:bg-[#00995a] transition"
-        >
-          Go
-        </button>
+      {/* Histogram bars visualization */}
+      <div className="flex items-end h-[35px] gap-[1px] px-2 w-full select-none pointer-events-none mb-[-10px]">
+        {histogramBars.map((heightPercent, idx) => {
+          const stepValue = absoluteMin + ((absoluteMax - absoluteMin) / 40) * idx;
+          const isSelected = stepValue >= Number(minInput || absoluteMin) && stepValue <= Number(maxInput || absoluteMax);
+          return (
+            <div
+              key={idx}
+              className="flex-1 transition-all duration-300"
+              style={{
+                height: `${Math.max(heightPercent, 8)}%`,
+                backgroundColor: isSelected ? "#333333" : "#404142ff",
+              }}
+            />
+          );
+        })}
+      </div>
+
+      {/* Custom HTML Dual Multi-Range Slider */}
+      <div className="relative w-full h-7 flex items-center mt-2">
+        <div className="absolute left-0 right-0 h-[3px] bg-gray-200 rounded-full" />
+        <div
+          className="absolute h-[3px] bg-black rounded-full"
+          style={{
+            left: `${Math.max(0, Math.min(minPercent, 100))}%`,
+            right: `${100 - Math.max(0, Math.min(maxPercent, 100))}%`,
+          }}
+        />
+        
+        <input
+          type="range"
+          min={absoluteMin}
+          max={absoluteMax}
+          value={minInput || absoluteMin}
+          onChange={(e) => handleSliderChange(e, "min")}
+          className="absolute pointer-events-none appearance-none w-full h-1 bg-transparent active:z-30 focus:outline-none
+            [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[18px] [&::-webkit-slider-thumb]:h-[18px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer
+            [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-[18px] [&::-moz-range-thumb]:h-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer"
+        />
+        <input
+          type="range"
+          min={absoluteMin}
+          max={absoluteMax}
+          value={maxInput || absoluteMax}
+          onChange={(e) => handleSliderChange(e, "max")}
+          className="absolute pointer-events-none appearance-none w-full h-1 bg-transparent active:z-30 focus:outline-none
+            [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[18px] [&::-webkit-slider-thumb]:h-[18px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer
+            [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-[18px] [&::-moz-range-thumb]:h-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer"
+        />
       </div>
     </div>
   );
-}
+};
 
 const OdometerRangeFilter = () => {
   const { start, refine } = useRange({
     attribute: "odometer",
   });
   const [error, setError] = useState("");
-
   const [min, setMin] = useState("");
   const [max, setMax] = useState("");
 
@@ -250,7 +410,6 @@ const OdometerRangeFilter = () => {
   const handleApply = () => {
     const minValue = min ? Number(min) : undefined;
     const maxValue = max ? Number(max) : undefined;
-
     setError("");
 
     if (
@@ -273,9 +432,7 @@ const OdometerRangeFilter = () => {
     refine([minValue, maxValue]);
   };
 
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleApply();
     }
@@ -294,9 +451,7 @@ const OdometerRangeFilter = () => {
           className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? "border-red-500" : "border-[#cfcfcf]"
             }`}
         />
-
         <span className="text-[16px] text-gray-700">To</span>
-
         <input
           type="number"
           min={400}
@@ -307,7 +462,6 @@ const OdometerRangeFilter = () => {
           className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? "border-red-500" : "border-[#cfcfcf]"
             }`}
         />
-
         <button
           type="button"
           onClick={handleApply}
@@ -316,9 +470,8 @@ const OdometerRangeFilter = () => {
           Go
         </button>
       </div>
-
       {error && (
-        <div className="mt-1 z-10 rounded   px-2 py-1 text-[12px] text-black shadow-md">
+        <div className="mt-1 z-10 rounded px-2 py-1 text-[12px] text-black shadow-md">
           {error}
         </div>
       )}
@@ -326,11 +479,6 @@ const OdometerRangeFilter = () => {
   );
 }
 
-/* useStartSync: small shared hook so PriceRangeFilter/OdometerRangeFilter
-    keep their local text-input state in sync with the InstantSearch
-    `useRange` `start` tuple (e.g. when loaded from the URL on first
-    render, or reset via "Clear Filters"). asStrings=true mirrors the
-    OdometerRangeFilter's original String() coercion. */
 function useStartSync(
   start: readonly [number | undefined, number | undefined],
   setMin: (v: any) => void,
@@ -345,18 +493,117 @@ function useStartSync(
       setMin(start[0] ?? "");
       setMax(start[1] ?? "");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [start[0], start[1]]);
 }
 
 /* InventoryContent: main page content */
 const InventoryContent = () => {
-  /* Only one filter open at a time */
-  const [openFilter, setOpenFilter] =
-    useState<string | null>("");
+  const [openFilter, setOpenFilter] = useState<string | null>("");
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
+  useEffect(() => {
+    if (isMobileFilterOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileFilterOpen]);
 
-    
+  const renderFilterGroups = () => (
+    <div className="space-y-5">
+      <FilterGroup
+        title="LOCATION"
+        isOpen={openFilter === "LOCATION"}
+        onToggle={() => setOpenFilter(openFilter === "LOCATION" ? null : "LOCATION")}
+      >
+        <RefinementList attribute="location" classNames={refinementListClassNames} />
+      </FilterGroup>
+
+      <FilterGroup
+        title="VEHICLE TYPE"
+        isOpen={openFilter === "VEHICLE TYPE"}
+        onToggle={() => setOpenFilter(openFilter === "VEHICLE TYPE" ? null : "VEHICLE TYPE")}
+      >
+        <RefinementList attribute="vehicle_type" classNames={refinementListClassNames} />
+      </FilterGroup>
+
+      <FilterGroup
+        title="PRICE"
+        isOpen={openFilter === "PRICE"}
+        onToggle={() => setOpenFilter(openFilter === "PRICE" ? null : "PRICE")}
+      >
+        <PriceRangeFilter />
+      </FilterGroup>
+
+      <FilterGroup
+        title="YEAR"
+        isOpen={openFilter === "YEAR"}
+        onToggle={() => setOpenFilter(openFilter === "YEAR" ? null : "YEAR")}
+      >
+        <RefinementList attribute="year" sortBy={["name:desc"]} classNames={refinementListClassNames} />
+      </FilterGroup>
+
+      <FilterGroup
+        title="MAKE"
+        isOpen={openFilter === "MAKE"}
+        onToggle={() => setOpenFilter(openFilter === "MAKE" ? null : "MAKE")}
+      >
+        <RefinementList attribute="make" classNames={refinementListClassNames} />
+      </FilterGroup>
+
+      <FilterGroup
+        title="MODEL"
+        isOpen={openFilter === "MODEL"}
+        onToggle={() => setOpenFilter(openFilter === "MODEL" ? null : "MODEL")}
+      >
+        <RefinementList attribute="model" classNames={refinementListClassNames} />
+      </FilterGroup>
+
+      <FilterGroup
+        title="ODOMETER"
+        isOpen={openFilter === "ODOMETER"}
+        onToggle={() => setOpenFilter(openFilter === "ODOMETER" ? null : "ODOMETER")}
+      >
+        <OdometerRangeFilter />
+      </FilterGroup>
+
+      <FilterGroup
+        title="EXTERIOR COLOR"
+        isOpen={openFilter === "EXTERIOR COLOR"}
+        onToggle={() => setOpenFilter(openFilter === "EXTERIOR COLOR" ? null : "EXTERIOR COLOR")}
+      >
+        <RefinementList attribute="exterior_color" classNames={refinementListClassNames} />
+      </FilterGroup>
+
+      <FilterGroup
+        title="BODY TYPE"
+        isOpen={openFilter === "BODY TYPE"}
+        onToggle={() => setOpenFilter(openFilter === "BODY TYPE" ? null : "BODY TYPE")}
+      >
+        <RefinementList attribute="body_type" classNames={refinementListClassNames} />
+      </FilterGroup>
+
+      <FilterGroup
+        title="TRANSMISSION"
+        isOpen={openFilter === "TRANSMISSION"}
+        onToggle={() => setOpenFilter(openFilter === "TRANSMISSION" ? null : "TRANSMISSION")}
+      >
+        <RefinementList attribute="transmission" classNames={refinementListClassNames} />
+      </FilterGroup>
+
+      <FilterGroup
+        title="FUEL TYPE"
+        isOpen={openFilter === "FUEL TYPE"}
+        onToggle={() => setOpenFilter(openFilter === "FUEL TYPE" ? null : "FUEL TYPE")}
+      >
+        <RefinementList attribute="fuel_type" classNames={refinementListClassNames} />
+      </FilterGroup>
+    </div>
+  );
+
   return (
     <main className="min-h-screen bg-background flex flex-col">
       <div className="bg-hero-bg">
@@ -364,7 +611,6 @@ const InventoryContent = () => {
       </div>
 
       <section className="w-full bg-[#efefef] flex-1">
-
         <InstantSearch
           searchClient={searchClient}
           indexName={TYPESENSE_COLLECTION_NAME}
@@ -377,308 +623,116 @@ const InventoryContent = () => {
           <Configure hitsPerPage={21} />
 
           <div className="max-w-[1600px] mx-auto px-3 lg:px-[24px] pt-[20px] pb-[50px]">
-            <div className="flex flex-col lg:flex-row items-start gap-5 lg:px-10 px-">
+            <div className="flex flex-col lg:flex-row items-start gap-5 lg:px-10">
 
-              {/* Sidebar Filters (Modified sticky position to flow up on first scroll) */}
-              <aside className="hidden sticky top-[-180px] self-start shrink-0 lg:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[290px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-
-                {/* Hits count + clear filters */}
+              {/* Desktop Sidebar Filters Layout */}
+              <aside className="hidden sticky top-[-180px] self-start shrink-0 lg:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[290px]">
                 <div className="mt-[10px] flex flex-col items-center gap-4">
                   <div className="bg-[#00af66] text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm">
                     <CustomHitsCount />
                   </div>
-
                   <ClearRefinements
                     classNames={{
-                      button:
-                        "text-[12px] mb-9 cursor-pointer font-bold text-black disabled:cursor-not-allowed",
+                      button: "text-[12px] mb-9 cursor-pointer font-bold text-black disabled:cursor-not-allowed",
                     }}
                     translations={{
                       resetButtonText: "Clear Filters",
                     }}
                   />
                 </div>
-
-                {/* Filter groups */}
-                <div className="space-y-5">
-
-                  <FilterGroup
-                    title="LOCATION"
-                    isOpen={openFilter === "LOCATION"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "LOCATION"
-                          ? null
-                          : "LOCATION"
-                      )
-                    }
-                  >
-                    <RefinementList
-                      attribute="location"
-                      classNames={refinementListClassNames}
-                    />
-                  </FilterGroup>
-
-                  <FilterGroup
-                    title="VEHICLE TYPE"
-                    isOpen={openFilter === "VEHICLE TYPE"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "VEHICLE TYPE"
-                          ? null
-                          : "VEHICLE TYPE"
-                      )
-                    }
-                  >
-                    <RefinementList
-                      attribute="vehicle_type"
-                      classNames={refinementListClassNames}
-                    />
-                  </FilterGroup>
-
-                  <FilterGroup
-                    title="PRICE"
-                    isOpen={openFilter === "PRICE"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "PRICE"
-                          ? null
-                          : "PRICE"
-                      )
-                    }
-                  >
-                    <PriceRangeFilter />
-                  </FilterGroup>
-
-                  <FilterGroup
-                    title="YEAR"
-                    isOpen={openFilter === "YEAR"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "YEAR"
-                          ? null
-                          : "YEAR"
-                      )
-                    }
-                  >
-                    <RefinementList
-                      attribute="year"
-                      sortBy={["name:desc"]}
-                      classNames={refinementListClassNames}
-                    />
-                  </FilterGroup>
-
-                  <FilterGroup
-                    title="MAKE"
-                    isOpen={openFilter === "MAKE"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "MAKE"
-                          ? null
-                          : "MAKE"
-                      )
-                    }
-                  >
-                    <RefinementList
-                      attribute="make"
-                      classNames={refinementListClassNames}
-                    />
-                  </FilterGroup>
-
-                  <FilterGroup
-                    title="MODEL"
-                    isOpen={openFilter === "MODEL"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "MODEL"
-                          ? null
-                          : "MODEL"
-                      )
-                    }
-                  >
-                    <RefinementList
-                      attribute="model"
-                      classNames={refinementListClassNames}
-                    />
-                  </FilterGroup>
-
-                  <FilterGroup
-                    title="ODOMETER"
-                    isOpen={openFilter === "ODOMETER"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "ODOMETER"
-                          ? null
-                          : "ODOMETER"
-                      )
-                    }
-                  >
-                    <OdometerRangeFilter />
-                  </FilterGroup>
-
-                  <FilterGroup
-                    title="EXTERIOR COLOR"
-                    isOpen={openFilter === "EXTERIOR COLOR"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "EXTERIOR COLOR"
-                          ? null
-                          : "EXTERIOR COLOR"
-                      )
-                    }
-                  >
-                    <RefinementList
-                      attribute="exterior_color"
-                      classNames={refinementListClassNames}
-                    />
-                  </FilterGroup>
-
-                  <FilterGroup
-                    title="BODY TYPE"
-                    isOpen={openFilter === "BODY TYPE"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "BODY TYPE"
-                          ? null
-                          : "BODY TYPE"
-                      )
-                    }
-                  >
-                    <RefinementList
-                      attribute="body_type"
-                      classNames={refinementListClassNames}
-                    />
-                  </FilterGroup>
-
-                  <FilterGroup
-                    title="TRANSMISSION"
-                    isOpen={openFilter === "TRANSMISSION"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "TRANSMISSION"
-                          ? null
-                          : "TRANSMISSION"
-                      )
-                    }
-                  >
-                    <RefinementList
-                      attribute="transmission"
-                      classNames={refinementListClassNames}
-                    />
-                  </FilterGroup>
-
-                  <FilterGroup
-                    title="FUEL TYPE"
-                    isOpen={openFilter === "FUEL TYPE"}
-                    onToggle={() =>
-                      setOpenFilter(
-                        openFilter === "FUEL TYPE"
-                          ? null
-                          : "FUEL TYPE"
-                      )
-                    }
-                  >
-                    <RefinementList
-                      attribute="fuel_type"
-                      classNames={refinementListClassNames}
-                    />
-                  </FilterGroup>
-
-                </div>
+                {renderFilterGroups()}
               </aside>
+
+              {/* Mobile Sidebar overlay */}
+              <div 
+                className={`fixed inset-0 z-50 flex lg:hidden transition-opacity duration-300 ${
+                  isMobileFilterOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+                }`}
+              >
+                <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileFilterOpen(false)} />
+                <div 
+                  className={`relative flex w-full max-w-xs flex-col bg-white h-full shadow-xl ml-auto p-4 overflow-y-auto transition-transform duration-300 ease-in-out ${
+                    isMobileFilterOpen ? "translate-x-0" : "translate-x-full"
+                  }`}
+                >
+                  <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-4">
+                    <h2 className="text-lg font-bold text-black uppercase tracking-wider">Filters</h2>
+                    <button 
+                      onClick={() => setIsMobileFilterOpen(false)}
+                      className="p-1 rounded-full text-gray-500 hover:bg-gray-100"
+                    >
+                      <X className="h-6 w-6" />
+                    </button>
+                  </div>
+
+                  <div className="mb-4">
+                    <div className="bg-[#00af66] text-white text-center py-2.5 px-4 rounded-xl font-bold text-[13px] w-full shadow-sm mb-3">
+                      <CustomHitsCount />
+                    </div>
+                    <ClearRefinements
+                      classNames={{
+                        button: "w-full py-2 text-[12px] border border-gray-300 rounded-xl cursor-pointer font-bold text-black disabled:cursor-not-allowed text-center block bg-gray-50",
+                      }}
+                      translations={{
+                        resetButtonText: "Clear Active Filters",
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex-1">
+                    {renderFilterGroups()}
+                  </div>
+                </div>
+              </div>
 
               {/* Right Content */}
               <div className="w-full lg:flex-1 mt-5 lg:mt-0">
 
-                {/* Search + sort */}
-                <div className="flex flex-col lg:flex-row lg:items-center items-end   justify-between gap-4 mb- px-3">
-
-                  <div
-                    className="relative w-full lg:max-w-[440px]"
-                  >
+                {/* Search + sort + responsive control bar */}
+                <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4 px-3">
+                  
+                  {/* Search bar container */}
+                  <div className="relative w-full lg:max-w-[440px]">
                     <SearchBox
                       classNames={{
                         root: "w-full",
                         form: "relative flex items-center",
-                        input:
-                          "w-full pl-[36px] tracking-wide  pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none transition-all",
+                        input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none transition-all",
                         submitIcon: "hidden",
                         resetIcon: "hidden",
                         loadingIcon: "hidden",
                       }}
                       placeholder="Search for Anything"
                     />
-
                     <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
                   </div>
 
-                  {/* Sort */}
-                  <div className="md:flex hidden items-center gap-4 self-end md:self-auto mr-3">
+                  {/* Responsive Filters and Sorting Bar */}
+                  <div className="w-full lg:w-auto flex items-center justify-between sm:justify-end gap-2 mt-1 lg:mt-0">
+                    
+                    {/* Filter Trigger button (Visible only on mobile/tablet) */}
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileFilterOpen(true)}
+                      className="flex lg:hidden items-center justify-center gap-2 h-[42px] px-4 rounded-[12px] border border-[#ddd] bg-white text-black text-[14px] font-bold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer shrink-0"
+                    >
+                      <Settings2 className="h-4 w-4" />
+                      <span>Filters</span>
+                    </button>
 
-                    <span className="text-[15px] font-bold text-gray-900 text-nowrap">
-                      Sort By
-                    </span>
+                    {/* Responsive Sort dropdown container (Now visible everywhere) */}
+                    <div className="flex items-center gap-2 lg:gap-4 ml-auto sm:ml-0">
+                      <span className="text-[13px] sm:text-[15px] font-bold text-gray-900 text-nowrap hidden xs:inline">
+                        Sort By
+                      </span>
+                      <SortBy
+                        items={sortItems}
+                        classNames={{
+                          select: `${selectClasses} w-[180px] sm:w-[212px]`,
+                        }}
+                      />
+                    </div>
 
-                    <SortBy
-                      items={[
-                        {
-                          label: "Recently Added",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
-                        },
-                        {
-                          label: "Price (Low to High)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:asc`,
-                        },
-                        {
-                          label: "Price (High to Low)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:desc`,
-                        },
-                        {
-                          label: "Odometer (Low to High)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:asc`,
-                        },
-                        {
-                          label: "Odometer (High to Low)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:desc`,
-                        },
-                        {
-                          label: "Make (A - Z)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/make_rank:asc`,
-                        },
-                        {
-                          label: "Make (Z - A)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/make_rank:desc`,
-                        },
-                        {
-                          label: "Model (A - Z)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/model_rank:asc`,
-                        },
-                        {
-                          label: "Model (Z - A)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/model_rank:desc`,
-                        },
-                        {
-                          label: "Year (Low to High)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:desc`,
-                        },
-                        {
-                          label: "Year (High to Low)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
-                        },
-                        {
-                          label: "Image Count (Low to High)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:asc`,
-                        },
-                        {
-                          label: "Image Count (High to Low)",
-                          value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:desc`,
-                        },
-                      ]}
-                      classNames={{
-                        select:
-                          "px-4 py-1 tracking-wide rounded-[12px] border border-gray-300 bg-white text-black/80 text-[13px] font-extrabold outline-none  cursor-pointer w-[212px] h-[42px] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke-width%3D%222%22%20stroke%3D%22%23000%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M8%209l4-4%204%204m0%206l-4%204-4-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10",
-                      }}
-                    />
                   </div>
                 </div>
 
