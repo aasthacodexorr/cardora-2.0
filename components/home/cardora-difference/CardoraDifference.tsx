@@ -24,7 +24,7 @@ const CardoraDifference = () => {
   return (
     <section className="w-full bg-background">
       <div className={CONTAINER_CLASS}>
-        <h2 className="text-[34px] lg:text-[44px] font-bold text-foreground tracking-tight mb-10">
+        <h2 className="text-[25px] lg:text-[44px] font-bold text-foreground tracking-tight mb-10">
           The Cardora difference
         </h2>
 

@@ -11,8 +11,8 @@ export const INPUT_CLASS = "w-full rounded-[8px] border border-[#c4c4c4] bg-tran
 
 export const LABEL_CLASS = "block text-[15px] font-medium text-foreground/80 mb-2";
 
-export const CONTAINER_CLASS = "max-w-[1280px] mx-auto px-[15px]";
+export const CONTAINER_CLASS = "max-w-[1280px] mx-auto px-[19px]";
 
 export const CARD_CLASS = "rounded-[15px] overflow-hidden border border-black/10 p-[20px] md:p-[30px]";
 
-export const GRID_CLASS = "flex gap-8 lg:gap-14 justify-center flex-col md:flex-row";
+export const GRID_CLASS = "flex gap-3 lg:gap-14 justify-center flex-col md:flex-row";

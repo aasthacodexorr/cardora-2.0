@@ -70,7 +70,7 @@ const Footer = () => {
       <div className="mx-auto max-w-[1600px] px-10 pb-5">
 
         {/* Link columns grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10">
           {columns.map((col) => (
             <div key={col.title}>
               <h3 className="text-[18px] font-bold tracking-[1px] uppercase mb-5 text-white">
