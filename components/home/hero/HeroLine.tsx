@@ -22,7 +22,7 @@ const HeroLine = ({ text, image, imageAlt, reverse = false, tagline }: HeroLineP
           />
         </div>
       )}
-      {text && <span>{text}</span>}
+      {text && <span className="mr-4">{text}</span>}
       {!reverse && image && (
         <div className="w-[120px] sm:w-[160px] md:w-[200px] lg:w-[220px] relative flex-shrink-0 -ml-[15px] md:ml-0">
           <Image
