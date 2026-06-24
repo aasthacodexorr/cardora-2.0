@@ -58,7 +58,7 @@ const Reviews = () => {
   // 1. Dynamic Responsive Slides Handler
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 640) {
+      if (window.innerWidth < 767) {
         setSlidesToShow(1); // Mobile
       } else if (window.innerWidth < 1024) {
         setSlidesToShow(2); // Tablet
@@ -140,12 +140,12 @@ const Reviews = () => {
         </h2>
 
         {/* Google rating bar */}
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center w-full sm:px-10 mb-7">
           <a
             href="https://www.google.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[16px] font-semibold text-foreground"
+            className="text-[16px] font-semibold text-foreground w-full md:w-auto"
           >
             <div className="flex items-center justify-center gap-3 rounded-[40px] overflow-hidden border border-[#e2e2e2] bg-transparent shadow-none py-[10px] lg:px-4 px-6 lg:w-[500px] max-w-full flex-wrap">
               <Image src={google} alt="Google" className="h-[29px] w-[85px] object-contain" />

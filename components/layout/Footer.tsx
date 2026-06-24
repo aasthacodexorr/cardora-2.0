@@ -67,7 +67,7 @@ const Footer = () => {
 
   return (
     <footer className="w-full bg-[#121319] border-t-0 -mt-5 ">
-      <div className="mx-auto max-w-[1600px] px-10 pb-5">
+      <div className="mx-auto max-w-[1600px] px-5 lg:px-10 pb-5">
 
         {/* Link columns grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10">
@@ -137,7 +137,7 @@ const Footer = () => {
 
       {/* Copyright bar */}
       <div className="pt-6 px-10 pb-5 flex flex-col md:flex-row gap-4 justify-between max-[767px]:justify-center max-[767px]:items-center">
-        <p className="text-[13px] text-white uppercase">
+        <p className="text-[13px] text-white uppercase text-center md:text-start">
           © {new Date().getFullYear()} {d.dealership_name}. <br />
           <span className="flex items-center gap-2">
             All rights reserved. Powered by
@@ -162,9 +162,9 @@ const Footer = () => {
         </p>
         <p className="text-[12.5px] text-white uppercase">
           <Link href="/privacy-policy" className="hover:text-white">Privacy Policy</Link>
-          {"|"}
+          {" | "}
           <Link href="/terms-and-conditions" className="hover:text-white">Terms &amp; Conditions</Link>
-          {"|"}
+          {" | "}
           <Link href="/sitemap" className="hover:text-white">Site Map</Link>
         </p>
       </div>
