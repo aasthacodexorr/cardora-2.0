@@ -101,10 +101,10 @@ const Header = () => {
       </header>
 
       {/*  Mobile Header */}
-      <header className="lg:hidden w-full bg-white shadow-none relative z-50">
+      <header className="lg:hidden w-full bg-[#f9f9f9] shadow-none relative z-50">
 
         {/* Top bar: logo + social icons */}
-        <div className="flex items-center justify-between pl-[12px] pr-[29px] py-[6px]">
+        <div className="flex items-center justify-between pl-[12px] pr-[29px] py-[5px]">
           <Link href="/" aria-label="Cardora home" className="[&_img]:max-w-[125px] [&_img]:h-auto">
             <CardoraLogo />
           </Link>
@@ -119,8 +119,8 @@ const Header = () => {
               <Image 
                 src={facebook} 
                 alt="Facebook" 
-                width={25}
-                height={25}
+                width={23}
+                height={23}
                 style={{
                   width: "auto",
                   height: "auto",
@@ -137,8 +137,8 @@ const Header = () => {
               <Image 
                 src={instagram} 
                 alt="Instagram" 
-                width={25}
-                height={25}
+                width={23}
+                height={23}
                 style={{
                   width: "auto",
                   height: "auto",
