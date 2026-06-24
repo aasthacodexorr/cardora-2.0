@@ -2,7 +2,7 @@ import type { DifferenceItem } from "./types";
 
 export const ITEMS: Omit<DifferenceItem, 'icon'>[] = [
   {
-    text: "Upfront prices, Cardora Certified quality, and detailed history reports on every car",
+    text: "Upfront prices, Dealership Certified quality, and detailed history reports on every car",
   },
   {
     text: "Shop online, in-store, or both. We provide no-pressure help along the way.",

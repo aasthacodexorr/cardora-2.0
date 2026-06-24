@@ -22,6 +22,7 @@ import blueCar from "@/assets/icons/cardora-blue-car.png";
 import saleServices from "@/assets/icons/sale-services.jpg";
 import reviews from "@/assets/icons/100reviews.png";
 import forCanada from "@/assets/icons/proudlycanadian.png";
+import { SITE_CONFIG } from "@/constants";
 
 /* Static Data */
 const certified = [
@@ -49,7 +50,7 @@ const About = () => {
               </h1>
               <p className="mt-6 text-[20px] md:text-[23px] text-neutral-800 leading-relaxed font-normal">
                 Only the best cars, backed by expertise and a customer-<br className="hidden lg:inline" />first experience.
-                That&apos;s how Cardora does it.
+                That&apos;s how {SITE_CONFIG?.dealership.name} does it.
               </p>
             </div>
 
@@ -76,7 +77,7 @@ const About = () => {
         <section className="bg-white py-10 md:py-24 px-5">
           <div className="mx-auto max-w-[1280px] md:px-1">
             <h2 className="text-[27px] md:text-4xl lg:text-5xl font-bold lg:tracking-tight text-neutral-950 text-left leading-none">
-              All our cars are Cardora Certified
+              All our cars are {SITE_CONFIG?.dealership.name} Certified
             </h2>
             <div className="flex flex-col lg:flex-row items-center justify-between mt-12">
 
@@ -196,7 +197,7 @@ const About = () => {
                 A proudly homegrown success story
               </p>
               <p className="mt-4 text-base md:text-md leading-relaxed text-black font-normal">
-                Cardora was founded on a simple belief: Canadians deserve a better
+                {SITE_CONFIG?.dealership.name} was founded on a simple belief: Canadians deserve a better
                 pre-owned car experience. So we built one.
               </p>
             </div>

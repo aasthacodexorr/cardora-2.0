@@ -130,7 +130,7 @@ export default async function VehicleDetailsPage({
                       </div>
                       <div>
                         <div className="m-0 text-[15px] text-gray-800 font-normal leading-relaxed">
-                          Get mechanical protection plus 24/7 roadside assistance with Cardora Extended Coverage.
+                          Get mechanical protection plus 24/7 roadside assistance with {SITE_CONFIG?.dealership.name} Extended Coverage.
                           <a data-toggle="modal" data-target="#exampleModalCenter"
                             className="font-semibold text-black underline cursor-pointer hover:text-emerald-500 transition-colors duration-150">
                             <CoverageModal /> 

@@ -5,6 +5,7 @@ import { Footer, Header } from '@/components/layout';
 import { GetInTouch } from '@/components/common';
 import skipDeal from "@/assets/cards/skipDeal.png";
 import newWay from "@/assets/cards/newWay.png";
+import { SITE_CONFIG } from '@/constants';
 
 
 export default function SkipTheDealership() {
@@ -51,7 +52,7 @@ export default function SkipTheDealership() {
                                 It means the old way of buying cars is outdated.
                             </p>
 
-                            <h3 className="text-xl font-bold mb-4">At Cardora, you don&rsquo;t have to:</h3>
+                            <h3 className="text-xl font-bold mb-4">At {SITE_CONFIG?.dealership.name}, you don&rsquo;t have to:</h3>
 
                             <ul className="mb-6">
                                 {[
@@ -145,7 +146,7 @@ export default function SkipTheDealership() {
                     <div className="max-w-4xl mx-auto">
                         <div className="text-center mb-12">
                             <h2 className="text-4xl font-bold mb-2">Side-By-Side Comparison</h2>
-                            <p className="font-medium text-xl">Old Way vs Cardora Way</p>
+                            <p className="font-medium text-xl">Old Way vs {SITE_CONFIG?.dealership.name} Way</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -174,7 +175,7 @@ export default function SkipTheDealership() {
                             {/* Cardora Column */}
                             <div className="bg-[#e6f4ff] rounded-2xl p-6 md:p-8 border border-blue-100">
                                 <h5 className="text-xl font-bold text-black border-b border-slate-200 py-7">
-                                    Cardora
+                                    {SITE_CONFIG?.dealership.name}
                                 </h5>
                                 <ul className="">
                                     {[

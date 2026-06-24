@@ -1,5 +1,6 @@
 "use client";
 
+import { SITE_CONFIG } from "@/constants";
 import { useState } from "react";
 
 export default function CoverageModal() {
@@ -42,10 +43,10 @@ export default function CoverageModal() {
 
           {/* Modal Header */}
           <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-2">
-            Cardora Extended Coverage
+            {SITE_CONFIG?.dealership.name} Extended Coverage
           </h3>
           <p className="text-black font-normal  md:text-base mb-6 leading-relaxed">
-            Purchase Cardora Extended Coverage and drive with confidence knowing your car is protected.
+            Purchase {SITE_CONFIG?.dealership.name} Extended Coverage and drive with confidence knowing your car is protected.
           </p>
 
           {/* Perks List */}
