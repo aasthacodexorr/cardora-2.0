@@ -8,7 +8,7 @@ const VehicleForm = () => {
   return (
     <>
       <Header />
-      <div className="bg-white mx-auto mt-18 mb-32 tracking-wider">
+      <div className="bg-white mx-auto px-5 mt-3 mb-32 tracking-wider">
         <h4 className="text-3xl my-4">What vehicle needs service or repair?</h4>
         <div className="space-y-6">
           <label className="block text-base">

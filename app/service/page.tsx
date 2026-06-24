@@ -79,7 +79,7 @@ const Service = () => {
       <Header />
 
       {/* Main Content Wrapper: Centers everything uniformly on large screens */}
-      <main className="mx-auto w-full max-w-[1370px] px-6 md:px-12 flex-1">
+      <main className="mx-auto w-full max-w-[1370px] px-5 md:px-12 flex-1">
         
         {/* Hero */}
         <section className="pt-16 md:pt-20 pb-10">
@@ -185,7 +185,7 @@ const Service = () => {
                 <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
 
                 <div className="relative z-20 pb-5">
-                  <div className="h-56 lg:h-40 w-full overflow-hidden relative">
+                  <div className="h-64 lg:h-40 w-full overflow-hidden relative">
                     <Image
                       src={section2Img || "/placeholder.jpg"}
                       alt={id}
@@ -245,7 +245,7 @@ const Service = () => {
 
         {/* Trust highlights */}
         <section className="w-full bg-background">
-          <div className="mx-auto py-10">
+          <div className="mx-auto py-5">
             <h2 className="text-[28px] lg:text-[44px] font-bold text-foreground tracking-tight mb-10">
               Hit the road with confidence
             </h2>
