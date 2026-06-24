@@ -140,7 +140,7 @@ const ProtectionPlans = () => {
       <section className="w-full bg-[#e6f4ff] border-t border-neutral-100/60 py-14 md:py-20 xl:mt-20 mt-7">
         <div className="mx-auto xl:max-w-[1280px] px-5 md:px-1 flex flex-col items-center text-center">
 
-          <h2 className="text-[26px] md:text-5xl font-bold text-neutral-900 leading-none xl:max-w-[680px]">
+          <h2 className="text-[26px] md:text-5xl font-bold text-neutral-900 leading-none xl:max-w-[650px]">
             We stand behind our cars so much, you get:
           </h2>
 
@@ -167,7 +167,7 @@ const ProtectionPlans = () => {
       <h2 className="text-3xl md:text-[45px] font-semibold tracking-tight text-foreground">
         How {SITE_CONFIG?.dealership.name} keeps you covered
       </h2>
-      <p className="mt-4 text-black text-base max-w-2xl">
+      <p className="mt-4 text-black text-base">
         Every plan covers major systems and parts on your car, with deductibles starting as low as $50 on any car you choose.
       </p>
     </div>
@@ -228,7 +228,7 @@ const ProtectionPlans = () => {
 
           {/* Breakdown Section */}
           <div className="mt-12 max-w-4xl mx-auto">
-            <span className="uppercase tracking-wide font-bold block mb-1">
+            <span className="uppercase tracking-wide block mb-1">
               Example
             </span>
             <p className="text-xl font-normal my-1">If You Owed on Your Vehicle</p>
@@ -238,14 +238,14 @@ const ProtectionPlans = () => {
 
               {/* Left Column: Payout */}
               <div className="pt-6 md:pt-10 pb-6 md:pb-0 border-b border-gray-300 md:border-b-0">
-                <p className="text-lg font-bold text-gray-800">Insurance Payout</p>
-                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-1">$15,000</p>
+                <p className="text-lg  text-gray-800">Insurance Payout</p>
+                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-1">$11,000</p>
               </div>
 
               {/* Right Column: Gap */}
               <div className="pt-8 md:pt-10 md:border-l md:border-gray-300 md:pl-10">
-                <p className="text-lg font-bold text-gray-800">Amount Owed (GAP)</p>
-                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-1">$3,000</p>
+                <p className="text-lg  text-gray-800">Amount Owed (GAP)</p>
+                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-1">$4,000</p>
                 <p className="mt-2 text-md mx-auto leading-normal max-w-sm md:max-w-none text-gray-600">
                   GAP coverage protects you from the amount still owed.
                 </p>

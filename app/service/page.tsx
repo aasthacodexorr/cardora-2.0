@@ -245,7 +245,7 @@ const Service = () => {
 
         {/* Trust highlights */}
         <section className="w-full bg-background">
-          <div className="mx-auto py-5">
+          <div className="mx-auto py-5 pb-16">
             <h2 className="text-[28px] lg:text-[44px] font-bold text-foreground tracking-tight mb-10">
               Hit the road with confidence
             </h2>
