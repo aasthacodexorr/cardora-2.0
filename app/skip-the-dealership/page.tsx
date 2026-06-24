@@ -15,12 +15,12 @@ export default function SkipTheDealership() {
             <div className="w-full font-sans antialiased text-gray-900 selection:bg-yellow-200">
 
                 {/* 1. Hero / Banner Section */}
-                <section className="bg-[#ffde5b] py-16 px-4 text-center">
+                <section className="bg-[#ffde5b] py-9 px-4 text-center">
                     <div className="max-w-4xl mx-auto">
                         <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
                             Skip the dealership.
                         </h1>
-                        <p className="text-base md:text-[20.4px] text-gray-800 max-w-2xl mx-auto my-8 font-medium">
+                        <p className="text-[20px] text-center md:text-[20.4px] text-gray-800 max-w-2xl mx-auto my-8 font-medium">
                             Buy your next car 100% online — or visit us on your terms. No pressure. No wasted time. Just a smarter way to buy.
                         </p>
                         <div className="flex flex-col sm:flex-row justify-center gap-4">
