@@ -11,7 +11,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, FileText, Mail, CalendarCheck, CarFrontIcon, CircleDollarSign } from "lucide-react";
+import { ChevronDown, FileText, Mail, CalendarCheck, CarFrontIcon,  } from "lucide-react";
 
 // Layout
 import { Header, Footer } from "@/components/layout";
@@ -43,7 +43,7 @@ const steps = [
     description: "If no additional information is required, you'll receive our offer for your car in one business day.",
   },
   {
-    icon: CircleDollarSign,
+    icon: CalendarCheck,
     title: "Book an inspection and get paid",
     description: "If you choose to accept our offer, you can book an inspection to confirm your car's condition and get paid.",
   },
