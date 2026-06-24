@@ -11,7 +11,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, FileText, Mail, CalendarCheck, CarFrontIcon } from "lucide-react";
+import { ChevronDown, FileText, Mail, CalendarCheck, CarFrontIcon, CircleDollarSign } from "lucide-react";
 
 // Layout
 import { Header, Footer } from "@/components/layout";
@@ -20,9 +20,10 @@ import { Header, Footer } from "@/components/layout";
 import { GetInTouch } from "@/components/common";
 
 // Assets
-import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
+// import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
 import Image from "next/image";
 import { SITE_CONFIG } from "@/constants";
+import sell from "@/assets/pages/sell.jpg";
 
 /* Static Data */
 const steps = [
@@ -42,7 +43,7 @@ const steps = [
     description: "If no additional information is required, you'll receive our offer for your car in one business day.",
   },
   {
-    icon: CalendarCheck,
+    icon: CircleDollarSign,
     title: "Book an inspection and get paid",
     description: "If you choose to accept our offer, you can book an inspection to confirm your car's condition and get paid.",
   },
@@ -108,7 +109,7 @@ const TradeIn = () => {
       <Header />
 
       {/* Hero / Quote form */}
-      <section className="w-full relative px-4 md:px-24">
+      <section className="w-full relative px-4 lg:px-24">
         <div className="mx-auto max-w-[1300px] px-2 md:px-9 pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
 
           {/* Left: Heading Typography Only */}
@@ -116,7 +117,7 @@ const TradeIn = () => {
             <h1 className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[38px] md:text-[44px] lg:text-[66px] md:w-xl">
               Sell my car the easy way.
             </h1>
-            <p className="mt-4 lg:mt-6 text-[16px] md:text-[18px] lg:text-[23px] font-medium text-black/80 max-w-xl leading-relaxed">
+            <p className="mt-4 lg:mt-6 text-[18px] lg:text-[23px] text-black max-w-xl leading-relaxed">
               Fast, seamless and secure. It's the way everyone <br className="hidden lg:inline" /> deserves.
             </p>
           </div>
@@ -285,13 +286,13 @@ const TradeIn = () => {
       </section>
 
       {/* How it works */}
-      <section className="w-full px-4 md:px-24">
-        <div className="mx-auto max-w-[1300px] px-2 md:px-9 py-12 lg:py-20">
+      <section className="w-full px-4 lg:px-24">
+        <div className="mx-auto max-w-[1300px] px-2 md:px-9 py-10 lg:py-20">
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
             {/* Left Column: Image */}
-            <div className="w-full h-64 md:h-96 lg:h-full">
+            <div className="w-full h-[500px] md:h-full">
               <Image
-                src={tradeInHero}
+                src={sell}
                 alt="Customer trading in their car at Cardora"
                 width={1280}
                 height={1896}
@@ -315,16 +316,16 @@ const TradeIn = () => {
                       className="flex items-start justify-between rounded-2xl border border-zinc-100 bg-white px-4 md:px-6 py-4 shadow-lg gap-4"
                     >
                       <div>
-                        <h3 className="text-[18px] md:text-[22px] font-bold text-zinc-900">
+                        <h3 className="text-[19px] md:text-[22px] font-bold text-zinc-900">
                           {step.title}
                         </h3>
-                        <p className="text-[14px] md:text-[17px] leading-relaxed text-zinc-600 mt-1">
+                        <p className="text-[15px] md:text-[17px] leading-relaxed text-black mt-1">
                           {step.description}
                         </p>
                       </div>
 
                       {/* Icon on the right side */}
-                      <div className="flex h-8 w-8 md:h-9 md:w-9 flex-shrink-0 items-center justify-center text-zinc-400">
+                      <div className="flex h-8 w-8 md:h-9 md:w-9 flex-shrink-0 items-center justify-center text-zinc-500">
                         <Icon className="h-full w-full stroke-[1.5]" />
                       </div>
                     </div>
@@ -337,7 +338,7 @@ const TradeIn = () => {
       </section>
 
       {/* FAQs */}
-      <section className="w-full mb-14 mt-6 lg:mt-10 px-4 md:px-24">
+      <section className="w-full lg:mb-14 mb-2 lg:mt-10 px-3 lg:px-24">
         <div className="mx-auto max-w-[1300px] px-2 md:px-9 py-8 lg:py-0">
           <div className="flex items-center gap-3 mb-6 md:mb-10">
             <h2 className="text-[28px] md:text-[36px] lg:text-[44px] font-semibold text-foreground leading-tight">
@@ -350,11 +351,11 @@ const TradeIn = () => {
               <div key={faq.q} className="bg-card border border-border overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className={`w-full flex items-center justify-between px-4 md:px-6 py-4 md:py-5 text-left cursor-pointer transition-colors ${
+                  className={`w-full flex items-center justify-between px-4 md:px-6 text-left  cursor-pointer transition-colors ${
                     openFaq !== i ? "bg-[#f4f4f4]" : "bg-white"
                   }`}
                 >
-                  <span className={`font-bold ${openFaq !== i ? "text-[#666666]" : "text-[#333333]"} text-[16px] md:text-[20px] pr-4`}>
+                  <span className={`font-bold leading-none ${openFaq !== i ? "text-[#666666]  py-5 md:py-6" : "text-[#333333] py-4 md:py-5"} text-[18px] md:text-[20px] pr-4 `}>
                     {faq.q}
                   </span>
                   <ChevronDown
@@ -364,7 +365,7 @@ const TradeIn = () => {
                   />
                 </button>
                 {openFaq === i && (
-                  <div className="px-4 md:px-6 pb-5 pt-2 text-foreground/70 text-[14px] md:text-[16px] leading-relaxed border-t border-gray-100 bg-white">
+                  <div className="px-4 md:px-6 pb-5 text-[16px] md:text-[16px] leading-normal bg-white">
                     {faq.a}
                   </div>
                 )}
