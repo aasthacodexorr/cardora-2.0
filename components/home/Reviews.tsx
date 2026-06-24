@@ -15,6 +15,7 @@ import Image from "next/image";
 
 import google from "@/assets/brand/google.png";
 import googleReview from "@/assets/brand/Goolge-Review-Logo.jpg";
+import { SITE_CONFIG } from "@/constants";
 
 /* Types */
 type Review = {
@@ -28,7 +29,7 @@ const reviews: Review[] = [
   {
     initial: "J",
     name: "It's Jerry",
-    text: "So, I recently bought a 2021 Jetta High line from Cardora, and I can confidently say the experience was nothing short of amazing—thanks to Sam! From the very beginning, Sam went above and beyond to make sure everything went smoothly.",
+    text: "So, I recently bought a 2021 Jetta High line from Dealership, and I can confidently say the experience was nothing short of amazing—thanks to Sam! From the very beginning, Sam went above and beyond to make sure everything went smoothly.",
   },
   {
     initial: "S",
@@ -136,7 +137,7 @@ const Reviews = () => {
     <section className="w-full bg-[#eaeff5] overflow-hidden">
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 pt-12 lg:pt-18 lg:pb-9">
         <h2 className="text-[26px] md:text-[44px] font-bold text-foreground tracking-tight leading-none text-center mb-5">
-          People love buying with Cardora
+          People love buying with {SITE_CONFIG?.dealership.name}
         </h2>
 
         {/* Google rating bar */}

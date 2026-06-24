@@ -51,8 +51,8 @@ const steps = [
 
 const faqs = [
   {
-    q: "How does selling my car to Cardora work?",
-    a: "Cardora makes selling your car fast and easy. Simply enter your vehicle details, get an instant online offer, schedule a quick inspection, and get paid on the spot. No obligations, no pushy salespeople.",
+    q: "How does selling my car to Dealership work?",
+    a: "Dealership makes selling your car fast and easy. Simply enter your vehicle details, get an instant online offer, schedule a quick inspection, and get paid on the spot. No obligations, no pushy salespeople.",
   },
   {
     q: "What documents do I need to sell my car?",
@@ -60,11 +60,11 @@ const faqs = [
   },
   {
     q: "Do you buy cars that still have a loan or financing on them?",
-    a: "Yes! Cardora will pay off your existing loan or lease directly with the bank. If your car is worth more than the payoff, you keep the difference. If it's worth less, we'll guide you on the best options.",
+    a: "Yes! Dealership will pay off your existing loan or lease directly with the bank. If your car is worth more than the payoff, you keep the difference. If it's worth less, we'll guide you on the best options.",
   },
   {
     q: "How long is my online offer valid for?",
-    a: "Your Cardora offer is valid for 7 days. This gives you enough time to compare options or shop around without feeling rushed.",
+    a: "Your Dealership offer is valid for 7 days. This gives you enough time to compare options or shop around without feeling rushed.",
   },
   {
     q: "How quickly do I get paid?",
@@ -75,11 +75,11 @@ const faqs = [
     a: "Yes! You can trade in your current vehicle and use the value toward your next purchase. We handle all paperwork and give you the highest value possible to maximize your savings.",
   },
   {
-    q: "Do I need to buy a car from Cardora to sell you mine?",
+    q: "Do I need to buy a car from Dealership to sell you mine?",
     a: "Not at all. We buy cars even if you're not purchasing one from us. Many customers simply want cash or want to get rid of an unused vehicle.",
   },
   {
-    q: "How does Cardora determine my vehicle's value?",
+    q: "How does Dealership determine my vehicle's value?",
     a: "We use real-time market data, vehicle history, condition reports, and recent sales in your area to give you an accurate and competitive offer. No guesswork—just transparent pricing.",
   },
   {
@@ -293,7 +293,7 @@ const TradeIn = () => {
             <div className="w-full h-[500px] md:h-full">
               <Image
                 src={sell}
-                alt="Customer trading in their car at Cardora"
+                alt="Customer trading in their car at Dealership"
                 width={1280}
                 height={1896}
                 loading="lazy"
