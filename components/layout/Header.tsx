@@ -219,7 +219,7 @@ const Header = () => {
                       window.location.href = "/inventory";
                     }
                   }}
-                  className={`py-4 border-b border-gray-100 text-[15px] font-semibold capitalize flex items-center justify-between ${
+                  className={`py-4 border-b border-gray-100 text-[17px] capitalize flex items-center justify-between ${
                     "text-gray-900"
                   }`}
                 >
