@@ -58,12 +58,12 @@ export default function ContactUs() {
     return (
         <>
             <Header />
-            <div className="min-h-screen flex items-center justify-center px-3 py-10 lg:p-12 font-sans text-gray-900">
+            <div className="min-h-screen flex items-center justify-center px-3 py-10  lg:px-24 font-sans text-gray-900">
                 <div className="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-12 gap-8">
 
                     {/* Left Side */}
                     <div className="space-y-8">
-                        <h1 className="text-2xl sm:text-5xl font-bold lg:mt-28">
+                        <h1 className="text-2xl sm:text-[42px] font-bold lg:mt-28 lg:max-w-xl">
                             Got a question? We’re here to help.
                         </h1>
                         <div className="space-y-7 lg:space-y-4 lg:w-[480px]">
@@ -124,14 +124,15 @@ export default function ContactUs() {
                                 </button>
                             </div>
                         ) : (
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                            <form onSubmit={handleSubmit} className="space-y-6 ">
                                 {error && (
                                     <div className="bg-rose-50 text-rose-600 p-3 rounded-xl text-sm font-medium">
                                         {error}
                                     </div>
                                 )}
 
-                                <input
+                                <div className='grid xl:grid-cols-2 grid-cols-1 gap-4'>
+                                    <input
                                     type="text"
                                     name="firstName"
                                     placeholder="First Name"
@@ -172,6 +173,7 @@ export default function ContactUs() {
                                     disabled={loading}
                                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
                                 />
+                                </div>
 
                                 <div>
                                     <textarea
@@ -199,7 +201,7 @@ export default function ContactUs() {
                                         className="mt-0.5 rounded text-emerald-600 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 border-gray-300 h-4 w-4 cursor-pointer transition-colors"
                                     />
                                     <label htmlFor="agreeToTerms" className="select-none cursor-pointer">
-                                        By submitting this form, you agree to be contacted through phone calls, SMS, WhatsApp, or email regarding your inquiry, offers, and updates. You can opt out anytime by texting STOP. Messaging frequency may vary. Message and data rates may apply. For assistance, text HELP or visit our website at <a href="/" className="text-blue-500 font-semibold hover:underline">{SITE_CONFIG?.dealership.name}</a>. Visit <a href="#" className="text-blue-500 font-semibold hover:underline">Privacy Policy</a> for privacy policy and <a href="#" className="text-blue-500 font-semibold hover:underline">Terms and Conditions</a> for Terms of Service.
+                                        By submitting this form, you agree to be contacted through phone calls, SMS, WhatsApp, or email regarding your inquiry, offers, and updates. You can opt out anytime by texting STOP. Messaging frequency may vary. Message and data rates may apply. For assistance, text HELP or visit our website at <a href="/" className="text-blue-500 hover:underline">{SITE_CONFIG?.dealership.name}</a>. Visit <a href="#" className="text-blue-500 hover:underline">Privacy Policy</a> for privacy policy and <a href="#" className="text-blue-500 hover:underline">Terms and Conditions</a> for Terms of Service.
                                     </label>
                                 </div>
 
