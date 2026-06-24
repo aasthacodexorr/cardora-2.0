@@ -1,14 +1,31 @@
 "use client";
 import { appConfig } from "@/lib/appConfig";
+import { useState, useRef, useEffect } from "react";
 
-const Terms = ({vehicle}:any) => {
+const Terms = ({ vehicle }: any) => {
+    const [showTermsTooltip, setShowTermsTooltip] = useState(false);
+    const termsTooltipRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                termsTooltipRef.current &&
+                !termsTooltipRef.current.contains(event.target as Node)
+            ) {
+                setShowTermsTooltip(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     return (
         <>
 
-            <div className="w-full   font-sans mt-8">
+            <div className="w-full font-sans mt-8">
                 {/* Main Container Card */}
-                <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm text-gray-800">
+                <div className="bg-white border border-gray-200 rounded-2xl p-5 text-gray-800">
 
                     {/* Features Grid */}
                     <div className="grid grid-cols-2 gap-x-4 gap-y-4 text-[14px] font-medium tracking-tight">
@@ -48,28 +65,53 @@ const Terms = ({vehicle}:any) => {
                     </div>
 
                     {/* View terms text trigger with Interactive Black Tooltip */}
-                    <div className="mt-5 text-center flex items-center justify-center relative group">
-                        <div className="inline-flex items-center gap-1 cursor-pointer py-1">
+                    <div
+                        ref={termsTooltipRef}
+                        className="mt-5 text-center flex items-center justify-center relative group"
+                    >
+                        <button
+                            type="button"
+                            onClick={() => setShowTermsTooltip(!showTermsTooltip)}
+                            className="inline-flex items-center gap-1 cursor-pointer py-1"
+                        >
                             <span className="text-[14px] text-gray-500 font-medium underline underline-offset-2">
                                 View terms
                             </span>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                            </svg>
-                        </div>
 
-                        {/* Black Background Tooltip Box Container */}
-                        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-[340px] bg-black text-white text-[11px] font-normal leading-normal px-4 py-3 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-left shadow-xl pointer-events-none">
-                            <p className="font-bold mb-1 text-[12px] text-white">Buy with confidence.</p>
-                            <p className="text-gray-200">
-                                Every {appConfig.dealership.dealership_name} vehicle includes a 6-month powertrain warranty,
-                                10-day exchange policy, 150-point inspection,
-                                complimentary CARFAX® vehicle history report,
-                                inspection report, and roadside assistance. Certain conditions, limitations,
-                                and exclusions may apply. Please visit the dealership for complete details.
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="w-3.5 h-3.5 text-gray-400"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                            >
+                                <path
+                                    fillRule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clipRule="evenodd"
+                                />
+                            </svg>
+                        </button>
+
+                        <div
+                            className={`absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-[300px] sm:w-[340px] bg-black text-white text-[11px] font-normal leading-normal px-4 py-3 rounded-xl text-left shadow-xl z-50 transition-all duration-200 ${showTermsTooltip
+                                ? "opacity-100 visible"
+                                : "opacity-0 invisible"
+                                } md:group-hover:opacity-100 md:group-hover:visible`}
+                        >
+                            <p className="font-bold mb-1 text-[12px] text-white">
+                                Buy with confidence.
                             </p>
-                            {/* Downward facing anchor triangle */}
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-black rotate-45 -mt-1.5"></div>
+
+                            <p className="text-gray-200">
+                                Every {appConfig.dealership.dealership_name} vehicle includes a
+                                6-month powertrain warranty, 10-day exchange policy,
+                                150-point inspection, complimentary CARFAX® vehicle history
+                                report, inspection report, and roadside assistance. Certain
+                                conditions, limitations, and exclusions may apply. Please visit
+                                the dealership for complete details.
+                            </p>
+
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-3 h-3 bg-black rotate-45 -mt-1.5" />
                         </div>
                     </div>
 

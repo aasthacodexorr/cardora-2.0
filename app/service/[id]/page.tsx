@@ -7,6 +7,7 @@ import { Reviews } from '@/components/home';
 import { GetInTouch } from '@/components/common';
 import { appConfig } from "@/lib/appConfig";
 import Image from "next/image";
+import { SITE_CONFIG } from '@/constants';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -286,7 +287,7 @@ export default async function ServicePage({ params }: PageProps) {
               </h2>
 
               <p className=" text-[20px] font-medium tracking-wide">
-                At Cardora, we use high-quality synthetic oil designed to provide superior engine protection and performance in all driving conditions.
+                At {SITE_CONFIG?.dealership.name}, we use high-quality synthetic oil designed to provide superior engine protection and performance in all driving conditions.
               </p>
 
               <div className="text-[20px] tracking-wide ">

@@ -22,6 +22,7 @@ import blueCar from "@/assets/icons/cardora-blue-car.png";
 import saleServices from "@/assets/icons/sale-services.jpg";
 import reviews from "@/assets/icons/100reviews.png";
 import forCanada from "@/assets/icons/proudlycanadian.png";
+import { SITE_CONFIG } from "@/constants";
 
 /* Static Data */
 const certified = [
@@ -37,19 +38,19 @@ const About = () => {
     <div className="min-h-screen bg-background flex flex-col justify-between">
       <Header />
 
-      <div className="flex-1 w-full overflow-hidden px-5 lg:px-0">
+      <div className="flex-1 w-full overflow-hidden px-0">
         {/* Hero Section */}
-        <section className="bg-white pb-12 mt-4">
-          <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12">
+        <section className="bg-white pb-12 mt-4 px-5">
+          <div className="mx-auto lg:max-w-[1280px] md:px-1 flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12">
 
             {/* Left Column: Text Content */}
             <div className="w-full text-left md:w-2xl md:pt-5   lg:w-full ">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-none">
+              <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-none">
                 Pre-Owned, Without Compromise.
               </h1>
-              <p className="mt-6 text-base md:text-[23px] text-neutral-800 leading-relaxed font-normal">
+              <p className="mt-6 text-[20px] md:text-[23px] text-neutral-800 leading-relaxed font-normal">
                 Only the best cars, backed by expertise and a customer-<br className="hidden lg:inline" />first experience.
-                That&apos;s how Cardora does it.
+                That&apos;s how {SITE_CONFIG?.dealership.name} does it.
               </p>
             </div>
 
@@ -68,28 +69,28 @@ const About = () => {
           </div>
         </section>
 
-        <div className="mx-auto px-6 md:px-1">
+        <div className="mx-auto md:px-1">
           <hr className="text-gray-200" />
         </div>
 
         {/* Cardora Certified Section */}
-        <section className="bg-white py-16 md:py-24">
-          <div className="mx-auto max-w-[1280px] px-6 md:px-1">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-950 text-left">
-              All our cars are Cardora Certified
+        <section className="bg-white py-10 md:py-24 px-5">
+          <div className="mx-auto max-w-[1280px] md:px-1">
+            <h2 className="text-[27px] md:text-4xl lg:text-5xl font-bold lg:tracking-tight text-neutral-950 text-left leading-none">
+              All our cars are {SITE_CONFIG?.dealership.name} Certified
             </h2>
             <div className="flex flex-col lg:flex-row items-center justify-between mt-12">
 
               {/* Left Column: Badge List */}
               <div className="flex flex-col items-start w-full lg:w-auto">
-                <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col gap-5 lg:gap-4 w-full  pr-16 md:pr-0">
                   {certified.map(({ label }, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-3 bg-[#e6f4ff] rounded-full px-5 py-4 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.05)]"
+                      className="flex items-center gap-3 bg-[#e6f4ff] rounded-full px-5 py-5 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.05)]"
                     >
                       <Check className="h-5 w-5 text-emerald-600 flex-shrink-0" strokeWidth={2.5} />
-                      <span className="text-sm md:text-base font-medium text-neutral-800">
+                      <span className="text-base font-medium text-black">
                         {label}
                       </span>
                     </div>
@@ -98,7 +99,7 @@ const About = () => {
               </div>
 
               {/* Right Column: Car Image Container */}
-              <div className="w-full md:max-w-[700px] mt-16 md:mt-0 flex justify-center md:justify-end relative min-h-[250px]">
+              <div className="w-full md:max-w-[700px] flex justify-center md:justify-end relative min-h-[250px]">
                 <Image
                   src={blueCar}
                   alt="Blue Honda Civic Sedan showcasing Cardora Certified quality"
@@ -113,12 +114,12 @@ const About = () => {
         </section>
 
         {/* 1. After-Sale Service Section (Full-Bleed Background Layout) */}
-        <section className="bg-[#eaeff5] py-16 md:py-20 px-4 lg:px-0">
+        <section className="bg-[#eaeff5] py-16 md:py-20 px-0">
           <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-12">
 
             {/* Left: Image Card Container */}
             <div className="w-full flex justify-center md:justify-start">
-              <div className="overflow-hidden rounded-2xl bg-white shadow-sm w-full lg:max-w-[540px] max-w-full">
+              <div className="overflow-hidden rounded-2xl bg-white shadow-sm w-full lg:max-w-[670px] max-w-full">
                 <Image
                   src={saleServices}
                   alt="Cardora service team standing proudly inside the dealership lot"
@@ -134,7 +135,7 @@ const About = () => {
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-950">
                 After-Sale Service
               </h2>
-              <p className="mt-5 text-base md:text-[19px] text-neutral-800 leading-relaxed font-normal">
+              <p className=" mt-2 lg:mt-5 text-[20px] md:text-[19px] text-neutral-800 leading-relaxed font-normal">
                 We&apos;re here for you long after you drive away. Our team is dedicated to
                 fast, efficient support and making sure every concern is handled with care.
               </p>
@@ -149,10 +150,10 @@ const About = () => {
 
             {/* Left: Text Block */}
             <div className="w-full lg:max-w-2xl">
-              <h2 className="text-3xl md:text-[42px] lg:text-5xl font-bold tracking-tight text-neutral-950 leading-tight">
+              <h2 className="text-[28px] md:text-[42px] lg:text-5xl font-bold tracking-tight text-neutral-950 leading-tight">
                 Hundreds of Five-Star Reviews — and Counting
               </h2>
-              <p className="mt-5 text-base md:text-[20px] text-neutral-800 leading-relaxed font-medium">
+              <p className=" mt-2 lg:mt-5 text-[18px] md:text-[20px] text-neutral-800 lg:leading-relaxed font-medium">
                 Hundreds of five-star Google reviews and counting—because a great
                 experience is never accidental.
               </p>
@@ -173,7 +174,7 @@ const About = () => {
         </section>
 
         {/* 3. Built in Canada Section */}
-        <section className="bg-white py-1 pb-12 md:py-0">
+        <section className="bg-white py-1 pb-12 md:pb-20  md:py-0">
           <div className="mx-auto max-w-[1280px] px-5 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-16">
 
             {/* Left: Graphic Illustration */}
@@ -181,22 +182,22 @@ const About = () => {
               <Image
                 src={forCanada}
                 alt="Cardora dealership illustration featuring the Canadian flag and map silhouette"
-                className="w-full lg:max-w-[540px] h-auto object-contain"
+                className="w-full lg:max-w-[650px] h-auto object-contain"
                 width={540}
-                height={320}
+                height={320} 
               />
             </div>
 
             {/* Right: Text Block */}
-            <div className="w-full text-left pb-10 max-w-2xl lg:max-w-full">
+            <div className="w-full text-left max-w-2xl lg:max-w-full">
               <h2 className="text-[25px] md:text-4xl lg:text-[43px] font-bold tracking-tight text-neutral-950">
                 Built in Canada, for Canadians
               </h2>
-              <p className="mt-3 text-lg md:text-xl text-neutral-900 font-semibold">
+              <p className="mt-3 text-[22px] font-light md:text-xl">
                 A proudly homegrown success story
               </p>
-              <p className="mt-4 text-base md:text-md leading-relaxed font-normal">
-                Cardora was founded on a simple belief: Canadians deserve a better
+              <p className="mt-4 text-base md:text-md leading-relaxed text-black font-normal">
+                {SITE_CONFIG?.dealership.name} was founded on a simple belief: Canadians deserve a better
                 pre-owned car experience. So we built one.
               </p>
             </div>

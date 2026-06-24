@@ -30,6 +30,7 @@ import rotateCar from "@/assets/cars/rotate-car.png";
 import greenCar from "@/assets/cars/green-car.png";
 import { CardoraDifference } from "@/components/home";
 import Image from "next/image";
+import { SITE_CONFIG } from "@/constants";
 
 /* Static Data */
 const includes = [
@@ -78,7 +79,7 @@ const includedFeatures = [
   {
     icon: Wallet,
     title: "No out-of-pocket costs",
-    body: "Save $100 on your deductible when your repairs are completed at one of Cardora Service Center.",
+    body: "Save $100 on your deductible when your repairs are completed at one of dealership Service Center.",
   },
   {
     icon: KeyRound,
@@ -100,7 +101,7 @@ const ProtectionPlans = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-16 pb-0 md:pt-24 overflow-hidden bg-white px-4 lg:px-0">
+      <section className="relative w-full pt-9 pb-0 md:pt-24 overflow-hidden bg-white px-0">
         <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col lg:flex-row lg:items-center justify-between min-h-[450px]">
 
           {/* Left Column: Title and Pills */}
@@ -109,7 +110,7 @@ const ProtectionPlans = () => {
               Every Vehicle Includes
             </h1>
 
-            <div className="flex flex-col gap-4 pt-4">
+            <div className="flex flex-col gap-4 pt-4  pr-14 lg:pr-0  ">
               {includes.map(({ label }) => (
                 <div
                   key={label}
@@ -136,11 +137,11 @@ const ProtectionPlans = () => {
       </section>
 
       {/* Section 2: We stand behind our cars (Full-Bleed Background, Centered Content) */}
-      <section className="w-full bg-[#e6f4ff] border-t border-neutral-100/60 py-16 md:py-20 mt-20">
-        <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col items-center text-center">
+      <section className="w-full bg-[#e6f4ff] border-t border-neutral-100/60 py-14 md:py-20 xl:mt-20 mt-7">
+        <div className="mx-auto xl:max-w-[1280px] px-5 md:px-1 flex flex-col items-center text-center">
 
-          <h2 className="text-2xl md:text-5xl font-bold text-neutral-900 leading-none">
-            We stand behind our cars<br />so much, you get:
+          <h2 className="text-[26px] md:text-5xl font-bold text-neutral-900 leading-none xl:max-w-[680px]">
+            We stand behind our cars so much, you get:
           </h2>
 
           {/* Full-width List Table style layout */}
@@ -160,29 +161,34 @@ const ProtectionPlans = () => {
       </section>
 
       {/* How Cardora keeps you covered (Full-Bleed Background, Centered Content) */}
-      <section className="bg-[#eaeff5] py-16 md:py-20 px-4 lg:px-0">
-        <div className="mx-auto max-w-[1280px] px-6 md:px-1">
-          <div>
-            <h2 className="text-3xl md:text-[45px] font-semibold tracking-tight text-foreground">
-              How Cardora keeps you covered
-            </h2>
-            <p className="mt-4 text-black text-base max-w-2xl">
-              Every plan covers major systems and parts on your car, with deductibles starting as low as $50 on any car you choose.
-            </p>
-          </div>
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            {coveredSystems.map(({ icon: Icon, label }) => (
-              <div key={label} className="w-full bg-card border border-[#00b066] rounded-xl hover:bg-[#00af66a6] text-[#00b066] hover:text-white cursor-pointer px-4 py-3 flex items-center justify-center gap-3 transition-all">
-                <Icon className="h-5 w-5 shrink-0" strokeWidth={2} />
-                <p className="mt-1 text-sm">{label}</p>
-              </div>
-            ))}
-          </div>
+<section className="bg-[#eaeff5] py-16 md:py-20 px-0">
+  <div className="mx-auto max-w-[1280px] px-6 md:px-1">
+    <div>
+      <h2 className="text-3xl md:text-[45px] font-semibold tracking-tight text-foreground">
+        How {SITE_CONFIG?.dealership.name} keeps you covered
+      </h2>
+      <p className="mt-4 text-black text-base max-w-2xl">
+        Every plan covers major systems and parts on your car, with deductibles starting as low as $50 on any car you choose.
+      </p>
+    </div>
+    
+    {/* Scrollable on mobile/tablet, Grid on Desktop (lg and up) */}
+    <div className="mt-10 flex lg:grid lg:grid-cols-6 gap-2 overflow-x-auto lg:overflow-x-visible scrollbar-none pb-2 lg:pb-0">
+      {coveredSystems.map(({ icon: Icon, label }) => (
+        <div 
+          key={label} 
+          className="w-ful min-w-[160px] sm:min-w-[180px] lg:min-w-0 shrink-0 lg:shrink grow bg-card border border-[#00b066] rounded-xl hover:bg-[#00af66a6] text-[#00b066] hover:text-white cursor-pointer px-4 py-3 flex items-center justify-center gap-3 transition-all"
+        >
+          <Icon className="h-5 w-5 shrink-0" strokeWidth={2} />
+          <p className="mt-1 text-sm whitespace-nowrap lg:whitespace-normal">{label}</p>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* What's included (Full-Bleed Background, Centered Content) */}
-      <section className="py-16 bg-[#eaeff5] px-4 lg:px-0">
+      <section className="lg:py-1 bg-[#eaeff5] px-0">
         <div className="mx-auto max-w-[1280px] px-6 md:px-1 pb-10">
           <h2 className="text-start text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
             What's included?
@@ -203,21 +209,20 @@ const ProtectionPlans = () => {
         </div>
       </section>
 
-      {/* GAP Coverage */}
-      <section className="text-gray-900 pt-18 py-1 px-4 font-sans ">
+      <section className="text-gray-900 pt-18 py-1 lg:px-4 font-sans">
         <div className="max-w-[1280px] mx-auto px-6 md:px-1 text-center">
           {/* Header Section */}
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-black">
             Gap Coverage
           </h2>
           <div className="mt-2">
-            <span className="inline-block bg-[#e6f4ff] text-base px-8 py-3 rounded-full uppercase tracking-wider shadow-[0_2px_18px_rgba(0,0,0,0.05)] ">
+            <span className="inline-block bg-[#e6f4ff] text-base px-8 py-3 rounded-full uppercase tracking-wider shadow-[0_2px_18px_rgba(0,0,0,0.05)]">
               Optional
             </span>
           </div>
-          <p className="mt-4 text-base mx-auto max-w-5xl leading-relaxed">
-            Life doesn't wait. If your vehicle is totaled or stolen, insurance may not cover what you still owe. 
-            GAP coverage protects you by covering the remaining balance — so you're not left paying for a 
+          <p className="mt-4 text-base mx-auto max-w-5xl leading-relaxed text-black">
+            Life doesn't wait. If your vehicle is totaled or stolen, insurance may not cover what you still owe.
+            GAP coverage protects you by covering the remaining balance — so you're not left paying for a
             car you no longer have.
           </p>
 
@@ -226,42 +231,65 @@ const ProtectionPlans = () => {
             <span className="uppercase tracking-wide font-bold block mb-1">
               Example
             </span>
-            <p className="text-xl font-normal my-1 ">If You Owed on Your Vehicle</p>
+            <p className="text-xl font-normal my-1">If You Owed on Your Vehicle</p>
             <p className="text-3xl md:text-3xl font-black text-emerald-600 mt-1">$15,000</p>
-            
-            <hr className="mt-12 border-gray-300 mx-auto" />
 
-            <div className="grid grid-cols-2 gap-4 mx-auto items-start text-center ">
+            <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-4 border-t border-gray-200 mx-auto items-start text-center mt-8">
+
               {/* Left Column: Payout */}
-              <div className="pt-10">
+              <div className="pt-6 md:pt-10 pb-6 md:pb-0 border-b border-gray-300 md:border-b-0">
                 <p className="text-lg font-bold text-gray-800">Insurance Payout</p>
-                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-1">$11,000</p>
+                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-1">$15,000</p>
               </div>
 
               {/* Right Column: Gap */}
-              <div className="border-l border-gray-300 pl-10 pt-10">
+              <div className="pt-8 md:pt-10 md:border-l md:border-gray-300 md:pl-10">
                 <p className="text-lg font-bold text-gray-800">Amount Owed (GAP)</p>
-                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-1">$4,000</p>
-                <p className="mt-2 text-md mx-auto leading-normal">
+                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-1">$3,000</p>
+                <p className="mt-2 text-md mx-auto leading-normal max-w-sm md:max-w-none text-gray-600">
                   GAP coverage protects you from the amount still owed.
                 </p>
               </div>
-            </div>
-          </div>
 
-          {/* Visual Asset Graphic */}
-          <div className="mt-10 flex justify-center">
-            <Image 
-              src={greenCar} 
-              alt="Vehicle visualization split with checklist indicators" 
-              className="w-full h-auto max-w-4xl"
-            />
+            </div>
+
+            {/* Visual Asset Graphic: Placed directly below the initial amount to match the image structure */}
+            <div className="flex justify-center">
+              <Image
+                src={greenCar}
+                alt="Vehicle visualization split with checklist indicators"
+                className="w-full h-auto max-w-md md:max-w-4xl"
+              />
+            </div>
+
+            {/* Responsive Grid layout:
+            - Single stacked column on mobile (grid-cols-1) to perfectly mimic the image vertical list.
+            - Restores back to the 2-column side-by-side design on desktop devices (md:grid-cols-2).
+          */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-0 md:gap-4 border-t border-gray-200 mx-auto items-start text-center">
+
+              {/* Left Column: Payout */}
+              <div className="pt-6 md:pt-10 pb-6 md:pb-0 border-b border-gray-300 md:border-b-0">
+                <p className="text-lg font-bold text-gray-800">Insurance Payout</p>
+                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-1">$15,000</p>
+              </div>
+
+              {/* Right Column: Gap */}
+              <div className="pt-8 md:pt-10 md:border-l md:border-gray-300 md:pl-10">
+                <p className="text-lg font-bold text-gray-800">Amount Owed (GAP)</p>
+                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-1">$3,000</p>
+                <p className="mt-2 text-md mx-auto leading-normal max-w-sm md:max-w-none">
+                  GAP coverage protects you from the amount still owed.
+                </p>
+              </div>
+
+            </div>
           </div>
         </div>
       </section>
 
       {/* The Cardora Difference Section */}
-      <div className="w-full mx-auto px-6 md:px-1 -mt-20">
+      <div className="w-full mx-auto  md:px-1 lg:-mt-20 -mt-5">
         <CardoraDifference />
       </div>
 
