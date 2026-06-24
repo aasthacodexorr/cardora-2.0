@@ -7,6 +7,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import callIcon from "@/assets/icons/call_icon.svg";
 import envelopIcon from "@/assets/icons/envelop_icon.svg";
+import { SITE_CONFIG } from '@/constants';
 
 export default function ContactUs() {
     // 1. Keep input state so React can track what the user types
@@ -57,16 +58,16 @@ export default function ContactUs() {
     return (
         <>
             <Header />
-            <div className="min-h-screen flex items-center justify-center p-6 lg:p-12 font-sans text-gray-900">
-                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="min-h-screen flex items-center justify-center px-3 py-10 lg:p-12 font-sans text-gray-900">
+                <div className="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-12 gap-8">
 
                     {/* Left Side */}
                     <div className="space-y-8">
-                        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight lg:mt-28">
+                        <h1 className="text-2xl sm:text-5xl font-bold lg:mt-28">
                             Got a question? We’re here to help.
                         </h1>
-                        <div className="space-y-4 lg:w-[480px]">
-                            <div className="group relative bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between overflow-hidden cursor-pointer">
+                        <div className="space-y-7 lg:space-y-4 lg:w-[480px]">
+                            <div className="group relative bg-white p-6 rounded-md border border-gray-200  flex justify-between overflow-hidden cursor-pointer">
                                 <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                                 <div className="relative z-10">
@@ -85,7 +86,7 @@ export default function ContactUs() {
                                 </div>
                             </div>
 
-                            <div className="group relative bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between overflow-hidden cursor-pointer">
+                            <div className="group relative bg-white p-6 rounded-md border border-gray-200  flex justify-between overflow-hidden cursor-pointer">
                                 <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                                 <div className="relative z-10">
@@ -107,7 +108,7 @@ export default function ContactUs() {
                     </div>
 
                     {/* Right Side: Form Container */}
-                    <div className=" bg-white p-8 sm:p-10 rounded-3xl shadow-[0_2px_18px_rgba(0,0,0,0.1)] border border-gray-100">
+                    <div className=" bg-white px-4 pt-8 pb-18 sm:p-10 rounded-3xl shadow-[0_2px_18px_rgba(0,0,0,0.1)] border border-gray-100">
                         <h2 className="text-2xl sm:text-3xl font-bold mb-6">Let’s Get You on the Road</h2>
 
                         {/* Conditional UI based on Success State */}
@@ -138,7 +139,7 @@ export default function ContactUs() {
                                     onChange={handleChange}
                                     required
                                     disabled={loading}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100"
+                                    className="w-full px-4 py-3  rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
                                 />
                                 <input
                                     type="text"
@@ -148,7 +149,7 @@ export default function ContactUs() {
                                     onChange={handleChange}
                                     required
                                     disabled={loading}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
                                 />
 
                                 <input
@@ -159,7 +160,7 @@ export default function ContactUs() {
                                     onChange={handleChange}
                                     required
                                     disabled={loading}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
                                 />
                                 <input
                                     type="tel"
@@ -169,7 +170,7 @@ export default function ContactUs() {
                                     onChange={handleChange}
                                     required
                                     disabled={loading}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
                                 />
 
                                 <div>
@@ -181,12 +182,12 @@ export default function ContactUs() {
                                         onChange={handleChange}
                                         required
                                         disabled={loading}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none disabled:bg-gray-100"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 resize-none disabled:bg-gray-100"
                                     ></textarea>
                                 </div>
 
 
-                                <div className="flex items-start gap-3 text-[13px] leading-relaxed pt-2">
+                                <div className="flex items-start gap-3 text-[11px] leading-relaxed pt-2">
                                     <input
                                         type="checkbox"
                                         name="agreeToTerms"
@@ -195,10 +196,10 @@ export default function ContactUs() {
                                         onChange={handleChange}
                                         required
                                         disabled={loading}
-                                        className="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 border-gray-300 h-4 w-4 cursor-pointer transition-colors"
+                                        className="mt-0.5 rounded text-emerald-600 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 border-gray-300 h-4 w-4 cursor-pointer transition-colors"
                                     />
                                     <label htmlFor="agreeToTerms" className="select-none cursor-pointer">
-                                        By submitting this form, you agree to be contacted through phone calls, SMS, WhatsApp, or email regarding your inquiry, offers, and updates. You can opt out anytime by texting STOP. Messaging frequency may vary. Message and data rates may apply. For assistance, text HELP or visit our website at <a href="#" className="text-emerald-600 font-semibold hover:underline">Cardora</a>. Visit <a href="#" className="text-emerald-600 font-semibold hover:underline">Privacy Policy</a> for privacy policy and <a href="#" className="text-emerald-600 font-semibold hover:underline">Terms and Conditions</a> for Terms of Service.
+                                        By submitting this form, you agree to be contacted through phone calls, SMS, WhatsApp, or email regarding your inquiry, offers, and updates. You can opt out anytime by texting STOP. Messaging frequency may vary. Message and data rates may apply. For assistance, text HELP or visit our website at <a href="/" className="text-blue-500 font-semibold hover:underline">{SITE_CONFIG?.dealership.name}</a>. Visit <a href="#" className="text-blue-500 font-semibold hover:underline">Privacy Policy</a> for privacy policy and <a href="#" className="text-blue-500 font-semibold hover:underline">Terms and Conditions</a> for Terms of Service.
                                     </label>
                                 </div>
 
@@ -206,7 +207,7 @@ export default function ContactUs() {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="border-[#00b066] bg-gradient-to-b from-[#00af66] cursor-pointer hover:opacity-90 to-[#00af66]/65 text-white font-medium px-8 py-3 rounded-xl transition-colors duration-200 shadow-md"
+                                        className="w-full lg:w-fit border-[#00b066] bg-gradient-to-b from-[#00af66] cursor-pointer hover:opacity-90 to-[#00af66]/65 text-white font-medium px-8 py-3 rounded-xl transition-colors duration-200 shadow-md"
                                     >
                                         {loading ? 'Sending...' : 'Submit'}
                                     </button>
