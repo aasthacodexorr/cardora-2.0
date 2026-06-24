@@ -4,7 +4,7 @@ import { Fuel, PaintBucket, Palette, Radiation } from "lucide-react";
 const AboutVehicle = ({ vehicle }: any) => {
     return (
         <>
-            <div className="bg-card border-none rounded-xl p-0 w-full xl:-mt-28">
+            <div className="bg-card border-none rounded-xl p-0 w-full xl:-mt-28 -mt-3   ">
                 <h2 className="text-[22px] font-semibold text-black mb-[30px]">
                     About this vehicle
                 </h2>

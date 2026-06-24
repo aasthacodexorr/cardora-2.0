@@ -101,10 +101,10 @@ const Header = () => {
       </header>
 
       {/*  Mobile Header */}
-      <header className="lg:hidden w-full bg-white shadow-none relative z-50">
+      <header className="lg:hidden w-full bg-[#f9f9f9] shadow-none relative z-50">
 
         {/* Top bar: logo + social icons */}
-        <div className="flex items-center justify-between pl-[12px] pr-[29px] py-[6px]">
+        <div className="flex items-center justify-between pl-[12px] pr-[29px] py-[5px]">
           <Link href="/" aria-label="Cardora home" className="[&_img]:max-w-[125px] [&_img]:h-auto">
             <CardoraLogo />
           </Link>
@@ -119,8 +119,8 @@ const Header = () => {
               <Image 
                 src={facebook} 
                 alt="Facebook" 
-                width={25}
-                height={25}
+                width={23}
+                height={23}
                 style={{
                   width: "auto",
                   height: "auto",
@@ -137,8 +137,8 @@ const Header = () => {
               <Image 
                 src={instagram} 
                 alt="Instagram" 
-                width={25}
-                height={25}
+                width={23}
+                height={23}
                 style={{
                   width: "auto",
                   height: "auto",
@@ -151,7 +151,7 @@ const Header = () => {
 
         {/* Green action bar: call, directions, menu toggle */}
         <div className="text-white flex items-center justify-between py-2 relative border-t border-[#dadada] border-b border-b-[#dadada]">
-          <div className="flex items-center gap-5 px-4 top-0">
+          <div className="flex items-center gap-5 px-3 top-0">
 
             {/* Call */}
             <a
@@ -219,7 +219,7 @@ const Header = () => {
                       window.location.href = "/inventory";
                     }
                   }}
-                  className={`py-4 border-b border-gray-100 text-[15px] font-semibold capitalize flex items-center justify-between ${
+                  className={`py-4 border-b border-gray-100 text-[17px] capitalize flex items-center justify-between ${
                     "text-gray-900"
                   }`}
                 >

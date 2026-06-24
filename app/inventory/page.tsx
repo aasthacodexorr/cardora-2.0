@@ -1,18 +1,3 @@
-/* =========================
-   Inventory Page
-   Vehicle listing page powered by react-instantsearch
-   and Typesense. Features:
-   - Left sidebar with smooth animated collapsible filter groups
-   - Only one dropdown open at a time
-   - Search box + sort-by dropdown
-   - Active refinement chips (CurrentRefinements)
-   - Responsive grid of HitCard results
-   - URL-driven state via custom InstantSearch router:
-     selected filters/search are written back into the URL in the
-     client-required format, and reset whenever a fresh footer/home
-     link is navigated to.
-========================= */
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -37,9 +22,9 @@ import {
   useInfiniteHits,
   ClearRefinements,
   SortBy,
-  CurrentRefinements,
   useRange,
   useInstantSearch,
+  useCurrentRefinements,
 } from "react-instantsearch";
 
 // Typesense search client
@@ -60,10 +45,10 @@ const refinementListClassNames = {
     "bg-[#e6f7ec] text-gray-900 font-bold px-[8px] py-[2px] rounded-md text-[11px] ml-auto",
 };
 
-/* Shared Sort Options array to avoid repetition */
+/* Shared Sort Options array to match your visual requirement */
 const sortItems = [
   {
-    label: "Recently Added",
+    label: "Sort",
     value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
   },
   {
@@ -116,7 +101,8 @@ const sortItems = [
   },
 ];
 
-const selectClasses = "px-4 py-1 tracking-wide rounded-[12px] border border-gray-300 bg-white text-black/80 text-[13px] font-extrabold outline-none cursor-pointer h-[42px] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke-width%3D%222%22%20stroke%3D%22%23000%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M8%209l4-4%204%204m0%206l-4%204-4-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10";
+/* Custom Select styling using inline Sort / Alignment icon match */
+const selectClasses = "px-4 py-1 tracking-wide rounded-[12px] border border-gray-300 bg-white text-black text-[14px] font-bold outline-none cursor-pointer h-[42px] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M4%206h16M4%2012h14M4%2018h8%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.15em_1.15em] bg-[left_1.1rem_center] bg-no-repeat pl-10 pr-6 ";
 
 type FilterGroupProps = {
   title: string;
@@ -132,13 +118,13 @@ const FilterGroup = ({
   onToggle,
 }: FilterGroupProps) => {
   return (
-    <div className="border-b border-border py-[7px] mb-0 last:border-b-0 first:border-t first:border-t-border">
+    <div className={`border-b border-border py-[7px] mb-0 last:border-b-0 first:border-t first:border-t-border transition-all duration-300 ${isOpen ? 'pb-4' : ''}`}>
       <button
         onClick={onToggle}
         className="w-full cursor-pointer"
       >
         <div className={`flex items-center justify-between rounded-[10px] px-[10px] py-[8px] transition-colors duration-200 hover:bg-gray-50 ${isOpen ? 'bg-gray-100' : ''}`}>
-          <span className="text-[17px] font-normal text-[#000] uppercase tracking-[1px] text-left">
+          <span className="text-[16px] font-medium text-[#000] tracking-[0.5px] text-left normal-case">
             {title}
           </span>
           <ChevronDown
@@ -150,8 +136,8 @@ const FilterGroup = ({
 
       <div
         className={`grid transition-all duration-300 ease-in-out ${isOpen
-            ? "grid-rows-[1fr] opacity-100 mt-3"
-            : "grid-rows-[0fr] opacity-0 mt-0"
+            ? "grid-rows-[1fr] opacity-100 mt-3 px-[10px]"
+            : "grid-rows-[0fr] opacity-0 mt-0 px-[10px]"
           }`}
       >
         <div className="overflow-hidden">
@@ -226,6 +212,39 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
           </button>
         </div>
       )}
+    </div>
+  );
+};
+
+/* Custom Grouped Refinements Component for precise visual hierarchy */
+const GroupedCurrentRefinements = () => {
+  const { items, refine } = useCurrentRefinements();
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="w-full flex flex-wrap gap-y-2 gap-x-2 mt-2 mb-3">
+      {items.map((category) => (
+        <div 
+          key={category.attribute} 
+          className="flex flex-wrap items-center gap-[0.5px] bg-transparent"
+        >
+          {category.refinements.map((refinement) => (
+            <div
+              key={refinement.label}
+              className="flex items-center bg-white rounded-lg px-[12px] py-[6px] border border-gray-200 text-[14px] text-gray-700 font-light shadow-sm"
+            >
+              <span className="cursor-pointer">{refinement.label}</span>
+              <button
+                onClick={() => refine(refinement)}
+                className="text-gray-400 ml-2 hover:text-gray-950 focus:outline-none flex items-center justify-center"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
@@ -513,9 +532,9 @@ const InventoryContent = () => {
   }, [isMobileFilterOpen]);
 
   const renderFilterGroups = () => (
-    <div className="space-y-5">
+    <div className="space-y-[18px]">
       <FilterGroup
-        title="LOCATION"
+        title="Location"
         isOpen={openFilter === "LOCATION"}
         onToggle={() => setOpenFilter(openFilter === "LOCATION" ? null : "LOCATION")}
       >
@@ -523,7 +542,7 @@ const InventoryContent = () => {
       </FilterGroup>
 
       <FilterGroup
-        title="VEHICLE TYPE"
+        title="Vehicle Type"
         isOpen={openFilter === "VEHICLE TYPE"}
         onToggle={() => setOpenFilter(openFilter === "VEHICLE TYPE" ? null : "VEHICLE TYPE")}
       >
@@ -531,7 +550,7 @@ const InventoryContent = () => {
       </FilterGroup>
 
       <FilterGroup
-        title="PRICE"
+        title="Price"
         isOpen={openFilter === "PRICE"}
         onToggle={() => setOpenFilter(openFilter === "PRICE" ? null : "PRICE")}
       >
@@ -539,7 +558,7 @@ const InventoryContent = () => {
       </FilterGroup>
 
       <FilterGroup
-        title="YEAR"
+        title="Year"
         isOpen={openFilter === "YEAR"}
         onToggle={() => setOpenFilter(openFilter === "YEAR" ? null : "YEAR")}
       >
@@ -547,7 +566,7 @@ const InventoryContent = () => {
       </FilterGroup>
 
       <FilterGroup
-        title="MAKE"
+        title="Make"
         isOpen={openFilter === "MAKE"}
         onToggle={() => setOpenFilter(openFilter === "MAKE" ? null : "MAKE")}
       >
@@ -555,7 +574,7 @@ const InventoryContent = () => {
       </FilterGroup>
 
       <FilterGroup
-        title="MODEL"
+        title="Model"
         isOpen={openFilter === "MODEL"}
         onToggle={() => setOpenFilter(openFilter === "MODEL" ? null : "MODEL")}
       >
@@ -563,7 +582,7 @@ const InventoryContent = () => {
       </FilterGroup>
 
       <FilterGroup
-        title="ODOMETER"
+        title="Odometer"
         isOpen={openFilter === "ODOMETER"}
         onToggle={() => setOpenFilter(openFilter === "ODOMETER" ? null : "ODOMETER")}
       >
@@ -571,7 +590,7 @@ const InventoryContent = () => {
       </FilterGroup>
 
       <FilterGroup
-        title="EXTERIOR COLOR"
+        title="Exterior Color"
         isOpen={openFilter === "EXTERIOR COLOR"}
         onToggle={() => setOpenFilter(openFilter === "EXTERIOR COLOR" ? null : "EXTERIOR COLOR")}
       >
@@ -579,7 +598,7 @@ const InventoryContent = () => {
       </FilterGroup>
 
       <FilterGroup
-        title="BODY TYPE"
+        title="Body Type"
         isOpen={openFilter === "BODY TYPE"}
         onToggle={() => setOpenFilter(openFilter === "BODY TYPE" ? null : "BODY TYPE")}
       >
@@ -587,7 +606,7 @@ const InventoryContent = () => {
       </FilterGroup>
 
       <FilterGroup
-        title="TRANSMISSION"
+        title="Transmission"
         isOpen={openFilter === "TRANSMISSION"}
         onToggle={() => setOpenFilter(openFilter === "TRANSMISSION" ? null : "TRANSMISSION")}
       >
@@ -595,7 +614,7 @@ const InventoryContent = () => {
       </FilterGroup>
 
       <FilterGroup
-        title="FUEL TYPE"
+        title="Fuel Type"
         isOpen={openFilter === "FUEL TYPE"}
         onToggle={() => setOpenFilter(openFilter === "FUEL TYPE" ? null : "FUEL TYPE")}
       >
@@ -626,14 +645,14 @@ const InventoryContent = () => {
             <div className="flex flex-col lg:flex-row items-start gap-5 lg:px-10">
 
               {/* Desktop Sidebar Filters Layout */}
-              <aside className="hidden sticky top-[-180px] self-start shrink-0 lg:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[290px]">
+              <aside className="hidden sticky top-[-180px] self-start shrink-0 lg:block bg-white border border-[#ddd] rounded-[15px] p-[15px] w-[290px] max-h-[calc(100vh-40px)] overflow-y-auto overscroll-contain">
                 <div className="mt-[10px] flex flex-col items-center gap-4">
                   <div className="bg-[#00af66] text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm">
                     <CustomHitsCount />
                   </div>
                   <ClearRefinements
                     classNames={{
-                      button: "text-[12px] mb-9 cursor-pointer font-bold text-black disabled:cursor-not-allowed",
+                      button: "text-[12px] mb-[15px] cursor-pointer font-bold text-black disabled:cursor-not-allowed",
                     }}
                     translations={{
                       resetButtonText: "Clear Filters",
@@ -651,12 +670,12 @@ const InventoryContent = () => {
               >
                 <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileFilterOpen(false)} />
                 <div 
-                  className={`relative flex w-full max-w-xs flex-col bg-white h-full shadow-xl ml-auto p-4 overflow-y-auto transition-transform duration-300 ease-in-out ${
+                  className={`relative flex w-full max-w-xs flex-col bg-white h-full shadow-xl ml-auto p-4 overflow-y-auto overscroll-contain transition-transform duration-300 ease-in-out ${
                     isMobileFilterOpen ? "translate-x-0" : "translate-x-full"
                   }`}
                 >
                   <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-4">
-                    <h2 className="text-lg font-bold text-black uppercase tracking-wider">Filters</h2>
+                    <h2 className="text-lg font-bold text-black tracking-wider">Filters</h2>
                     <button 
                       onClick={() => setIsMobileFilterOpen(false)}
                       className="p-1 rounded-full text-gray-500 hover:bg-gray-100"
@@ -720,15 +739,12 @@ const InventoryContent = () => {
                       <span>Filters</span>
                     </button>
 
-                    {/* Responsive Sort dropdown container (Now visible everywhere) */}
-                    <div className="flex items-center gap-2 lg:gap-4 ml-auto sm:ml-0">
-                      <span className="text-[13px] sm:text-[15px] font-bold text-gray-900 text-nowrap hidden xs:inline">
-                        Sort By
-                      </span>
+                    {/* Responsive Sort dropdown box setup */}
+                    <div className="flex items-start">
                       <SortBy
                         items={sortItems}
                         classNames={{
-                          select: `${selectClasses} w-[180px] sm:w-[212px]`,
+                          select: `${selectClasses} w-[115px] sm:w-[130px]`,
                         }}
                       />
                     </div>
@@ -736,21 +752,9 @@ const InventoryContent = () => {
                   </div>
                 </div>
 
-                {/* Current refinements */}
-                <div className="ml-3">
-                  <CurrentRefinements
-                    classNames={{
-                      root: "w-full",
-                      list: "flex flex-wrap gap-2",
-                      item: "flex flex-wrap gap-2",
-                      label: "hidden",
-                      category:
-                        "flex items-center bg-white rounded-lg px-[15px] py-[6px] mt-[5px] mb-2 shadow-none border border-gray-200 text-[14px] text-gray-700 font-light",
-                      categoryLabel: "mr-3 text-[16px] cursor-pointer",
-                      delete:
-                        "text-gray-500 cursor-pointer hover:text-gray-900 focus:outline-none flex items-center justify-center text-[16px]",
-                    }}
-                  />
+                {/* Grouped custom current refinements layout wrapper */}
+                <div className="px-3">
+                  <GroupedCurrentRefinements />
                 </div>
 
                 {/* Results */}
@@ -777,4 +781,4 @@ const InventoryPage = () => {
   return <InventoryContent />;
 };
 
-export default InventoryPage;
+export default InventoryPage; 

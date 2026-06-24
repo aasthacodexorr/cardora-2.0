@@ -13,6 +13,7 @@ import { ITEMS, CONTAINER_CLASS, GRID_CLASS } from "./constants";
 import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
 import MapIcon   from "@/assets/icons/MAP-ICON.svg";
 import HeartIcon from "@/assets/icons/HEART-ICON.svg";
+import { SITE_CONFIG } from "@/constants";
 
 const icons = [
   <Image src={CheckIcon} alt="Check Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
@@ -25,7 +26,7 @@ const CardoraDifference = () => {
     <section className="w-full bg-background">
       <div className={CONTAINER_CLASS}>
         <h2 className="text-[25px] lg:text-[44px] font-bold text-foreground tracking-tight mb-10">
-          The Cardora difference
+          The {SITE_CONFIG?.dealership.name} difference
         </h2>
 
         {/* Three value-prop cards */}
