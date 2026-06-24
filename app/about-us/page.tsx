@@ -152,7 +152,7 @@ const About = () => {
               <h2 className="text-[28px] md:text-[42px] lg:text-5xl font-bold tracking-tight text-neutral-950 leading-tight">
                 Hundreds of Five-Star Reviews — and Counting
               </h2>
-              <p className="mt-5 text-[18px] md:text-[20px] text-neutral-800 lg:leading-relaxed font-medium">
+              <p className=" mt-2 lg:mt-5 text-[18px] md:text-[20px] text-neutral-800 lg:leading-relaxed font-medium">
                 Hundreds of five-star Google reviews and counting—because a great
                 experience is never accidental.
               </p>
