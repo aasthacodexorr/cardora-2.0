@@ -207,7 +207,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
                   type="button"
                   onClick={() => goTo(idx)}
                   className={`flex-shrink-0 w-[80px] h-[60px] rounded-lg overflow-hidden border snap-start ${
-                    idx === activeIndex ? "ring-2 ring-blue-500" : "border-gray-200"
+                    idx === activeIndex ? "border-transparent" : "border-gray-200"
                   }`}
                 >
                   <Image
@@ -237,7 +237,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
               type="button"
               onClick={() => goTo(idx)}
               className={`w-[155px] h-[121px] flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 mb-1 transition-all duration-200 ${
-                idx === activeIndex ? "border-blue-500 scale-[0.98]" : "border-transparent"
+                idx === activeIndex ? "border-transparent" : "border-transparent"
               }`}
             >
               <Image 
