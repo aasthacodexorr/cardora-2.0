@@ -1,7 +1,7 @@
 // components/VehicleInfo.tsx
 "use client"; // <--- This allows us to use useState right here!
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import checkout from "@/assets/icons/checkout.png";
 import { Fuel } from "lucide-react";
@@ -25,9 +25,28 @@ const FuelIcon = ({ size = 4 }: FuelIconProps) => (
 // 1. PriceAndCTA now owns the state internally
 export const PriceAndCTA = ({ vehicle }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        tooltipRef.current &&
+        !tooltipRef.current.contains(event.target as Node)
+      ) {
+        setShowTooltip(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="bg-white rounded-2xl px-5 pb-2 text-center shadow-sm">
+    <div className="bg-white rounded-2xl px-5 pb-2 text-center">
       {
         vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString()
           ? null :
@@ -35,28 +54,43 @@ export const PriceAndCTA = ({ vehicle }: any) => {
             ${vehicle?.price?.toLocaleString()}.00
           </p>
       }
-      
+
       <div className="flex items-center justify-center gap-1 my-3">
         <p className="text-[32px] font-extrabold text-[#00A651] leading-none">
           ${Number(vehicle?.selling_price || 0).toLocaleString("en-CA")}.00
         </p>
 
-        <div className="relative inline-flex items-center group">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="w-4 h-4 text-gray-500 cursor-pointer"
+        <div
+          ref={tooltipRef}
+          className="relative inline-flex items-center group"
+        >
+          <button
+            type="button"
+            onClick={() => setShowTooltip(!showTooltip)}
+            className="flex items-center"
           >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
-              clipRule="evenodd"
-            />
-          </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="w-4 h-4 text-gray-500 cursor-pointer"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
 
-          <div className="absolute top-[-52px] -translate-x-[74%] whitespace-nowrap bg-black text-white text-[14px] px-2 py-2 rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 shadow-lg">
+          <div
+            className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[240px] sm:w-max max-w-[280px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
+                ? "opacity-100 visible"
+                : "opacity-0 invisible"
+              } md:group-hover:opacity-100 md:group-hover:visible`}
+          >
             Listed price does not include taxes and licensing fees.
+
             <div className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
           </div>
         </div>
@@ -74,7 +108,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
         </a>
 
         {/* Triggers local state change */}
-        <button 
+        <button
           onClick={() => setIsModalOpen(true)}
           className="w-full bg-white cursor-pointer hover:bg-[#00af66a6] hover:text-white border-2 border-[#00af66a6] text-[#00A651] font-bold py-3 rounded-xl transition-colors text-[16px] sm:text-[20px]"
         >
@@ -83,10 +117,10 @@ export const PriceAndCTA = ({ vehicle }: any) => {
       </div>
 
       {/* The modal is safely self-contained right here */}
-      <MessageModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        vehicle={vehicle} 
+      <MessageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        vehicle={vehicle}
       />
     </div>
   );
@@ -147,7 +181,7 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left">
       <div className="bg-white rounded-2xl w-full z-[9999] max-w-[540px] relative shadow-2xl p-6 flex flex-col max-h-[90vh]">
-        
+
         <button onClick={onClose} className="absolute right-5 cursor-pointer top-5 text-gray-400 hover:text-gray-600 transition-colors">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -158,17 +192,17 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
 
         <div className="overflow-y-auto pr-1 space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <input type="text" placeholder="First Name" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500"/>
-            <input type="text" placeholder="Last Name" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500"/>
+            <input type="text" placeholder="First Name" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500" />
+            <input type="text" placeholder="Last Name" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <input type="email" placeholder="Email" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500"/>
-            <input type="tel" placeholder="Phone Number" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500"/>
+            <input type="email" placeholder="Email" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500" />
+            <input type="tel" placeholder="Phone Number" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500" />
           </div>
 
           <div>
-            <textarea rows={4} defaultValue={`Hi, I'm interested in the ${vehicle?.year || '2018'} ${vehicle?.make || 'Honda'} ${vehicle?.model || 'Civic'}. Please contact me as soon as you can.`} className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 resize-none"/>
+            <textarea rows={4} defaultValue={`Hi, I'm interested in the ${vehicle?.year || '2018'} ${vehicle?.make || 'Honda'} ${vehicle?.model || 'Civic'}. Please contact me as soon as you can.`} className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 resize-none" />
           </div>
 
           <div className="flex items-start gap-2 text-[12px] text-gray-700 leading-normal">
