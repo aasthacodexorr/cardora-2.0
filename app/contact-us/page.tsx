@@ -1,4 +1,3 @@
-
 "use client"
 
 import { GetInTouch } from '@/components/common';
@@ -23,36 +22,82 @@ export default function ContactUs() {
     // 2. Add API status states to control UI changes
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     const handleChange = (e: any) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        const targetValue = type === 'checkbox' ? checked : value;
+
+        // --- ON-TYPING VALIDATION LOGIC ---
+        if (name === 'firstName' || name === 'lastName') {
+            // Prevent entering numbers or special characters immediately
+            const nameRegex = /^[A-Za-z\s]*$/;
+            if (!nameRegex.test(targetValue)) {
+                setError(`${name === 'firstName' ? 'First name' : 'Last name'} should only contain letters.`);
+                return; // Block the input state change
+            } else {
+                setError(null);
+            }
+        }
+
+        if (name === 'phoneNumber') {
+            // Allow only numbers and restrict to 10 digits max
+            const cleanPhone = targetValue.replace(/\D/g, '');
+            if (cleanPhone.length > 10) return; // Block typing beyond 10 digits
+            
+            if (cleanPhone.length > 0 && cleanPhone.length < 10) {
+                setError("Phone number must be exactly 10 digits.");
+            } else {
+                setError(null);
+            }
+            
+            setFormData((prev) => ({ ...prev, [name]: cleanPhone }));
+            return;
+        }
+
+        if (name === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (targetValue.trim() !== '' && !emailRegex.test(targetValue.trim())) {
+                setError("Please enter a valid email address.");
+            } else {
+                setError(null);
+            }
+        }
+
+        if (name === 'agreeToTerms') {
+            if (!checked) {
+                setError("You must agree to the terms and conditions to proceed.");
+            } else {
+                setError(null);
+            }
+        }
+
+        // Update state if all instant validation checks pass
+        setFormData((prev) => ({ ...prev, [name]: targetValue }));
     };
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
+        
+        // Final sanity check before submission
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email.trim())) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+
+        if (formData.phoneNumber.length !== 10) {
+            setError("Phone number must be exactly 10 digits.");
+            return;
+        }
+
+        if (!formData.agreeToTerms) {
+            setError("You must agree to the terms and conditions to proceed.");
+            return;
+        }
+
         setLoading(true);
         setError(null);
-
-        try {
-            // Send the formData to your Next.js API route that communicates with Typesense
-            const response = await fetch('/api/contact', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) throw new Error('Something went wrong. Please try again.');
-
-            setSuccess(true);
-            // Reset form on success
-            setFormData({ firstName: '', lastName: '', email: '', phoneNumber: '', message: '', agreeToTerms: false });
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
     };
 
     return (
@@ -133,46 +178,46 @@ export default function ContactUs() {
 
                                 <div className='grid xl:grid-cols-2 grid-cols-1 gap-4'>
                                     <input
-                                    type="text"
-                                    name="firstName"
-                                    placeholder="First Name"
-                                    value={formData.firstName}
-                                    onChange={handleChange}
-                                    required
-                                    disabled={loading}
-                                    className="w-full px-4 py-3  rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
-                                />
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    placeholder="Last Name"
-                                    value={formData.lastName}
-                                    onChange={handleChange}
-                                    required
-                                    disabled={loading}
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
-                                />
+                                        type="text"
+                                        name="firstName"
+                                        placeholder="First Name"
+                                        value={formData.firstName}
+                                        onChange={handleChange}
+                                        required
+                                        disabled={loading}
+                                        className="w-full px-4 py-3  rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="lastName"
+                                        placeholder="Last Name"
+                                        value={formData.lastName}
+                                        onChange={handleChange}
+                                        required
+                                        disabled={loading}
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
+                                    />
 
-                                <input
-                                    type="email"
-                                    name="email"
-                                    placeholder="Email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                    disabled={loading}
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
-                                />
-                                <input
-                                    type="tel"
-                                    name="phoneNumber"
-                                    placeholder="Phone Number"
-                                    value={formData.phoneNumber}
-                                    onChange={handleChange}
-                                    required
-                                    disabled={loading}
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
-                                />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="Email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        disabled={loading}
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
+                                    />
+                                    <input
+                                        type="tel"
+                                        name="phoneNumber"
+                                        placeholder="Phone Number"
+                                        value={formData.phoneNumber}
+                                        onChange={handleChange}
+                                        required
+                                        disabled={loading}
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:bg-gray-100"
+                                    />
                                 </div>
 
                                 <div>
@@ -211,7 +256,7 @@ export default function ContactUs() {
                                         disabled={loading}
                                         className="w-full lg:w-fit border-[#00b066] bg-gradient-to-b from-[#00af66] cursor-pointer hover:opacity-90 to-[#00af66]/65 text-white font-medium px-8 py-3 rounded-xl transition-colors duration-200 shadow-md"
                                     >
-                                        {loading ? 'Sending...' : 'Submit'}
+                                        Submit
                                     </button>
                                 </div>
                             </form>
