@@ -23,7 +23,7 @@ export default function SkipTheDealership() {
                         <p className="text-[20px] text-center md:text-[20.4px] text-gray-800 max-w-2xl mx-auto my-8 font-medium">
                             Buy your next car 100% online — or visit us on your terms. No pressure. No wasted time. Just a smarter way to buy.
                         </p>
-                        <div className="flex flex-col sm:flex-row justify-center gap-4">
+                        <div className="flex flex-col sm:flex-row justify-center gap-4 px-18 lg:px-0 mt-14 lg:mt-0">
                             <Link
                                 href="/inventory"
                                 className="bg-white text-[#00b066] px-8 py-3 rounded-md shadow-sm hover:shadow-md hover:bg-[linear-gradient(180deg,#00af66a6,#00af66)] hover:text-white transition-all duration-200 transition border border-[#00b066]"
@@ -41,7 +41,7 @@ export default function SkipTheDealership() {
                 </section>
 
                 {/* 2. What Does Skip the Dealership Mean Section */}
-                <section className="bg-white py-16 px-14">
+                <section className="bg-white px-6 py-6 lg:py-16 lg:px-32">
                     <div className="mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                         <div>
                             <h2 className="text-2xl md:text-5xl font-bold mb-4 tracking-tight">
@@ -73,7 +73,7 @@ export default function SkipTheDealership() {
                             </p>
                         </div>
 
-                        <div className="relative h-[350px] md:h-[420px] w-full rounded-2xl overflow-hidden shadow-lg">
+                        <div className="relative h-[350px] md:h-[420px] w-full rounded-lg overflow-hidden shadow-lg">
                             <Image
                                 src={skipDeal}
                                 alt="Buy car online Canada"
@@ -91,20 +91,21 @@ export default function SkipTheDealership() {
                     <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-6 items-center">
 
                         {/* Order adjustment for responsive layout (Image first on mobile, left side on desktop) */}
-                        <div className="relative h-[450px] md:h-[750px] w-full rounded-2xl overflow-hidden order-2 md:order-1">
+                        <div className="relative h-[450px] md:h-[750px] w-full rounded-lg overflow-hidden order-first md:order-1">
                             <div className="p-20 h-full relative">
                                 <Image
                                     src={newWay}
                                     alt="Skip dealership car buying"
                                     className="w-full h-full object-cover rounded-2xl"
-                                    fill
+                                    width={200}
+                                    height={200}
                                 />
                             </div>
                         </div>
 
-                        <div className="order-1 md:order-2">
-                            <h2 className="text-5xl font-bold mb-4">The New Way to Buy a Car</h2>
-                            <p className="mb-8 font-medium text-2xl">This is how car buying should feel</p>
+                        <div className="order-1 md:order-2 pb-10 md:pb-0">
+                            <h2 className="text-2xl lg:text-4xl font-bold mb-4">The New Way to Buy a Car</h2>
+                            <p className="mb-8 font-medium text-lg lg:text-2xl">This is how car buying should feel</p>
 
                             <div className="space-y-4">
                                 {/* Feature 1 */}
@@ -142,11 +143,11 @@ export default function SkipTheDealership() {
                 </section>
 
                 {/* 4. Comparison Section */}
-                <section className="bg-white py-16 px-4">
-                    <div className="max-w-4xl mx-auto">
+                <section className="bg-white py-6 md:py-16 px-4">
+                    <div className="w-full md:max-w-4xl mx-auto">
                         <div className="text-center mb-12">
-                            <h2 className="text-4xl font-bold mb-2">Side-By-Side Comparison</h2>
-                            <p className="font-medium text-xl">Old Way vs {SITE_CONFIG?.dealership.name} Way</p>
+                            <h2 className="text-[30px] md:text-4xl font-bold mb-2">Side-By-Side Comparison</h2>
+                            <p className="font-medium text-lg md:text-xl">Old Way vs {SITE_CONFIG?.dealership.name} Way</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
