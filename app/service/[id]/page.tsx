@@ -30,7 +30,7 @@ export default async function ServicePage({ params }: PageProps) {
       <Header />
       
       {/* SECTION 1: Hero with Title + Coupon Side by Side */}
-      <section className="w-full bg-gradient-to-b from-white  to-[#f4f9fc] py-12 md:py-20 flex items-center">
+      <section className="w-full bg-gradient-to-b from-white  to-[#f4f9fc] py-12 md:py-20 flex items-center lg:mt-28">
         <div className=" md:px-36 px-8 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
 

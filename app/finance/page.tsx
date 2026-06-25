@@ -24,7 +24,7 @@ const FinanceContent = () => {
   return (
     <>
     <Header/>
-    <main className="bg-background  my-18 mx-5 xl:mx-36 overflow-hidden">
+    <main className="bg-background  my-18 mx-5 xl:mx-36 overflow-hidden lg:mt-40">
       <section className="flex-1 w-full">
         <div className="mx-auto max-w-[1400px">
           <iframe

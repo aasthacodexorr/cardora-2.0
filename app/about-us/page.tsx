@@ -38,7 +38,7 @@ const About = () => {
     <div className="min-h-screen bg-background flex flex-col justify-between">
       <Header />
 
-      <div className="flex-1 w-full overflow-hidden px-0">
+      <div className="flex-1 w-full overflow-hidden px-0 lg:mt-28">
         {/* Hero Section */}
         <section className="bg-white pb-12 mt-4 px-5">
           <div className="mx-auto lg:max-w-[1280px] md:px-1 flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12">

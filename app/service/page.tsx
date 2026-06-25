@@ -79,7 +79,7 @@ const Service = () => {
       <Header />
 
       {/* Main Content Wrapper: Centers everything uniformly on large screens */}
-      <main className="mx-auto w-full max-w-[1370px] px-5 md:px-12 flex-1">
+      <main className="mx-auto w-full max-w-[1370px] px-5 md:px-12 flex-1 lg:mt-18">
         
         {/* Hero */}
         <section className="pt-16 md:pt-20 pb-10">
