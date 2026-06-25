@@ -25,7 +25,7 @@ export default function CoverageModal() {
       >
         {/* Modal Window with "Top to Center" Slide & Fade transition */}
         <div
-          className={`bg-white rounded-2xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative border border-gray-100 transition-all duration-300 transform ${
+          className={`bg-white rounded-2xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative border border-gray-100 transition-all duration-300 transform ${
             isOpen ? "translate-y-0 scale-100 opacity-100" : "-translate-y-12 scale-95 opacity-0"
           }`}
           onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside
@@ -33,7 +33,7 @@ export default function CoverageModal() {
           {/* Close Button */}
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-5 right-5 text-gray-400 hover:text-black transition-colors p-1 cursor-pointer"
+            className="absolute top-3 right-3 text-gray-400 hover:text-black transition-colors p-1 cursor-pointer"
             aria-label="Close modal"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">

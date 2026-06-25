@@ -52,7 +52,7 @@ export const appConfig = defineAppConfig({
   site: {
     saas_api: "https://cardora.zopsoftware.com/",
     cdn_api: "https://zopsoftware-asset.b-cdn.net",
-    collection: "56d5b06765ad7f3843fd182cf2b4afe0",
+    collection: "07cb7c095c0cf712732a976016079e19",
     feature_inventory_key:
       "Rjl5ckZSUmJVaE5raS9KRi9BUDV2bld6S2h0a3dSOFJYMTcybnBnQ2N3Yz1oZmUweyJmaWx0ZXJfYnkiOiJzdGF0dXM6W0luc3RvY2tdICYmIGZlYXR1cmVfbGlzdGluZzoxICYmIHZpc2liaWxpdHk6PjAgJiYgZGVsZXRlZF9hdDo9MCJ9",
     default_sort: "/sort/status_rank:asc,created_at:desc",
