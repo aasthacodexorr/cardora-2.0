@@ -9,3 +9,4 @@ export { default as CardoraLogo } from "./CardoraLogo";
 export { NavLink } from "./NavLink";
 export { default as GetInTouch } from "./GetInTouch";
 export { default as DreamVehicleCTA } from "./DreamVehicleCTA";
+export { Captcha } from "./Captcha";
