@@ -190,7 +190,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
                 e.stopPropagation();
                 goTo(activeIndex + 1);
               }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl z-10"
+              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl z-0"
             >
               <ChevronRight className="w-9 h-9 text-gray-500/60" strokeWidth={3} />
             </button>
@@ -225,7 +225,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
       </div>
 
       {/* Desktop Thumbnail Strip */}
-      {images.length > 1 && (
+      {images.length > 1 ? (
         <div 
           ref={desktopThumbsRef}
           className="hidden md:flex flex-col overflow-y-auto w-[165px] h-[500px] pr-1 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -250,7 +250,15 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
             </button>
           ))}
         </div>
-      )}
+      ) : <div className="hidden md:block w-[165px]">
+          <Image
+            src={images[0]}
+            alt={`Thumbnail`}
+            width={168}
+            height={136}
+            className="w-42 h-34 object-cover rounded-lg cursor-pointer"
+          />
+        </div>}
     </div>
   );
 };
