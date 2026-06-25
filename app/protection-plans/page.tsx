@@ -67,24 +67,24 @@ const includedFeatures = [
     body: "Help is always a call away. Roadside and towing services are available 365 days a year and start the moment your warranty plan begins.",
   },
   {
-    icon: MapPin,
-    title: "Nationwide protection",
-    body: "Drive with confidence knowing you're protected across Canada and the United States.",
-  },
-  {
-    icon: Car,
-    title: "Rental car coverage",
-    body: "If your vehicle needs a covered repair, we help cover the cost of a rental vehicle—up to $40 per day.",
-  },
-  {
     icon: Wallet,
     title: "No out-of-pocket costs",
     body: "Save $100 on your deductible when your repairs are completed at one of dealership Service Center.",
   },
   {
+    icon: MapPin,
+    title: "Nationwide protection",
+    body: "Drive with confidence knowing you're protected across Canada and the United States.",
+  },
+  {
     icon: KeyRound,
     title: "Lost Key & Lockout Assistance",
     body: "Locked out or misplaced your keys? Your warranty plan helps cover the cost of locksmith services.",
+  },
+  {
+    icon: Car,
+    title: "Rental car coverage",
+    body: "If your vehicle needs a covered repair, we help cover the cost of a rental vehicle—up to $40 per day.",
   },
 ];
 
@@ -161,31 +161,31 @@ const ProtectionPlans = () => {
       </section>
 
       {/* How Cardora keeps you covered (Full-Bleed Background, Centered Content) */}
-<section className="bg-[#eaeff5] py-16 md:py-20 px-0">
-  <div className="mx-auto max-w-[1280px] px-6 md:px-1">
-    <div>
-      <h2 className="text-3xl md:text-[45px] font-semibold tracking-tight text-foreground">
-        How {SITE_CONFIG?.dealership.name} keeps you covered
-      </h2>
-      <p className="mt-4 text-black text-base">
-        Every plan covers major systems and parts on your car, with deductibles starting as low as $50 on any car you choose.
-      </p>
-    </div>
-    
-    {/* Scrollable on mobile/tablet, Grid on Desktop (lg and up) */}
-    <div className="mt-10 flex lg:grid lg:grid-cols-6 gap-2 overflow-x-auto lg:overflow-x-visible scrollbar-none pb-2 lg:pb-0">
-      {coveredSystems.map(({ icon: Icon, label }) => (
-        <div 
-          key={label} 
-          className="w-ful min-w-[160px] sm:min-w-[180px] lg:min-w-0 shrink-0 lg:shrink grow bg-card border border-[#00b066] rounded-xl hover:bg-[#00af66a6] text-[#00b066] hover:text-white cursor-pointer px-4 py-3 flex items-center justify-center gap-3 transition-all"
-        >
-          <Icon className="h-5 w-5 shrink-0" strokeWidth={2} />
-          <p className="mt-1 text-sm whitespace-nowrap lg:whitespace-normal">{label}</p>
+      <section className="bg-[#eaeff5] py-16 md:py-20 px-0">
+        <div className="mx-auto max-w-[1280px] px-6 md:px-1">
+          <div>
+            <h2 className="text-3xl md:text-[45px] font-semibold tracking-tight text-foreground">
+              How {SITE_CONFIG?.dealership.name} keeps you covered
+            </h2>
+            <p className="mt-4 text-black text-base">
+              Every plan covers major systems and parts on your car, with deductibles starting as low as $50 on any car you choose.
+            </p>
+          </div>
+
+          {/* Scrollable on mobile/tablet, Grid on Desktop (lg and up) */}
+          <div className="mt-10 flex lg:grid lg:grid-cols-6 gap-2 overflow-x-auto lg:overflow-x-visible scrollbar-none pb-2 lg:pb-0">
+            {coveredSystems.map(({ icon: Icon, label }) => (
+              <div
+                key={label}
+                className="w-ful min-w-[160px] sm:min-w-[180px] lg:min-w-0 shrink-0 lg:shrink grow bg-card border border-[#00b066] rounded-xl hover:bg-[#00af66a6] text-[#00b066] hover:text-white cursor-pointer px-4 py-3 flex items-center justify-center gap-3 transition-all"
+              >
+                <Icon className="h-5 w-5 shrink-0" strokeWidth={2} />
+                <p className="mt-1 text-sm whitespace-nowrap lg:whitespace-normal">{label}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* What's included (Full-Bleed Background, Centered Content) */}
       <section className="lg:py-1 bg-[#eaeff5] px-0">
@@ -228,9 +228,9 @@ const ProtectionPlans = () => {
 
           {/* Breakdown Section */}
           <div className="mt-12 max-w-4xl mx-auto">
-            <span className="uppercase tracking-wide block mb-1">
+            <p className="uppercase mb-1 font-medum">
               Example
-            </span>
+            </p>
             <p className="text-xl font-normal my-1">If You Owed on Your Vehicle</p>
             <p className="text-3xl md:text-3xl font-black text-emerald-600 mt-1">$15,000</p>
 
@@ -289,7 +289,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/* The Cardora Difference Section */}
-      <div className="w-full mx-auto  md:px-1 lg:-mt-20 -mt-5">
+      <div className="w-full mx-auto lg:mb-5 md:px-1 lg:-mt-20 -mt-5">
         <CardoraDifference />
       </div>
 

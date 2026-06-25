@@ -13,6 +13,8 @@ import { Suspense } from "react";
 
 // Config
 import { SITE_CONFIG } from "@/constants";
+import { Footer, Header } from "@/components/layout";
+import { GetInTouch } from "@/components/common";
 
 /*  Inner component (needs useSearchParams) */
 const FinanceContent = () => {
@@ -20,11 +22,13 @@ const FinanceContent = () => {
   const inventoryId  = searchParams.get("inventory_id") || "";
 
   return (
-    <main className="min-h-screen bg-background flex flex-col">
+    <>
+    <Header/>
+    <main className="bg-background  my-18 mx-5 xl:mx-36 overflow-hidden">
       <section className="flex-1 w-full">
         <div className="mx-auto max-w-[1400px">
           <iframe
-            src={`${SITE_CONFIG.urls.financeBaseUrl}/?inventory_id=${inventoryId}`}
+            src={`${SITE_CONFIG?.urls.financeBaseUrl}?inventory_id=${inventoryId}`}
             className="w-full border-0 rounded-2xl min-h-screen"
             title="Express Checkout - Finance"
             allow="payment"
@@ -32,6 +36,9 @@ const FinanceContent = () => {
         </div>
       </section>
     </main>
+    <GetInTouch/>
+    <Footer/>
+    </>
   );
 };
 

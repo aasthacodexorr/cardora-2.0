@@ -7,6 +7,8 @@ import Image from 'next/image';
 import callIcon from "@/assets/icons/call_icon.svg";
 import envelopIcon from "@/assets/icons/envelop_icon.svg";
 import { SITE_CONFIG } from '@/constants';
+import { appConfig } from '@/lib/appConfig';
+import Link from 'next/link';
 
 export default function ContactUs() {
     // 1. Keep input state so React can track what the user types
@@ -44,13 +46,13 @@ export default function ContactUs() {
             // Allow only numbers and restrict to 10 digits max
             const cleanPhone = targetValue.replace(/\D/g, '');
             if (cleanPhone.length > 10) return; // Block typing beyond 10 digits
-            
+
             if (cleanPhone.length > 0 && cleanPhone.length < 10) {
                 setError("Phone number must be exactly 10 digits.");
             } else {
                 setError(null);
             }
-            
+
             setFormData((prev) => ({ ...prev, [name]: cleanPhone }));
             return;
         }
@@ -78,7 +80,7 @@ export default function ContactUs() {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-        
+
         // Final sanity check before submission
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email.trim())) {
@@ -112,43 +114,51 @@ export default function ContactUs() {
                             Got a question? We’re here to help.
                         </h1>
                         <div className="space-y-7 lg:space-y-4 lg:w-[480px]">
-                            <div className="group relative bg-white p-6 rounded-md border border-gray-200  flex justify-between overflow-hidden cursor-pointer">
+                            {/* Call Card */}
+                            <Link
+                                href={`tel:${appConfig.dealership.sales_number_1}`}
+                                className="group relative bg-white p-6 rounded-md border border-gray-200 flex justify-between overflow-hidden cursor-pointer block"
+                            >
                                 <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                                 <div className="relative z-10">
                                     <h2 className="text-xl font-bold mb-1">Call us</h2>
-                                    <p className="text-gray-600">Call Us Anytime Now</p>
+                                    <p className="text-gray-600">{appConfig.dealership.sales_number_1 || "Call Us Anytime Now"}</p>
                                 </div>
 
                                 <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-[#00af66] flex items-center justify-center">
                                     <Image
                                         src={callIcon}
-                                        alt=""
+                                        alt="Call icon"
                                         width={27}
                                         height={27}
                                         className="object-contain"
                                     />
                                 </div>
-                            </div>
+                            </Link>
 
-                            <div className="group relative bg-white p-6 rounded-md border border-gray-200  flex justify-between overflow-hidden cursor-pointer">
+                            {/* Email Card */}
+                            <Link
+                                href={`mailto:${appConfig.dealership.email_1}`}
+                                className="group relative bg-white p-6 rounded-md border border-gray-200 flex justify-between overflow-hidden cursor-pointer block"
+                            >
                                 <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                                 <div className="relative z-10">
                                     <h2 className="text-xl font-bold mb-1">Email</h2>
-                                    <p className="text-gray-600">Send Us an Email</p>
+                                    <p className="text-gray-600">{appConfig.dealership.email_1 || "Send Us an Email"}</p>
                                 </div>
 
                                 <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-[#00af66] flex items-center justify-center">
                                     <Image
                                         src={envelopIcon}
-                                        alt=""
+                                        alt="Email icon"
                                         width={27}
                                         height={27}
                                         className="object-contain"
                                     />
                                 </div>
-                            </div>
+                            </Link>
                         </div>
                     </div>
 
