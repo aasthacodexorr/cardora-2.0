@@ -171,3 +171,32 @@ export const getInventoryUrlByQuery = (query: string) => {
 
   return `/inventory/?${encoded}%5Bquery%5D=${encodeURIComponent(query)}`;
 };
+
+export const getInventoryUrlByRefinement = (
+  attribute: string,
+  values: string[]
+): string => {
+  const base = `${COLLECTION_ID}/sort/${DEFAULT_SORT}`;
+
+  const params = values
+    .map(
+      (value, index) =>
+        `${encodeURIComponent(base)}%5BrefinementList%5D%5B${attribute}%5D%5B${index}%5D=${encodeURIComponent(value)}`
+    )
+    .join("&");
+
+  return `/inventory/?${params}`;
+};
+
+export const getInventoryUrlByRange = (
+  attribute: string,
+  range: string
+): string => {
+  const encoded = getEncodedCollectionAndSort();
+
+  if (!encoded) return "/inventory";
+
+  return `/inventory/?${encoded}%5Brange%5D%5B${attribute}%5D=${encodeURIComponent(
+    range
+  )}`;
+};
