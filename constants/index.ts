@@ -108,7 +108,7 @@ export const INVENTORY_SLUG = appConfig.site.inventory_slug;
 export const SITE_CONFIG = {
   urls: {
     /** Base URL for the financing application iframe */
-    financeBaseUrl: "https://www.cardora.ca/finance",
+    financeBaseUrl: "https://cardora.zopsoftware.com/api/templates/render/16",
 
     /** API endpoint for the financing form render (postMessage height) */
     financeRenderApiUrl: "https://cardora.zopsoftware.com/api/templates/render/15",
