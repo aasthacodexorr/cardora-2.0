@@ -231,59 +231,121 @@ const PriceRangeFilter = () => {
   const { start, range, refine } = useRange({ attribute: "selling_price" });
   const { hits } = useHits();
 
-  const absoluteMin = range.min ?? 0;
-  const absoluteMax = range.max ?? 100000;
-
+  // ─── 1. Derive dynamic min/max from currently loaded hits ───────────────────
+  // Filter out invalid prices, then compute the live boundaries.
   const currentPrices = hits
     .map((hit: any) => Number(hit.selling_price))
-    .filter((price) => !isNaN(price))
+    .filter((price) => !isNaN(price) && price > 0)
     .sort((a, b) => a - b);
 
-  const [minInput, setMinInput] = useState<string>("");
-  const [maxInput, setMaxInput] = useState<string>("");
+  // Fall back to Typesense's global range if no hits yet (avoids NaN on empty)
+  const dynamicMin = currentPrices.length > 0
+    ? currentPrices[0]
+    : (range.min ?? 0);
+  const dynamicMax = currentPrices.length > 0
+    ? currentPrices[currentPrices.length - 1]
+    : (range.max ?? 100000);
 
+  // ─── 2. Local input state ────────────────────────────────────────────────────
+  const [minInput, setMinInput] = useState<string>(String(dynamicMin));
+  const [maxInput, setMaxInput] = useState<string>(String(dynamicMax));
+
+  // ─── 3. Sync inputs when hits change OR when an active refinement is applied ─
+  // Priority: if the user has an active refinement (start[0]/start[1]), show that.
+  // Otherwise, mirror the dynamic dataset boundaries.
   useEffect(() => {
-    setMinInput(start[0] !== undefined ? String(start[0]) : String(absoluteMin));
-    setMaxInput(start[1] !== undefined ? String(start[1]) : String(absoluteMax));
-  }, [start, absoluteMin, absoluteMax]);
+    const activeMin = start[0] !== undefined ? start[0] : dynamicMin;
+    const activeMax = start[1] !== undefined ? start[1] : dynamicMax;
 
+    // Clamp active refinement to the new dynamic boundaries
+    // so inputs never show values outside the current dataset.
+    setMinInput(String(Math.max(activeMin, dynamicMin)));
+    setMaxInput(String(Math.min(activeMax, dynamicMax)));
+  }, [
+    // Re-run whenever the dataset boundaries shift OR the active refinement changes
+    dynamicMin,
+    dynamicMax,
+    start[0],
+    start[1],
+  ]);
+
+  // ─── 4. Histogram bins built against dynamic boundaries ─────────────────────
   const generateHistogramBins = () => {
     const binCount = 40;
     const bins = Array(binCount).fill(0);
     if (currentPrices.length === 0) return bins;
-    const rangeDiff = absoluteMax - absoluteMin;
-    if (rangeDiff === 0) { bins[0] = currentPrices.length; return bins; }
+
+    const rangeDiff = dynamicMax - dynamicMin;
+    if (rangeDiff === 0) {
+      bins[0] = currentPrices.length;
+      return bins;
+    }
+
     currentPrices.forEach((price) => {
-      let binIndex = Math.floor(((price - absoluteMin) / rangeDiff) * binCount);
+      let binIndex = Math.floor(
+        ((price - dynamicMin) / rangeDiff) * binCount
+      );
       if (binIndex >= binCount) binIndex = binCount - 1;
       if (binIndex < 0) binIndex = 0;
       bins[binIndex]++;
     });
+
     const maxBinValue = Math.max(...bins);
-    return bins.map((count) => (maxBinValue > 0 ? (count / maxBinValue) * 100 : 0));
+    return bins.map((count) =>
+      maxBinValue > 0 ? (count / maxBinValue) * 100 : 0
+    );
   };
 
   const histogramBars = generateHistogramBins();
 
+  // ─── 5. Apply refinement, clamped to dynamic boundaries ─────────────────────
   const handleApply = () => {
-    const minValue = minInput !== "" ? Number(minInput) : undefined;
-    const maxValue = maxInput !== "" ? Number(maxInput) : undefined;
-    refine([minValue, maxValue]);
+    const minValue = minInput !== ""
+      ? Math.max(Number(minInput), dynamicMin)
+      : dynamicMin;
+    const maxValue = maxInput !== ""
+      ? Math.min(Number(maxInput), dynamicMax)
+      : dynamicMax;
+
+    // Only refine if the selection is meaningfully narrowed
+    refine([
+      minValue > dynamicMin ? minValue : undefined,
+      maxValue < dynamicMax ? maxValue : undefined,
+    ]);
   };
 
   const handleInputChange = (type: "min" | "max", value: string) => {
     if (type === "min") setMinInput(value);
-    if (type === "max") setMaxInput(value);
+    else setMaxInput(value);
   };
 
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>, target: "min" | "max") => {
-    const val = e.target.value;
+  // ─── 6. Slider change: update input + immediately refine ────────────────────
+  const handleSliderChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    target: "min" | "max"
+  ) => {
+    const val = Number(e.target.value);
+
     if (target === "min") {
-      setMinInput(val);
-      refine([Number(val), maxInput ? Number(maxInput) : undefined]);
+      // Prevent min thumb from crossing max thumb
+      const clampedVal = Math.min(val, Number(maxInput || dynamicMax));
+      setMinInput(String(clampedVal));
+      refine([
+        clampedVal > dynamicMin ? clampedVal : undefined,
+        Number(maxInput || dynamicMax) < dynamicMax
+          ? Number(maxInput)
+          : undefined,
+      ]);
     } else {
-      setMaxInput(val);
-      refine([minInput ? Number(minInput) : undefined, Number(val)]);
+      // Prevent max thumb from crossing min thumb
+      const clampedVal = Math.max(val, Number(minInput || dynamicMin));
+      setMaxInput(String(clampedVal));
+      refine([
+        Number(minInput || dynamicMin) > dynamicMin
+          ? Number(minInput)
+          : undefined,
+        clampedVal < dynamicMax ? clampedVal : undefined,
+      ]);
     }
   };
 
@@ -291,50 +353,94 @@ const PriceRangeFilter = () => {
     if (e.key === "Enter") handleApply();
   };
 
-  const minPercent = absoluteMax !== absoluteMin
-    ? ((Number(minInput || absoluteMin) - absoluteMin) / (absoluteMax - absoluteMin)) * 100 : 0;
-  const maxPercent = absoluteMax !== absoluteMin
-    ? ((Number(maxInput || absoluteMax) - absoluteMin) / (absoluteMax - absoluteMin)) * 100 : 100;
+  // ─── 7. Track percentages against dynamic boundaries for the slider fill ────
+  const minPercent =
+    dynamicMax !== dynamicMin
+      ? ((Number(minInput || dynamicMin) - dynamicMin) /
+          (dynamicMax - dynamicMin)) *
+        100
+      : 0;
+  const maxPercent =
+    dynamicMax !== dynamicMin
+      ? ((Number(maxInput || dynamicMax) - dynamicMin) /
+          (dynamicMax - dynamicMin)) *
+        100
+      : 100;
 
+  // ─── Render (no styling changes) ────────────────────────────────────────────
   return (
     <div className="pt-2 pb-4 select-none">
-      <div className="mb-2 text-[13px] font-bold text-gray-700 uppercase tracking-wide">Price Range</div>
+      <div className="mb-2 text-[13px] font-bold text-gray-700 uppercase tracking-wide">
+        Price Range
+      </div>
+
+      {/* Input Boxes */}
       <div className="flex items-center gap-2 mb-4">
-        <input type="number" value={minInput} placeholder={String(absoluteMin)}
+        <input
+          type="number"
+          value={minInput}
+          placeholder={String(dynamicMin)}
+          min={dynamicMin}   // ← constrained to dataset floor
+          max={dynamicMax}
           onChange={(e) => handleInputChange("min", e.target.value)}
-          onBlur={handleApply} onKeyDown={handleKeyDown}
-          className="w-full h-[40px] px-3 border border-[#cfcfcf] rounded-[6px] text-[14px] font-medium outline-none text-center" />
+          onBlur={handleApply}
+          onKeyDown={handleKeyDown}
+          className="w-full h-[40px] px-3 border border-[#cfcfcf] rounded-[6px] text-[14px] font-medium outline-none text-center"
+        />
         <span className="text-gray-400 font-medium">—</span>
-        <input type="number" value={maxInput} placeholder={String(absoluteMax)}
+        <input
+          type="number"
+          value={maxInput}
+          placeholder={String(dynamicMax)}
+          min={dynamicMin}
+          max={dynamicMax}   // ← constrained to dataset ceiling
           onChange={(e) => handleInputChange("max", e.target.value)}
-          onBlur={handleApply} onKeyDown={handleKeyDown}
-          className="w-full h-[40px] px-3 border border-[#cfcfcf] rounded-[6px] text-[14px] font-medium outline-none text-center" />
+          onBlur={handleApply}
+          onKeyDown={handleKeyDown}
+          className="w-full h-[40px] px-3 border border-[#cfcfcf] rounded-[6px] text-[14px] font-medium outline-none text-center"
+        />
       </div>
-      <div className="flex items-end h-[35px] gap-[1px] px-2 w-full select-none pointer-events-none mb-[-10px]">
-        {histogramBars.map((heightPercent, idx) => {
-          const stepValue = absoluteMin + ((absoluteMax - absoluteMin) / 40) * idx;
-          const isSelected = stepValue >= Number(minInput || absoluteMin) && stepValue <= Number(maxInput || absoluteMax);
-          return (
-            <div key={idx} className="flex-1 transition-all duration-300"
-              style={{ height: `${Math.max(heightPercent, 8)}%`, backgroundColor: isSelected ? "#333333" : "#404142ff" }} />
-          );
-        })}
-      </div>
+
+     
+
+      {/* Dual Range Slider */}
       <div className="relative w-full h-7 flex items-center mt-2">
         <div className="absolute left-0 right-0 h-[3px] bg-gray-200 rounded-full" />
-        <div className="absolute h-[3px] bg-black rounded-full"
-          style={{ left: `${Math.max(0, Math.min(minPercent, 100))}%`, right: `${100 - Math.max(0, Math.min(maxPercent, 100))}%` }} />
-        <input type="range" min={absoluteMin} max={absoluteMax} value={minInput || absoluteMin}
+        <div
+          className="absolute h-[3px] bg-black rounded-full"
+          style={{
+            left: `${Math.max(0, Math.min(minPercent, 100))}%`,
+            right: `${100 - Math.max(0, Math.min(maxPercent, 100))}%`,
+          }}
+        />
+
+        {/* Min thumb — bounded to [dynamicMin, dynamicMax] */}
+        <input
+          type="range"
+          min={dynamicMin}
+          max={dynamicMax}
+          value={Number(minInput) || dynamicMin}
           onChange={(e) => handleSliderChange(e, "min")}
-          className="absolute pointer-events-none appearance-none w-full h-1 bg-transparent active:z-30 focus:outline-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[18px] [&::-webkit-slider-thumb]:h-[18px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-[18px] [&::-moz-range-thumb]:h-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer" />
-        <input type="range" min={absoluteMin} max={absoluteMax} value={maxInput || absoluteMax}
+          className="absolute pointer-events-none appearance-none w-full h-1 bg-transparent active:z-30 focus:outline-none
+            [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[18px] [&::-webkit-slider-thumb]:h-[18px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer
+            [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-[18px] [&::-moz-range-thumb]:h-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer"
+        />
+
+        {/* Max thumb — bounded to [dynamicMin, dynamicMax] */}
+        <input
+          type="range"
+          min={dynamicMin}
+          max={dynamicMax}
+          value={Number(maxInput) || dynamicMax}
           onChange={(e) => handleSliderChange(e, "max")}
-          className="absolute pointer-events-none appearance-none w-full h-1 bg-transparent active:z-30 focus:outline-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[18px] [&::-webkit-slider-thumb]:h-[18px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-[18px] [&::-moz-range-thumb]:h-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer" />
+          className="absolute pointer-events-none appearance-none w-full h-1 bg-transparent active:z-30 focus:outline-none
+            [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[18px] [&::-webkit-slider-thumb]:h-[18px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer
+            [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-[18px] [&::-moz-range-thumb]:h-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer"
+        />
       </div>
     </div>
   );
 };
-
 const OdometerRangeFilter = () => {
   const { start, refine } = useRange({ attribute: "odometer" });
   const [error, setError] = useState("");
