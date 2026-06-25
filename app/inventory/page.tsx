@@ -373,10 +373,6 @@ const PriceRangeFilter = () => {
       : 100;
   return (
     <div className="pt-2 pb-4 select-none">
-      <div className="mb-2 text-[13px] font-bold text-gray-700 uppercase tracking-wide">
-        Price Range
-      </div>
-
       {/* Input Boxes */}
       <div className="flex items-center gap-2 mb-4">
         <input
