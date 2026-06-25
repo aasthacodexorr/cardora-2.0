@@ -12,7 +12,7 @@ import Link from "next/link";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
 import zlogo from "@/assets/brand/zlogo.png";
-import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getBodyTypeUrl } from "@/lib/inventoryUrls";
+import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getBodyTypeUrl, getInventoryUrlByRefinement } from "@/lib/inventoryUrls";
 import { appConfig } from "@/lib/appConfig";
 import { usePathname } from "next/navigation";
 
@@ -31,7 +31,7 @@ const columns = [
     title: "Popular Car Types",
     links: POPULAR_CAR_TYPES.map(({ label, bodyType }) => ({
       label,
-      href: getBodyTypeUrl(bodyType),
+      href: getInventoryUrlByRefinement("body_type", [bodyType]),
       external: false,
     })),
   },
