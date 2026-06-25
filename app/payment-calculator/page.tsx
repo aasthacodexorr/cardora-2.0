@@ -71,7 +71,7 @@ export default function PaymentCalculator() {
     return (
         <>
             <Header />
-            <div className=" mx-auto px-16 py-8 bg-[#f4f4f4] shadow-sm font-sans text-gray-700">
+            <div className=" mx-auto px-5 lg:px-16 py-8 bg-[#f4f4f4] shadow-sm font-sans text-gray-700">
                 <h1 className="text-3xl md:text-5xl font-bold mb-8 text-black">Payment Calculator</h1>
 
                 <div className=' bg-white'>
@@ -228,7 +228,7 @@ export default function PaymentCalculator() {
                                             if (score === 'Fair') setApr(9.99);
                                             if (score === 'Poor') setApr(14.99);
                                         }}
-                                        className={`px-6 py-2 border border-slate-300 rounded-xl text-sm font-medium transition-colors  cursor-pointer ${creditScore === score
+                                        className={`px-4 lg:px-6 py-2 border border-slate-300 rounded-xl text-sm font-medium transition-colors  cursor-pointer ${creditScore === score
                                                 ? 'bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:bg-[#0f9f6e] text-white'
                                                 : 'bg-white text-gray-700 hover:bg-gray-50'
                                             }`}
@@ -269,9 +269,9 @@ export default function PaymentCalculator() {
                     </div>
 
                     {/* Right Output Sidebar Box */}
-                    <div className="bg-white px-6 py-9 flex flex-col justify-between h-fit text-center">
+                    <div className="bg-white px-2 lg:px-6 lg:py-9 flex flex-col justify-between h-fit text-center">
                         <div>
-                            <p className="text-sm tracking-wider mb-4">
+                            <p className="text-xl lg:text-sm tracking-wider mb-4">
                                 Based on your input, your estimated payment:
                             </p>
                             <h4 className="text-md font-semibold text-gray-600 my-8">Bi-Weekly Payment</h4>
@@ -312,7 +312,7 @@ export default function PaymentCalculator() {
                 </div>
 
                 {/* Disclosures Section */}
-                <div className="px-6 pt-6 pb-14">
+                <div className="px-6 lg:pt-6 pb-14">
                     <p className="font-semibold mb-1 text-gray-700 text-base">Finance disclosures</p>
                     <p className='text-sm leading-relaxed'>
                         The payment estimator is not an advertisement or offer for specific terms of credit and actual terms may vary. Payment amounts presented are for illustrative purposes only and may not be available. Actual vehicle price may vary by Dealer. The Estimated Monthly Payment amount calculated is based on the variables entered, the price of the vehicle you entered, the term you select, the down payment you enter, the Annual Percentage Rate (APR) you select, and any net trade-in amount. The payment estimate displayed does not include taxes, title, license and/or registration fees. Payment amount is for illustrative purposes only. Actual prices may vary by Dealer. Payment amounts may be different due to various factors such as fees, specials, rebates, term, down payment, APR, net trade-in, and applicable tax rate. Actual APR is based on available finance programs and the creditworthiness of the customer. Not all customers will qualify for credit or for the lowest rate. Please contact an authorized dealer for actual rates, program details and actual terms.
