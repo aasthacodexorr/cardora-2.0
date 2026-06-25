@@ -230,46 +230,40 @@ const GroupedCurrentRefinements = () => {
 const PriceRangeFilter = () => {
   const { start, range, refine } = useRange({ attribute: "selling_price" });
   const { hits } = useHits();
-
-  // ─── 1. Derive dynamic min/max from currently loaded hits ───────────────────
-  // Filter out invalid prices, then compute the live boundaries.
+ 
   const currentPrices = hits
     .map((hit: any) => Number(hit.selling_price))
     .filter((price) => !isNaN(price) && price > 0)
     .sort((a, b) => a - b);
 
-  // Fall back to Typesense's global range if no hits yet (avoids NaN on empty)
-  const dynamicMin = currentPrices.length > 0
-    ? currentPrices[0]
-    : (range.min ?? 0);
-  const dynamicMax = currentPrices.length > 0
-    ? currentPrices[currentPrices.length - 1]
-    : (range.max ?? 100000);
+  const dynamicMin = range.min ?? 0;
+  const dynamicMax = range.max ?? 100000;
 
-  // ─── 2. Local input state ────────────────────────────────────────────────────
-  const [minInput, setMinInput] = useState<string>(String(dynamicMin));
-  const [maxInput, setMaxInput] = useState<string>(String(dynamicMax));
-
-  // ─── 3. Sync inputs when hits change OR when an active refinement is applied ─
-  // Priority: if the user has an active refinement (start[0]/start[1]), show that.
-  // Otherwise, mirror the dynamic dataset boundaries.
+  const [minInput, setMinInput] = useState("");
+  const [maxInput, setMaxInput] = useState("");
+  const [selectedMin, setSelectedMin] = useState(dynamicMin);
+  const [selectedMax, setSelectedMax] = useState(dynamicMax);
+ 
   useEffect(() => {
-    const activeMin = start[0] !== undefined ? start[0] : dynamicMin;
-    const activeMax = start[1] !== undefined ? start[1] : dynamicMax;
+    const min =
+      typeof start?.[0] === "number" &&
+        Number.isFinite(start[0])
+        ? start[0]
+        : dynamicMin;
 
-    // Clamp active refinement to the new dynamic boundaries
-    // so inputs never show values outside the current dataset.
-    setMinInput(String(Math.max(activeMin, dynamicMin)));
-    setMaxInput(String(Math.min(activeMax, dynamicMax)));
-  }, [
-    // Re-run whenever the dataset boundaries shift OR the active refinement changes
-    dynamicMin,
-    dynamicMax,
-    start[0],
-    start[1],
-  ]);
+    const max =
+      typeof start?.[1] === "number" &&
+        Number.isFinite(start[1])
+        ? start[1]
+        : dynamicMax;
 
-  // ─── 4. Histogram bins built against dynamic boundaries ─────────────────────
+    setSelectedMin(min);
+    setSelectedMax(max);
+
+    setMinInput(String(min));
+    setMaxInput(String(max));
+  }, [dynamicMin, dynamicMax, start]);
+
   const generateHistogramBins = () => {
     const binCount = 40;
     const bins = Array(binCount).fill(0);
@@ -296,9 +290,7 @@ const PriceRangeFilter = () => {
     );
   };
 
-  const histogramBars = generateHistogramBins();
 
-  // ─── 5. Apply refinement, clamped to dynamic boundaries ─────────────────────
   const handleApply = () => {
     const minValue = minInput !== ""
       ? Math.max(Number(minInput), dynamicMin)
@@ -307,7 +299,6 @@ const PriceRangeFilter = () => {
       ? Math.min(Number(maxInput), dynamicMax)
       : dynamicMax;
 
-    // Only refine if the selection is meaningfully narrowed
     refine([
       minValue > dynamicMin ? minValue : undefined,
       maxValue < dynamicMax ? maxValue : undefined,
@@ -319,7 +310,6 @@ const PriceRangeFilter = () => {
     else setMaxInput(value);
   };
 
-  // ─── 6. Slider change: update input + immediately refine ────────────────────
   const handleSliderChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     target: "min" | "max"
@@ -327,24 +317,30 @@ const PriceRangeFilter = () => {
     const val = Number(e.target.value);
 
     if (target === "min") {
-      // Prevent min thumb from crossing max thumb
-      const clampedVal = Math.min(val, Number(maxInput || dynamicMax));
-      setMinInput(String(clampedVal));
+      const value = Math.max(
+        dynamicMin,
+        Math.min(val, selectedMax)
+      );
+
+      setSelectedMin(value);
+      setMinInput(String(value));
+
       refine([
-        clampedVal > dynamicMin ? clampedVal : undefined,
-        Number(maxInput || dynamicMax) < dynamicMax
-          ? Number(maxInput)
-          : undefined,
+        value > dynamicMin ? value : undefined,
+        selectedMax < dynamicMax ? selectedMax : undefined,
       ]);
-    } else {
-      // Prevent max thumb from crossing min thumb
-      const clampedVal = Math.max(val, Number(minInput || dynamicMin));
-      setMaxInput(String(clampedVal));
+    } if (target === "max") {
+      const value = Math.min(
+        dynamicMax,
+        Math.max(val, selectedMin)
+      );
+
+      setSelectedMax(value);
+      setMaxInput(String(value));
+
       refine([
-        Number(minInput || dynamicMin) > dynamicMin
-          ? Number(minInput)
-          : undefined,
-        clampedVal < dynamicMax ? clampedVal : undefined,
+        selectedMin > dynamicMin ? selectedMin : undefined,
+        value < dynamicMax ? value : undefined,
       ]);
     }
   };
@@ -353,21 +349,28 @@ const PriceRangeFilter = () => {
     if (e.key === "Enter") handleApply();
   };
 
-  // ─── 7. Track percentages against dynamic boundaries for the slider fill ────
-  const minPercent =
-    dynamicMax !== dynamicMin
-      ? ((Number(minInput || dynamicMin) - dynamicMin) /
-          (dynamicMax - dynamicMin)) *
-        100
-      : 0;
-  const maxPercent =
-    dynamicMax !== dynamicMin
-      ? ((Number(maxInput || dynamicMax) - dynamicMin) /
-          (dynamicMax - dynamicMin)) *
-        100
-      : 100;
 
-  // ─── Render (no styling changes) ────────────────────────────────────────────
+  const safeSelectedMin = Number.isFinite(selectedMin)
+    ? selectedMin
+    : dynamicMin;
+
+  const safeSelectedMax = Number.isFinite(selectedMax)
+    ? selectedMax
+    : dynamicMax;
+
+  const minPercent =
+    dynamicMax > dynamicMin
+      ? ((safeSelectedMin - dynamicMin) /
+        (dynamicMax - dynamicMin)) *
+      100
+      : 0;
+
+  const maxPercent =
+    dynamicMax > dynamicMin
+      ? ((safeSelectedMax - dynamicMin) /
+        (dynamicMax - dynamicMin)) *
+      100
+      : 100;
   return (
     <div className="pt-2 pb-4 select-none">
       <div className="mb-2 text-[13px] font-bold text-gray-700 uppercase tracking-wide">
@@ -380,12 +383,12 @@ const PriceRangeFilter = () => {
           type="number"
           value={minInput}
           placeholder={String(dynamicMin)}
-          min={dynamicMin}   // ← constrained to dataset floor
+          min={dynamicMin}   
           max={dynamicMax}
           onChange={(e) => handleInputChange("min", e.target.value)}
           onBlur={handleApply}
           onKeyDown={handleKeyDown}
-          className="w-full h-[40px] px-3 border border-[#cfcfcf] rounded-[6px] text-[14px] font-medium outline-none text-center"
+          className="w-full h-[40px] px-3 border border-[#cfcfcf] rounded-[6px] text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         <span className="text-gray-400 font-medium">—</span>
         <input
@@ -393,17 +396,14 @@ const PriceRangeFilter = () => {
           value={maxInput}
           placeholder={String(dynamicMax)}
           min={dynamicMin}
-          max={dynamicMax}   // ← constrained to dataset ceiling
+          max={dynamicMax}   
           onChange={(e) => handleInputChange("max", e.target.value)}
           onBlur={handleApply}
           onKeyDown={handleKeyDown}
-          className="w-full h-[40px] px-3 border border-[#cfcfcf] rounded-[6px] text-[14px] font-medium outline-none text-center"
+          className="w-full h-[40px] px-3 border border-[#cfcfcf] rounded-[6px] text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </div>
 
-     
-
-      {/* Dual Range Slider */}
       <div className="relative w-full h-7 flex items-center mt-2">
         <div className="absolute left-0 right-0 h-[3px] bg-gray-200 rounded-full" />
         <div
@@ -414,24 +414,22 @@ const PriceRangeFilter = () => {
           }}
         />
 
-        {/* Min thumb — bounded to [dynamicMin, dynamicMax] */}
         <input
           type="range"
           min={dynamicMin}
           max={dynamicMax}
-          value={Number(minInput) || dynamicMin}
+          value={selectedMin}
           onChange={(e) => handleSliderChange(e, "min")}
           className="absolute pointer-events-none appearance-none w-full h-1 bg-transparent active:z-30 focus:outline-none
             [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[18px] [&::-webkit-slider-thumb]:h-[18px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer
             [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-[18px] [&::-moz-range-thumb]:h-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer"
         />
 
-        {/* Max thumb — bounded to [dynamicMin, dynamicMax] */}
         <input
           type="range"
           min={dynamicMin}
           max={dynamicMax}
-          value={Number(maxInput) || dynamicMax}
+          value={selectedMax}
           onChange={(e) => handleSliderChange(e, "max")}
           className="absolute pointer-events-none appearance-none w-full h-1 bg-transparent active:z-30 focus:outline-none
             [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[18px] [&::-webkit-slider-thumb]:h-[18px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer
@@ -441,6 +439,7 @@ const PriceRangeFilter = () => {
     </div>
   );
 };
+
 const OdometerRangeFilter = () => {
   const { start, refine } = useRange({ attribute: "odometer" });
   const [error, setError] = useState("");
