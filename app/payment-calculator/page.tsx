@@ -71,7 +71,7 @@ export default function PaymentCalculator() {
     return (
         <>
             <Header />
-            <div className=" mx-auto px-5 lg:px-16 py-8 bg-[#f4f4f4] shadow-sm font-sans text-gray-700">
+            <div className="lg:mt-28 mx-auto px-5 lg:px-16 py-8 bg-[#f4f4f4] shadow-sm font-sans text-gray-700">
                 <h1 className="text-3xl md:text-5xl font-bold mb-8 text-black">Payment Calculator</h1>
 
                 <div className=' bg-white'>
