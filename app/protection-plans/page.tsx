@@ -101,7 +101,7 @@ const ProtectionPlans = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-9 pb-0 md:pt-24 overflow-hidden bg-white px-0">
+      <section className="relative w-full pt-9 pb-0 md:pt-24 overflow-hidden bg-white px-0 lg:mt-28">
         <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col lg:flex-row lg:items-center justify-between min-h-[450px]">
 
           {/* Left Column: Title and Pills */}

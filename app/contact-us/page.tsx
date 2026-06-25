@@ -133,7 +133,7 @@ export default function ContactUs() {
     return (
         <>
             <Header />
-            <div className="min-h-screen flex items-center justify-center px-3 py-10  lg:px-24 font-sans text-gray-900">
+            <div className="min-h-screen flex items-center justify-center px-3 py-10  lg:px-24 font-sans text-gray-900 lg:mt-28">
                 <div className="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-12 gap-8">
 
                     {/* Left Side */}
