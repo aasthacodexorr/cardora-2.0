@@ -258,8 +258,8 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left">
-      <div className="bg-white rounded-2xl w-full z-[9999] max-w-[540px] relative shadow-2xl p-6 flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left mt-28">
+      <div className="bg-white rounded-2xl w-full z-[9999] max-w-[540px] relative shadow-2xl p-6 lg:p-4 flex flex-col max-h-[80vh]">
 
         <button 
           onClick={onClose} 
@@ -285,9 +285,9 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
           </div>
         ) : (
           <>
-            <h2 className="text-[24px] font-bold text-gray-900 mb-6 mt-2">Got a question</h2>
+            <h2 className="text-[24px] font-bold text-gray-900 mb-5 ">Got a question</h2>
 
-            <form onSubmit={handleSubmit} className="overflow-y-auto pr-1 space-y-4 flex-1">
+            <form onSubmit={handleSubmit} className="overflow-y-auto pr-1 space-y-3 flex-1">
               {error && (
                 <div className="bg-rose-50 text-rose-600 p-3 rounded-xl text-sm font-medium">
                   {error}

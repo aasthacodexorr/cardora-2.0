@@ -105,11 +105,11 @@ const TradeIn = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Header />
 
       {/* Hero / Quote form */}
-      <section className="w-full relative px-4 lg:px-24">
+      <section className="w-full relative px-4 lg:px-24 lg:mt-24">
         <div className="mx-auto max-w-[1300px] px-2 md:px-9 pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
 
           {/* Left: Heading Typography Only */}
