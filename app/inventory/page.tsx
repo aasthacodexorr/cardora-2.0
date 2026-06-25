@@ -681,7 +681,7 @@ const InventoryContent = () => {
               </div>
 
               {/* Results grid */}
-              <div className="mb-4 mt-3">
+              <div className="mb-4 mt-3 min-h-[800px]">
                 <NoResultsHandler>
                   <CustomInfiniteHits hitComponent={HitCard} />
                 </NoResultsHandler>
