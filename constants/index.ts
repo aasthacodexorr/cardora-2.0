@@ -104,6 +104,7 @@ export const TYPESENSE_PORT = appConfig.site.typesense_port;
 export const TYPESENSE_PROTOCOL = appConfig.site.typesense_protocol;
 export const INVENTORY_SLUG = appConfig.site.inventory_slug;
 
+
 // ─── Site Config (Consolidated from lib/config.ts) ─────────────────────────────
 export const SITE_CONFIG = {
   urls: {
@@ -172,4 +173,6 @@ export const SITE_CONFIG = {
     /** Default placeholder image for missing car images */
     placeholderImage: appConfig.dealership.default_placeholder_image,
   },
+
+  recaptchaSiteKey: "6Lf4uTMtAAAAABXoMsZBjTFgt43oeVgc5BjzlNTW"
 } as const;
