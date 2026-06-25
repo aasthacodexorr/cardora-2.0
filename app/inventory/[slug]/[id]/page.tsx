@@ -180,7 +180,7 @@ export default async function VehicleDetailsPage({
           </div>
 
           {/* Finance Calculator - Now spans full responsive width within the centralized container bounds */}
-          <div className="mt-12 w-full md:px-8 lg:px-10">
+          <div className="mt-12 w-full">
             <FinanceCalculator vehiclePrice={vehicle.selling_price} inventoryId={resolvedParams.id} />
           </div>
 
@@ -188,7 +188,7 @@ export default async function VehicleDetailsPage({
       </section>
 
       {/* Disclaimers & Info banner footer base */}
-      <div className="w-full text-left text-xs md:text-[12px] px-2 md:px-10 bg-[#666]/10 pt-10 pb-16 italic text-black mt-12">
+      <div className="w-full text-left text-xs md:text-[12px] px-2 md:px-10 bg-[#666]/10 pt-10 pb-16 italic text-black">
         <div className="max-w-[1440px] xl:max-w-[1600px] mx-auto">
           Every reasonable effort is made to ensure the accuracy of the information listed above. Vehicle pricing, incentives, options (including standard equipment), and technical specifications listed for the {vehicle.year} {vehicle.make} {vehicle.model} {vehicle.trim} may not match the exact vehicle displayed. {appConfig.site.inventory_pricing_verbage} Please confirm with a sales representative the accuracy of this information.
         </div>
