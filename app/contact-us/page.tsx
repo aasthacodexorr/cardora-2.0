@@ -1,6 +1,6 @@
 "use client"
 
-import { GetInTouch } from '@/components/common';
+import { GetInTouch, Captcha } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
 import { useState } from 'react';
 import Image from 'next/image';
@@ -25,6 +25,10 @@ export default function ContactUs() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // 3. reCAPTCHA states
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const [resetCaptcha, setResetCaptcha] = useState(false);
 
     const handleChange = (e: any) => {
         const { name, value, type, checked } = e.target;
@@ -81,6 +85,12 @@ export default function ContactUs() {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
 
+        // Check if reCAPTCHA is completed
+        if (!captchaToken) {
+            setError("Please complete the reCAPTCHA verification.");
+            return;
+        }
+
         // Final sanity check before submission
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email.trim())) {
@@ -100,6 +110,24 @@ export default function ContactUs() {
 
         setLoading(true);
         setError(null);
+
+        // TODO: Add backend API call here to verify captchaToken server-side
+        // For now, simulate successful submission
+        setTimeout(() => {
+            setSuccess(true);
+            setLoading(false);
+            // Reset form
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                phoneNumber: '',
+                message: '',
+                agreeToTerms: false,
+            });
+            setCaptchaToken(null);
+            setResetCaptcha(!resetCaptcha); // Trigger reCAPTCHA reset
+        }, 1000);
     };
 
     return (
@@ -260,11 +288,17 @@ export default function ContactUs() {
                                     </label>
                                 </div>
 
+                                {/* reCAPTCHA Component */}
+                                <Captcha 
+                                    onVerify={setCaptchaToken}
+                                    resetTrigger={resetCaptcha}
+                                />
+
                                 <div className="pt-2">
                                     <button
                                         type="submit"
-                                        disabled={loading}
-                                        className="w-full lg:w-fit border-[#00b066] bg-gradient-to-b from-[#00af66] cursor-pointer hover:opacity-90 to-[#00af66]/65 text-white font-medium px-8 py-3 rounded-xl transition-colors duration-200 shadow-md"
+                                        disabled={loading || !captchaToken}
+                                        className="w-full lg:w-fit border-[#00b066] bg-gradient-to-b from-[#00af66] cursor-pointer hover:opacity-90 to-[#00af66]/65 text-white font-medium px-8 py-3 rounded-xl transition-colors duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         Submit
                                     </button>

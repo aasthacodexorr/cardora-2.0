@@ -35,7 +35,7 @@ export default function FaqAccordion({ faqs }: { faqs: FAQItem[] }) {
                 isOpen ? 'max-h-96' : 'max-h-0'
               }`}
             >
-              <div className="px-6 py-4 text-slate-600 border-t border-slate-200 bg-slate-50 leading-relaxed">
+              <div className="px-6 pb-4 leading-relaxed">
                 {faq.a}
               </div>
             </div>

@@ -179,7 +179,7 @@ const Service = () => {
             {Object.values(servicesData).map(({ id, cardText, section2Img }) => (
               <Link
                 key={id}
-                href={`/service/${id}`}
+                href={id === "battery" ? "/book-an-appointment" : `/service/${id}`}
                 className="relative w-full sm:w-[48%] md:w-[31%] lg:w-[19%] bg-white border-2 border-gray-200 p-[0.2] rounded-2xl overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer"
               >
                 <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />

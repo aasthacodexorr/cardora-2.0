@@ -31,7 +31,7 @@ export default async function ServicePage({ params }: PageProps) {
       
       {/* SECTION 1: Hero with Title + Coupon Side by Side */}
       <section className="w-full bg-gradient-to-b from-white  to-[#f4f9fc] py-12 md:py-20 flex items-center">
-        <div className="mx-auto px-4 md:px-24 w-full">
+        <div className=" md:px-36 px-8 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
 
             {/* Left: Title and Checklist */}
@@ -49,7 +49,7 @@ export default async function ServicePage({ params }: PageProps) {
                 ]).map((item, index) => (
                   <li key={index} className="flex items-center justify-between py-3.5 text-[18px] font-medium tracking-wide">
                     <span>{item}</span>
-                    <svg className="w-4 h-4 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </li>
@@ -59,10 +59,10 @@ export default async function ServicePage({ params }: PageProps) {
 
             {/* Right: Coupon Card */}
             <div className="lg:col-span-6 flex justify-center lg:justify-end">
-              <div className="w-full max-w-[4540px] bg-white border border-dashed border-[#10b981] p-6 shadow-[0_0_30px_rgba(244, 249, 252, 0.5)] rounded-xl">
+              <div className="w-full max-w-[4540px] bg-white border border-dashed border-[#10b981] p-6 shadow-[0_0_30px_rgba(244,249,252,1.3)] rounded-xl">
 
                 {/* Top Label */}
-                <div className="flex items-center gap-1 text-[21px] tracking-wide mb-2 uppercase">
+                <div className="flex items-center gap-1 text-[17px] tracking-wide mb-4 uppercase">
                   <svg className="w-5.5 h-5.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 11-4.243-4.243 3 3 0 014.243 4.243z" />
                   </svg>
@@ -70,7 +70,7 @@ export default async function ServicePage({ params }: PageProps) {
                 </div>
 
                 {/* Coupon Header */}
-                <h3 className="text-2xl font-bold text-black mb-4">
+                <h3 className="lg:text-4xl font-bold text-black mb-4">
                   {currentData.couponTitle || "Oil Change Coupon"}
                 </h3>
 
@@ -92,8 +92,8 @@ export default async function ServicePage({ params }: PageProps) {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <p className="text-[11px] font-bold text-slate-700 uppercase tracking-wider leading-none">
-                    OFFER EXPIRES 6/30/2026
+                  <p className="text-[13px] text-slate-700 uppercase leading-none">
+                    OFFER EXPIRES <span className='font-bold  tracking-wider'>6/30/2026</span>
                   </p>
                 </div>
 
@@ -114,24 +114,24 @@ export default async function ServicePage({ params }: PageProps) {
         </div>
       </section>
       {/* SECTION 2: Alert Message Intro Container */}
-      <section className="w-full bg-[#e6f4ff] py-10 md:py-5 ">
-        <div className=" px-36 py-10 text-center text-base md:text-[20px] text-slate-900 tracking-wider">
+      <section className="w-full bg-[#e6f4ff] py-1 md:py-5 ">
+        <div className="px-5 xl:px-56 py-0 xl:py-8 text-center text-base md:text-[20px] text-slate-900 tracking-wider">
           {currentData.introText}
         </div>
       </section>
 
       {/* SECTION 3: Why Regular Changes Matter */}
-      <section className="w-full bg-white py-12 md:py-20">
-        <div className="mx-auto px-4 md:px-14">
-          <div className="flex flex-col md:flex-row gap-28 items-start">
+      <section className="w-full bg-white py-12 md:py-16">
+        <div className="mx-auto px-4 md:px-32">
+          <div className="flex flex-col md:flex-row md:gap-28 gap-8 items-start">
 
             {/* Left Column Content */}
-            <div className=" w-full max-w-[50%] space-y-5">
+            <div className=" w-full xl:max-w-[50%] space-y-5">
               <h2 className="text-3xl md:text-[44px] font-bold text-black tracking-tight leading-[1.15]">
                 {currentData.section2Title || "Why Regular Oil Changes Matter"}
               </h2>
 
-              <p className="text-[24px] font-medium tracking-wide">
+              <p className="text-[20px] lg::text-[24px] font-medium tracking-wide">
                 {currentData.section2Body}
               </p>
 
@@ -162,13 +162,14 @@ export default async function ServicePage({ params }: PageProps) {
             </div>
 
             {/* Right Column Image */}
-            <div className="">
+            <div className="w-full">
               <div className="w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[11/15] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-slate-100 bg-slate-50 relative">
                 <Image
-                  src={currentData.section2Img || "image_862620.jpg"}
+                  src={currentData.premiumImg}
                   alt="Pouring fresh engine oil from container"
                   className="w-full h-full object-cover"
-                  fill
+                  width={400}
+                  height={800}
                 />
               </div>
             </div>
@@ -179,11 +180,11 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 4: Dual Box Highlights Grid */}
       <section className="w-full bg-[#e6f4ff] py-16">
-        <div className="mx-auto px-4 md:px-18">
+        <div className="mx-auto px-4 md:px-28">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
 
             {/* Box 1: Signs You Need Service */}
-            <div className="bg-white rounded-[20px] p-8 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col justify-between space-y-6">
+            <div className="bg-white rounded-[20px] p-7 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col justify-between space-y-6">
               <div className="space-y-5">
                 {/* Header Content Row */}
                 <div className="flex items-center gap-4">
@@ -191,13 +192,13 @@ export default async function ServicePage({ params }: PageProps) {
                   <svg className="w-10 h-10 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
-                  <h3 className="text-xl md:text-2xl font-bold text-black tracking-tight">
+                  <h3 className="text-2xl font-bold text-black tracking-tight">
                     Signs You Need an Oil Change
                   </h3>
                 </div>
 
                 {/* Bullet Points */}
-                <ul className="pl-2">
+                <ul className="pl-14 md:pl-2">
                   {(currentData.signsList || [
                     "Oil change or check engine light is on",
                     "Engine sounds louder than usual",
@@ -215,7 +216,7 @@ export default async function ServicePage({ params }: PageProps) {
               </div>
 
               {/* Bottom Context Note */}
-              <p className="text-[18px] leading-[1.5] font-medium tracking-wide pt-3 border-t border-slate-50">
+              <p className=" text-[15px] md:text-[18px] leading-[1.5] font-medium tracking-wide pt-3 border-t border-slate-50  pl-14 md:pl-2 ">
                 Not sure if it's time? Our team can inspect your vehicle and recommend the right maintenance schedule.
               </p>
             </div>
@@ -236,7 +237,7 @@ export default async function ServicePage({ params }: PageProps) {
                 </div>
 
                 {/* Bullet Points */}
-                <ul className="pl-2">
+                <ul className="pl-14 md:pl-2">
                   {(currentData.includesList || [
                     "Free inspection for your air and cabin filters",
                     "Drain and replace engine oil and install a new oil filter",
@@ -254,7 +255,7 @@ export default async function ServicePage({ params }: PageProps) {
               </div>
 
               {/* Bottom Context Note */}
-              <p className="text-[18px] leading-[1.5] font-medium tracking-wide pt-3 border-t border-slate-50">
+              <p className="text-[15px] md:text-[18px] leading-[1.5] font-medium tracking-wide pt-3 border-t border-slate-50  pl-14 md:pl-2 ">
                 We service most makes and models, including domestic, European, and imported vehicles.
               </p>
             </div>
@@ -264,17 +265,17 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 5: Premium Service Highlight (Flipped Mirror Layout) */}
-      <section className="w-full bg-white py-12 md:py-20 md:px-24">
+      <section className="w-full bg-white py-12 md:py-16 px-4 md:px-32">
         <div className="">
           <div className="flex flex-col md:flex-row gap-10 lg:gap-16 items-start">
 
             {/* Left Column Image */}
-            <div className="w-full max-w-[45%] order-last lg:order-first">
+            <div className="w-full lg:max-w-[45%]">
               <div className=" w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[7/10] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] relative">
                 <Image
                   src={currentData.premiumImg || "image_85aa7b.jpg"}
                   alt="Premium synthetic oil change service execution"
-                  className="w-full h-full object-cover p-3 rounded-3xl"
+                  className="w-full h-full object-cover lg:p-3 rounded-2xl"
                   fill
                 />
               </div>
@@ -325,12 +326,12 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 6: Why Drivers Choose Us Content Split */}
-      <section className="w-full bg-[#f5f5f7] py-12 md:py-20">
-        <div className="px-4 md:px-12">
-          <div className="flex flex-col md:flex-row gap-10 lg:gap-16 items-start">
+      <section className="w-full bg-[#f5f5f7] py-6 md:py-20">
+        <div className="px-4 md:px-28">
+          <div className="flex flex-col md:flex-row gap-10 lg:gap-12 items-start">
 
             {/* Left Text Grid Features */}
-            <div className="w-full max-w-[45%]  space-y-6">
+            <div className="w-full lg:max-w-[45%]  space-y-6">
               <h2 className="text-3xl md:text-[40px] font-bold text-black tracking-tight leading-[1.15]">
                 Why Drivers in {appConfig.dealership.city_1} Choose {appConfig.dealership.dealership_name}
               </h2>
@@ -366,7 +367,7 @@ export default async function ServicePage({ params }: PageProps) {
 
             {/* Right Side Facility Showcase Image */}
             <div className="w-full">
-              <div className="w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[11/9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)] relative">
+              <div className="w-full aspect-[4/3] sm:aspect-[16/12] aspect-[16/12] rounded-md overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)] relative">
                 <Image
                   src={currentData?.premiumImg || "image_85aa7b.jpg"}
                   alt={`${appConfig.dealership.dealership_name} ${appConfig.dealership.city_1} Facility Storefront with parked vehicles`}
@@ -381,8 +382,8 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 7: Related Services Grid */}
-      <section className="w-full bg-white py-12 md:py-20">
-        <div className="  px-4 md:px-16">
+      <section className="w-full bg-white py-12 md:py-16">
+        <div className="  px-4 md:px-28">
 
           {/* Left-Aligned Header Container */}
           <div className="text-left mb-10 space-y-1.5">
@@ -395,15 +396,17 @@ export default async function ServicePage({ params }: PageProps) {
           </div>
 
           {/* 4-Column Card Grid Container */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {otherCards.slice(0, 4).map((card) => (
               <Link
                 key={card.id}
-                href={`/service/${card.id}`}
-                className="group bg-white pb-6 border-2 border-slate-200/70 rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col h-full"
+                href={card.id === "battery" ? "/book-an-appointment" : `/service/${card.id}`}
+                className="group bg-white pb-6 relative border-2 border-slate-200/70 rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col h-full"
               >
+              <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
+
                 {/* Image Wrapper Block */}
-                <div className="aspect-[16/11] bg-slate-50 overflow-hidden w-full relative">
+                <div className="aspect-[16/11] bg-slate-50 overflow-hidden w-full relative ">
                   <Image
                     src={card.section2Img || "image_85493b.jpg"}
                     alt={card.id}
@@ -443,7 +446,7 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 9: FAQ Section */}
-      <section className="w-full bg-white py-16 border-t border-slate-100">
+      <section className="w-full bg-white py-20 border-t border-slate-100">
         <div className="  px-4 md:px-18">
           <div className="mb-10">
             <h2 className="text-4xl font-bold text-slate-900">Frequently Asked Questions</h2>
@@ -456,8 +459,8 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 10: Final Inline CTA Row */}
       <section className="w-full bg-[#eaeff5] border-t border-slate-100 py-8 text-center">
-        <div className="  px-4 md:px-28 py-14 space-y-3">
-          <p className="text-base md:text-3xl ">
+        <div className="  px-4 md:px-82 md:py-14 space-y-3 py-5">
+          <p className="text-xl md:text-3xl ">
             Book your oil change service today at {appConfig.dealership.dealership_name} {appConfig.dealership.city_1} and keep your vehicle performing at its best.
           </p>
           <div>
