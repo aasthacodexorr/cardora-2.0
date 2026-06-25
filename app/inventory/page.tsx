@@ -537,47 +537,47 @@ const InventoryContent = () => {
 
   const renderFilterGroups = () => (
     <div className="space-y-[18px]">
-      <FilterGroup title="Location" isOpen={openFilter === "LOCATION"}
+      <FilterGroup title="LOCATION" isOpen={openFilter === "LOCATION"}
         onToggle={() => setOpenFilter(openFilter === "LOCATION" ? null : "LOCATION")}>
         <RefinementList attribute="location" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="Vehicle Type" isOpen={openFilter === "VEHICLE TYPE"}
+      <FilterGroup title="VEHICLE TYPE" isOpen={openFilter === "VEHICLE TYPE"}
         onToggle={() => setOpenFilter(openFilter === "VEHICLE TYPE" ? null : "VEHICLE TYPE")}>
         <RefinementList attribute="vehicle_type" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="Price" isOpen={openFilter === "PRICE"}
+      <FilterGroup title="PRICE" isOpen={openFilter === "PRICE"}
         onToggle={() => setOpenFilter(openFilter === "PRICE" ? null : "PRICE")}>
         <PriceRangeFilter />
       </FilterGroup>
-      <FilterGroup title="Year" isOpen={openFilter === "YEAR"}
+      <FilterGroup title="YEAR" isOpen={openFilter === "YEAR"}
         onToggle={() => setOpenFilter(openFilter === "YEAR" ? null : "YEAR")}>
         <RefinementList attribute="year" sortBy={["name:desc"]} classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="Make" isOpen={openFilter === "MAKE"}
+      <FilterGroup title="MAKE" isOpen={openFilter === "MAKE"}
         onToggle={() => setOpenFilter(openFilter === "MAKE" ? null : "MAKE")}>
         <RefinementList attribute="make" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="Model" isOpen={openFilter === "MODEL"}
+      <FilterGroup title="MODEL" isOpen={openFilter === "MODEL"}
         onToggle={() => setOpenFilter(openFilter === "MODEL" ? null : "MODEL")}>
         <RefinementList attribute="model" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="Odometer" isOpen={openFilter === "ODOMETER"}
+      <FilterGroup title="ODOMETER" isOpen={openFilter === "ODOMETER"}
         onToggle={() => setOpenFilter(openFilter === "ODOMETER" ? null : "ODOMETER")}>
         <OdometerRangeFilter />
       </FilterGroup>
-      <FilterGroup title="Exterior Color" isOpen={openFilter === "EXTERIOR COLOR"}
+      <FilterGroup title="EXTERIOR COLOR" isOpen={openFilter === "EXTERIOR COLOR"}
         onToggle={() => setOpenFilter(openFilter === "EXTERIOR COLOR" ? null : "EXTERIOR COLOR")}>
         <RefinementList attribute="exterior_color" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="Body Type" isOpen={openFilter === "BODY TYPE"}
+      <FilterGroup title="BODY TYPE" isOpen={openFilter === "BODY TYPE"}
         onToggle={() => setOpenFilter(openFilter === "BODY TYPE" ? null : "BODY TYPE")}>
         <RefinementList attribute="body_type" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="Transmission" isOpen={openFilter === "TRANSMISSION"}
+      <FilterGroup title="TRANSMISSION" isOpen={openFilter === "TRANSMISSION"}
         onToggle={() => setOpenFilter(openFilter === "TRANSMISSION" ? null : "TRANSMISSION")}>
         <RefinementList attribute="transmission" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="Fuel Type" isOpen={openFilter === "FUEL TYPE"}
+      <FilterGroup title="FUEL TYPE" isOpen={openFilter === "FUEL TYPE"}
         onToggle={() => setOpenFilter(openFilter === "FUEL TYPE" ? null : "FUEL TYPE")}>
         <RefinementList attribute="fuel_type" classNames={refinementListClassNames} />
       </FilterGroup>
