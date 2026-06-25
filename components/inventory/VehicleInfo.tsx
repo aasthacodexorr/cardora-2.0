@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Captcha from "@/components/common/Captcha";
 import checkout from "@/assets/icons/checkout.png";
 import { Fuel } from "lucide-react";
 
@@ -176,61 +177,223 @@ export const VehicleHeader = ({ vehicle }: any) => (
 
 // 3. MessageModal Overlay
 const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    message: `Hi, I'm interested in the ${vehicle?.year || '2018'} ${vehicle?.make || 'Honda'} ${vehicle?.model || 'Civic'}. Please contact me as soon as you can.`,
+    consent: true,
+  });
+
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [resetCaptcha, setResetCaptcha] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    const targetValue = type === 'checkbox' ? checked : value;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: targetValue,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Validate reCAPTCHA
+    if (!captchaToken) {
+      setError("Please complete the reCAPTCHA verification.");
+      return;
+    }
+
+    // Basic validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (formData.phoneNumber.replace(/\D/g, '').length !== 10) {
+      setError("Phone number must be exactly 10 digits.");
+      return;
+    }
+
+    if (!formData.firstName || !formData.lastName) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    // TODO: Add backend API call here to verify captchaToken server-side
+    // Simulate successful submission
+    setTimeout(() => {
+      setSuccess(true);
+      setLoading(false);
+      // Reset form after brief delay
+      setTimeout(() => {
+        onClose();
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phoneNumber: '',
+          message: `Hi, I'm interested in the ${vehicle?.year || '2018'} ${vehicle?.make || 'Honda'} ${vehicle?.model || 'Civic'}. Please contact me as soon as you can.`,
+          consent: true,
+        });
+        setCaptchaToken(null);
+        setResetCaptcha(!resetCaptcha);
+        setSuccess(false);
+      }, 1500);
+    }, 1000);
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left">
       <div className="bg-white rounded-2xl w-full z-[9999] max-w-[540px] relative shadow-2xl p-6 flex flex-col max-h-[90vh]">
 
-        <button onClick={onClose} className="absolute right-5 cursor-pointer top-5 text-gray-400 hover:text-gray-600 transition-colors">
+        <button 
+          onClick={onClose} 
+          className="absolute right-5 cursor-pointer top-5 text-gray-400 hover:text-gray-600 transition-colors"
+          type="button"
+        >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        <h2 className="text-[24px] font-bold text-gray-900 mb-6 mt-2">Got a question</h2>
-
-        <div className="overflow-y-auto pr-1 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <input type="text" placeholder="First Name" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500" />
-            <input type="text" placeholder="Last Name" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <input type="email" placeholder="Email" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500" />
-            <input type="tel" placeholder="Phone Number" className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500" />
-          </div>
-
-          <div>
-            <textarea rows={4} defaultValue={`Hi, I'm interested in the ${vehicle?.year || '2018'} ${vehicle?.make || 'Honda'} ${vehicle?.model || 'Civic'}. Please contact me as soon as you can.`} className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 resize-none" />
-          </div>
-
-          <div className="flex items-start gap-2 text-[12px] text-gray-700 leading-normal">
-            <input type="checkbox" defaultChecked className="mt-1 accent-[#00A651]" id="consent" />
-            <label htmlFor="consent" className="cursor-pointer">
-              By submitting this form, you agree to be contacted through phone calls, SMS, WhatsApp, or email regarding your inquiry, offers, and updates. You can opt out anytime by notifying us.
-            </label>
-          </div>
-
-          <div className="border border-gray-200 rounded-md p-3 flex items-center justify-between bg-[#f9f9f9] max-w-[300px]">
-            <div className="flex items-center gap-3">
-              <input type="checkbox" className="w-6 h-6 border-2 border-gray-300 rounded cursor-pointer accent-blue-600" />
-              <span className="text-[14px] text-gray-700 font-medium">I'm not a robot</span>
-            </div>
-            <div className="text-center flex flex-col items-center">
-              <svg className="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.213 6h-2.607" />
-              </svg>
-              <span className="text-[9px] text-gray-400 mt-0.5">reCAPTCHA</span>
+        {success ? (
+          <div className="flex items-center justify-center h-[400px]">
+            <div className="text-center">
+              <div className="mb-4">
+                <svg className="w-16 h-16 text-emerald-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Message Sent Successfully!</h3>
+              <p className="text-sm text-gray-600">Thank you for your inquiry. Our team will contact you shortly.</p>
             </div>
           </div>
-        </div>
+        ) : (
+          <>
+            <h2 className="text-[24px] font-bold text-gray-900 mb-6 mt-2">Got a question</h2>
 
-        <div className="mt-6 pt-2">
-          <button type="submit" className="bg-[#00A651] cursor-pointer hover:bg-[#008942] text-white font-bold py-3 px-8 rounded-xl text-[16px] transition-colors shadow-md">
-            Submit
-          </button>
-        </div>
+            <form onSubmit={handleSubmit} className="overflow-y-auto pr-1 space-y-4 flex-1">
+              {error && (
+                <div className="bg-rose-50 text-rose-600 p-3 rounded-xl text-sm font-medium">
+                  {error}
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <input 
+                  type="text" 
+                  name="firstName"
+                  placeholder="First Name" 
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 disabled:bg-gray-100" 
+                />
+                <input 
+                  type="text" 
+                  name="lastName"
+                  placeholder="Last Name" 
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 disabled:bg-gray-100" 
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <input 
+                  type="email" 
+                  name="email"
+                  placeholder="Email" 
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 disabled:bg-gray-100" 
+                />
+                <input 
+                  type="tel" 
+                  name="phoneNumber"
+                  placeholder="Phone Number" 
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 disabled:bg-gray-100" 
+                />
+              </div>
+
+              <div>
+                <textarea 
+                  name="message"
+                  rows={4} 
+                  value={formData.message} 
+                  onChange={handleChange}
+                  disabled={loading}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 resize-none disabled:bg-gray-100" 
+                />
+              </div>
+
+              <div className="flex items-start gap-2 text-[12px] text-gray-700 leading-normal">
+                <input 
+                  type="checkbox" 
+                  name="consent"
+                  id="consent" 
+                  checked={formData.consent}
+                  onChange={handleChange}
+                  disabled={loading}
+                  className="mt-1 accent-[#00A651] cursor-pointer" 
+                />
+                <label htmlFor="consent" className="cursor-pointer">
+                  By submitting this form, you agree to be contacted through phone calls, SMS, WhatsApp, or email regarding your inquiry, offers, and updates. You can opt out anytime by notifying us.
+                </label>
+              </div>
+
+              {/* reCAPTCHA Component */}
+              <div className="flex justify-center">
+                <Captcha 
+                  onVerify={setCaptchaToken}
+                  resetTrigger={resetCaptcha}
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="flex-1 bg-gray-200 cursor-pointer hover:bg-gray-300 text-gray-900 font-bold py-3 px-8 rounded-xl text-[16px] transition-colors"
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading || !captchaToken}
+                  className="flex-1 bg-[#00A651] cursor-pointer hover:bg-[#008942] text-white font-bold py-3 px-8 rounded-xl text-[16px] transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Sending...' : 'Submit'}
+                </button>
+              </div>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );
