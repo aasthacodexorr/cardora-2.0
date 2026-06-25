@@ -127,22 +127,22 @@ const TradeIn = () => {
             <div className="w-full h-[180px] relative overflow-visible flex flex-col items-center justify-center">
 
               {/* Background Landscape Wave Line Vector */}
-              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-full flex justify-center z-10">
+              <div className="absolute inset-x-0 top-14 -translate-y-1/2 w-full flex justify-center z-10">
                 <svg
-                  viewBox="0 0 360 60"
-                  fill="none"
-                  className="w-full overflow-visible"
-                  xmlns="http://www.w3.org/2000/svg"
-                  preserveAspectRatio="none"
-                >
-                  <path
-                    d="M -20,30 C 90,45 120,5 180,20 C 240,35 270,10 380,20"
-                    stroke="#00af66"
-                    strokeWidth="6"
-                    strokeLinecap="round"
-                    fill="none"
-                  />
-                </svg>
+              className=" w-full h-full"
+              viewBox="0 0 1440 500"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                // Re-mapped curve to drop gently and sweep back up right beneath the form card
+                d="M 0,310 C 350,310 400,340 648,313 C 800,295 1000,270 1440,310"
+                fill="none"
+                stroke="#00b872"
+                strokeWidth="12"
+                strokeLinecap="round"
+              />
+            </svg>
               </div>
 
               {/* Center Connected Data Badge Tracker Complex */}
@@ -229,19 +229,20 @@ const TradeIn = () => {
         {/* Desktop Only Background Wave & Axis Graphic Overlays */}
         <div className="hidden lg:block absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0">
           {/* Main Landscape Wave Vector */}
-          <div className="absolute bottom-30 w-full z-10">
-            <svg 
-              viewBox="0 0 1440 100" 
-              fill="none" 
-              className="w-full min-w-[1440px]"
+          <div className="absolute xl:-bottom-14  2xl:-bottom-20 lg:-bottom-5  w-full z-10">
+            <svg
+              className=" w-full h-full z-10 pointer-events-none"
+              viewBox="0 0 1440 500"
+              preserveAspectRatio="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path 
-                d="M0,70 C340,110 520,30 720,70 C920,110 1120,50 1440,70" 
-                stroke="#00af66" 
-                strokeWidth="10" 
+              <path
+                // Re-mapped curve to drop gently and sweep back up right beneath the form card
+                d="M 0,310 C 350,310 400,340 648,313 C 800,295 1000,270 1440,310"
+                fill="none"
+                stroke="#00b872"
+                strokeWidth="12"
                 strokeLinecap="round"
-                fill="none" 
               />
             </svg>
           </div>
