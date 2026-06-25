@@ -12,10 +12,10 @@ export default function SkipTheDealership() {
     return (
         <>
             <Header />
-            <div className="w-full font-sans antialiased text-gray-900 selection:bg-yellow-200">
+            <div className="w-full font-sans antialiased text-gray-900 selection:bg-yellow-200 lg:mt-32">
 
                 {/* 1. Hero / Banner Section */}
-                <section className="bg-[#ffde5b] py-9 px-4 text-center">
+                <section className="bg-[#ffde5b] lg:py-18 py-9 px-4 text-center">
                     <div className="max-w-4xl mx-auto">
                         <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
                             Skip the dealership.
