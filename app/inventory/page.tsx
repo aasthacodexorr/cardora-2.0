@@ -210,12 +210,12 @@ const GroupedCurrentRefinements = () => {
           {category.refinements.map((refinement) => (
             <div
               key={refinement.label}
-              className="flex items-center bg-white rounded-lg px-[12px] py-[6px] border border-gray-200 text-[14px] text-gray-700 font-light shadow-sm"
+              className="flex items-center bg-white rounded-lg px-[12px] py-[6px] border border-gray-200 text-[14px] text-gray-600 font-light shadow-sm"
             >
-              <span className="cursor-pointer">{refinement.label}</span>
+              <span className="cursor-pointer tracking-wider font-light">{refinement.label}</span>
               <button
                 onClick={() => refine(refinement)}
-                className="text-gray-400 ml-2 hover:text-gray-950 focus:outline-none flex items-center justify-center"
+                className="text-gray-400 ml-2 hover:text-gray-950 focus:outline-none flex items-center justify-center cursor-pointer"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
