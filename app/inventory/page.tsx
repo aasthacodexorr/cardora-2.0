@@ -195,7 +195,10 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+         console.log("Intersecting:", entry.isIntersecting);
+
         if (entry.isIntersecting) {
+           console.log("Calling showMore");
           showMore();
         }
       },
@@ -226,11 +229,11 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
 
       {/* Observer Target */}
       {!isLastPage && (
-        <div ref={loadMoreRef} className="h-2 w-full" />
+        <div ref={loadMoreRef}   style={{ height: 50 }}/>
       )}
 
       {!isLastPage && (
-        <div className="mt-8 flex justify-start pl-[9px]">
+        <div className="mt-8 flex justify-start pl-[9px]" >
           <button
             onClick={showMore}
             className="bg-black text-white px-6 py-3 rounded-xl cursor-pointer font-medium text-[13px] uppercase tracking-wider hover:bg-gray-800 transition-colors"
@@ -677,6 +680,25 @@ const InventoryContent = () => {
       </FilterGroup>
     </div>
   );
+
+  
+
+
+  useEffect(() => {
+  console.log(document.getElementById("results-column"));
+}, []);
+
+useEffect(() => {
+  const el = document.getElementById("results-column");
+
+  if (!el) return;
+
+  console.log({
+    scrollHeight: el.scrollHeight,
+    clientHeight: el.clientHeight,
+    overflow: getComputedStyle(el).overflowY,
+  });
+}, []);
 
   return (
     <main className="flex flex-col h-screen overflow-hidden bg-background pt-30">
