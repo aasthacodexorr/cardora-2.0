@@ -386,13 +386,17 @@ export function createInventoryRouter() {
         }
 
         const newUrl = `${window.location.pathname}${newSearch}`;
+        if (newSearch === window.location.search) {
+          return;
+        }
 
         lastSearch = newSearch;
 
         isInternalWrite = true;
-        window.history.pushState(routeState, "", newUrl);
+        console.count("history.write");
+        window.history.replaceState(routeState, "", newUrl);
         isInternalWrite = false;
-      }, 0);
+      }, 150); 
     },
 
     createURL(routeState: PlainObject): string {
