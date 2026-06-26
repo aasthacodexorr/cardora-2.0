@@ -102,10 +102,10 @@ const ProtectionPlans = () => {
 
       {/* Hero Section */}
       <section className="relative w-full pt-9 pb-0 md:pt-24 overflow-hidden bg-white px-0 lg:mt-28">
-        <div className="mx-auto max-w-[1280px] px-6 md:px-1 flex flex-col lg:flex-row lg:items-center justify-between min-h-[450px]">
+        <div className="mx-auto max-w-[1240px] px-6 md:px-1 flex flex-col lg:flex-row lg:items-center justify-between min-h-[450px]">
 
           {/* Left Column: Title and Pills */}
-          <div className="flex flex-col justify-center space-y-6 max-w-md pb-12 md:pb-16 z-10">
+          <div className="flex flex-col justify-center space-y-6 max-w-md pb-12 md:pb-12 z-10">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-neutral-900 leading-tight md:w-xl">
               Every Vehicle Includes
             </h1>
@@ -138,7 +138,7 @@ const ProtectionPlans = () => {
 
       {/* Section 2: We stand behind our cars (Full-Bleed Background, Centered Content) */}
       <section className="w-full bg-[#e6f4ff] border-t border-neutral-100/60 py-14 md:py-20 xl:mt-20 mt-7">
-        <div className="mx-auto xl:max-w-[1280px] px-5 md:px-1 flex flex-col items-center text-center">
+        <div className="mx-auto xl:max-w-[1240px] px-5 md:px-1 flex flex-col items-center text-center">
 
           <h2 className="text-[26px] md:text-5xl font-bold text-neutral-900 leading-none xl:max-w-[650px]">
             We stand behind our cars so much, you get:
@@ -162,7 +162,7 @@ const ProtectionPlans = () => {
 
       {/* How Cardora keeps you covered (Full-Bleed Background, Centered Content) */}
       <section className="bg-[#eaeff5] py-16 md:py-20 px-0">
-        <div className="mx-auto max-w-[1280px] px-6 md:px-1">
+        <div className="mx-auto max-w-[1240px] px-6 md:px-1">
           <div>
             <h2 className="text-3xl md:text-[45px] font-semibold tracking-tight text-foreground">
               How {SITE_CONFIG?.dealership.name} keeps you covered
@@ -189,7 +189,7 @@ const ProtectionPlans = () => {
 
       {/* What's included (Full-Bleed Background, Centered Content) */}
       <section className="lg:py-1 bg-[#eaeff5] px-0">
-        <div className="mx-auto max-w-[1280px] px-6 md:px-1 pb-10">
+        <div className="mx-auto max-w-[1240px] px-6 md:px-1 pb-10">
           <h2 className="text-start text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
             What's included?
           </h2>
@@ -201,7 +201,7 @@ const ProtectionPlans = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-foreground mb-2">{title}</h3>
-                  <p className="text-base leading-6 text-neutral-600">{body}</p>
+                  <p className="text-base leading-6">{body}</p>
                 </div>
               </div>
             ))}
@@ -210,7 +210,7 @@ const ProtectionPlans = () => {
       </section>
 
       <section className="text-gray-900 pt-18 py-1 lg:px-4 font-sans">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-1 text-center">
+        <div className="max-w-[1240px] mx-auto px-6 md:px-1 text-center">
           {/* Header Section */}
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-black">
             Gap Coverage
