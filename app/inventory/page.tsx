@@ -701,7 +701,7 @@ useEffect(() => {
 }, []);
 
   return (
-    <main className="flex flex-col h-screen overflow-hidden bg-background pt-30">
+    <main className="flex flex-col h-screen overflow-hidden bg-background lg:pt-30">
 
       {/* ── Header: fixed at the top, outside the scrolling area ── */}
       <div className="bg-hero-bg">
@@ -710,7 +710,7 @@ useEffect(() => {
 
       {/* ── Inventory section: fills all remaining vertical space ── */}
       {/* On mobile we revert to normal page scroll; on lg+ we clip overflow */}
-      <section className="flex-1 min-h-0 bg-[#efefef] overflow-y-auto lg:overflow-hidden px-14">
+      <section className="flex-1 min-h-0 bg-[#efefef] overflow-y-auto lg:overflow-hidden lg:px-14">
         <InstantSearch
           searchClient={searchClient}
           indexName={TYPESENSE_COLLECTION_NAME}
@@ -791,7 +791,8 @@ useEffect(() => {
                   </button>
 
                   <div className="flex items-start">
-<CustomSortBy />                  </div>
+                    <CustomSortBy />           
+                  </div>
                 </div>
               </div>
 
