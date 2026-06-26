@@ -287,11 +287,11 @@ const TradeIn = () => {
       </section>
 
       {/* How it works */}
-      <section className="w-full px-4 lg:pr-32 -mt-5 ml-12">
-        <div className="mx-auto max-w-[1600px] px-2 md:px- py-10 lg:py-20 ml-20">
+      <section className="w-full lg:px-4 lg:pr-32 -mt-5 lg:ml-12">
+        <div className="mx-auto lg:max-w-[1600px] px-4 py-10 lg:py-20 lg:ml-20">
           <div className="grid grid-cols-1 items-start gap-6 lg:gap-0 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
             {/* Left Column: Image */}
-            <div className="w-full h-[500px] md:h-full ml-4 ">
+            <div className="w-full h-[500px] md:h-full lg:ml-4 ">
               <Image
                 src={sell}
                 alt="Customer trading in their car at Dealership"
@@ -303,7 +303,7 @@ const TradeIn = () => {
             </div>
 
             {/* Right Column: Steps */}
-            <div className="pr-20">
+            <div className="lg:pr-20">
               <h2 className="text-[28px] md:text-[36px] font-bold tracking-tight text-zinc-900 lg:text-[44px]">
                 How it works
               </h2>

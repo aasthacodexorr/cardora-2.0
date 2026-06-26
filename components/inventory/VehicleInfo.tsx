@@ -258,7 +258,7 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left mt-28">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left lg:mt-28">
       <div className="bg-white rounded-2xl w-full z-[9999] max-w-[540px] relative shadow-2xl p-6 lg:p-4 flex flex-col max-h-[80vh]">
 
         <button 
