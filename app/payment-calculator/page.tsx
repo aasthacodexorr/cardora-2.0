@@ -88,7 +88,7 @@ export default function PaymentCalculator() {
                                     type="number"
                                     value={vehiclePrice || ''}
                                     onChange={(e) => setVehiclePrice(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-xl transition-all duration-200 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md transition-all duration-200 outline-none  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
                             </div>
                         </div>
@@ -101,7 +101,7 @@ export default function PaymentCalculator() {
                                     type="number"
                                     value={downPayment || ''}
                                     onChange={(e) => setDownPayment(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0.00"
                                 />
                             </div>
@@ -116,7 +116,7 @@ export default function PaymentCalculator() {
                                     value={additionalFees || ''}
                                     placeholder="0.00"
                                     onChange={(e) => setAdditionalFees(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
                             </div>
                         </div>
@@ -130,7 +130,7 @@ export default function PaymentCalculator() {
                                     value={financeFee || ''}
                                     placeholder="0.00"
                                     onChange={(e) => setFinanceFee(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
                             </div>
                         </div>
@@ -143,7 +143,7 @@ export default function PaymentCalculator() {
                                     type="number"
                                     value={gapFee || ''}
                                     onChange={(e) => setGapFee(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
                             </div>
                         </div>
@@ -156,7 +156,7 @@ export default function PaymentCalculator() {
                                     type="number"
                                     value={warrantyCost || ''}
                                     onChange={(e) => setWarrantyCost(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0.00"
                                 />
                             </div>
@@ -206,7 +206,7 @@ export default function PaymentCalculator() {
                                     type="number"
                                     value={loanBalance || ''}
                                     onChange={(e) => setLoanBalance(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0.00"
                                 />
                             </div>
@@ -247,7 +247,7 @@ export default function PaymentCalculator() {
                                     step="0.01"
                                     value={apr}
                                     onChange={(e) => setApr(Number(e.target.value))}
-                                    className="w-full pr-8 pl-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pr-8 pl-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
                                 <span className="absolute right-3 top-[9px] text-black">%</span>
                             </div>
@@ -296,7 +296,7 @@ export default function PaymentCalculator() {
                                     type="number"
                                     value={desiredPayment}
                                     onChange={(e) => setDesiredPayment(e.target.value)}
-                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0.00"
                                 />
                             </div>

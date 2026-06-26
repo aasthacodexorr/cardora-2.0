@@ -87,7 +87,7 @@ const About = () => {
                   {certified.map(({ label }, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-3 bg-[#e6f4ff] rounded-full px-5 py-5 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.05)]"
+                      className="flex items-center gap-3 bg-[#e6f4ff] rounded-full px-5 py-5 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.1)]"
                     >
                       <Check className="h-5 w-5 text-emerald-600 flex-shrink-0" strokeWidth={2.5} />
                       <span className="text-base font-medium text-black">
@@ -153,7 +153,7 @@ const About = () => {
               <h2 className="text-[28px] md:text-[42px] lg:text-5xl font-bold tracking-tight text-neutral-950 leading-tight">
                 Hundreds of Five-Star Reviews — and Counting
               </h2>
-              <p className=" mt-2 lg:mt-5 text-[18px] md:text-[20px] text-neutral-800 lg:leading-relaxed font-medium">
+              <p className=" mt-2 lg:mt-2 text-[18px] md:text-[20px] text-neutral-800 lg:leading-relaxed font-medium">
                 Hundreds of five-star Google reviews and counting—because a great
                 experience is never accidental.
               </p>
