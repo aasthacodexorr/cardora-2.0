@@ -168,15 +168,50 @@ const ScrollToTopOnSearch = () => {
 };
 
 const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
-  const { results } = useHits();
-  if (results && results.nbHits === 0) {
-    return <div className="mt-8 text-[15px] text-gray-800" />;
+  const { results } = useInstantSearch();
+
+  if (!results?.__isArtificial && results?.nbHits === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <p className="mt-3 max-w-md">
+          Currently, there are no vehicles that match your criteria.
+        </p>
+      </div>
+    );
   }
+
   return <>{children}</>;
 };
 
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   const { hits, isLastPage, showMore } = useInfiniteHits();
+
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isLastPage) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          showMore();
+        }
+      },
+      {
+        root: document.getElementById("results-column"),
+        rootMargin: "250px",
+      }
+    );
+
+    const current = loadMoreRef.current;
+
+    if (current) observer.observe(current);
+
+    return () => {
+      if (current) observer.unobserve(current);
+    };
+  }, [isLastPage, showMore]);
+
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
@@ -186,6 +221,12 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
           </div>
         ))}
       </div>
+
+      {/* Observer Target */}
+      {!isLastPage && (
+        <div ref={loadMoreRef} className="h-2 w-full" />
+      )}
+
       {!isLastPage && (
         <div className="mt-8 flex justify-start pl-[9px]">
           <button
