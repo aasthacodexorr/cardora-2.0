@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown, Search, Settings2, X } from "lucide-react";
+import { Check, ChevronDown, Search, Settings2, X } from "lucide-react";
 
 // Layout
 import { Header, Footer } from "@/components/layout";
@@ -11,6 +11,8 @@ import { HitCard } from "@/components/inventory";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
+
+import { useSortBy } from "react-instantsearch";
 
 // react-instantsearch
 import {
@@ -48,7 +50,7 @@ const refinementListClassNames = {
 /* Shared Sort Options array to match your visual requirement */
 const sortItems = [
   {
-    label: "Sort",
+    label: "Recently Added",
     value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
   },
   {
@@ -264,6 +266,50 @@ const GroupedCurrentRefinements = () => {
           ))}
         </div>
       ))}
+    </div>
+  );
+};
+
+const CustomSortBy = () => {
+  const [open, setOpen] = useState(false)
+  const { currentRefinement, refine } = useSortBy({
+    items: sortItems,
+  });
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className={selectClasses}
+      >
+        Sort
+      </button>
+
+      {open && (
+        <div className="absolute top-full right-0 mt-2 w-60 rounded-lg bg-white border border-slate-200 shadow-lg z-50">
+          {sortItems?.map((item) => (
+            <button
+              key={item.value}
+              onClick={() => {
+                refine(item.value);
+                setOpen(false);
+              }}
+              className={`flex w-full items-center text-black/70 justify-between px-4 py-3 hover:bg-gray-100 border-b border-slate-200 ${currentRefinement === item.value
+                  ? "font-semibold"
+                  : ""
+                }`}
+            >
+
+
+              {item.label}
+
+              {currentRefinement === item.value && (
+                <Check size={16} />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -711,8 +757,7 @@ const InventoryContent = () => {
                   </button>
 
                   <div className="flex items-start">
-                    <SortBy items={sortItems} classNames={{ select: `${selectClasses} w-[115px] sm:w-[130px]` }} />
-                  </div>
+<CustomSortBy />                  </div>
                 </div>
               </div>
 
