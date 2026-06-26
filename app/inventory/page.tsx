@@ -688,13 +688,17 @@ const InventoryContent = () => {
   console.log(document.getElementById("results-column"));
 }, []);
 
-const el = document.getElementById("results-column");
+useEffect(() => {
+  const el = document.getElementById("results-column");
 
-console.log({
-  scrollHeight: el?.scrollHeight,
-  clientHeight: el?.clientHeight,
-  overflow: getComputedStyle(el!).overflowY,
-});
+  if (!el) return;
+
+  console.log({
+    scrollHeight: el.scrollHeight,
+    clientHeight: el.clientHeight,
+    overflow: getComputedStyle(el).overflowY,
+  });
+}, []);
 
   return (
     <main className="flex flex-col h-screen overflow-hidden bg-background pt-30">
