@@ -272,12 +272,30 @@ const GroupedCurrentRefinements = () => {
 
 const CustomSortBy = () => {
   const [open, setOpen] = useState(false)
+   const dropdownRef = useRef<HTMLDivElement>(null);
   const { currentRefinement, refine } = useSortBy({
     items: sortItems,
   });
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+  
 
   return (
-    <div className="relative">
+    <div  ref={dropdownRef} className="relative">
       <button
         onClick={() => setOpen(!open)}
         className={selectClasses}
@@ -294,18 +312,12 @@ const CustomSortBy = () => {
                 refine(item.value);
                 setOpen(false);
               }}
-              className={`flex w-full items-center text-black/70 justify-between px-4 py-3 hover:bg-gray-100 border-b border-slate-200 ${currentRefinement === item.value
+              className={`flex w-full items-center cursor-pointer text-black/70 justify-between px-4 py-3 hover:bg-gray-100 border-b border-slate-200 ${currentRefinement === item.value
                   ? "font-semibold"
                   : ""
                 }`}
             >
-
-
-              {item.label}
-
-              {currentRefinement === item.value && (
-                <Check size={16} />
-              )}
+             {item.label}
             </button>
           ))}
         </div>
