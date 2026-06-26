@@ -88,11 +88,11 @@ export default function SkipTheDealership() {
 
                 {/* 3. The New Way to Buy a Car Section */}
                 <section className="bg-[#EBF5FF] py-1 px-4">
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-6 items-center">
+                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-6 items-center py-5">
 
                         {/* Order adjustment for responsive layout (Image first on mobile, left side on desktop) */}
                         <div className="relative h-[450px] md:h-[750px] w-full rounded-lg overflow-hidden order-first md:order-1">
-                            <div className="p-20 h-full relative">
+                            <div className="lg:p-20 h-full relative">
                                 <Image
                                     src={newWay}
                                     alt="Skip dealership car buying"
@@ -150,10 +150,10 @@ export default function SkipTheDealership() {
                             <p className="font-medium text-lg md:text-xl">Old Way vs {SITE_CONFIG?.dealership.name} Way</p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
 
                             {/* Traditional Dealership Column */}
-                            <div className="bg-[#e6f4ff] rounded-2xl p-6 md:p-8 border border-gray-200/60">
+                            <div className="bg-[#e6f4ff] rounded-2xl p-6 md:p-4 border border-gray-200/60">
                                 <h5 className="text-xl font-bold text-gray-900 border-b border-gray-200 py-7">
                                     Traditional Dealership
                                 </h5>
@@ -174,7 +174,7 @@ export default function SkipTheDealership() {
                             </div>
 
                             {/* Cardora Column */}
-                            <div className="bg-[#e6f4ff] rounded-2xl p-6 md:p-8 border border-blue-100">
+                            <div className="bg-[#e6f4ff] rounded-2xl p-6 md:p-4 border border-blue-100">
                                 <h5 className="text-xl font-bold text-black border-b border-slate-200 py-7">
                                     {SITE_CONFIG?.dealership.name}
                                 </h5>
