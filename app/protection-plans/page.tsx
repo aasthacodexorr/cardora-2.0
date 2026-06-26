@@ -101,8 +101,8 @@ const ProtectionPlans = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-9 pb-0 md:pt-24 overflow-hidden bg-white px-0 lg:mt-28">
-        <div className="mx-auto max-w-[1240px] px-6 md:px-1 flex flex-col lg:flex-row lg:items-center justify-between min-h-[450px]">
+      <section className="relative w-full pt-9 pb-0 md:pt-20 overflow-hidden bg-white px-0 lg:mt-28">
+        <div className="mx-auto max-w-[1240px] px-6 lg:px-0 flex flex-col lg:flex-row lg:items-center justify-between min-h-[450px]">
 
           {/* Left Column: Title and Pills */}
           <div className="flex flex-col justify-center space-y-6 max-w-md pb-12 md:pb-12 z-10">
@@ -110,11 +110,11 @@ const ProtectionPlans = () => {
               Every Vehicle Includes
             </h1>
 
-            <div className="flex flex-col gap-4 pt-4  pr-14 lg:pr-0  ">
+            <div className="flex flex-col gap-4 pt-4 pr-14 lg:pr-0">
               {includes.map(({ label }) => (
                 <div
                   key={label}
-                  className="flex items-center gap-3 bg-[#e6f4ff] rounded-full px-5 py-4 w-full sm:w-96 shadow-[0_2px_18px_rgba(0,0,0,0.05)]"
+                  className="flex items-center gap-3 bg-[#e6f4ff] rounded-full px-5 py-4 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.1)]"
                 >
                   <Check className="h-6 w-6 text-emerald-500 shrink-0" strokeWidth={2} />
                   <span className="text-base font-medium text-neutral-800">{label}</span>
@@ -124,7 +124,7 @@ const ProtectionPlans = () => {
           </div>
 
           {/* Right Column: Car Image */}
-          <div className="w-full lg:absolute lg:bottom-0 lg:right-0 lg:w-1/2 lg:w-[55%] flex justify-end items-end pointer-events-none">
+          <div className="w-full lg:absolute lg:bottom-0 lg:right-32 lg:w-1/2 lg:w-[45%] flex justify-end items-end pointer-events-none">
             <Image
               src={rotateCar}
               alt="Silver Toyota Camry Sedan"
@@ -289,7 +289,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/* The Cardora Difference Section */}
-      <div className="w-full mx-auto lg:mb-5 md:px-1 lg:-mt-20 -mt-5">
+      <div className="w-full mx-auto lg:mb-5 lg:px-28 lg:-mt-20 -mt-5">
         <CardoraDifference />
       </div>
 
