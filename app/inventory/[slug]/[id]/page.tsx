@@ -70,7 +70,7 @@ export default async function VehicleDetailsPage({
         We added 'max-w-[1440px] xl:max-w-[1600px] w-full mx-auto' to control the core structure 
         so that on large monitors the entire layout centers like the design.
       */}
-      <section className="w-full bg-background flex-1 max-w-[1440px] xl:max-w-[1600px] mx-auto">
+      <section className="w-full bg-background flex-1 max-w-[1440px] xl:max-w-[1600px] mx-auto mt-32">
         <div className="w-full pt-[30px]">
           
           {/* SECTION ROW: Controls the boundaries of the sticky sidebar */}
