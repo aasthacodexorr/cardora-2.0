@@ -1,3 +1,5 @@
+import couponImg from "@/assets/icons/couponImg.png"
+
 export interface FAQItem {
   q: string;
   a: string;
@@ -29,7 +31,7 @@ export const servicesData: Record<string, ServiceContent> = {
     id: "oil-change",
     cityTitle: "Oil Change in Brampton, ON",
     couponTitle: "Oil Change Coupon",
-    couponImg: "https://www.cardora.ca/wp-content/uploads/2026/05/oil-c.png",
+    couponImg: couponImg?.src,
     bannerChecklist: [
       "Premium Synthetic Oil",
       "Fast & Reliable Service",
@@ -59,7 +61,7 @@ export const servicesData: Record<string, ServiceContent> = {
     id: "brakes",
     cityTitle: "Brake Service & Repair in Brampton, ON",
     couponTitle: "Brake Special Coupon",
-    couponImg: "https://www.cardora.ca/wp-content/uploads/2026/05/break.png",
+    couponImg: couponImg?.src,
     bannerChecklist: [
       "Premium Brake Pads & Rotors",
       "Complimentary Brake Inspection",
@@ -87,7 +89,7 @@ export const servicesData: Record<string, ServiceContent> = {
     id: "tire-service",
     cityTitle: "Tire Service & Replacement in Brampton, ON",
     couponTitle: "Tire Service Coupon",
-    couponImg: "https://www.cardora.ca/wp-content/uploads/2026/05/tire-new.png",
+    couponImg: couponImg?.src,
     bannerChecklist: [
       "Premium Tire Brands",
       "Professional Installation",
@@ -116,7 +118,7 @@ export const servicesData: Record<string, ServiceContent> = {
     id: "wheel-service",
     cityTitle: "Wheel Alignment & Service in Brampton, ON",
     couponTitle: "Wheel Alignment Coupon",
-    couponImg: "https://www.cardora.ca/wp-content/uploads/2026/05/wheel-new.png",
+    couponImg:couponImg?.src,
     bannerChecklist: [
       "Computer Wheel Alignment",
       "Expert Technicians",
@@ -145,7 +147,7 @@ export const servicesData: Record<string, ServiceContent> = {
     id: "battery",
     cityTitle: "Car Battery Service & Replacement in Brampton, ON",
     couponTitle: "Battery Replacement Coupon",
-    couponImg: "https://www.cardora.ca/wp-content/uploads/2026/05/battery-c.png",
+    couponImg: couponImg?.src,
     bannerChecklist: [
       "Premium Battery Brands",
       "Free Testing",

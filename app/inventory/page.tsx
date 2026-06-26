@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown, Search, Settings2, X } from "lucide-react";
+import { Check, ChevronDown, Search, Settings2, X } from "lucide-react";
 
 // Layout
 import { Header, Footer } from "@/components/layout";
@@ -11,6 +11,8 @@ import { HitCard } from "@/components/inventory";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
+
+import { useSortBy } from "react-instantsearch";
 
 // react-instantsearch
 import {
@@ -48,7 +50,7 @@ const refinementListClassNames = {
 /* Shared Sort Options array to match your visual requirement */
 const sortItems = [
   {
-    label: "Sort",
+    label: "Recently Added",
     value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
   },
   {
@@ -168,15 +170,50 @@ const ScrollToTopOnSearch = () => {
 };
 
 const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
-  const { results } = useHits();
-  if (results && results.nbHits === 0) {
-    return <div className="mt-8 text-[15px] text-gray-800" />;
+  const { results } = useInstantSearch();
+
+  if (!results?.__isArtificial && results?.nbHits === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <p className="mt-3 max-w-md">
+          Currently, there are no vehicles that match your criteria.
+        </p>
+      </div>
+    );
   }
+
   return <>{children}</>;
 };
 
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   const { hits, isLastPage, showMore } = useInfiniteHits();
+
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isLastPage) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          showMore();
+        }
+      },
+      {
+        root: document.getElementById("results-column"),
+        rootMargin: "250px",
+      }
+    );
+
+    const current = loadMoreRef.current;
+
+    if (current) observer.observe(current);
+
+    return () => {
+      if (current) observer.unobserve(current);
+    };
+  }, [isLastPage, showMore]);
+
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
@@ -186,6 +223,12 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
           </div>
         ))}
       </div>
+
+      {/* Observer Target */}
+      {!isLastPage && (
+        <div ref={loadMoreRef} className="h-2 w-full" />
+      )}
+
       {!isLastPage && (
         <div className="mt-8 flex justify-start pl-[9px]">
           <button
@@ -223,6 +266,62 @@ const GroupedCurrentRefinements = () => {
           ))}
         </div>
       ))}
+    </div>
+  );
+};
+
+const CustomSortBy = () => {
+  const [open, setOpen] = useState(false)
+   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { currentRefinement, refine } = useSortBy({
+    items: sortItems,
+  });
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+  
+
+  return (
+    <div  ref={dropdownRef} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className={selectClasses}
+      >
+        Sort
+      </button>
+
+      {open && (
+        <div className="absolute top-full right-0 mt-2 w-60 rounded-lg bg-white border border-slate-200 shadow-lg z-50">
+          {sortItems?.map((item) => (
+            <button
+              key={item.value}
+              onClick={() => {
+                refine(item.value);
+                setOpen(false);
+              }}
+              className={`flex w-full items-center cursor-pointer text-black/70 justify-between px-4 py-3 hover:bg-gray-100 border-b border-slate-200 ${currentRefinement === item.value
+                  ? "font-semibold"
+                  : ""
+                }`}
+            >
+             {item.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -670,8 +769,7 @@ const InventoryContent = () => {
                   </button>
 
                   <div className="flex items-start">
-                    <SortBy items={sortItems} classNames={{ select: `${selectClasses} w-[115px] sm:w-[130px]` }} />
-                  </div>
+<CustomSortBy />                  </div>
                 </div>
               </div>
 
