@@ -8,6 +8,7 @@ import { GetInTouch } from '@/components/common';
 import { appConfig } from "@/lib/appConfig";
 import Image from "next/image";
 import { SITE_CONFIG } from '@/constants';
+import DownloadCouponButton from '@/components/service/DownloadCouponButton';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -102,9 +103,10 @@ export default async function ServicePage({ params }: PageProps) {
                   <Link href="/book-an-appointment" className="block w-full bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:bg-[#0f9f6e] text-white font-medium py-3 px-4 rounded-md transition duration-200 text-center text-sm shadow-sm">
                     Schedule Service
                   </Link>
-                  <a href="#" className="block w-full  bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:bg-[#0f9f6e] text-white font-medium py-3 px-4 rounded-md transition duration-200 text-center text-sm shadow-sm">
-                    Download Offer
-                  </a>
+                  <DownloadCouponButton
+                    imageUrl={currentData.couponImg}
+                    fileName={currentData.couponTitle || "Coupon"}
+                  />
                 </div>
 
               </div>
