@@ -609,6 +609,7 @@ function useHeaderHeight() {
 const InventoryContent = () => {
   const [openFilter, setOpenFilter] = useState<string | null>("");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [isHoveringFilters, setIsHoveringFilters] = useState(false);
   const headerHeight = useHeaderHeight();
 
   useEffect(() => {
@@ -671,7 +672,7 @@ const InventoryContent = () => {
 
   return (
     // CHANGED: Restored normal scrolling layout behavior to the main document frame rather than clamping the viewport h-screen
-    <main className="min-h-screen bg-background lg:pt-30">
+    <main className={` bg-backgroun ${isHoveringFilters? "overflow-hidden h-screen" : "min-h-screen" }`}>
 
       {/* ── Header: Fixed/Sticky layout element at the top ── */}
       <div className="bg-hero-bg sticky top-0 z-40">
@@ -696,6 +697,8 @@ const InventoryContent = () => {
  
             {/* ── CHANGED: Filter component sticks naturally right below header when scrolling past it ── */}
             <aside
+            onMouseEnter={()=>setIsHoveringFilters(true)}
+            onMouseLeave={()=>setIsHoveringFilters(false)}
               className={[
                 "hidden",
                 "lg:flex lg:flex-col",
@@ -726,7 +729,7 @@ const InventoryContent = () => {
             {/* ── CHANGED: Cleaned up fixed classes so the search + cards dynamically scale fluidly to fill workspace width ── */}
             <div
               id="results-column"
-              className="w-full flex-1 min-w-0"
+              className="w-full flex-1 min-w-0 lg:pt-30"
             >
               {/* Search + sort + responsive control bar */}
               <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4 px-3">
