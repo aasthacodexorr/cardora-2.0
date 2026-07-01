@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Check, ChevronDown, Search, Settings2, X } from "lucide-react";
 
 // Layout
@@ -34,6 +34,7 @@ import { searchClient, TYPESENSE_COLLECTION_NAME } from "@/lib/typesense";
 
 // Custom router/stateMapping that produces the client-required URL format
 import { createInventoryRouter, inventoryStateMapping } from "@/lib/inventoryRouting";
+import { InventoryGridSkeleton } from "@/components/inventory/HitCardSkeleton";
 
 /* Shared class name configs for InstantSearch widgets */
 const refinementListClassNames = {
@@ -137,6 +138,17 @@ const FilterGroup = ({ title, children, isOpen, onToggle }: FilterGroupProps) =>
       </div>
     </div>
   );
+};
+
+const SearchResultsWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { status } = useInstantSearch();
+
+  // Trigger skeleton immediately whenever Typesense is actively fetching 
+  if (status === "loading") {
+    return <InventoryGridSkeleton />;
+  }
+
+  return <>{children}</>;
 };
 
 const CustomHitsCount = () => {
@@ -328,15 +340,19 @@ const CustomSortBy = () => {
     </div>
   );
 };
+ 
 
 const PriceRangeFilter = () => {
   const { start, range, refine } = useRange({ attribute: "selling_price" });
   const { hits } = useHits();
- 
-  const currentPrices = hits
-    .map((hit: any) => Number(hit.selling_price))
-    .filter((price) => !isNaN(price) && price > 0)
-    .sort((a, b) => a - b);
+
+  // Cache price calculations so they don't block the UI threads
+  const currentPrices = useMemo(() => {
+    return hits
+      .map((hit: any) => Number(hit.selling_price))
+      .filter((price) => !isNaN(price) && price > 0)
+      .sort((a, b) => a - b);
+  }, [hits]);
 
   const dynamicMin = range.min ?? 0;
   const dynamicMax = range.max ?? 100000;
@@ -345,61 +361,33 @@ const PriceRangeFilter = () => {
   const [maxInput, setMaxInput] = useState("");
   const [selectedMin, setSelectedMin] = useState(dynamicMin);
   const [selectedMax, setSelectedMax] = useState(dynamicMax);
- 
+
+  // ── NEW: Track if the user is actively dragging a slider track ──
+  const isDragging = useRef(false);
+
+  // Sync server changes to local state ONLY if the user isn't touching the slider
   useEffect(() => {
+    if (isDragging.current) return;
+
     const min =
-      typeof start?.[0] === "number" &&
-        Number.isFinite(start[0])
+      typeof start?.[0] === "number" && Number.isFinite(start[0])
         ? start[0]
         : dynamicMin;
 
     const max =
-      typeof start?.[1] === "number" &&
-        Number.isFinite(start[1])
+      typeof start?.[1] === "number" && Number.isFinite(start[1])
         ? start[1]
         : dynamicMax;
 
     setSelectedMin(min);
     setSelectedMax(max);
-
     setMinInput(String(min));
     setMaxInput(String(max));
   }, [dynamicMin, dynamicMax, start]);
 
-  const generateHistogramBins = () => {
-    const binCount = 40;
-    const bins = Array(binCount).fill(0);
-    if (currentPrices.length === 0) return bins;
-
-    const rangeDiff = dynamicMax - dynamicMin;
-    if (rangeDiff === 0) {
-      bins[0] = currentPrices.length;
-      return bins;
-    }
-
-    currentPrices.forEach((price) => {
-      let binIndex = Math.floor(
-        ((price - dynamicMin) / rangeDiff) * binCount
-      );
-      if (binIndex >= binCount) binIndex = binCount - 1;
-      if (binIndex < 0) binIndex = 0;
-      bins[binIndex]++;
-    });
-
-    const maxBinValue = Math.max(...bins);
-    return bins.map((count) =>
-      maxBinValue > 0 ? (count / maxBinValue) * 100 : 0
-    );
-  };
-
-
   const handleApply = () => {
-    const minValue = minInput !== ""
-      ? Math.max(Number(minInput), dynamicMin)
-      : dynamicMin;
-    const maxValue = maxInput !== ""
-      ? Math.min(Number(maxInput), dynamicMax)
-      : dynamicMax;
+    const minValue = minInput !== "" ? Math.max(Number(minInput), dynamicMin) : dynamicMin;
+    const maxValue = maxInput !== "" ? Math.min(Number(maxInput), dynamicMax) : dynamicMax;
 
     refine([
       minValue > dynamicMin ? minValue : undefined,
@@ -412,67 +400,27 @@ const PriceRangeFilter = () => {
     else setMaxInput(value);
   };
 
-  const handleSliderChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    target: "min" | "max"
-  ) => {
-    const val = Number(e.target.value);
-
-    if (target === "min") {
-      const value = Math.max(
-        dynamicMin,
-        Math.min(val, selectedMax)
-      );
-
-      setSelectedMin(value);
-      setMinInput(String(value));
-
-      refine([
-        value > dynamicMin ? value : undefined,
-        selectedMax < dynamicMax ? selectedMax : undefined,
-      ]);
-    } if (target === "max") {
-      const value = Math.min(
-        dynamicMax,
-        Math.max(val, selectedMin)
-      );
-
-      setSelectedMax(value);
-      setMaxInput(String(value));
-
-      refine([
-        selectedMin > dynamicMin ? selectedMin : undefined,
-        value < dynamicMax ? value : undefined,
-      ]);
-    }
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") handleApply();
   };
 
-
-  const safeSelectedMin = Number.isFinite(selectedMin)
-    ? selectedMin
-    : dynamicMin;
-
-  const safeSelectedMax = Number.isFinite(selectedMax)
-    ? selectedMax
-    : dynamicMax;
+  const safeSelectedMin = Number.isFinite(selectedMin) ? selectedMin : dynamicMin;
+  const safeSelectedMax = Number.isFinite(selectedMax) ? selectedMax : dynamicMax;
 
   const minPercent =
-    dynamicMax > dynamicMin
-      ? ((safeSelectedMin - dynamicMin) /
-        (dynamicMax - dynamicMin)) *
-      100
-      : 0;
-
+    dynamicMax > dynamicMin ? ((safeSelectedMin - dynamicMin) / (dynamicMax - dynamicMin)) * 100 : 0;
   const maxPercent =
-    dynamicMax > dynamicMin
-      ? ((safeSelectedMax - dynamicMin) /
-        (dynamicMax - dynamicMin)) *
-      100
-      : 100;
+    dynamicMax > dynamicMin ? ((safeSelectedMax - dynamicMin) / (dynamicMax - dynamicMin)) * 100 : 100;
+
+  // Shared completion function when releasing handles
+  const handleCommitChange = (currentMin: number, currentMax: number) => {
+    isDragging.current = false;
+    refine([
+      currentMin > dynamicMin ? currentMin : undefined,
+      currentMax < dynamicMax ? currentMax : undefined,
+    ]);
+  };
+
   return (
     <div className="pt-2 pb-4 select-none">
       {/* Input Boxes */}
@@ -481,7 +429,7 @@ const PriceRangeFilter = () => {
           type="number"
           value={minInput}
           placeholder={String(dynamicMin)}
-          min={dynamicMin}   
+          min={dynamicMin}
           max={dynamicMax}
           onChange={(e) => handleInputChange("min", e.target.value)}
           onBlur={handleApply}
@@ -494,7 +442,7 @@ const PriceRangeFilter = () => {
           value={maxInput}
           placeholder={String(dynamicMax)}
           min={dynamicMin}
-          max={dynamicMax}   
+          max={dynamicMax}
           onChange={(e) => handleInputChange("max", e.target.value)}
           onBlur={handleApply}
           onKeyDown={handleKeyDown}
@@ -502,6 +450,7 @@ const PriceRangeFilter = () => {
         />
       </div>
 
+      {/* Slider Bars Track */}
       <div className="relative w-full h-7 flex items-center mt-2">
         <div className="absolute left-0 right-0 h-[3px] bg-gray-200 rounded-full" />
         <div
@@ -512,23 +461,43 @@ const PriceRangeFilter = () => {
           }}
         />
 
+        {/* Minimum Slider Handle */}
         <input
           type="range"
           min={dynamicMin}
           max={dynamicMax}
           value={selectedMin}
-          onChange={(e) => handleSliderChange(e, "min")}
+          onMouseDown={() => { isDragging.current = true; }}
+          onTouchStart={() => { isDragging.current = true; }}
+          onChange={(e) => {
+            const val = Number(e.target.value);
+            const value = Math.max(dynamicMin, Math.min(val, selectedMax));
+            setSelectedMin(value);
+            setMinInput(String(value));
+          }}
+          onMouseUp={() => handleCommitChange(selectedMin, selectedMax)}
+          onTouchEnd={() => handleCommitChange(selectedMin, selectedMax)}
           className="absolute pointer-events-none appearance-none w-full h-1 bg-transparent active:z-30 focus:outline-none
             [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[18px] [&::-webkit-slider-thumb]:h-[18px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer
             [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-[18px] [&::-moz-range-thumb]:h-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer"
         />
 
+        {/* Maximum Slider Handle */}
         <input
           type="range"
           min={dynamicMin}
           max={dynamicMax}
           value={selectedMax}
-          onChange={(e) => handleSliderChange(e, "max")}
+          onMouseDown={() => { isDragging.current = true; }}
+          onTouchStart={() => { isDragging.current = true; }}
+          onChange={(e) => {
+            const val = Number(e.target.value);
+            const value = Math.min(dynamicMax, Math.max(val, selectedMin));
+            setSelectedMax(value);
+            setMaxInput(String(value));
+          }}
+          onMouseUp={() => handleCommitChange(selectedMin, selectedMax)}
+          onTouchEnd={() => handleCommitChange(selectedMin, selectedMax)}
           className="absolute pointer-events-none appearance-none w-full h-1 bg-transparent active:z-30 focus:outline-none
             [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[18px] [&::-webkit-slider-thumb]:h-[18px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer
             [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-[18px] [&::-moz-range-thumb]:h-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer"
@@ -537,6 +506,7 @@ const PriceRangeFilter = () => {
     </div>
   );
 };
+
 
 const OdometerRangeFilter = () => {
   const { start, refine } = useRange({ attribute: "odometer" });
@@ -681,25 +651,6 @@ const InventoryContent = () => {
     </div>
   );
 
-  
-
-
-  useEffect(() => {
-  console.log(document.getElementById("results-column"));
-}, []);
-
-useEffect(() => {
-  const el = document.getElementById("results-column");
-
-  if (!el) return;
-
-  console.log({
-    scrollHeight: el.scrollHeight,
-    clientHeight: el.clientHeight,
-    overflow: getComputedStyle(el).overflowY,
-  });
-}, []);
-
   return (
     <main className="flex flex-col h-screen overflow-hidden bg-background lg:pt-30">
 
@@ -803,9 +754,11 @@ useEffect(() => {
 
               {/* Results grid */}
               <div className="mb-4 mt-3 min-h-[800px]">
-                <NoResultsHandler>
-                  <CustomInfiniteHits hitComponent={HitCard} />
-                </NoResultsHandler>
+                <SearchResultsWrapper>
+                  <NoResultsHandler>
+                    <CustomInfiniteHits hitComponent={HitCard} />
+                  </NoResultsHandler>
+                </SearchResultsWrapper>
               </div>
 
               {/* Footer lives inside the results column so it scrolls with cards */}
