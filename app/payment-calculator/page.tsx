@@ -83,7 +83,7 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-base font-lg mb-1">Vehicle Price</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[9px] text-black">$</span>
+                                <span className="absolute left-3 top-[9px] text-slate-400">$</span>
                                 <input
                                     type="number"
                                     value={vehiclePrice || ''}
@@ -96,7 +96,7 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-base font-lg mb-1">Down Payment</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[9px] text-black">$</span>
+                                <span className="absolute left-3 top-[9px] text-slate-400">$</span>
                                 <input
                                     type="number"
                                     value={downPayment || ''}
@@ -110,7 +110,7 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-base font-lg mb-1">Additional Fees</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[9px] text-black">$</span>
+                                <span className="absolute left-3 top-[9px] text-slate-400">$</span>
                                 <input
                                     type="number"
                                     value={additionalFees || ''}
@@ -124,7 +124,7 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-base font-lg mb-1">Finance Fee</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[9px] text-black">$</span>
+                                <span className="absolute left-3 top-[9px] text-slate-400">$</span>
                                 <input
                                     type="number"
                                     value={financeFee || ''}
@@ -138,7 +138,7 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-base font-lg mb-1">Gap Fee</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[9px] text-black">$</span>
+                                <span className="absolute left-3 top-[9px] text-slate-400">$</span>
                                 <input
                                     type="number"
                                     value={gapFee || ''}
@@ -151,7 +151,7 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-base font-lg mb-1">Warranty Cost</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[9px] text-black">$</span>
+                                <span className="absolute left-3 top-[9px] text-slate-400">$</span>
                                 <input
                                     type="number"
                                     value={warrantyCost || ''}
@@ -187,7 +187,7 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-base font-lg mb-1">Trade-In Value</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[9px] text-black">$</span>
+                                <span className="absolute left-3 top-[9px] text-slate-400">$</span>
                                 <input
                                     type="number"
                                     value={tradeInValue || ''}
@@ -201,7 +201,7 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-base font-lg mb-1">Existing vehicle loan balance</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[9px] text-black">$</span>
+                                <span className="absolute left-3 top-[9px] text-slate-400">$</span>
                                 <input
                                     type="number"
                                     value={loanBalance || ''}
@@ -228,7 +228,7 @@ export default function PaymentCalculator() {
                                             if (score === 'Fair') setApr(9.99);
                                             if (score === 'Poor') setApr(14.99);
                                         }}
-                                        className={`px-4 lg:px-6 py-2 border border-slate-300 rounded-xl text-sm font-medium transition-colors  cursor-pointer ${creditScore === score
+                                        className={`px-4 lg:px-6 py-2 border border-slate-300 rounded-xl text-sm font-medium transition-colors hover:shadow-[0_4px_0_0_#00af66] cursor-pointer ${creditScore === score
                                                 ? 'bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:bg-[#0f9f6e] text-white'
                                                 : 'bg-white text-gray-700 hover:bg-gray-50'
                                             }`}
@@ -249,7 +249,7 @@ export default function PaymentCalculator() {
                                     onChange={(e) => setApr(Number(e.target.value))}
                                     className="w-full pr-8 pl-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
-                                <span className="absolute right-3 top-[9px] text-black">%</span>
+                                <span className="absolute right-3 top-[9px] text-slate-400">%</span>
                             </div>
                         </div>
 
@@ -279,7 +279,7 @@ export default function PaymentCalculator() {
 
                             <Link href={"/finance"}>
 
-                            <button  className="w-full cursor-pointer bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:bg-[#0f9f6e] text-white font-semibold py-3 px-4 rounded-md transition-colors shadow-sm mb-6">
+                            <button  className="w-full cursor-pointer bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:bg-[#0f9f6e] text-white font-semibold py-3 px-4 rounded-xl transition-colors shadow-sm mb-6">
                                 Get pre-approved
                             </button>
                             
@@ -291,7 +291,7 @@ export default function PaymentCalculator() {
                         <div className=" ">
                             <label className="block text-base mb-2 text-left">Desired Bi-Weekly Payment</label>
                             <div className="relative mb-3">
-                                <span className="absolute left-3 top-[9px] text-black">$</span>
+                                <span className="absolute left-3 top-[9px] text-slate-400">$</span>
                                 <input
                                     type="number"
                                     value={desiredPayment}
