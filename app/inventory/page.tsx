@@ -199,7 +199,6 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
 
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   const { hits, isLastPage, showMore } = useInfiniteHits();
-
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -207,21 +206,18 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-         console.log("Intersecting:", entry.isIntersecting);
-
         if (entry.isIntersecting) {
-           console.log("Calling showMore");
           showMore();
         }
       },
       {
-        root: document.getElementById("results-column"),
-        rootMargin: "250px",
+        // Changed to null so it monitors viewport scrolling naturally now
+        root: null, 
+        rootMargin: "300px",
       }
     );
 
     const current = loadMoreRef.current;
-
     if (current) observer.observe(current);
 
     return () => {
@@ -231,6 +227,7 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
 
   return (
     <div>
+      {/* Results grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
         {hits.map((hit) => (
           <div key={hit.objectID} className="flex flex-col h-full p-[9px]">
@@ -239,19 +236,26 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
         ))}
       </div>
 
-      {/* Observer Target */}
+      {/* Observer Target & Manual fallback button */}
       {!isLastPage && (
-        <div ref={loadMoreRef}   style={{ height: 50 }}/>
+        <>
+          <div ref={loadMoreRef} style={{ height: 50 }} />
+          <div className="mt-8 mb-12 flex justify-start pl-[9px]">
+            <button
+              onClick={showMore}
+              className="bg-black text-white px-6 py-3 rounded-xl cursor-pointer font-medium text-[13px] uppercase tracking-wider hover:bg-gray-800 transition-colors"
+            >
+              Show More Results
+            </button>
+          </div>
+        </>
       )}
 
-      {!isLastPage && (
-        <div className="mt-8 flex justify-start pl-[9px]" >
-          <button
-            onClick={showMore}
-            className="bg-black text-white px-6 py-3 rounded-xl cursor-pointer font-medium text-[13px] uppercase tracking-wider hover:bg-gray-800 transition-colors"
-          >
-            Show More Results
-          </button>
+      {/* ── Footer only shows up when there are no more pages to load ── */}
+      {isLastPage && (
+        <div className="mt-12 transition-opacity duration-300 ease-in">
+          <GetInTouch />
+          <Footer />
         </div>
       )}
     </div>
@@ -761,9 +765,11 @@ const InventoryContent = () => {
                 </SearchResultsWrapper>
               </div>
 
+              
+
               {/* Footer lives inside the results column so it scrolls with cards */}
-              <GetInTouch />
-              <Footer />
+              {/* <GetInTouch />
+              <Footer /> */}
             </div>
 
           </div>
