@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import ratesIcon from "@/assets/icons/rates-icon.png";
 import onlineIcon from "@/assets/icons/online-icon.png";
 import yearIcon from "@/assets/icons/year-icon.png";
@@ -13,6 +14,41 @@ interface FinanceCalculatorProps {
   vehiclePrice?: number;
   inventoryId?: string;
 }
+
+// Simple internal component to animate price counting numbers smoothly
+const AnimatedCounter = ({ value }: { value: number }) => {
+  const [displayValue, setDisplayValue] = useState(value);
+
+  useEffect(() => {
+    let start = displayValue;
+    const end = value;
+    if (start === end) return;
+
+    const duration = 400; // ms
+    const startTime = performance.now();
+
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Ease out quad formula
+      const easeProgress = progress * (2 - progress);
+      
+      const current = start + (end - start) * easeProgress;
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setDisplayValue(end);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [value]);
+
+  return <span>{displayValue.toFixed(2)}</span>;
+};
 
 const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalculatorProps) => {
   // State management
@@ -35,20 +71,16 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
   }
 
   // Convert to bi-weekly (26 periods per year, 12 months per year)
-  // Bi-weekly = Monthly * 12 / 26
   const biWeeklyPayment = (monthlyPayment * 12) / 26;
 
-  // Handle term button click
   const handleTermClick = (years: number) => {
     setLoanTerm(years);
   };
 
-  // Handle slider change
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInterestRate(parseFloat(e.target.value));
   };
 
-  // Handle input changes
   const handlePurchasePriceChange = (value: string) => {
     const num = parseFloat(value) || 0;
     setPurchasePrice(num);
@@ -61,12 +93,33 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
 
   const sliderPercent = ((interestRate - 6) / (15 - 6)) * 100;
 
+  // Animation variants
+  const fadeInUp:Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  };
+
+  const staggerContainer:Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.12, delayChildren: 0.1 }
+    }
+  };
+
   return (
-    <div className="w-full bg-[#faf9f8] md:py-14 py-6 mt-10 font-sans px-2 md:px-10">
+    <div className="w-full bg-[#faf9f8] md:py-14 py-6 mt-10 font-sans px-2 md:px-10 overflow-hidden">
       <div className="w-full mx-auto">
         <div className="flex flex-col lg:flex-row pl-2 lg:gap-10">
+          
           {/* Left column: Content section */}
-          <div className="flex flex-col gap-3 max-w-[700px] ">
+          <motion.div 
+            className="flex flex-col gap-3 max-w-[700px]"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, margin: "-100px" }}
+            variants={fadeInUp}
+          >
             <h2 className="text-3xl md:text-[30px] font-semibold text-gray-900 tracking-wider mt-6">
               Tailored car finance that puts you in the driver's seat.
             </h2>
@@ -74,50 +127,67 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
               We support you at every step, offering multiple finance options to help you make an informed decision.
             </p>
 
-            <ul className="flex flex-col md:flex-row gap-4 my-8 max-w-[680px]">
-              <li className="flex items-start gap-1 text-[14px] text-gray-700 font-medium leading-tight">
-                <Image src={ratesIcon} alt="Rates Icon" className="w-10 h-10 object-contain -mt-[3px] flex-shrink-0" />
-                <span>Open and transparent interest rates and fees</span>
-              </li>
-              <li className="flex items-start gap-1 text-[14px] text-gray-700 font-medium leading-tight">
-                <Image src={onlineIcon} alt="Process Icon" className="w-10 h-10 -mt-[3px] object-contain flex-shrink-0" />
-                <span>Quick and simple paperless process</span>
-              </li>
-              <li className="flex items-start gap-1 text-[14px] text-gray-700 font-medium leading-tight">
-                <Image src={yearIcon} alt="Approval Icon" className="w-10 h-10 -mt-[3px] object-contain flex-shrink-0" />
-                <span>Fast approvals typically by the same business day</span>
-              </li>
-            </ul>
+            <motion.ul 
+              className="flex flex-col md:flex-row gap-4 my-8 max-w-[680px]"
+              variants={staggerContainer}
+            >
+              {[
+                { icon: ratesIcon, text: "Open and transparent interest rates and fees" },
+                { icon: onlineIcon, text: "Quick and simple paperless process" },
+                { icon: yearIcon, text: "Fast approvals typically by the same business day" }
+              ].map((item, index) => (
+                <motion.li 
+                  key={index} 
+                  variants={fadeInUp}
+                  className="flex items-start gap-1 text-[14px] text-gray-700 font-medium leading-tight"
+                >
+                  <Image src={item.icon} alt="Icon" className="w-10 h-10 object-contain -mt-[3px] flex-shrink-0" />
+                  <span>{item.text}</span>
+                </motion.li>
+              ))}
+            </motion.ul>
 
-            <div className="mt-4">
+            <motion.div 
+              className="mt-4"
+              initial={{ scale: 0.95, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: false }}
+              transition={{ delay: 0.3, duration: 0.7, ease: "easeOut" }}
+            >
               <Image src={vdpCar} alt="Vehicle Graphic" />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Right column: Calculator form */}
-          <div className="bg-white lg:rounded-2xl p-6 sm:p-10 flex flex-col gap-7 shadow-sm w-full">
+          <motion.div 
+            className="bg-white lg:rounded-2xl p-6 sm:p-10 flex flex-col gap-7 shadow-sm w-full"
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+          >
             <h3 className="text-3xl font-semibold text-gray-900">How much do you want to spend?</h3>
 
             {/* Purchase Price and Deposit */}
             <div className="grid grid-cols-2 gap-10">
               <div className="flex flex-col gap-2">
-                <label className=" text:text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Purchase price</label>
+                <label className="text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Purchase price</label>
                 <input
                   type="number"
                   value={purchasePrice}
                   onChange={(e) => handlePurchasePriceChange(e.target.value)}
-                  className="w-full px-4 py-4 rounded-xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border border-gray-200 outline-none focus:border-emerald-500 transition-colors text-gray-800 font-medium text-base"
+                  className="w-full px-4 py-4 rounded-xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border border-gray-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all text-gray-800 font-medium text-base"
                   placeholder="$ 25,000"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className=" text:text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Deposit amount</label>
+                <label className="text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Deposit amount</label>
                 <input
                   type="number"
                   value={depositAmount}
                   onChange={(e) => handleDepositAmountChange(e.target.value)}
-                  className="w-full px-4 py-4 rounded-xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border border-gray-200 outline-none focus:border-emerald-500 transition-colors text-gray-800 font-medium text-base"
+                  className="w-full px-4 py-4 rounded-xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border border-gray-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all text-gray-800 font-medium text-base"
                   placeholder="$ 0"
                 />
               </div>
@@ -125,21 +195,32 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
 
             {/* Term of Loan */}
             <div className="flex flex-col gap-2 mt-4">
-              <label className="text:text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Term of Loan (years)</label>
+              <label className="text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Term of Loan (years)</label>
               <div className="grid grid-cols-5 gap-2">
-                {[4, 5, 6, 7, 8].map((year) => (
-                  <button
-                    key={year}
-                    onClick={() => handleTermClick(year)}
-                    className={`flex items-center justify-center border rounded-xl py-4 px-4 font-semibold cursor-pointer text-center transition-colors text-xl sm:text-base ${
-                      loanTerm === year
-                        ? "border-2 border-emerald-500 text-emerald-600 font-bold"
-                        : "border border-emerald-200 text-gray-600 hover:bg-emerald-50"
-                    }`}
-                  >
-                    {year}
-                  </button>
-                ))}
+                {[4, 5, 6, 7, 8].map((year) => {
+                  const isActive = loanTerm === year;
+                  return (
+                    <button
+                      key={year}
+                      type="button"
+                      onClick={() => handleTermClick(year)}
+                      className="relative flex items-center justify-center border rounded-xl py-4 px-4 font-semibold cursor-pointer text-center text-xl sm:text-base transition-colors"
+                      style={{ overflow: "hidden" }}
+                    >
+                      {/* Smooth background/border bubble selection layer */}
+                      {isActive && (
+                        <motion.div 
+                          layoutId="activeTermBg"
+                          className="absolute inset-0 border-2 border-emerald-500 bg-emerald-50/20 rounded-xl pointer-events-none"
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                      <span className={`relative z-10 ${isActive ? "text-emerald-600 font-bold" : "text-gray-600 hover:text-gray-900"}`}>
+                        {year}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -162,22 +243,19 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                   <div className="absolute inset-0 rounded-full bg-[#DCEBE6]" />
 
                   {/* Green Fill */}
-                  <div
+                  <motion.div
                     className="absolute left-0 top-0 h-full rounded-full"
+                    animate={{ width: `${sliderPercent}%` }}
+                    transition={{ type: "tween", ease: "linear", duration: 0.05 }}
                     style={{
-                      width: `${sliderPercent}%`,
-                      background:
-                        "linear-gradient(90deg, #A8E5CC 0%, #85DBB8 50%, #05B169 100%)",
+                      background: "linear-gradient(90deg, #A8E5CC 0%, #85DBB8 50%, #05B169 100%)",
                     }}
                   />
 
                   {/* Dots */}
                   <div className="absolute inset-0 flex justify-between items-center px-4 pointer-events-none z-10">
                     {Array.from({ length: 10 }).map((_, i) => (
-                      <span
-                        key={i}
-                        className="h-1.5 w-1.5 rounded-full bg-[#1D8B68]/60"
-                      />
+                      <span key={i} className="h-1.5 w-1.5 rounded-full bg-[#1D8B68]/60" />
                     ))}
                   </div>
 
@@ -188,32 +266,40 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                     step="0.01"
                     value={interestRate}
                     onChange={handleSliderChange}
-                    className="finance-slider absolute inset-0 z-20 w-full h-9"
+                    className="finance-slider absolute inset-0 z-20 w-full h-9 opacity-0 cursor-pointer"
                   />
                 </div>  
-                </div>
- 
- 
+              </div>
             </div>
 
-            {/* Bi-weekly Repayment Result */}
-            <div className="bg-[#faf9f8] border border-emerald-50/80 rounded-2xl p-5 text-center flex flex-col gap-3">
+            {/* Bi-weekly Repayment Result Box */}
+            <motion.div 
+              className="bg-[#faf9f8] border border-emerald-50/80 rounded-2xl p-5 text-center flex flex-col gap-3"
+              layout
+            >
               <h4 className="text-base font-semibold text-black/50 tracking-wide">Your estimated Bi-weekly repayment</h4>
+              
               <h2 className="text-5xl sm:text-4xl font-extrabold text-gray-900 tracking-tight my-1">
-                ${biWeeklyPayment.toFixed(2)}
+                $<AnimatedCounter value={biWeeklyPayment} />
                 <span className="text-5xl sm:text-4xl font-bold">/Bi-weekly*</span>
               </h2>
+              
               <div className="text-base text-black tracking-wide uppercase">
                 <span>O.A.C + HST + licensing</span>
               </div>
-              <a
+              
+              <motion.a
                 href={`/finance?inventory_id=${inventoryId}`}
-                className="mt-2 block w-full bg-gradient-to-b from-[#00af66] to-[#00af66]/65 hover:opacity-90 text-white font-bold text-base py-4 px-6 rounded-xl transition-all duration-150 shadow-md shadow-emerald-600/10 text-center no-underline"
+                className="mt-2 block w-full bg-gradient-to-b from-[#00af66] to-[#00af66]/65 text-white font-bold text-base py-4 px-6 rounded-xl text-center no-underline shadow-md shadow-emerald-600/10"
+                whileHover={{ scale: 1.01, filter: "brightness(1.05)" }}
+                whileTap={{ scale: 0.99 }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
               >
                 Get personalised quotes
-              </a>
-            </div>
-          </div>
+              </motion.a>
+            </motion.div>
+          </motion.div>
+
         </div>
       </div>
     </div>
