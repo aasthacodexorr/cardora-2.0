@@ -199,10 +199,16 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
 
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   const { hits, isLastPage, showMore } = useInfiniteHits();
+  // 1. Get the current status of the search
+  const { status } = useInstantSearch(); 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
+  // A helper to know if we are currently fetching data
+  const isLoading = status === 'loading' || status === 'stalled';
+
   useEffect(() => {
-    if (isLastPage) return;
+    // If it's loading or it's the last page, don't observe
+    if (isLastPage || isLoading) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -211,7 +217,6 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
         }
       },
       {
-        // Changed to null so it monitors viewport scrolling naturally now
         root: null, 
         rootMargin: "300px",
       }
@@ -223,7 +228,7 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
     return () => {
       if (current) observer.unobserve(current);
     };
-  }, [isLastPage, showMore]);
+  }, [isLastPage, showMore, isLoading]);
 
   return (
     <div>
@@ -236,8 +241,17 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
         ))}
       </div>
 
+      {/* 2. Show a dedicated Loader instead of the footer when loading */}
+      {isLoading && (
+        <div className="flex justify-center items-center py-12">
+          {/* Replace this with your actual Loader component */}
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+        </div>
+      )}
+
       {/* Observer Target & Manual fallback button */}
-      {!isLastPage && (
+      {/* 3. Only show this if we aren't loading and there are more pages */}
+      {!isLastPage && !isLoading && (
         <>
           <div ref={loadMoreRef} style={{ height: 50 }} />
           <div className="mt-8 mb-12 flex justify-start pl-[9px]">
@@ -251,8 +265,8 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
         </>
       )}
 
-      {/* ── Footer only shows up when there are no more pages to load ── */}
-      {isLastPage && (
+      {/* ── 4. Footer ONLY shows when we are genuinely done AND not loading ── */}
+      {isLastPage && !isLoading && hits.length > 0 && (
         <div className="mt-12 transition-opacity duration-300 ease-in">
           <GetInTouch />
           <Footer />
