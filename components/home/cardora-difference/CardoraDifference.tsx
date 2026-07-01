@@ -49,7 +49,7 @@ const CardoraDifference = () => {
         <motion.h2 
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           className="text-[25px] lg:text-[44px] font-bold text-foreground tracking-tight mb-10"
         >
@@ -61,7 +61,7 @@ const CardoraDifference = () => {
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: false, margin: "-100px" }}
+          viewport={{ once: true, margin: "-100px" }}
           className={GRID_CLASS}
         >
           {ITEMS.map((item, idx) => (

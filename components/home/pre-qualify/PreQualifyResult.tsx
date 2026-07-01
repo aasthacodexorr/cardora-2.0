@@ -9,7 +9,7 @@ const PreQualifyResult = ({ biWeeklyPayment, rate, loanAmount }: PreQualifyResul
   const textRef = useRef<HTMLDivElement>(null);
   
   // Changed once to false to recount every time it arrives on screen
-  const isInView = useInView(containerRef, { once: false, amount: 0.5 });
+  const isInView = useInView(containerRef, { once: true, amount: 0.5 });
   const count = useMotionValue(0);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const PreQualifyResult = ({ biWeeklyPayment, rate, loanAmount }: PreQualifyResul
       ref={containerRef}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, amount: 0.2 }} // Triggers every time
+      viewport={{ once: true, amount: 0.2 }} // Triggers every time
       transition={{ duration: 0.5 }}
       className="flex flex-col items-center lg:mt-6 min-w-[229px]"
     >

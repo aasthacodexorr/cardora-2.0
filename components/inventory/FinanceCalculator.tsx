@@ -117,7 +117,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
             className="flex flex-col gap-3 max-w-[700px]"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, margin: "-100px" }}
+            viewport={{ once: true, margin: "-100px" }}
             variants={fadeInUp}
           >
             <h2 className="text-3xl md:text-[30px] font-semibold text-gray-900 tracking-wider mt-6">
@@ -151,7 +151,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
               className="mt-4"
               initial={{ scale: 0.95, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.7, ease: "easeOut" }}
             >
               <Image src={vdpCar} alt="Vehicle Graphic" />
@@ -163,7 +163,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
             className="bg-white lg:rounded-2xl p-6 sm:p-10 flex flex-col gap-7 shadow-sm w-full"
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
           >
             <h3 className="text-3xl font-semibold text-gray-900">How much do you want to spend?</h3>
@@ -204,7 +204,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                       key={year}
                       type="button"
                       onClick={() => handleTermClick(year)}
-                      className="relative flex items-center justify-center border rounded-xl py-4 px-4 font-semibold cursor-pointer text-center text-xl sm:text-base transition-colors"
+                      className="relative flex items-center justify-center border border-emerald-300 rounded-xl py-4 px-4 font-semibold cursor-pointer text-center text-xl sm:text-base transition-colors"
                       style={{ overflow: "hidden" }}
                     >
                       {/* Smooth background/border bubble selection layer */}

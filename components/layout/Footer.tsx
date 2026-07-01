@@ -59,10 +59,12 @@ const columns = [
   },
 ];
 
-/*  Component */
+/* Component */
 const Footer = () => {
   const d = appConfig.dealership;
-  const mapsUrl = d.address_map_url_1 || d.address_1_bar;
+  
+  // FIX: Prioritize the share link (address_1_bar) over the embed url for redirection
+  const mapsUrl = d.address_1_bar || d.address_map_url_1;
   const pathname = usePathname();
 
   return (
@@ -118,8 +120,15 @@ const Footer = () => {
             </h3>
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-white/85 shrink-0 mt-0.5" />
-              <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
-                <address className="not-italic text-[15px] leading-relaxed text-white cursor-pointer">
+              
+              {/* Entire address element acts as a link now */}
+              <a 
+                href={mapsUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-white block"
+              >
+                <address className="not-italic text-[15px] leading-relaxed cursor-pointer">
                   {d.full_address_1},<br />
                   {d.city_1}, {d.province_1}<br />
                   {d.postal_code_1} {d.country_1}
@@ -129,7 +138,6 @@ const Footer = () => {
           </div>
         </div>
 
-
       </div>
       <div className="mt-12">
         <hr className="border-dark-border" />
@@ -137,7 +145,7 @@ const Footer = () => {
 
       {/* Copyright bar */}
       <div className="pt-6 px-10 pb-5 flex flex-col md:flex-row gap-4 justify-between max-[767px]:justify-center max-[767px]:items-center">
-        <p className="text-[13px] text-white uppercase text-center md:text-start">
+        <div className="text-[13px] text-white uppercase text-center md:text-start">
           © {new Date().getFullYear()} {d.dealership_name}. <br />
           <span className="flex items-center gap-2">
             All rights reserved. Powered by
@@ -159,11 +167,11 @@ const Footer = () => {
               />
             </a>
           </span>
-        </p>
+        </div>
         <p className="text-[12.5px] text-white uppercase">
           <Link href="/privacy-policy" className="hover:text-white">Privacy Policy</Link>
           {" | "}
-          <Link href="/terms-and-conditions" className="hover:text-white">Terms &amp; Conditions</Link>
+          <Link href="/terms-and-conditions" className="hover:text-white">Terms & Conditions</Link>
           {" | "}
           <Link href="/sitemap" className="hover:text-white">Site Map</Link>
         </p>
@@ -171,5 +179,5 @@ const Footer = () => {
     </footer>
   );
 };
-  
+
 export default Footer;
