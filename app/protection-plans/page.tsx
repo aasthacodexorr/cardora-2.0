@@ -182,7 +182,7 @@ const ProtectionPlans = () => {
             <motion.h1
               initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6 }}
               className="text-4xl md:text-6xl font-bold tracking-tight text-neutral-900 leading-tight md:w-xl"
             >
@@ -193,7 +193,7 @@ const ProtectionPlans = () => {
               variants={containerVariants}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               className="flex flex-col gap-4 pt-4 pr-14 lg:pr-0"
             >
               {includes.map(({ label }) => (
@@ -213,7 +213,7 @@ const ProtectionPlans = () => {
           <motion.div
             initial={{ opacity: 0, x: 80 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="w-full lg:absolute lg:bottom-0 lg:right-32 lg:w-1/2 lg:w-[45%] flex justify-end items-end pointer-events-none"
           >
@@ -235,7 +235,7 @@ const ProtectionPlans = () => {
           <motion.h2
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: false, margin: "-100px" }}
+            viewport={{ once: true, margin: "-100px" }}
             className="text-[26px] md:text-5xl font-bold text-neutral-900 leading-none xl:max-w-[650px]"
           >
             We stand behind our cars so much, you get:
@@ -245,7 +245,7 @@ const ProtectionPlans = () => {
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: false, margin: "-100px" }}
+            viewport={{ once: true, margin: "-100px" }}
             className="mt-14 w-full max-w-xl divide-y divide-blue-100/80 border-t border-b border-blue-100/80"
           >
             {standBehind.map((item) => (
@@ -269,7 +269,7 @@ const ProtectionPlans = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl md:text-[45px] font-semibold tracking-tight text-foreground">
@@ -284,7 +284,7 @@ const ProtectionPlans = () => {
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             className="mt-10 flex lg:grid lg:grid-cols-6 gap-2 overflow-x-auto lg:overflow-x-visible scrollbar-none pb-2 lg:pb-0"
           >
             {coveredSystems.map(({ icon: Icon, label }) => (
@@ -312,7 +312,7 @@ const ProtectionPlans = () => {
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             className="grid md:grid-cols-2 gap-7"
           >
             {includedFeatures.map(({ icon: Icon, title, body }) => (
@@ -340,7 +340,7 @@ const ProtectionPlans = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-black">
@@ -367,7 +367,7 @@ const ProtectionPlans = () => {
             <motion.div
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.6 }}
               className="hidden lg:grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-4 border-t border-gray-200 mx-auto items-start text-center mt-8"
             >
@@ -391,7 +391,7 @@ const ProtectionPlans = () => {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ delay: 0.1, duration: 0.5 }}
               className="flex justify-center"
             >
@@ -405,7 +405,7 @@ const ProtectionPlans = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               className="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-0 md:gap-4 border-t border-gray-200 mx-auto items-start text-center"
             >
               {/* Left Column: Payout */}
