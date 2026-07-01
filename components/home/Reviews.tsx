@@ -167,7 +167,7 @@ const Reviews = () => {
                   <motion.article 
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false, margin: "-40px" }}
+                    viewport={{ once: true, margin: "-40px" }}
                     transition={{ duration: 0.4, delay: (index % 3) * 0.1 }}
                     whileHover={{ y: -4 }}
                     className="rounded-2xl bg-card p-5 md:p-6 shadow-md flex flex-col h-full border border-border transition-shadow duration-300 hover:shadow-lg"

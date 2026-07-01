@@ -12,7 +12,7 @@ const HeroLine = ({ text, image, imageAlt, reverse = false, tagline }: HeroLineP
         <motion.div 
           initial={{ x: -70, opacity: 0 }}
           whileInView={{ x: 0, opacity: 1 }}
-          viewport={{ once: false, amount: 0.3 }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={carTransition}
           className="w-[120px] sm:w-[160px] md:w-[200px] lg:w-[220px] relative flex-shrink-0"
         >

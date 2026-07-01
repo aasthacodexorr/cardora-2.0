@@ -21,7 +21,7 @@ const NextRideCard = ({ image, alt, title, subtitle, to }: NextRideCardProps) =>
           initial={{ y: -120, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           exit={{ y: -120, opacity: 0 }}
-          viewport={{ once: false, amount: 0.1 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ 
             type: "spring", 
             stiffness: 55, 

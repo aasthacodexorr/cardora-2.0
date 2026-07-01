@@ -24,7 +24,7 @@ const AboutVehicle = ({ vehicle }: any) => {
       <motion.h2 
         initial={{ opacity: 0, x: -15 }}
         whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: false, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.3 }}
         className="text-[22px] font-semibold text-black mb-[30px]"
       >
         About this vehicle
@@ -34,7 +34,7 @@ const AboutVehicle = ({ vehicle }: any) => {
         variants={containerVariants}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: false, amount: 0.15 }} // Animates on repeat
+        viewport={{ once: true, amount: 0.15 }} // Animates on repeat
         className="grid grid-cols-2 lg:grid-cols-3 gap-6"
       >
         {/* Odometer */}
