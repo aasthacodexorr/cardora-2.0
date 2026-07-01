@@ -11,7 +11,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, FileText, Mail, CalendarCheck, CarFrontIcon,  } from "lucide-react";
+import { ChevronDown, FileText, Mail, CalendarCheck, CarFrontIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Layout
 import { Header, Footer } from "@/components/layout";
@@ -129,20 +130,19 @@ const TradeIn = () => {
               {/* Background Landscape Wave Line Vector */}
               <div className="absolute inset-x-0 top-14 -translate-y-1/2 w-full flex justify-center z-10">
                 <svg
-              className=" w-full h-full"
-              viewBox="0 0 1440 500"
-              preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                // Re-mapped curve to drop gently and sweep back up right beneath the form card
-                d="M 0,310 C 350,310 400,340 648,313 C 800,295 1000,270 1440,310"
-                fill="none"
-                stroke="#00b872"
-                strokeWidth="12"
-                strokeLinecap="round"
-              />
-            </svg>
+                  className=" w-full h-full"
+                  viewBox="0 0 1440 500"
+                  preserveAspectRatio="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M 0,310 C 350,310 400,340 648,313 C 800,295 1000,270 1440,310"
+                    fill="none"
+                    stroke="#00b872"
+                    strokeWidth="12"
+                    strokeLinecap="round"
+                  />
+                </svg>
               </div>
 
               {/* Center Connected Data Badge Tracker Complex */}
@@ -150,13 +150,8 @@ const TradeIn = () => {
 
                 {/* Vertical Transparent Connector Bar Structure */}
                 <div className="relative h-28 w-[38px] flex items-center justify-center z-0">
-                  {/* Green glow background */}
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00b074]/15 to-[#00b074]/20" />
-
-                  {/* Main green progress line */}
                   <div className="absolute inset-y-0 w-full bg-gradient-to-b from-[#dff8ed] via-[#a8ebc9] to-[#7ee0af]" />
-
-                  {/* White dashed center line */}
                   <div className="absolute inset-y-4 w-[2px]">
                     <div
                       className="h-full w-full opacity-80"
@@ -168,7 +163,6 @@ const TradeIn = () => {
                   </div>
                 </div>
                 
-
                 {/* Anchor Marker Circle Dot */}
                 <div className="absolute top-[37%] z-20 flex items-center justify-center">
                   <div className="h-6 w-6 rounded-full bg-white border-[3.5px] border-[#00b074] shadow-md" />
@@ -186,7 +180,7 @@ const TradeIn = () => {
           </div>
 
           {/* Right: Quote Form Card Container */}
-          <div className="bg-white rounded-2xl shadow-xl p-5 md:p-8 pb-12 md:pb-24 border border-gray-100/80 w-full max-w-[440px] lg:justify-self-end z-10">
+          <div className="bg-white rounded-2xl shadow-xl lg:mr-7  p-5 md:p-8 pb-12 md:pb-24 border border-gray-100/80 w-full max-w-[440px] lg:justify-self-end z-10">
             <div className="flex border-b border-gray-200 mb-6 cursor-pointer">
               <button
                 onClick={() => setMode("vehicle")}
@@ -228,8 +222,7 @@ const TradeIn = () => {
 
         {/* Desktop Only Background Wave & Axis Graphic Overlays */}
         <div className="hidden lg:block absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0">
-          {/* Main Landscape Wave Vector */}
-          <div className="absolute xl:-bottom-14  2xl:-bottom-20 lg:-bottom-5  w-full z-10">
+          <div className="absolute xl:-bottom-14 2xl:-bottom-20 lg:-bottom-5 w-full z-10">
             <svg
               className=" w-full h-full z-10 pointer-events-none"
               viewBox="0 0 1440 500"
@@ -237,7 +230,6 @@ const TradeIn = () => {
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                // Re-mapped curve to drop gently and sweep back up right beneath the form card
                 d="M 0,310 C 350,310 400,340 648,313 C 800,295 1000,270 1440,310"
                 fill="none"
                 stroke="#00b872"
@@ -247,18 +239,11 @@ const TradeIn = () => {
             </svg>
           </div>
 
-          {/* Added z-10 to the main outer container to lift everything above the wave line */}
           <div className="absolute bottom-0 left-1/2 -translate-x-16 flex flex-col items-center z-10">
-
             {/* Vertical Transparent Connector Bar */}
             <div className="relative h-96 w-[44px] flex items-end justify-center ">
-              {/* Green glow background */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent via-[#00b074]/15 to-[#00b074]/20" />
-
-              {/* Main green progress line */}
               <div className="absolute inset-y-0 rounded-full bg-gradient-to-b from-[#dff8ed] via-[#a8ebc9] to-[#7ee0af]" />
-
-              {/* White dashed center line */}
               <div className="absolute inset-y-6 w-[2px]">
                 <div
                   className="h-full w-full opacity-80"
@@ -325,7 +310,6 @@ const TradeIn = () => {
                         </p>
                       </div>
 
-                      {/* Icon on the right side */}
                       <div className="flex h-8 w-8 md:h-9 md:w-9 flex-shrink-0 items-center justify-center text-zinc-500">
                         <Icon className="h-full w-full stroke-[1.5]" />
                       </div>
@@ -352,24 +336,41 @@ const TradeIn = () => {
               <div key={faq.q} className="bg-card border border-border overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className={`w-full flex items-center justify-between px-4 md:px-6 text-left  cursor-pointer transition-colors ${
+                  className={`w-full flex items-center justify-between px-4 md:px-6 text-left cursor-pointer transition-colors duration-200 ${
                     openFaq !== i ? "bg-[#f4f4f4]" : "bg-white"
                   }`}
                 >
-                  <span className={`font-bold leading-none ${openFaq !== i ? "text-[#666666]  py-5 md:py-6" : "text-[#333333] py-4 md:py-5"} text-[18px] md:text-[20px] pr-4 `}>
+                  <span className={`font-bold leading-none transition-colors duration-200 ${
+                    openFaq !== i ? "text-[#666666] py-5 md:py-6" : "text-[#333333] py-4 md:py-5"
+                  } text-[18px] md:text-[20px] pr-4`}>
                     {faq.q}
                   </span>
-                  <ChevronDown
-                    className={`h-5 w-5 flex-shrink-0 text-foreground/60 transition-transform duration-200 ${
-                      openFaq === i ? "rotate-180" : ""
-                    }`}
-                  />
+                  <motion.div
+                    animate={{ rotate: openFaq === i ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    className="flex-shrink-0 text-foreground/60"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </motion.div>
                 </button>
-                {openFaq === i && (
-                  <div className="px-4 md:px-6 pb-5 text-[16px] md:text-[16px] leading-normal bg-white">
-                    {faq.a}
-                  </div>
-                )}
+
+                {/* Framer Motion Accordion Dropdown */}
+                <AnimatePresence initial={false}>
+                  {openFaq === i && (
+                    <motion.div
+                      key="content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className="overflow-hidden bg-white"
+                    >
+                      <div className="px-4 md:px-6 pb-5 text-[16px] md:text-[16px] leading-normal text-[#444444]">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ))}
           </div>

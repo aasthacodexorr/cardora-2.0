@@ -7,6 +7,7 @@
 ========================= */
 
 import Image from "next/image";
+import { motion } from "framer-motion";
 import DifferenceCard from "./DifferenceCard";
 import { ITEMS, CONTAINER_CLASS, GRID_CLASS } from "./constants";
 
@@ -22,24 +23,57 @@ const icons = [
 ];
 
 const CardoraDifference = () => {
+  // Framer Motion parent orchestrator variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { type: "spring" as const, stiffness: 100, damping: 15 } 
+    }
+  };
+
   return (
     <section className="w-full bg-background">
       <div className={CONTAINER_CLASS}>
-        <h2 className="text-[25px] lg:text-[44px] font-bold text-foreground tracking-tight mb-10">
+        <motion.h2 
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.5 }}
+          className="text-[25px] lg:text-[44px] font-bold text-foreground tracking-tight mb-10"
+        >
           The {SITE_CONFIG?.dealership.name} difference
-        </h2>
+        </motion.h2>
 
-        {/* Three value-prop cards */}
-        <div className={GRID_CLASS}>
+        {/* Staggered load-in sequence wrapper */}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: false, margin: "-100px" }}
+          className={GRID_CLASS}
+        >
           {ITEMS.map((item, idx) => (
-            <DifferenceCard
-              key={idx}
-              icon={icons[idx]}
-              text={item.text}
-              body=""
-            />
+            <motion.div key={idx} variants={itemVariants}>
+              <DifferenceCard
+                icon={icons[idx]}
+                text={item.text}
+                body=""
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
