@@ -83,7 +83,7 @@ const About = () => {
             <motion.div 
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.7, ease: "easeOut" }}
               className="w-full flex justify-center md:justify-end"
             >
@@ -116,7 +116,7 @@ const About = () => {
                 <motion.div 
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: false, margin: "-50px" }}
+                  viewport={{ once: true, margin: "-50px" }}
                   variants={containerVariants}
                   className="flex flex-col gap-5 lg:gap-4 w-full pr-16 md:pr-0"
                 >
@@ -171,7 +171,7 @@ const About = () => {
             <motion.div 
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: false, margin: "-100px" }}
+              viewport={{ once: true, margin: "-100px" }}
               variants={fadeInUp}
               className="w-full text-left"
             >
@@ -205,7 +205,7 @@ const About = () => {
             <motion.div 
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: false, margin: "-100px" }}
+              viewport={{ once: true, margin: "-100px" }}
               variants={scaleUp}
               className="w-full flex justify-center md:justify-end"
             >
@@ -239,7 +239,7 @@ const About = () => {
             <motion.div 
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: false, margin: "-100px" }}
+              viewport={{ once: true, margin: "-100px" }}
               variants={fadeInUp}
               className="w-full text-left max-w-2xl"
             >
