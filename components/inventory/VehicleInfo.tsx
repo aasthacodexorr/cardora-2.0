@@ -85,7 +85,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
           </button>
 
           <div
-            className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[240px] sm:w-max max-w-[280px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
+            className={`absolute bottom-full -right-44 -translate-x-1/2 mb-2 w-[240px] sm:w-max max-w-[280px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
                 ? "opacity-100 visible"
                 : "opacity-0 invisible"
               } md:group-hover:opacity-100 md:group-hover:visible`}
@@ -317,7 +317,7 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid lg:grid-cols-2 gap-4">
                 <input 
                   type="email" 
                   name="email"

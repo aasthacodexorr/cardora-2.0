@@ -12,19 +12,18 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 import google from "@/assets/brand/google.png";
 import googleReview from "@/assets/brand/Goolge-Review-Logo.jpg";
 import { SITE_CONFIG } from "@/constants";
 
-/* Types */
 type Review = {
   initial: string;
   name: string;
   text: string;
 };
 
-/* Static Data */
 const reviews: Review[] = [
   {
     initial: "J",
@@ -53,37 +52,27 @@ const Reviews = () => {
   const isResetting = useRef(false);
   const [slidesToShow, setSlidesToShow] = useState(3);
 
-  // Triple the array so we can loop seamlessly
   const duplicatedReviews = [...reviews, ...reviews, ...reviews];
 
-  // 1. Dynamic Responsive Slides Handler
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 767) {
-        setSlidesToShow(1); // Mobile
-      } else if (window.innerWidth < 1024) {
-        setSlidesToShow(2); // Tablet
-      } else {
-        setSlidesToShow(3); // Desktop
-      }
+      if (window.innerWidth < 767) setSlidesToShow(1);
+      else if (window.innerWidth < 1024) setSlidesToShow(2);
+      else setSlidesToShow(3);
     };
-
-    handleResize(); // Run on mount
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Helper to safely get the current width of a single slide
   const getScrollAmount = () => {
     if (!scrollRef.current) return 0;
     const firstChild = scrollRef.current.querySelector("[data-slide]");
     return firstChild ? firstChild.clientWidth : scrollRef.current.clientWidth / slidesToShow;
   };
 
-  // 2. Manual scroll handler using dynamic widths
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current || isResetting.current) return;
-
     const scrollAmount = getScrollAmount();
     scrollRef.current.scrollBy({
       left: dir === "left" ? -scrollAmount : scrollAmount,
@@ -91,24 +80,19 @@ const Reviews = () => {
     });
   };
 
-  // 3. Infinite loop reset handler
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
 
     const scrollAmount = getScrollAmount();
     const singleSetWidth = scrollAmount * reviews.length;
-
-    // Initialize position to the start of the middle set
     container.scrollLeft = singleSetWidth;
 
     const handleScrollEnd = () => {
       if (!container) return;
-
       const currentScrollAmount = getScrollAmount();
       const currentSetWidth = currentScrollAmount * reviews.length;
 
-      // If we've scrolled into the third set, snap back to the middle set instantly
       if (container.scrollLeft >= currentSetWidth * 2 - 10) {
         isResetting.current = true;
         container.style.scrollBehavior = "auto";
@@ -117,7 +101,6 @@ const Reviews = () => {
         isResetting.current = false;
       }
 
-      // If we've scrolled into the first set, snap forward to the middle set instantly
       if (container.scrollLeft <= currentScrollAmount) {
         isResetting.current = true;
         container.style.scrollBehavior = "auto";
@@ -128,10 +111,8 @@ const Reviews = () => {
     };
 
     container.addEventListener("scrollend", handleScrollEnd);
-    return () => {
-      container.removeEventListener("scrollend", handleScrollEnd);
-    };
-  }, [slidesToShow]); // Re-bind if layout changes
+    return () => container.removeEventListener("scrollend", handleScrollEnd);
+  }, [slidesToShow]);
 
   return (
     <section className="w-full bg-[#eaeff5] overflow-hidden mt-14">
@@ -140,7 +121,6 @@ const Reviews = () => {
           People love buying with {SITE_CONFIG?.dealership.name}
         </h2>
 
-        {/* Google rating bar */}
         <div className="flex justify-center items-center w-full sm:px-10 mb-7">
           <a
             href="https://www.google.com"
@@ -161,35 +141,37 @@ const Reviews = () => {
           </a>
         </div>
 
-        {/* Carousel Container */}
-        <div className="relative mt-5 lg:mt-0 lg:px-8">
-          {/* Prev button */}
+        <div className="relative mt-5 lg:mt-0 px-4 md:px-10">
           <button
             onClick={() => scroll("left")}
             aria-label="Previous review"
-            className="flex absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-card border border-border shadow-md items-center justify-center cursor-pointer hover:bg-accent transition-colors"
+            className="flex absolute left-1 md:left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-card border border-border shadow-md items-center justify-center cursor-pointer hover:bg-accent transition-colors"
           >
             <ChevronLeft className="h-5 w-5 text-foreground" />
           </button>
 
-          {/* Scrollable Window viewport */}
           <div
             ref={scrollRef}
-            className="overflow-x-hidden scrollbar-none min-h-[500px] w-full snap-x mandatory"
+            className="overflow-x-hidden scrollbar-none w-full snap-x mandatory"
           >
-            {/* The Track element containing the items */}
-            <div className="flex w-full">
+            <div className="flex w-full py-2">
               {duplicatedReviews.map((r, index) => (
                 <div
                   key={`${r.name}-${index}`}
                   data-slide
-                  /* CHANGED: snap-start to snap-center */
                   className={`snap-center shrink-0 lg:flex-shrink-0 px-2 min-h-[470px] lg:min-h-[450px] md:px-3 ${
                     slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
                   }`}
                 >
-                  <article className="rounded-2xl bg-card p-5 md:p-6 shadow-md flex flex-col h-full border border-border">
-                    {/* Reviewer avatar + name */}
+                  {/* Integrated subtle entry/hover micro-animations */}
+                  <motion.article 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false, margin: "-40px" }}
+                    transition={{ duration: 0.4, delay: (index % 3) * 0.1 }}
+                    whileHover={{ y: -4 }}
+                    className="rounded-2xl bg-card p-5 md:p-6 shadow-md flex flex-col h-full border border-border transition-shadow duration-300 hover:shadow-lg"
+                  >
                     <div className="flex items-center gap-4">
                       <div className="h-[65px] w-[65px] rounded-full bg-[#512da8] flex items-center justify-center text-white text-[35px] font-medium flex-shrink-0">
                         {r.initial}
@@ -204,27 +186,24 @@ const Reviews = () => {
                       </div>
                     </div>
 
-                    {/* Review text */}
                     <p className="mt-5 text-[16px] text-foreground/80 leading-relaxed flex-1">
                       {r.text}
                     </p>
 
-                    {/* Google Review badge */}
                     <div className="flex items-center gap-2 mt-6 pt-2">
                       <Image src={googleReview} alt="Google" className="h-[30px] w-[30px] object-contain" />
                       <span className="text-[14px] font-bold text-foreground/80">Google Review</span>
                     </div>
-                  </article>
+                  </motion.article>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Next button */}
           <button
             onClick={() => scroll("right")}
             aria-label="Next review"
-            className="flex absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-card border border-border shadow-md items-center justify-center cursor-pointer hover:bg-accent transition-colors"
+            className="flex absolute right-1 md:right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-card border border-border shadow-md items-center justify-center cursor-pointer hover:bg-accent transition-colors"
           >
             <ChevronRight className="h-5 w-5 text-foreground" />
           </button>
