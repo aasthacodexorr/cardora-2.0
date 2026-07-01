@@ -670,16 +670,16 @@ const InventoryContent = () => {
   );
 
   return (
-    <main className="flex flex-col h-screen overflow-hidden bg-background lg:pt-30">
+    // CHANGED: Restored normal scrolling layout behavior to the main document frame rather than clamping the viewport h-screen
+    <main className="min-h-screen bg-background lg:pt-30">
 
-      {/* ── Header: fixed at the top, outside the scrolling area ── */}
-      <div className="bg-hero-bg">
+      {/* ── Header: Fixed/Sticky layout element at the top ── */}
+      <div className="bg-hero-bg sticky top-0 z-40">
         <Header />
       </div>
 
-      {/* ── Inventory section: fills all remaining vertical space ── */}
-      {/* On mobile we revert to normal page scroll; on lg+ we clip overflow */}
-      <section className="flex-1 min-h-0 bg-[#efefef] overflow-y-auto lg:overflow-hidden lg:px-14">
+      {/* ── Main content layout container ── */}
+      <section className="bg-[#efefef] px-3 lg:px-14 py-[20px]">
         <InstantSearch
           searchClient={searchClient}
           indexName={TYPESENSE_COLLECTION_NAME}
@@ -691,15 +691,17 @@ const InventoryContent = () => {
           <ScrollToTopOnSearch />
           <Configure hitsPerPage={21} />
 
-          <div className="lg:flex lg:h-full lg:overflow-hidden max-w-[1600px] mx-auto px-3 lg:px-[24px] lg:px-10 py-[20px] lg:py-0">
+          {/* CHANGED: Configured a clean layout alignment mapping */}
+          <div className="flex flex-col lg:flex-row items-start max-w-[1600px] mx-auto gap-5">
  
+            {/* ── CHANGED: Filter component sticks naturally right below header when scrolling past it ── */}
             <aside
               className={[
                 "hidden",
                 "lg:flex lg:flex-col",
                 "lg:shrink-0 lg:w-[320px]",
-                "lg:h-full lg:overflow-y-auto",
-                "lg:py-[20px]",
+                "lg:sticky lg:top-[150px]", // ADJUST THIS VALUE to match your exact desktop Header height component
+                "max-h-[calc(100vh-170px)] overflow-y-auto", // Keeps internal filter options scrollable if they exceed display height
                 "[&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar-track]:hidden",
                 "lg:[scrollbar-width:none] lg:[-ms-overflow-style:none]",
               ].join(" ")}
@@ -721,15 +723,10 @@ const InventoryContent = () => {
               </div>
             </aside>
  
+            {/* ── CHANGED: Cleaned up fixed classes so the search + cards dynamically scale fluidly to fill workspace width ── */}
             <div
               id="results-column"
-              className={[
-                "w-full lg:flex-1",
-                "lg:h-full lg:overflow-y-auto",
-                "lg:pl-5 pt-[20px]",
-                "[&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar-track]:hidden",
-                "lg:[scrollbar-width:none] lg:[-ms-overflow-style:none]",
-              ].join(" ")}
+              className="w-full flex-1 min-w-0"
             >
               {/* Search + sort + responsive control bar */}
               <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4 px-3">
@@ -771,7 +768,7 @@ const InventoryContent = () => {
               </div>
 
               {/* Results grid */}
-              <div className="mb-4 mt-3 min-h-[800px]">
+              <div className="mb-4 mt-3">
                 <SearchResultsWrapper>
                   <NoResultsHandler>
                     <CustomInfiniteHits hitComponent={HitCard} />
@@ -779,11 +776,6 @@ const InventoryContent = () => {
                 </SearchResultsWrapper>
               </div>
 
-              
-
-              {/* Footer lives inside the results column so it scrolls with cards */}
-              {/* <GetInTouch />
-              <Footer /> */}
             </div>
 
           </div>
@@ -821,7 +813,6 @@ const InventoryContent = () => {
 
         </InstantSearch>
       </section>
-
 
     </main>
   );
