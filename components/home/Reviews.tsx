@@ -12,7 +12,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 
 import google from "@/assets/brand/google.png";
 import googleReview from "@/assets/brand/Goolge-Review-Logo.jpg";
@@ -52,9 +51,10 @@ const Reviews = () => {
   const appConfig = useAppConfig();
   const { SITE_CONFIG } = getConstants(appConfig);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const isResetting = useRef(false);
+  const isScrolling = useRef(false);
   const [slidesToShow, setSlidesToShow] = useState(3);
 
+  // Triple the array to provide buffer segments for infinite scrolling loops
   const duplicatedReviews = [...reviews, ...reviews, ...reviews];
 
   useEffect(() => {
@@ -75,10 +75,20 @@ const Reviews = () => {
   };
 
   const scroll = (dir: "left" | "right") => {
-    if (!scrollRef.current || isResetting.current) return;
+    if (!scrollRef.current || isScrolling.current) return;
+
+    const container = scrollRef.current;
     const scrollAmount = getScrollAmount();
-    scrollRef.current.scrollBy({
-      left: dir === "left" ? -scrollAmount : scrollAmount,
+    
+    isScrolling.current = true;
+
+    // Use absolute coordinates instead of scrollBy to prevent multi-click calculation stacking
+    const targetScrollLeft = dir === "left" 
+      ? container.scrollLeft - scrollAmount 
+      : container.scrollLeft + scrollAmount;
+
+    container.scrollTo({
+      left: targetScrollLeft,
       behavior: "smooth",
     });
   };
@@ -89,6 +99,8 @@ const Reviews = () => {
 
     const scrollAmount = getScrollAmount();
     const singleSetWidth = scrollAmount * reviews.length;
+    
+    // Initial jump to the middle track setup
     container.scrollLeft = singleSetWidth;
 
     const handleScrollEnd = () => {
@@ -96,21 +108,19 @@ const Reviews = () => {
       const currentScrollAmount = getScrollAmount();
       const currentSetWidth = currentScrollAmount * reviews.length;
 
+      // Infinite loop boundary correction mechanics
       if (container.scrollLeft >= currentSetWidth * 2 - 10) {
-        isResetting.current = true;
         container.style.scrollBehavior = "auto";
         container.scrollLeft = container.scrollLeft - currentSetWidth;
         container.style.scrollBehavior = "smooth";
-        isResetting.current = false;
-      }
-
-      if (container.scrollLeft <= currentScrollAmount) {
-        isResetting.current = true;
+      } else if (container.scrollLeft <= currentScrollAmount) {
         container.style.scrollBehavior = "auto";
         container.scrollLeft = container.scrollLeft + currentSetWidth;
         container.style.scrollBehavior = "smooth";
-        isResetting.current = false;
       }
+      
+      // Unblock click interaction
+      isScrolling.current = false;
     };
 
     container.addEventListener("scrollend", handleScrollEnd);
@@ -119,7 +129,7 @@ const Reviews = () => {
 
   return (
     <section className="w-full bg-[#eaeff5] overflow-hidden mt-14">
-      <div className="mx-auto max-w-[1280px] px-4 md:px-6 pt-12 lg:pt-18 lg:pb-9">
+      <div className="mx-auto max-w-[1280px] px-4 md:px-6 pt-12 lg:pt-18 pb-9">
         <h2 className="text-[26px] md:text-[44px] font-bold text-foreground tracking-tight leading-none text-center mb-5">
           People love buying with {SITE_CONFIG?.dealership.name}
         </h2>
@@ -153,9 +163,10 @@ const Reviews = () => {
             <ChevronLeft className="h-5 w-5 text-foreground" />
           </button>
 
+          {/* Changed overflow-x-hidden to overflow-x-auto to make touch gestures work natively on mobile */}
           <div
             ref={scrollRef}
-            className="overflow-x-hidden scrollbar-none w-full snap-x mandatory"
+            className="overflow-x-auto scrollbar-none w-full snap-x mandatory"
           >
             <div className="flex w-full py-2">
               {duplicatedReviews.map((r, index) => (
@@ -166,15 +177,7 @@ const Reviews = () => {
                     slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
                   }`}
                 >
-                  {/* Integrated subtle entry/hover micro-animations */}
-                  <motion.article 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{ duration: 0.4, delay: (index % 3) * 0.1 }}
-                    whileHover={{ y: -4 }}
-                    className="rounded-2xl bg-card p-5 md:p-6 shadow-md flex flex-col h-full border border-border transition-shadow duration-300 hover:shadow-lg"
-                  >
+                  <article className="rounded-2xl bg-card p-5 md:p-6 shadow-md flex flex-col h-full border border-border transition-shadow duration-300 hover:shadow-lg">
                     <div className="flex items-center gap-4">
                       <div className="h-[65px] w-[65px] rounded-full bg-[#512da8] flex items-center justify-center text-white text-[35px] font-medium flex-shrink-0">
                         {r.initial}
@@ -197,7 +200,7 @@ const Reviews = () => {
                       <Image src={googleReview} alt="Google" className="h-[30px] w-[30px] object-contain" />
                       <span className="text-[14px] font-bold text-foreground/80">Google Review</span>
                     </div>
-                  </motion.article>
+                  </article>
                 </div>
               ))}
             </div>
