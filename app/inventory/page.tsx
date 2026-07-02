@@ -383,7 +383,7 @@ const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string
       </button>
 
       {open && (
-        <div className="absolute top-full max-h-[300px] overflow-y-auto overscroll-contain right-0 mt-2 w-60 rounded-lg bg-white border border-slate-200 shadow-lg z-50 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory">
+        <div className="absolute top-full max-h-[450px] overflow-y-auto overscroll-contain right-0 mt-2 w-60 rounded-lg bg-white border border-slate-200 shadow-lg z-50">
           {sortItems?.map((item) => (
             <button
               key={item.value}
