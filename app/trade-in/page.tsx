@@ -12,7 +12,8 @@
 
 import { useState } from "react";
 import { ChevronDown, FileText, Mail, CalendarCheck, CarFrontIcon } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import Image from "next/image";
 
 // Layout
 import { Header, Footer } from "@/components/layout";
@@ -21,8 +22,6 @@ import { Header, Footer } from "@/components/layout";
 import { GetInTouch } from "@/components/common";
 
 // Assets
-// import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
-import Image from "next/image";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import sell from "@/assets/pages/sell.jpg";
@@ -90,6 +89,72 @@ const faqs = [
   },
 ];
 
+/* Animation Variants */
+const heroTextContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 }
+  }
+};
+
+const heroTextItem: Variants = {
+  hidden: { opacity: 0, y: 25 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.6, ease: [0.215, 0.610, 0.355, 1.0] } 
+  }
+};
+
+const heroFormVariants: Variants = {
+  hidden: { opacity: 0, y: 30, scale: 0.98 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.65, delay: 0.3, ease: "easeOut" }
+  }
+};
+
+const graphicVariants: Variants = {
+  hidden: { opacity: 0, scaleY: 0.8 },
+  visible: {
+    opacity: 1,
+    scaleY: 1,
+    transition: { duration: 0.8, delay: 0.4, ease: "easeOut" }
+  }
+};
+
+const slideInLeft: Variants = {
+  hidden: { opacity: 0, x: -30 },
+  visible: { 
+    opacity: 1, 
+    x: 0, 
+    transition: { duration: 0.65, ease: "easeOut" } 
+  }
+};
+
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.5, ease: "easeOut" } 
+  }
+};
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { 
+      staggerChildren: 0.08, 
+      delayChildren: 0.05 
+    }
+  }
+};
+
 /* Page Component */
 const TradeIn = () => {
   const appConfig = useAppConfig();
@@ -112,22 +177,38 @@ const TradeIn = () => {
     <div className="min-h-screen bg-background overflow-x-hidden">
       <Header />
 
-      {/* Hero / Quote form */}
+      {/* Hero / Quote form — Animated on Initial Page Entry */}
       <section className="w-full relative px-4 lg:px-24 lg:mt-18">
         <div className="mx-auto max-w-[1300px] px-2 md:px-9 pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
 
-          {/* Left: Heading Typography Only */}
-          <div className="w-full lg:w-auto text-left">
-            <h1 className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[38px] md:text-[44px] lg:text-[66px] md:w-xl">
+          {/* Left: Animated Heading Typography Complex */}
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={heroTextContainer}
+            className="w-full lg:w-auto text-left"
+          >
+            <motion.h1 
+              variants={heroTextItem}
+              className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[38px] md:text-[44px] lg:text-[66px] md:w-xl"
+            >
               Sell my car the easy way.
-            </h1>
-            <p className="mt-4 lg:mt-6 text-[18px] lg:text-[23px] text-black max-w-xl leading-relaxed">
+            </motion.h1>
+            <motion.p 
+              variants={heroTextItem}
+              className="mt-4 lg:mt-6 text-[18px] lg:text-[23px] text-black max-w-xl leading-relaxed"
+            >
               Fast, seamless and secure. It's the way everyone <br className="hidden lg:inline" /> deserves.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           {/* Dynamic Wave, Axis Tracking Graphic and Tag for Mobile View */}
-          <div className="block lg:hidden w-full relative pointer-events-none px-4">
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={graphicVariants}
+            className="block lg:hidden w-full relative pointer-events-none px-4"
+          >
             <div className="w-full h-[180px] relative overflow-visible flex flex-col items-center justify-center">
 
               {/* Background Landscape Wave Line Vector */}
@@ -171,7 +252,7 @@ const TradeIn = () => {
                   <div className="h-6 w-6 rounded-full bg-white border-[3.5px] border-[#00b074] shadow-md" />
                 </div>
 
-                {/* Valuation Floating Popup Tag matching original desktop styles */}
+                {/* Valuation Floating Popup Tag */}
                 <div className="bg-[#cdf5e3] text-center px-8 py-3 rounded-xl shadow-md border border-[#b2edd1]/40 mt-1 z-20">
                   <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Jan 9, 2026</div>
                   <div className="text-xl font-black text-gray-900 mt-0.5">$18,400</div>
@@ -180,10 +261,15 @@ const TradeIn = () => {
               </div>
 
             </div>
-          </div>
+          </motion.div>
 
           {/* Right: Quote Form Card Container */}
-          <div className="bg-white rounded-2xl shadow-xl lg:mr-7  p-5 md:p-8 pb-12 md:pb-24 border border-gray-100/80 w-full max-w-[440px] lg:justify-self-end z-10">
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={heroFormVariants}
+            className="bg-white rounded-2xl shadow-xl lg:mr-7 p-5 md:p-8 pb-12 md:pb-24 border border-gray-100/80 w-full max-w-[440px] lg:justify-self-end z-10"
+          >
             <div className="flex border-b border-gray-200 mb-6 cursor-pointer">
               <button
                 onClick={() => setMode("vehicle")}
@@ -220,11 +306,16 @@ const TradeIn = () => {
                 minHeight: `${TRADE_FORMS[mode].minHeight}px`,
               }}
             />
-          </div>
+          </motion.div>
         </div>
 
         {/* Desktop Only Background Wave & Axis Graphic Overlays */}
-        <div className="hidden lg:block absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0">
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={graphicVariants}
+          className="hidden lg:block absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0"
+        >
           <div className="absolute xl:-bottom-14 2xl:-bottom-20 lg:-bottom-5 w-full z-10">
             <svg
               className=" w-full h-full z-10 pointer-events-none"
@@ -271,15 +362,22 @@ const TradeIn = () => {
               <div className="text-2xl font-semibold font-black text-gray-900 mt-0.5">$18,400</div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* How it works */}
+      {/* How it works — Image slides from left, right text block remains static */}
       <section className="w-full lg:px-4 lg:pr-32 -mt-5 lg:ml-12">
         <div className="mx-auto lg:max-w-[1600px] px-4 py-10 lg:py-20 lg:ml-16">
           <div className="grid grid-cols-1 items-start gap-6 lg:gap-0 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
-            {/* Left Column: Image */}
-            <div className="w-full h-[500px] md:h-full">
+            
+            {/* Left Column: Animated Image Block */}
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={slideInLeft}
+              className="w-full h-[500px] md:h-full"
+            >
               <Image
                 src={sell}
                 alt="Customer trading in their car at Dealership"
@@ -288,9 +386,9 @@ const TradeIn = () => {
                 loading="lazy"
                 className="h-full w-full rounded-[24px] md:rounded-[32px] object-cover"
               />
-            </div>
+            </motion.div>
 
-            {/* Right Column: Steps */}
+            {/* Right Column: Static Content Block */}
             <div className="lg:pr-16">
               <h2 className="text-[28px] md:text-[36px] font-bold tracking-tight text-zinc-900 lg:text-[44px]">
                 How it works
@@ -321,11 +419,12 @@ const TradeIn = () => {
                 })}
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* FAQs */}
+      {/* FAQs — Header layout remains static, list nodes stagger into viewport view */}
       <section className="w-full lg:mb-14 mb-2 lg:mt-10 px-3 lg:px-24">
         <div className="mx-auto max-w-[1300px] px-2 md:px-9 py-8 lg:py-0">
           <div className="flex items-center gap-3 mb-6 md:mb-10">
@@ -334,9 +433,20 @@ const TradeIn = () => {
             </h2>
           </div>
 
-          <div className="space-y-1">
+          {/* Staggered Row Entry Container */}
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={containerVariants}
+            className="space-y-1"
+          >
             {faqs.map((faq, i) => (
-              <div key={faq.q} className="bg-card border border-border overflow-hidden">
+              <motion.div 
+                key={faq.q} 
+                variants={fadeInUp}
+                className="bg-card border border-border overflow-hidden"
+              >
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className={`w-full flex items-center justify-between px-4 md:px-6 text-left cursor-pointer transition-colors duration-200 ${
@@ -357,7 +467,7 @@ const TradeIn = () => {
                   </motion.div>
                 </button>
 
-                {/* Framer Motion Accordion Dropdown */}
+                {/* Accordion Expansion Drawer */}
                 <AnimatePresence initial={false}>
                   {openFaq === i && (
                     <motion.div
@@ -374,9 +484,9 @@ const TradeIn = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
