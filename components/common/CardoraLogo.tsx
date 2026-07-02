@@ -7,13 +7,22 @@
 ========================= */
 
 import Image from "next/image";
-import { appConfig } from "@/lib/appConfig";
+import { useAppConfig } from "@/app/providers";
+import { fallbackValue, defaultAppConfig } from "@/lib/appConfig";
 
 const CardoraLogo = () => {
+  const appConfig = useAppConfig();
+  const defaultD = defaultAppConfig.dealership;
+  
+  const safeD = {
+    dealership_logo: fallbackValue(appConfig.dealership.dealership_logo, defaultD.dealership_logo),
+    dealership_name: fallbackValue(appConfig.dealership.dealership_name, defaultD.dealership_name),
+  };
+  
   return (
     <Image
-      src={appConfig.dealership.dealership_logo || "/cardora-logo.png"}
-      alt={`${appConfig.dealership.dealership_name} Logo`}
+      src={safeD.dealership_logo || "/cardora-logo.png"}
+      alt={`${safeD.dealership_name} Logo`}
       width={200}
       height={60}
       priority

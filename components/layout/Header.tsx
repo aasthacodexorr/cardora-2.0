@@ -21,10 +21,13 @@ import instagram from "@/assets/social/insta-1.png";
 import famicons from "@/assets/icons/famicons_call.svg";
 
 import CardoraLogo from "@/components/common/CardoraLogo";
-import { SITE_CONFIG, NAV_ITEMS, PHONE_NUMBER, PHONE_HREF } from "@/constants";
+import { getConstants, NAV_ITEMS } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 
 /*  Component */
 const Header = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG, PHONE_NUMBER, PHONE_HREF } = getConstants(appConfig);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 

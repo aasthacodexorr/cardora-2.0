@@ -6,11 +6,13 @@ import { useState } from 'react';
 import Image from 'next/image';
 import callIcon from "@/assets/icons/call_icon.svg";
 import envelopIcon from "@/assets/icons/envelop_icon.svg";
-import { SITE_CONFIG } from '@/constants';
-import { appConfig } from '@/lib/appConfig';
+import { getConstants } from '@/constants';
+import { useAppConfig } from '@/app/providers';
 import Link from 'next/link';
 
 export default function ContactUs() {
+    const appConfig = useAppConfig();
+    const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
     // 1. Keep input state so React can track what the user types
     const [formData, setFormData] = useState({
         firstName: '',

@@ -7,13 +7,16 @@
 ========================= */
 
 import CategoryPill from "./CategoryPill";
-import { CATEGORIES, CONTAINER_CLASS } from "./constants"
+import { getCategories, CONTAINER_CLASS } from "./constants"
+import { useAppConfig } from "@/app/providers";
 
 const CategoryPills = () => {
+  const appConfig = useAppConfig();
+  const categories = getCategories(appConfig);
   return (
     <section className="w-full bg-background">
       <div className={CONTAINER_CLASS}>
-        {CATEGORIES.map(({ label, icon, href }) => (
+        {categories.map(({ label, icon, href }) => (
           <CategoryPill
             key={label}
             label={label}

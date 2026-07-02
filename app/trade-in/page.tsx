@@ -23,7 +23,8 @@ import { GetInTouch } from "@/components/common";
 // Assets
 // import tradeInHero from "@/assets/pages/trade-in-hero.jpg";
 import Image from "next/image";
-import { SITE_CONFIG } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 import sell from "@/assets/pages/sell.jpg";
 
 /* Static Data */
@@ -89,28 +90,30 @@ const faqs = [
   },
 ];
 
-const TRADE_FORMS = {
-  vehicle: {
-    url: SITE_CONFIG.urls.tradeFormByVehicle,
-    minHeight: 447,
-  },
-  vin: {
-    url: SITE_CONFIG.urls.tradeFormByVin,
-    minHeight: 327,
-  },
-} as const;
-
 /* Page Component */
 const TradeIn = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   const [mode, setMode]       = useState<"vehicle" | "vin">("vehicle");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  const TRADE_FORMS = {
+    vehicle: {
+      url: SITE_CONFIG.urls.tradeFormByVehicle,
+      minHeight: 447,
+    },
+    vin: {
+      url: SITE_CONFIG.urls.tradeFormByVin,
+      minHeight: 327,
+    },
+  };
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <Header />
 
       {/* Hero / Quote form */}
-      <section className="w-full relative px-4 lg:px-24 lg:mt-24">
+      <section className="w-full relative px-4 lg:px-24 lg:mt-18">
         <div className="mx-auto max-w-[1300px] px-2 md:px-9 pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
 
           {/* Left: Heading Typography Only */}
@@ -185,7 +188,7 @@ const TradeIn = () => {
               <button
                 onClick={() => setMode("vehicle")}
                 className={`flex-1 text-center pb-3 text-[16px] md:text-[18px] font-bold transition-all relative cursor-pointer ${
-                  mode === "vehicle" ? "text-gray-900" : "text-gray-900"
+                  mode === "vehicle" ? "text-gray-900" : "text-gray-500"
                 }`}
               >
                 By Vehicle
@@ -197,7 +200,7 @@ const TradeIn = () => {
               <button
                 onClick={() => setMode("vin")}
                 className={`flex-1 text-center pb-3 text-[16px] md:text-[18px] font-bold transition-all relative cursor-pointer ${
-                  mode === "vin" ? "text-gray-900" : "text-gray-900"
+                  mode === "vin" ? "text-gray-900" : "text-gray-500"
                 }`}
               >
                 VIN

@@ -8,7 +8,8 @@ import { Footer, Header } from '@/components/layout';
 import { GetInTouch } from '@/components/common';
 import skipDeal from "@/assets/cards/skipDeal.png";
 import newWay from "@/assets/cards/newWay.png";
-import { SITE_CONFIG } from '@/constants';
+import { getConstants } from '@/constants';
+import { useAppConfig } from '@/app/providers';
 
 /* Animation Variants */
 const dropDown: Variants = {
@@ -44,10 +45,12 @@ const containerVariants: Variants = {
 };
 
 export default function SkipTheDealership() {
+    const appConfig = useAppConfig();
+    const { SITE_CONFIG } = getConstants(appConfig);
     return (
         <>
             <Header />
-            <div className="w-full font-sans antialiased text-gray-900 selection:bg-yellow-200 lg:mt-32 overflow-hidden">
+            <div className="w-full font-sans antialiased text-gray-900 selection:bg-yellow-200 lg:mt-20 overflow-hidden">
 
                 {/* 1. Hero / Banner Section: Buttons animate top-to-bottom */}
                 <section className="bg-[#ffde5b] lg:py-18 py-9 px-4 text-center">
