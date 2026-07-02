@@ -14,7 +14,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { getFeaturedVehicles, type FeaturedVehicle } from "@/lib/featuredVehicles";
-import { appConfig } from "@/lib/appConfig";
+import { useAppConfig } from "@/app/providers";
 
 type DisplayVehicle = {
   id: string;
@@ -27,13 +27,14 @@ type DisplayVehicle = {
 const SCROLL_AMOUNT = 314; // Card width (290px) + Gap (24px)
 
 export default function FeaturedVehicles() {
+  const appConfig = useAppConfig();
   const [vehicles, setVehicles] = useState<DisplayVehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const isResetting = useRef(false);
 
   useEffect(() => {
-    getFeaturedVehicles()
+    getFeaturedVehicles(appConfig)
       .then((data) => {
         if (data.length === 0) {
           setVehicles([]);

@@ -2,9 +2,12 @@
 
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
-import { SITE_CONFIG } from '@/constants';
+import { getConstants } from '@/constants';
+import { useAppConfig } from '@/app/providers';
 
 const VehicleForm = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   return (
     <>
       <Header />

@@ -16,10 +16,10 @@ import FinanceCalculator from "@/components/inventory/FinanceCalculator";
 import { GetInTouch } from "@/components/common";
 
 // Config, assets & services
-import { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
+import { getConstants } from "@/constants";
 import { getVehicleById } from "@/lib/inventoryUrls";
 import { stripHtml, parseImageUrls } from "@/utils/formatters";
-import { appConfig } from "@/lib/appConfig";
+import { getAppConfig } from "@/lib/appConfig";
 
 import doller from "@/assets/icons/doller-1.png";
 import protectShield from "@/assets/icons/trade-shield.png";
@@ -40,10 +40,12 @@ export default async function VehicleDetailsPage({
 }: {
   params: Promise<{ slug: string; id: string }>;
 }) {
+  const appConfig = await getAppConfig();
+  const { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } = getConstants(appConfig);
   const resolvedParams = await params;
-  const vehicle = await getVehicleById(resolvedParams.id);
+  const vehicle = await getVehicleById(resolvedParams.id, appConfig);
   const description = vehicle?.vehicle_description
-  ?.replace(/_{10,}/g, "<hr />");
+    ?.replace(/_{10,}/g, "<hr />");
 
   if (!vehicle) notFound();
 
@@ -70,7 +72,7 @@ export default async function VehicleDetailsPage({
         We added 'max-w-[1440px] xl:max-w-[1600px] w-full mx-auto' to control the core structure 
         so that on large monitors the entire layout centers like the design.
       */}
-      <section className="w-full bg-background flex-1 max-w-[1440px] xl:max-w-[1600px] mx-auto lg:mt-32">
+      <section className="w-full bg-background flex-1 max-w-[1440px] xl:max-w-[1600px] mx-auto lg:mt-24">
         <div className="w-full pt-[30px] lg:pl-2">
           
           {/* SECTION ROW: Controls the boundaries of the sticky sidebar */}

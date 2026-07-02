@@ -5,9 +5,9 @@ import FaqAccordion from '@/components/common/FaqAccordion';
 import { Footer, Header } from '@/components/layout';
 import { Reviews } from '@/components/home';
 import { GetInTouch } from '@/components/common';
-import { appConfig } from "@/lib/appConfig";
+import { getAppConfig } from "@/lib/appConfig";
+import { getConstants } from '@/constants';
 import Image from "next/image";
-import { SITE_CONFIG } from '@/constants';
 import DownloadCouponButton from '@/components/service/DownloadCouponButton';
 
 interface PageProps {
@@ -15,6 +15,8 @@ interface PageProps {
 }
 
 export default async function ServicePage({ params }: PageProps) {
+  const appConfig = await getAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   const { id } = await params;
   const serviceKey = id;
   const currentData = servicesData[serviceKey];
@@ -115,6 +117,7 @@ export default async function ServicePage({ params }: PageProps) {
           </div>
         </div>
       </section>
+
       {/* SECTION 2: Alert Message Intro Container */}
       <section className="w-full bg-[#e6f4ff] py-1 md:py-5 ">
         <div className="px-5 xl:px-56 py-0 xl:py-8 text-center text-base md:text-[20px] text-slate-900 tracking-wider">
@@ -188,9 +191,7 @@ export default async function ServicePage({ params }: PageProps) {
             {/* Box 1: Signs You Need Service */}
             <div className="bg-white rounded-[20px] p-7 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col justify-between space-y-6">
               <div className="space-y-5">
-                {/* Header Content Row */}
                 <div className="flex items-center gap-4">
-                  {/* Custom Green Stethoscope SVG Icon */}
                   <svg className="w-10 h-10 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
@@ -199,7 +200,6 @@ export default async function ServicePage({ params }: PageProps) {
                   </h3>
                 </div>
 
-                {/* Bullet Points */}
                 <ul className="pl-14 md:pl-2">
                   {(currentData.signsList || [
                     "Oil change or check engine light is on",
@@ -217,18 +217,15 @@ export default async function ServicePage({ params }: PageProps) {
                 </ul>
               </div>
 
-              {/* Bottom Context Note */}
               <p className=" text-[15px] md:text-[18px] leading-[1.5] font-medium tracking-wide pt-3 border-t border-slate-50  pl-14 md:pl-2 ">
-                Not sure if it's time? Our team can inspect your vehicle and recommend the right maintenance schedule.
+                Not sure if it&apos;s time? Our team can inspect your vehicle and recommend the right maintenance schedule.
               </p>
             </div>
 
             {/* Box 2: What's Included */}
             <div className="bg-white rounded-[20px] p-8 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col justify-between space-y-6">
               <div className="space-y-5">
-                {/* Header Content Row */}
                 <div className="flex items-center gap-4">
-                  {/* Custom Green Oil Funnel/Can SVG Icon */}
                   <svg className="w-10 h-10 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -238,7 +235,6 @@ export default async function ServicePage({ params }: PageProps) {
                   </h3>
                 </div>
 
-                {/* Bullet Points */}
                 <ul className="pl-14 md:pl-2">
                   {(currentData.includesList || [
                     "Free inspection for your air and cabin filters",
@@ -256,7 +252,6 @@ export default async function ServicePage({ params }: PageProps) {
                 </ul>
               </div>
 
-              {/* Bottom Context Note */}
               <p className="text-[15px] md:text-[18px] leading-[1.5] font-medium tracking-wide pt-3 border-t border-slate-50  pl-14 md:pl-2 ">
                 We service most makes and models, including domestic, European, and imported vehicles.
               </p>
@@ -266,7 +261,7 @@ export default async function ServicePage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* SECTION 5: Premium Service Highlight (Flipped Mirror Layout) */}
+      {/* SECTION 5: Premium Service Highlight */}
       <section className="w-full bg-white py-12 md:py-16 px-4 md:px-32">
         <div className="">
           <div className="flex flex-col md:flex-row gap-10 lg:gap-16 items-start">
@@ -297,8 +292,7 @@ export default async function ServicePage({ params }: PageProps) {
                 Synthetic oil helps:
               </div>
 
-              {/* Bordered Clean List Block */}
-              <ul className="w-full border-t border-slate-100 divide-y divide-slate-100   text-[18px] font-medium tracking-wide">
+              <ul className="w-full border-t border-slate-100 divide-y divide-slate-100 text-[18px] font-medium tracking-wide">
                 {[
                   "Protect your engine during extreme Ontario temperatures",
                   "Improve engine performance and efficiency",
@@ -312,7 +306,6 @@ export default async function ServicePage({ params }: PageProps) {
                 ))}
               </ul>
 
-              {/* Bottom Body Copy */}
               <div className="space-y-2 text-[18px] leading-[1.6] font-medium tracking-wide">
                 <p>
                   {currentData.premiumBody || `Modern vehicles are designed to perform best with synthetic oil, especially for drivers dealing with daily commuting, stop-and-go traffic, and changing weather conditions around ${appConfig.dealership.city_1} and the GTA.`}
@@ -327,7 +320,7 @@ export default async function ServicePage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* SECTION 6: Why Drivers Choose Us Content Split */}
+      {/* SECTION 6: Why Drivers Choose Us */}
       <section className="w-full bg-[#f5f5f7] py-6 md:py-20">
         <div className="px-4 md:px-28">
           <div className="flex flex-col md:flex-row gap-10 lg:gap-12 items-start">
@@ -338,7 +331,6 @@ export default async function ServicePage({ params }: PageProps) {
                 Why Drivers in {appConfig.dealership.city_1} Choose {appConfig.dealership.dealership_name}
               </h2>
 
-              {/* Right-Aligned Split Row Checklist */}
               <ul className="w-full border-t border-slate-200/60 divide-y divide-slate-200/60 text-[18px] font-medium tracking-wide">
                 {([
                   "Honest recommendations with no pressure",
@@ -349,11 +341,9 @@ export default async function ServicePage({ params }: PageProps) {
                   "Trusted customer service experience"
                 ]).map((feature, idx) => (
                   <li key={idx} className="flex items-center justify-between py-3.5">
-                    {/* Checkmark aligned on the far left */}
                     <svg className="w-4 h-4 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    {/* Feature text pulled smoothly to the right side */}
                     <span className="text-slate-900 text-right font-medium">
                       {feature}
                     </span>
@@ -361,7 +351,6 @@ export default async function ServicePage({ params }: PageProps) {
                 ))}
               </ul>
 
-              {/* Bottom Conclusion Paragraph */}
               <p className="text-slate-900 text-[18px] leading-[1.6] font-medium tracking-wide pt-2">
                 We know your time matters. Our goal is to get you back on the road quickly and confidently.
               </p>
@@ -387,17 +376,15 @@ export default async function ServicePage({ params }: PageProps) {
       <section className="w-full bg-white py-12 md:py-16">
         <div className="  px-4 md:px-28">
 
-          {/* Left-Aligned Header Container */}
           <div className="text-left mb-10 space-y-1.5">
             <h2 className="text-3xl md:text-[40px] font-bold text-black tracking-tight">
-              Let's take care of your ride
+              Let&apos;s take care of your ride
             </h2>
             <p className="text-slate-900 text-[20px] font-medium tracking-wide">
               Great ways to get started
             </p>
           </div>
 
-          {/* 4-Column Card Grid Container */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {otherCards.slice(0, 4).map((card) => (
               <Link
@@ -407,7 +394,6 @@ export default async function ServicePage({ params }: PageProps) {
               >
               <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
 
-                {/* Image Wrapper Block */}
                 <div className="aspect-[16/11] bg-slate-50 overflow-hidden w-full relative ">
                   <Image
                     src={card.section2Img || "image_85493b.jpg"}
@@ -417,20 +403,16 @@ export default async function ServicePage({ params }: PageProps) {
                   />
                 </div>
 
-                {/* Inner Content Block */}
                 <div className="p-4 flex-1 flex flex-col justify-start space-y-1">
-                  {/* Title & Action Arrow Row */}
                   <div className="flex items-center justify-between gap-2 w-full">
                     <h4 className="text-[17px] font-bold text-slate-900 capitalize tracking-tight">
                       {card.id.replace('-', ' ')}
                     </h4>
-                    {/* Green Right-Facing Chevron Arrow */}
                     <svg className="w-4 h-4 text-[#10b981] flex-shrink-0 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
                   </div>
 
-                  {/* Short Service Details Text */}
                   <p className=" text-[15px] leading-snug font-medium tracking-wide line-clamp-2">
                     {card.cardText || "Issues, pads, rotors, calipers"}
                   </p>
