@@ -91,7 +91,15 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
     setDepositAmount(num);
   };
 
-  const sliderPercent = ((interestRate - 6) / (15 - 6)) * 100;
+  const min = 6;
+  const max = 15;
+
+  const sliderPercent = ((interestRate - min) / (max - min)) * 100;
+
+  const fillWidth =
+    interestRate === min
+      ? "18px"  
+      : `calc(${sliderPercent}% + 9px)`;  
 
   // Animation variants
   const fadeInUp:Variants = {
@@ -245,10 +253,11 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                   {/* Green Fill */}
                   <motion.div
                     className="absolute left-0 top-0 h-full rounded-full"
-                    animate={{ width: `${sliderPercent}%` }}
+                    animate={{ width: fillWidth }}
                     transition={{ type: "tween", ease: "linear", duration: 0.05 }}
                     style={{
-                      background: "linear-gradient(90deg, #A8E5CC 0%, #85DBB8 50%, #05B169 100%)",
+                      background:
+                        "linear-gradient(90deg, #A8E5CC 0%, #85DBB8 50%, #05B169 100%)",
                     }}
                   />
 
