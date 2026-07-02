@@ -358,6 +358,19 @@ const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string
     document.removeEventListener("mousedown", handleClickOutside);
   };
 }, []);
+
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setOpen(false);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   
 
   return (
@@ -370,7 +383,7 @@ const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string
       </button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-2 w-60 rounded-lg bg-white border border-slate-200 shadow-lg z-50">
+        <div className="absolute top-full max-h-[300px] overflow-y-auto overscroll-contain right-0 mt-2 w-60 rounded-lg bg-white border border-slate-200 shadow-lg z-50 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory">
           {sortItems?.map((item) => (
             <button
               key={item.value}
@@ -378,7 +391,7 @@ const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string
                 refine(item.value);
                 setOpen(false);
               }}
-              className={`flex w-full items-center cursor-pointer text-black/70 justify-between px-4 py-3 hover:bg-gray-100 border-b border-slate-200 ${currentRefinement === item.value
+              className={`flex w-full items-start cursor-pointer text-black/70 justify-between px-2 py-3 hover:bg-gray-100 border-b border-slate-200 ${currentRefinement === item.value
                   ? "font-semibold"
                   : ""
                 }`}

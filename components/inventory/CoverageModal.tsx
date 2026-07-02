@@ -2,12 +2,26 @@
 
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function CoverageModal() {
   const appConfig = useAppConfig();
   const { SITE_CONFIG } = getConstants(appConfig);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    };
+  }, [isOpen]);
 
   return (
     <>
