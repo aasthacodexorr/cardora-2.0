@@ -148,7 +148,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                 <motion.li 
                   key={index} 
                   variants={fadeInUp}
-                  className="flex items-start gap-1 text-[14px] text-gray-700 font-medium leading-tight"
+                  className="flex items-center lg:items-start  gap-1 text-[14px] text-gray-700 font-medium leading-tight"
                 >
                   <Image src={item.icon} alt="Icon" className="w-10 h-10 object-contain -mt-[3px] flex-shrink-0" />
                   <span>{item.text}</span>
@@ -178,7 +178,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
             <h3 className="text-3xl font-semibold text-gray-900">How much do you want to spend?</h3>
 
             {/* Purchase Price and Deposit */}
-            <div className="grid grid-cols-2 gap-10">
+            <div className="grid lg:grid-cols-2 lg:gap-10 gap-5 ">
               <div className="flex flex-col gap-2">
                 <label className="text-xl md:text-sm font-semibold text-gray-500 tracking-wider">Purchase price</label>
                 <input

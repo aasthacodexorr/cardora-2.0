@@ -77,6 +77,11 @@ const Terms = ({ vehicle }: any) => {
                     <div
                         ref={termsTooltipRef}
                         className="mt-5 text-center flex items-center justify-center relative group"
+                        onClick={(e) => {
+                            if (e.target === e.currentTarget) {
+                                setShowTermsTooltip(false);
+                            }
+                        }}
                     >
                         <button
                             type="button"
@@ -102,13 +107,13 @@ const Terms = ({ vehicle }: any) => {
                         </button>
 
                         <div
-                            className={`absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-[300px] sm:w-[420px] bg-[#222] text-white text-[12px] py-3 rounded-lg shadow-xl z-50 transition-all duration-200 ${showTermsTooltip
+                            className={`absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-full sm:w-[420px] bg-[#222] text-white text-[12px] py-3 rounded-lg shadow-xl z-50 transition-all duration-200 ${showTermsTooltip
                                     ? "opacity-100 visible"
                                     : "opacity-0 invisible"
                                 } md:group-hover:opacity-100 md:group-hover:visible`}
                         >
-                            <div className="text-center">
-                                <p className="font-bold underline mb-1">
+                            <div className="lg:text-center text-start px-4 lg:px-0">
+                                <p className="font-bold underline mb-1 text-center">
                                     Buy with confidence.
                                 </p>
 
@@ -116,9 +121,9 @@ const Terms = ({ vehicle }: any) => {
                                 <p>10-day exchange policy,  150-point inspection,</p>
                                 <p>complimentary CARFAX® vehicle history report,</p>
                                 <p>inspection report, and roadside assistance.
-                                    Certain conditions, limitations,
+                                    Certain conditions, limitations,</p>
                                     <p>and exclusions may apply. Please visit the dealership for complete details.</p>
-                                </p>
+                                
                             </div>
 
                             <div className="absolute top-full left-1/2 -translate-x-1/2 w-3 h-3 bg-[#222] rotate-45 -mt-1.5" />
