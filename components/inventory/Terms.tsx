@@ -1,8 +1,17 @@
 "use client";
-import { appConfig } from "@/lib/appConfig";
+import { useAppConfig } from "@/app/providers";
+import { fallbackValue, defaultAppConfig } from "@/lib/appConfig";
 import { useState, useRef, useEffect } from "react";
 
 const Terms = ({ vehicle }: any) => {
+    const appConfig = useAppConfig();
+    const defaultD = defaultAppConfig.dealership;
+    
+    const safeD = {
+      dealership_name: fallbackValue(appConfig.dealership.dealership_name, defaultD.dealership_name),
+      city_1: fallbackValue(appConfig.dealership.city_1, defaultD.city_1),
+    };
+    
     const [showTermsTooltip, setShowTermsTooltip] = useState(false);
     const termsTooltipRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -93,25 +102,26 @@ const Terms = ({ vehicle }: any) => {
                         </button>
 
                         <div
-                            className={`absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-[300px] sm:w-[340px] bg-black text-white text-[11px] font-normal leading-normal px-4 py-3 rounded-xl text-left shadow-xl z-50 transition-all duration-200 ${showTermsTooltip
-                                ? "opacity-100 visible"
-                                : "opacity-0 invisible"
+                            className={`absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-[300px] sm:w-[420px] bg-[#222] text-white text-[12px] py-3 rounded-lg shadow-xl z-50 transition-all duration-200 ${showTermsTooltip
+                                    ? "opacity-100 visible"
+                                    : "opacity-0 invisible"
                                 } md:group-hover:opacity-100 md:group-hover:visible`}
                         >
-                            <p className="font-bold mb-1 text-[12px] text-white">
-                                Buy with confidence.
-                            </p>
+                            <div className="text-center">
+                                <p className="font-bold underline mb-1">
+                                    Buy with confidence.
+                                </p>
 
-                            <p className="text-gray-200">
-                                Every {appConfig.dealership.dealership_name} vehicle includes a
-                                6-month powertrain warranty, 10-day exchange policy,
-                                150-point inspection, complimentary CARFAX® vehicle history
-                                report, inspection report, and roadside assistance. Certain
-                                conditions, limitations, and exclusions may apply. Please visit
-                                the dealership for complete details.
-                            </p>
+                                <p>Every {safeD.dealership_name} vehicle includes a 6-month powertrain warranty,</p>
+                                <p>10-day exchange policy,  150-point inspection,</p>
+                                <p>complimentary CARFAX® vehicle history report,</p>
+                                <p>inspection report, and roadside assistance.
+                                    Certain conditions, limitations,
+                                    <p>and exclusions may apply. Please visit the dealership for complete details.</p>
+                                </p>
+                            </div>
 
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-3 h-3 bg-black rotate-45 -mt-1.5" />
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-3 h-3 bg-[#222] rotate-45 -mt-1.5" />
                         </div>
                     </div>
 
@@ -148,7 +158,7 @@ const Terms = ({ vehicle }: any) => {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </div>
-                    <span>{vehicle?.location || `${appConfig.dealership.dealership_name} ${appConfig.dealership.city_1}`}</span>
+                    <span>{vehicle?.location || `${safeD.dealership_name} ${safeD.city_1}`}</span>
                 </div>
             </div>
 

@@ -8,7 +8,7 @@ import onlineIcon from "@/assets/icons/online-icon.png";
 import yearIcon from "@/assets/icons/year-icon.png";
 import vdpCar from "@/assets/icons/vdp-car.png";
 
-import { appConfig } from "@/lib/appConfig";
+import { useAppConfig } from "@/app/providers";
 
 interface FinanceCalculatorProps {
   vehiclePrice?: number;
@@ -51,6 +51,7 @@ const AnimatedCounter = ({ value }: { value: number }) => {
 };
 
 const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalculatorProps) => {
+  const appConfig = useAppConfig();
   // State management
   const [purchasePrice, setPurchasePrice] = useState<number>(vehiclePrice || appConfig.payment_calculator.vehicle_price);
   const [depositAmount, setDepositAmount] = useState<number>(appConfig.payment_calculator.downpayment);
@@ -91,7 +92,15 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
     setDepositAmount(num);
   };
 
-  const sliderPercent = ((interestRate - 6) / (15 - 6)) * 100;
+  const min = 6;
+  const max = 15;
+
+  const sliderPercent = ((interestRate - min) / (max - min)) * 100;
+
+  const fillWidth =
+    interestRate === min
+      ? "18px"  
+      : `calc(${sliderPercent}% + 9px)`;  
 
   // Animation variants
   const fadeInUp:Variants = {
@@ -171,7 +180,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
             {/* Purchase Price and Deposit */}
             <div className="grid grid-cols-2 gap-10">
               <div className="flex flex-col gap-2">
-                <label className="text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Purchase price</label>
+                <label className="text-xl md:text-sm font-semibold text-gray-500 tracking-wider">Purchase price</label>
                 <input
                   type="number"
                   value={purchasePrice}
@@ -182,7 +191,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Deposit amount</label>
+                <label className="text-xl md:text-sm font-semibold text-gray-500 tracking-wider">Deposit amount</label>
                 <input
                   type="number"
                   value={depositAmount}
@@ -195,7 +204,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
 
             {/* Term of Loan */}
             <div className="flex flex-col gap-2 mt-4">
-              <label className="text-xl md:text-xs font-semibold text-gray-500 tracking-wider">Term of Loan (years)</label>
+              <label className="text-xl md:text-sm font-semibold text-gray-500">Term of Loan (years)</label>
               <div className="grid grid-cols-5 gap-2">
                 {[4, 5, 6, 7, 8].map((year) => {
                   const isActive = loanTerm === year;
@@ -204,18 +213,17 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                       key={year}
                       type="button"
                       onClick={() => handleTermClick(year)}
-                      className="relative flex items-center justify-center border border-emerald-300 rounded-xl py-4 px-4 font-semibold cursor-pointer text-center text-xl sm:text-base transition-colors"
+                      className="relative flex items-center justify-center border border-[#00af6645] hover:bg-[#00af6645]/40 rounded-xl py-4 px-4 font-semibold cursor-pointer text-center text-xl sm:text-base transition-colors"
                       style={{ overflow: "hidden" }}
                     >
                       {/* Smooth background/border bubble selection layer */}
                       {isActive && (
                         <motion.div 
-                          layoutId="activeTermBg"
                           className="absolute inset-0 border-2 border-emerald-500 bg-emerald-50/20 rounded-xl pointer-events-none"
-                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          transition={{ type: "spring", }}
                         />
                       )}
-                      <span className={`relative z-10 ${isActive ? "text-emerald-600 font-bold" : "text-gray-600 hover:text-gray-900"}`}>
+                      <span className={`relative z-10  font-light text-black`}>
                         {year}
                       </span>
                     </button>
@@ -245,10 +253,11 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                   {/* Green Fill */}
                   <motion.div
                     className="absolute left-0 top-0 h-full rounded-full"
-                    animate={{ width: `${sliderPercent}%` }}
+                    animate={{ width: fillWidth }}
                     transition={{ type: "tween", ease: "linear", duration: 0.05 }}
                     style={{
-                      background: "linear-gradient(90deg, #A8E5CC 0%, #85DBB8 50%, #05B169 100%)",
+                      background:
+                        "linear-gradient(90deg, #A8E5CC 0%, #85DBB8 50%, #05B169 100%)",
                     }}
                   />
 

@@ -10,11 +10,14 @@
 
 import React from "react";
 import Link from "next/link";
-import { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 import Image from "next/image";
 
 /*  Component */
 export const HitCard = ({ hit }: { hit: any }) => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } = getConstants(appConfig);
   // Build display title from Typesense document fields
   const title =
     `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${hit.trim || ""}`.trim();

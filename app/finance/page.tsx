@@ -12,12 +12,15 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 // Config
-import { SITE_CONFIG } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 import { Footer, Header } from "@/components/layout";
 import { GetInTouch } from "@/components/common";
 
 /*  Inner component (needs useSearchParams) */
 const FinanceContent = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   const searchParams = useSearchParams();
   const inventoryId  = searchParams.get("inventory_id") || "";
 

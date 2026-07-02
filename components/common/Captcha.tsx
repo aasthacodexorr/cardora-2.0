@@ -1,6 +1,7 @@
 "use client";
 
-import { SITE_CONFIG } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 import React, { useRef, useEffect } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
@@ -25,6 +26,8 @@ interface CaptchaProps {
  * Then disable submit button if captchaToken is null
  */
 export const Captcha: React.FC<CaptchaProps> = ({ onVerify, resetTrigger = false }) => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   // Reset the reCAPTCHA widget when resetTrigger changes

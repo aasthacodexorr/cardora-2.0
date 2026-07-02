@@ -16,16 +16,10 @@
    passed to <InstantSearch routing={{ router, stateMapping }} />.
 ========================= */
 
-import { appConfig } from "@/lib/appConfig";
-import { TYPESENSE_COLLECTION_NAME } from "@/lib/typesense";
+import { AppConfig } from "@/lib/appConfig";
 import type { UiState } from "instantsearch.js";
 
-const COLLECTION_ID = appConfig.site.collection || "";
-const DEFAULT_SORT = "status_rank:asc,created_at:desc";
-
-// The constant, literal prefix glued onto every param key, decoded form.
-// e.g. "07cb7c095c0cf712732a976016079e19/sort/status_rank:asc,created_at:desc"
-const PREFIX = `${COLLECTION_ID}/sort/${DEFAULT_SORT}`;
+// We will pass prefix and collection_id dynamically down from the config
 
 /* -------------------------------------------------------
    Helpers to turn a nested object into bracketed query keys
@@ -120,16 +114,12 @@ function unflatten(pairs: Array<[string, string]>): PlainObject {
 /* -------------------------------------------------------
    stateMapping: translates between InstantSearch's internal
    uiState and the "route state" object the router persists.
-
-   Route state shape (per index):
-   {
-     query?: string,
-     refinementList?: Record<string, string[]>,
-     range?: Record<string, string>, // "min:max"
-   }
 ------------------------------------------------------- */
 
-export const inventoryStateMapping = {
+export const createInventoryStateMapping = (config: AppConfig) => {
+  const TYPESENSE_COLLECTION_NAME = config.site.collection || "";
+  
+  return {
   stateToRoute(uiState: UiState) {
     const indexState = uiState[TYPESENSE_COLLECTION_NAME] || {};
     const route: PlainObject = {};
@@ -174,8 +164,9 @@ export const inventoryStateMapping = {
     return {
       [TYPESENSE_COLLECTION_NAME]: indexState,
     };
-  },
-};
+  }
+}; // closes returned stateMapping object
+}; // closes createInventoryStateMapping arrow function
 
 /* -------------------------------------------------------
    router: a minimal custom history-based router compatible
@@ -194,7 +185,7 @@ export function setPreserveCleanInventoryUrl() {
   preserveCleanUrl = true;
 }
 
-function parseUrlToRouteState(): PlainObject {
+function parseUrlToRouteState(PREFIX: string): PlainObject {
   if (typeof window === "undefined") return {};
 
   const search = window.location.search.replace(/^\?/, "");
@@ -278,7 +269,7 @@ function normalizeRouteState(value: any): any {
   return value;
 }
 
-function routeStateToSearch(routeState: PlainObject): string {
+function routeStateToSearch(routeState: PlainObject, PREFIX: string): string {
   const pairs = flatten(routeState);
   if (pairs.length === 0) return "";
 
@@ -337,7 +328,11 @@ function ensureHistoryPatched() {
   });
 }
 
-export function createInventoryRouter() {
+export function createInventoryRouter(config: AppConfig) {
+  const COLLECTION_ID = config.site.collection || "";
+  const DEFAULT_SORT = "status_rank:asc,created_at:desc";
+  const PREFIX = `${COLLECTION_ID}/sort/${DEFAULT_SORT}`;
+
   let writeTimer: ReturnType<typeof setTimeout> | null = null;
   let updateCallback: ((route: PlainObject) => void) | null = null;
   let lastSearch = typeof window !== "undefined" ? window.location.search : "";
@@ -349,7 +344,7 @@ export function createInventoryRouter() {
     if (window.location.search === lastSearch) return;
     lastSearch = window.location.search;
      if (updateCallback) {
-    updateCallback(parseUrlToRouteState());
+    updateCallback(parseUrlToRouteState(PREFIX));
   }
   };
 
@@ -357,7 +352,7 @@ export function createInventoryRouter() {
 
   return {
     read(): PlainObject {
-      return parseUrlToRouteState();
+      return parseUrlToRouteState(PREFIX);
     },
 
     write(routeState: PlainObject) {
@@ -366,7 +361,7 @@ export function createInventoryRouter() {
       if (writeTimer) clearTimeout(writeTimer);
 
       writeTimer = setTimeout(() => {
-        const search = routeStateToSearch(routeState);
+        const search = routeStateToSearch(routeState, PREFIX);
         const newSearch = search ? `?${search}` : "";
 
         // No-op if the URL wouldn't actually change. Compare normalized
@@ -375,7 +370,7 @@ export function createInventoryRouter() {
         // we'd generate for an equivalent state - a naive string compare
         // would falsely detect a "change" and rewrite the URL anyway,
         // causing a visible flicker.
-        const currentRouteState = parseUrlToRouteState();
+        const currentRouteState = parseUrlToRouteState(PREFIX);
         const isSameState =
           JSON.stringify(normalizeRouteState(currentRouteState)) ===
           JSON.stringify(normalizeRouteState(routeState));
@@ -401,7 +396,7 @@ export function createInventoryRouter() {
 
     createURL(routeState: PlainObject): string {
       if (typeof window === "undefined") return "";
-      const search = routeStateToSearch(routeState);
+      const search = routeStateToSearch(routeState, PREFIX);
       return `${window.location.origin}${window.location.pathname}${search ? `?${search}` : ""}`;
     },
 

@@ -1,4 +1,4 @@
-import { appConfig } from "@/lib/appConfig";
+import { AppConfig } from "@/lib/appConfig";
 
 export interface FeaturedVehicle {
   id: string;
@@ -17,7 +17,7 @@ export interface FeaturedVehicle {
  * Fetches featured vehicles from Typesense API
  * @returns Array of featured vehicles
  */
-export async function getFeaturedVehicles(): Promise<FeaturedVehicle[]> {
+export async function getFeaturedVehicles(appConfig: AppConfig): Promise<FeaturedVehicle[]> {
   try {
     const { feature_inventory_key, typesense_host, typesense_port, typesense_protocol, collection } = appConfig.site;
 

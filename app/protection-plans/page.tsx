@@ -30,7 +30,8 @@ import rotateCar from "@/assets/cars/rotate-car.png";
 import greenCar from "@/assets/cars/green-car.png";
 import { CardoraDifference } from "@/components/home";
 import Image from "next/image";
-import { SITE_CONFIG } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 
 /* Static Data */
 const includes = [
@@ -169,12 +170,14 @@ const itemVariants:Variants = {
 };
 
 const ProtectionPlans = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-9 pb-0 md:pt-20 overflow-hidden bg-white px-0 lg:mt-28">
+      <section className="relative w-full pt-9 pb-0 md:pt-20 overflow-hidden bg-white px-0 lg:mt-18">
         <div className="mx-auto max-w-[1240px] px-6 lg:px-0 flex flex-col lg:flex-row lg:items-center justify-between min-h-[450px]">
 
           {/* Left Column: Title and Pills */}
@@ -292,7 +295,7 @@ const ProtectionPlans = () => {
                 variants={itemVariants}
                 whileHover={{ y: -4, scale: 1.02 }}
                 key={label}
-                className="w-full min-w-[160px] sm:min-w-[180px] lg:min-w-0 shrink-0 lg:shrink grow bg-card border border-[#00b066] rounded-xl text-[#00b066] hover:text-white hover:bg-gradient-to-b from-[#00af66] to-[#00af66a6] cursor-pointer px-4 py-3 flex items-center justify-center gap-3 transition-colors duration-200"
+                className="w-ful min-w-[160px] sm:min-w-[180px] lg:min-w-0 shrink-0 lg:shrink grow bg-card border border-[#00b066] rounded-xl text-[#00b066] hover:text-white hover:bg-gradient-to-b from-[#00af66] to-[#00af66a6] cursor-pointer px-4 py-3 flex items-center justify-center gap-3 transition-colors duration-200"
               >
                 <Icon className="h-5 w-5 shrink-0" strokeWidth={2} />
                 <p className="mt-1 text-sm whitespace-nowrap lg:whitespace-normal">{label}</p>
