@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
-import { appConfig } from "@/lib/appConfig";
+import { getAppConfig, getSafeDealershipConfig } from "@/lib/appConfig";
 
-export const metadata: Metadata = {
-  title: `${appConfig.dealership.dealership_name} | About Us`,
-  description: `Learn more about ${appConfig.dealership.dealership_name} in ${appConfig.dealership.city_1}, ${appConfig.dealership.province_1}.`,
+export async function generateMetadata(): Promise<Metadata> {
+  const appConfig = await getAppConfig();
+  const safeD = getSafeDealershipConfig(appConfig.dealership);
+  
+  return {
+  title: `${safeD.dealership_name} | About Us`,
+  description: `Learn more about ${safeD.dealership_name} in ${safeD.city_1}, ${safeD.province_1}.`,
 };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;

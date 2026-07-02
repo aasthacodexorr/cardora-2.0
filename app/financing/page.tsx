@@ -17,7 +17,8 @@ import { Header, Footer } from "@/components/layout";
 import { GetInTouch } from "@/components/common";
 
 // Config
-import { SITE_CONFIG } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 
 /*  Constants */
 const MIN_HEIGHT      = 540;
@@ -25,6 +26,8 @@ const FALLBACK_HEIGHT = 900;
 
 /*  Page Component */
 const Finance = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState<number>(FALLBACK_HEIGHT);
 

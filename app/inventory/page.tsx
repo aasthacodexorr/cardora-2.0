@@ -29,11 +29,11 @@ import {
   useCurrentRefinements,
 } from "react-instantsearch";
 
-// Typesense search client
-import { searchClient, TYPESENSE_COLLECTION_NAME } from "@/lib/typesense";
+import { getTypesenseClient } from "@/lib/typesense";
 
 // Custom router/stateMapping that produces the client-required URL format
-import { createInventoryRouter, inventoryStateMapping } from "@/lib/inventoryRouting";
+import { createInventoryRouter, createInventoryStateMapping } from "@/lib/inventoryRouting";
+import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton } from "@/components/inventory/HitCardSkeleton";
 
 /* Shared class name configs for InstantSearch widgets */
@@ -49,58 +49,58 @@ const refinementListClassNames = {
 };
 
 /* Shared Sort Options array to match your visual requirement */
-const sortItems = [
+const getSortItems = (collectionName: string) => [
   {
     label: "Recently Added",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
+    value: `${collectionName}/sort/status_rank:asc,created_at:desc`,
   },
   {
     label: "Price (Low to High)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:asc`,
+    value: `${collectionName}/sort/selling_price:asc`,
   },
   {
     label: "Price (High to Low)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/selling_price:desc`,
+    value: `${collectionName}/sort/selling_price:desc`,
   },
   {
     label: "Odometer (Low to High)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:asc`,
+    value: `${collectionName}/sort/odometer:asc`,
   },
   {
     label: "Odometer (High to Low)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/odometer:desc`,
+    value: `${collectionName}/sort/odometer:desc`,
   },
   {
     label: "Make (A - Z)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/make_rank:asc`,
+    value: `${collectionName}/sort/make_rank:asc`,
   },
   {
     label: "Make (Z - A)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/make_rank:desc`,
+    value: `${collectionName}/sort/make_rank:desc`,
   },
   {
     label: "Model (A - Z)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/model_rank:asc`,
+    value: `${collectionName}/sort/model_rank:asc`,
   },
   {
     label: "Model (Z - A)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/model_rank:desc`,
+    value: `${collectionName}/sort/model_rank:desc`,
   },
   {
     label: "Year (Low to High)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/year:desc`,
+    value: `${collectionName}/sort/year:desc`,
   },
   {
     label: "Year (High to Low)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/year:asc`,
+    value: `${collectionName}/sort/year:asc`,
   },
   {
     label: "Image Count (Low to High)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:asc`,
+    value: `${collectionName}/sort/image_count:asc`,
   },
   {
     label: "Image Count (High to Low)",
-    value: `${TYPESENSE_COLLECTION_NAME}/sort/image_count:desc`,
+    value: `${collectionName}/sort/image_count:desc`,
   },
 ];
 
@@ -140,11 +140,22 @@ const FilterGroup = ({ title, children, isOpen, onToggle }: FilterGroupProps) =>
   );
 };
 
+// ── CHANGED ──────────────────────────────────────────────────────────────
+// Previously this swapped the ENTIRE results grid for a skeleton on every
+// `status === "loading"` — but that status also fires while paginating
+// (showMore()), search-box typing, refinements, sort changes, etc. That
+// caused the whole card grid to disappear/reappear (the "blinking").
+// Now we only show the full-page skeleton when we don't have any hits yet
+// (i.e. a genuinely fresh search / initial load). Once hits exist, we let
+// the grid stay mounted and rely on CustomInfiniteHits' own inline loader
+// for pagination feedback instead of tearing down the whole results pane.
 const SearchResultsWrapper = ({ children }: { children: React.ReactNode }) => {
   const { status } = useInstantSearch();
+  const { results } = useHits();
 
-  // Trigger skeleton immediately whenever Typesense is actively fetching 
-  if (status === "loading") {
+  const hasHits = (results?.nbHits ?? 0) > 0;
+
+  if (status === "loading" && !hasHits) {
     return <InventoryGridSkeleton />;
   }
 
@@ -197,27 +208,49 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// ── CHANGED ──────────────────────────────────────────────────────────────
+// Pagination loading is now tracked with LOCAL state (`isLoadingMore`)
+// instead of the global InstantSearch `status`. That global status flips
+// to "loading"/"stalled" for lots of unrelated reasons (typing in the
+// search box, toggling a filter, changing sort) which was causing the
+// spinner / button to flicker even when the user wasn't paginating at all.
+//
+// `isLoadingMore` is only ever set true by an explicit showMore() call
+// (either from scrolling to the sentinel or tapping the button), and is
+// cleared as soon as the hits array actually grows — so it accurately
+// reflects "we're fetching the next page" and nothing else.
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   const { hits, isLastPage, showMore } = useInfiniteHits();
-  // 1. Get the current status of the search
-  const { status } = useInstantSearch(); 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const prevHitsLength = useRef(hits.length);
 
-  // A helper to know if we are currently fetching data
-  const isLoading = status === 'loading' || status === 'stalled';
+  // Clear the "loading more" flag once new hits have actually arrived
+  // (or once a fresh search reset the hits array).
+  useEffect(() => {
+    if (hits.length !== prevHitsLength.current) {
+      setIsLoadingMore(false);
+      prevHitsLength.current = hits.length;
+    }
+  }, [hits.length]);
+
+  const handleShowMore = () => {
+    if (isLoadingMore || isLastPage) return;
+    setIsLoadingMore(true);
+    showMore();
+  };
 
   useEffect(() => {
-    // If it's loading or it's the last page, don't observe
-    if (isLastPage || isLoading) return;
+    if (isLastPage || isLoadingMore) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          showMore();
+          handleShowMore();
         }
       },
       {
-        root: null, 
+        root: null,
         rootMargin: "300px",
       }
     );
@@ -228,11 +261,12 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
     return () => {
       if (current) observer.unobserve(current);
     };
-  }, [isLastPage, showMore, isLoading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLastPage, isLoadingMore]);
 
   return (
     <div>
-      {/* Results grid */}
+      {/* Results grid — this never unmounts on pagination anymore */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
         {hits.map((hit) => (
           <div key={hit.objectID} className="flex flex-col h-full p-[9px]">
@@ -241,32 +275,31 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
         ))}
       </div>
 
-      {/* 2. Show a dedicated Loader instead of the footer when loading */}
-      {isLoading && (
-        <div className="flex justify-center items-center py-12">
-          {/* Replace this with your actual Loader component */}
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+      {/* Sentinel used to auto-trigger the next page while scrolling */}
+      {!isLastPage && <div ref={loadMoreRef} style={{ height: 1 }} />}
+
+      {/* ── Bottom control: fixed-height container so nothing jumps ──
+          Idle -> "Show More Results" button.
+          Loading (either from scroll-trigger OR button tap) -> spinner
+          shown in the SAME slot, so there's no flicker/layout shift. */}
+      {!isLastPage && (
+        <div className="mt-8 mb-12 flex justify-start pl-[9px] min-h-[52px] items-center">
+          <button
+            type="button"
+            onClick={handleShowMore}
+            disabled={isLoadingMore}
+            className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl cursor-pointer font-medium text-[13px] uppercase tracking-wider hover:bg-gray-800 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {isLoadingMore && (
+              <span className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+            )}
+            {isLoadingMore ? "Loading..." : "Show More Results"}
+          </button>
         </div>
       )}
 
-      {/* Observer Target & Manual fallback button */}
-      {/* 3. Only show this if we aren't loading and there are more pages */}
-      {!isLastPage && !isLoading && (
-        <>
-          <div ref={loadMoreRef} style={{ height: 50 }} />
-          <div className="mt-8 mb-12 flex justify-start pl-[9px]">
-            <button
-              onClick={showMore}
-              className="bg-black text-white px-6 py-3 rounded-xl cursor-pointer font-medium text-[13px] uppercase tracking-wider hover:bg-gray-800 transition-colors"
-            >
-              Show More Results
-            </button>
-          </div>
-        </>
-      )}
-
-      {/* ── 4. Footer ONLY shows when we are genuinely done AND not loading ── */}
-      {isLastPage && !isLoading && hits.length > 0 && (
+      {/* Footer only shows when we're genuinely done */}
+      {isLastPage && hits.length > 0 && (
         <div className="mt-12 transition-opacity duration-300 ease-in">
           <GetInTouch />
           <Footer />
@@ -303,7 +336,7 @@ const GroupedCurrentRefinements = () => {
   );
 };
 
-const CustomSortBy = () => {
+const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string }[] }) => {
   const [open, setOpen] = useState(false)
    const dropdownRef = useRef<HTMLDivElement>(null);
   const { currentRefinement, refine } = useSortBy({
@@ -607,6 +640,11 @@ function useHeaderHeight() {
 }
 
 const InventoryContent = () => {
+  const config = useAppConfig();
+  const { searchClient, TYPESENSE_COLLECTION_NAME } = useMemo(() => getTypesenseClient(config), [config]);
+  const router = useMemo(() => createInventoryRouter(config), [config]);
+  const stateMapping = useMemo(() => createInventoryStateMapping(config), [config]);
+
   const [openFilter, setOpenFilter] = useState<string | null>("");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isHoveringFilters, setIsHoveringFilters] = useState(false);
@@ -672,7 +710,7 @@ const InventoryContent = () => {
 
   return (
     // CHANGED: Restored normal scrolling layout behavior to the main document frame rather than clamping the viewport h-screen
-    <main className={` bg-backgroun ${isHoveringFilters? "overflow-hidden h-screen" : "min-h-screen" }`}>
+    <main className={` bg-background ${isHoveringFilters? "overflow-hidden h-screen" : "min-h-screen" }`}>
 
       {/* ── Header: Fixed/Sticky layout element at the top ── */}
       <div className="bg-hero-bg sticky top-0 z-40">
@@ -685,8 +723,8 @@ const InventoryContent = () => {
           searchClient={searchClient}
           indexName={TYPESENSE_COLLECTION_NAME}
           routing={{
-            router: createInventoryRouter(),
-            stateMapping: inventoryStateMapping,
+            router,
+            stateMapping,
           }}
         >
           <ScrollToTopOnSearch />
@@ -703,15 +741,15 @@ const InventoryContent = () => {
                 "hidden",
                 "lg:flex lg:flex-col",
                 "lg:shrink-0 lg:w-[320px]",
-                "lg:sticky lg:top-[150px]", // ADJUST THIS VALUE to match your exact desktop Header height component
-                "max-h-[calc(100vh-170px)] overflow-y-auto", // Keeps internal filter options scrollable if they exceed display height
+                "lg:sticky lg:top-[120px]", // ADJUST THIS VALUE to match your exact desktop Header height component
+                "max-h-[calc(100vh-130px)] overflow-y-auto", // Keeps internal filter options scrollable if they exceed display height
                 "[&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar-track]:hidden",
                 "lg:[scrollbar-width:none] lg:[-ms-overflow-style:none]",
               ].join(" ")}
             >
               {/* Inner card — keeps the rounded white box look */}
               <div className="bg-white border border-[#ddd] rounded-[15px] p-[15px] flex-1">
-                <div className="mt-[10px] flex flex-col items-center gap-4">
+                <div className="flex flex-col items-center gap-4">
                   <div className="bg-[#00af66] text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm">
                     <CustomHitsCount />
                   </div>
@@ -729,7 +767,7 @@ const InventoryContent = () => {
             {/* ── CHANGED: Cleaned up fixed classes so the search + cards dynamically scale fluidly to fill workspace width ── */}
             <div
               id="results-column"
-              className="w-full flex-1 min-w-0 lg:pt-30"
+              className="w-full flex-1 min-w-0 lg:pt-24"
             >
               {/* Search + sort + responsive control bar */}
               <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4 px-3">
@@ -760,7 +798,7 @@ const InventoryContent = () => {
                   </button>
 
                   <div className="flex items-start">
-                    <CustomSortBy />           
+                    <CustomSortBy sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)} />           
                   </div>
                 </div>
               </div>

@@ -3,10 +3,13 @@
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { COLLECTION_ID, DEFAULT_SORT } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 import { Search } from "lucide-react";
 
 const HeroSearchPanelContent = () => {
+  const appConfig = useAppConfig();
+  const { COLLECTION_ID, DEFAULT_SORT } = getConstants(appConfig);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 

@@ -1,9 +1,12 @@
 "use client";
 
-import { SITE_CONFIG } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 import { useState } from "react";
 
 export default function CoverageModal() {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   const [isOpen, setIsOpen] = useState(false);
 
   return (

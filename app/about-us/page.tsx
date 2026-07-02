@@ -23,7 +23,8 @@ import blueCar from "@/assets/icons/cardora-blue-car.png";
 import saleServices from "@/assets/icons/sale-services.jpg";
 import reviews from "@/assets/icons/100reviews.png";
 import forCanada from "@/assets/icons/proudlycanadian.png";
-import { SITE_CONFIG } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 
 /* Static Data */
 const certified = [
@@ -58,11 +59,13 @@ const containerVariants: Variants = {
 };
 
 const About = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   return (
     <div className="min-h-screen bg-background flex flex-col justify-between">
       <Header />
 
-      <div className="flex-1 w-full overflow-hidden px-0 lg:mt-28">
+      <div className="flex-1 w-full overflow-hidden px-0 lg:mt-20">
         
         {/* Hero Section: Text static, Image slides in repeatedly */}
         <section className="bg-white pb-12 mt-4 px-5">

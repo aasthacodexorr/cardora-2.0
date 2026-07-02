@@ -28,13 +28,14 @@ import { Header, Footer } from "@/components/layout";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
+import { fallbackValue, defaultAppConfig } from "@/lib/appConfig";
 
 // Config
-import { PHONE_HREF, PHONE_NUMBER } from "@/constants";
+import { getConstants } from "@/constants";
 import { servicesData } from "@/constants/serviceData";
 import locationIcon from "@/assets/icons/location.png";
 import mapIcon from "@/assets/icons/map-c.png";
-import { appConfig } from "@/lib/appConfig";
+import { useAppConfig } from "@/app/providers";
 
 import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
 import MapIcon   from "@/assets/icons/MAP-ICON.svg";
@@ -118,12 +119,23 @@ const cardHover: Variants = {
 };
 
 const Service = () => {
+  const appConfig = useAppConfig();
+  const { PHONE_HREF, PHONE_NUMBER } = getConstants(appConfig);
+  
+  // Apply fallback logic for dealership config
+  const defaultD = defaultAppConfig.dealership;
+  const safeD = {
+    city_1: fallbackValue(appConfig.dealership.city_1, defaultD.city_1),
+    address_map_url_1: fallbackValue(appConfig.dealership.address_map_url_1, defaultD.address_map_url_1),
+    address_1_bar: fallbackValue(appConfig.dealership.address_1_bar, defaultD.address_1_bar),
+    full_address_1: fallbackValue(appConfig.dealership.full_address_1, defaultD.full_address_1),
+  };
   return (
     <div className="min-h-screen bg-background flex flex-col justify-between">
       <Header />
 
       {/* Main Content Wrapper */}
-      <main className="mx-auto w-full max-w-[1350px] px-5 md:px-12 flex-1 lg:mt-18 overflow-hidden">
+      <main className="mx-auto w-full max-w-[1350px] px-5 md:px-12 flex-1 lg:mt-14 overflow-hidden">
         
         {/* Hero */}
         <motion.section 
@@ -173,16 +185,16 @@ const Service = () => {
                   Call to schedule your Service appointment
                 </h3>
                 <div className="mt-8 space-y-4">
-                  <p className="text-2xl tracking-wide text-gray-900">{appConfig.dealership.city_1}</p>
+                  <p className="text-2xl tracking-wide text-gray-900">{safeD.city_1}</p>
                   <div className="flex items-center gap-2 text-lg">
                     <MapPin className="h-5 w-5 shrink-0" />
                     <a
-                      href={appConfig.dealership.address_map_url_1 || appConfig.dealership.address_1_bar}
+                      href={safeD.address_map_url_1 || safeD.address_1_bar}
                       target="_blank"
                       rel="noreferrer"
                       className="hover:text-emerald-500 transition-colors"
                     >
-                      {appConfig.dealership.full_address_1}
+                      {safeD.full_address_1}
                     </a>
                   </div>
                   <div className="flex items-center gap-2 text-lg">

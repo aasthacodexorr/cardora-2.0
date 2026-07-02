@@ -7,42 +7,43 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import type { Category } from "./types";
 import { getInventoryUrlByRange, getInventoryUrlByRefinement } from "@/lib/inventoryUrls";
+import { AppConfig } from "@/lib/appConfig";
 
-export const CATEGORIES: Category[] = [
+export const getCategories = (appConfig: AppConfig): Category[] => [
   {
     label: "EVs",
     icon: faBolt,
-    href: getInventoryUrlByRefinement("body_type", ["Commercial EV"]),
+    href: getInventoryUrlByRefinement("body_type", ["Commercial EV"], appConfig),
   },
   {
     label: "Sedans",
     icon: faCar,
-    href: getInventoryUrlByRefinement("body_type", ["Sedan", "Sedan 4 Dr."]),
+    href: getInventoryUrlByRefinement("body_type", ["Sedan", "Sedan 4 Dr."], appConfig),
   },
   {
     label: "Used",
     icon: faCar,
-    href: getInventoryUrlByRefinement("vehicle_type", ["Used"]),
+    href: getInventoryUrlByRefinement("vehicle_type", ["Used"], appConfig),
   },
   {
     label: "Vans",
     icon: faVanShuttle,
-    href: getInventoryUrlByRefinement("body_type", ["Van", "Mini van"]),
+    href: getInventoryUrlByRefinement("body_type", ["Van", "Mini van"], appConfig),
   },
   {
     label: "SUVs",
     icon: faCarSide,
-    href: getInventoryUrlByRefinement("body_type", ["Suvs", "Sport Utility Vehicle", "SUV-Crossover",]),
+    href: getInventoryUrlByRefinement("body_type", ["Suvs", "Sport Utility Vehicle", "SUV-Crossover",], appConfig),
   },
   {
     label: "Hybrids",
     icon: null,
-    href: getInventoryUrlByRefinement("fuel_type", ["hybrid"]),
+    href: getInventoryUrlByRefinement("fuel_type", ["hybrid"], appConfig),
   },
   {
     label: "Below $20k",
     icon: faPiggyBank,
-    href: getInventoryUrlByRange("selling_price", ":20000"),
+    href: getInventoryUrlByRange("selling_price", ":20000", appConfig),
   }
 ];
 

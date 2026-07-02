@@ -15,9 +15,7 @@
    - React-instantsearch reads the URL and auto-populates the search box
 ========================= */
 
-import { appConfig } from "@/lib/appConfig";
-
-const COLLECTION_ID = appConfig.site.collection || "";
+import { AppConfig } from "@/lib/appConfig";
 
 // Default sort parameters: recently added (status_rank ascending, created_at descending)
 const DEFAULT_SORT = "status_rank:asc,created_at:desc";
@@ -29,9 +27,10 @@ const DEFAULT_SORT = "status_rank:asc,created_at:desc";
  * 
  * @returns Encoded collection_id/sort string
  */
-const getEncodedCollectionAndSort = (): string => {
+const getEncodedCollectionAndSort = (appConfig: AppConfig): string => {
+  const COLLECTION_ID = appConfig?.site?.collection || "";
   if (!COLLECTION_ID) {
-    console.warn("NEXT_PUBLIC_TYPESENSE_COLLECTION not set in environment");
+    console.warn("Typesense collection not set in config");
     return "";
   }
   
@@ -49,8 +48,8 @@ const getEncodedCollectionAndSort = (): string => {
  * @param make - Vehicle make (e.g., "Toyota", "BMW", "Honda")
  * @returns Full inventory URL with collection_id, sort, and search query
  */
-export const getInventoryUrlByMake = (make: string): string => {
-  const encoded = getEncodedCollectionAndSort();
+export const getInventoryUrlByMake = (make: string, appConfig: AppConfig): string => {
+  const encoded = getEncodedCollectionAndSort(appConfig);
   if (!encoded) return "/inventory";
   
   return `/inventory/?${encoded}%5Bquery%5D=${encodeURIComponent(make)}`;
@@ -66,8 +65,8 @@ export const getInventoryUrlByMake = (make: string): string => {
  * @param bodyType - Single body type value
  * @returns Full inventory URL with collection_id, sort, and search query
  */
-export const getInventoryUrlByBodyType = (bodyType: string): string => {
-  const encoded = getEncodedCollectionAndSort();
+export const getInventoryUrlByBodyType = (bodyType: string, appConfig: AppConfig): string => {
+  const encoded = getEncodedCollectionAndSort(appConfig);
   if (!encoded) return "/inventory";
   
   return `/inventory/?${encoded}%5Bquery%5D=${encodeURIComponent(bodyType)}`;
@@ -80,8 +79,8 @@ export const getInventoryUrlByBodyType = (bodyType: string): string => {
  * @param params - Query parameters as key-value pairs
  * @returns Full inventory URL with collection_id, sort, and custom filters
  */
-export const getInventoryUrlWithParams = (params: Record<string, string>): string => {
-  const encoded = getEncodedCollectionAndSort();
+export const getInventoryUrlWithParams = (params: Record<string, string>, appConfig: AppConfig): string => {
+  const encoded = getEncodedCollectionAndSort(appConfig);
   if (!encoded) return "/inventory";
   
   const queryString = Object.entries(params)
@@ -117,15 +116,15 @@ export const POPULAR_CAR_TYPES = [
 /**
  * Get inventory URL for a make
  */
-export const getMakeUrl = (make: string): string => {
-  return getInventoryUrlByMake(make);
+export const getMakeUrl = (make: string, appConfig: AppConfig): string => {
+  return getInventoryUrlByMake(make, appConfig);
 };
 
 /**
  * Get inventory URL for body type
  */
-export const getBodyTypeUrl = (bodyType: string): string => {
-  return getInventoryUrlByBodyType(bodyType);
+export const getBodyTypeUrl = (bodyType: string, appConfig: AppConfig): string => {
+  return getInventoryUrlByBodyType(bodyType, appConfig);
 };
 
 /* =========================
@@ -141,7 +140,7 @@ export const getBodyTypeUrl = (bodyType: string): string => {
  *
  * @param id - The Typesense document ID
  */
-export async function getVehicleById(id: string): Promise<Record<string, any> | null> {
+export async function getVehicleById(id: string, appConfig: AppConfig): Promise<Record<string, any> | null> {
   const apiKey     = appConfig.site.inventory_search_only_key;
   const collection = appConfig.site.collection;
   const host       = appConfig.site.typesense_host;
@@ -166,16 +165,18 @@ export async function getVehicleById(id: string): Promise<Record<string, any> | 
 }
 
 
-export const getInventoryUrlByQuery = (query: string) => {
-  const encoded = getEncodedCollectionAndSort();
+export const getInventoryUrlByQuery = (query: string, appConfig: AppConfig) => {
+  const encoded = getEncodedCollectionAndSort(appConfig);
 
   return `/inventory/?${encoded}%5Bquery%5D=${encodeURIComponent(query)}`;
 };
 
 export const getInventoryUrlByRefinement = (
   attribute: string,
-  values: string[]
+  values: string[],
+  appConfig: AppConfig
 ): string => {
+  const COLLECTION_ID = appConfig?.site?.collection || "";
   const base = `${COLLECTION_ID}/sort/${DEFAULT_SORT}`;
 
   const params = values
@@ -190,9 +191,10 @@ export const getInventoryUrlByRefinement = (
 
 export const getInventoryUrlByRange = (
   attribute: string,
-  range: string
+  range: string,
+  appConfig: AppConfig
 ): string => {
-  const encoded = getEncodedCollectionAndSort();
+  const encoded = getEncodedCollectionAndSort(appConfig);
 
   if (!encoded) return "/inventory";
 

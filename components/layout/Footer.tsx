@@ -12,59 +12,79 @@ import Link from "next/link";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
 import zlogo from "@/assets/brand/zlogo.png";
-import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getBodyTypeUrl, getInventoryUrlByRefinement } from "@/lib/inventoryUrls";
-import { appConfig } from "@/lib/appConfig";
+import { useAppConfig } from "@/app/providers";
 import { usePathname } from "next/navigation";
+import { fallbackValue, defaultAppConfig } from "@/lib/appConfig";
 
-
-/*  Static Data */
-const columns = [
-  {
-    title: "Popular Makes",
-    links: POPULAR_MAKES.map(({ label, make }) => ({
-      label,
-      href: getMakeUrl(make),
-      external: false,
-    })),
-  },
-  {
-    title: "Popular Car Types",
-    links: POPULAR_CAR_TYPES.map(({ label, bodyType }) => ({
-      label,
-      href: getInventoryUrlByRefinement("body_type", [bodyType]),
-      external: false,
-    })),
-  },
-  {
-    title: "About Us",
-    links: [
-      { label: "Home", href: "/", external: false },
-      { label: "Find Your Car", href: "/inventory", external: false },
-      { label: "Sell or Trade In", href: "/trade-in", external: false },
-      { label: "Car Finance", href: "/financing", external: false },
-      { label: "Payment Calculator", href: "/payment-calculator", external: false },
-      { label: "Skip the Dealership", href: "/skip-the-dealership", external: false },
-      { label: "About Us", href: "/about-us", external: false },
-      { label: "Contact Us", href: "/contact-us", external: false },
-    ],
-  },
-  {
-    title: "Follow Us",
-    links: [
-      { label: "Facebook", href: appConfig.dealership.social_media_facebook, external: true },
-      { label: "Instagram", href: appConfig.dealership.social_media_instagram, external: true },
-      { label: "TikTok", href: appConfig.dealership.social_media_tiktok, external: true },
-      { label: "YouTube", href: appConfig.dealership.social_media_youtube, external: true },
-    ],
-  },
-];
+import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getInventoryUrlByRefinement } from "@/lib/inventoryUrls";
 
 /* Component */
 const Footer = () => {
+  const appConfig = useAppConfig();
+  const defaultD = defaultAppConfig.dealership;
   const d = appConfig.dealership;
+
+  // Apply fallback logic for all dealership fields
+  const safeD = {
+    dealership_name: fallbackValue(d.dealership_name, defaultD.dealership_name),
+    dealership_logo: fallbackValue(d.dealership_logo, defaultD.dealership_logo),
+    full_address_1: fallbackValue(d.full_address_1, defaultD.full_address_1),
+    city_1: fallbackValue(d.city_1, defaultD.city_1),
+    province_1: fallbackValue(d.province_1, defaultD.province_1),
+    postal_code_1: fallbackValue(d.postal_code_1, defaultD.postal_code_1),
+    country_1: fallbackValue(d.country_1, defaultD.country_1),
+    address_1_bar: fallbackValue(d.address_1_bar, defaultD.address_1_bar),
+    address_2_bar: fallbackValue(d.address_2_bar, defaultD.address_2_bar),
+    address_map_url_1: fallbackValue(d.address_map_url_1, defaultD.address_map_url_1),
+    social_media_facebook: fallbackValue(d.social_media_facebook, defaultD.social_media_facebook),
+    social_media_instagram: fallbackValue(d.social_media_instagram, defaultD.social_media_instagram),
+    social_media_tiktok: fallbackValue(d.social_media_tiktok, defaultD.social_media_tiktok),
+    social_media_youtube: fallbackValue(d.social_media_youtube, defaultD.social_media_youtube),
+  };
+  
+  const columns = [
+    {
+      title: "Popular Makes",
+      links: POPULAR_MAKES.map(({ label, make }) => ({
+        label,
+        href: getMakeUrl(make, appConfig),
+        external: false,
+      })),
+    },
+    {
+      title: "Popular Car Types",
+      links: POPULAR_CAR_TYPES.map(({ label, bodyType }) => ({
+        label,
+        href: getInventoryUrlByRefinement("body_type", [bodyType], appConfig),
+        external: false,
+      })),
+    },
+    {
+      title: "About Us",
+      links: [
+        { label: "Home", href: "/", external: false },
+        { label: "Find Your Car", href: "/inventory", external: false },
+        { label: "Sell or Trade In", href: "/trade-in", external: false },
+        { label: "Car Finance", href: "/financing", external: false },
+        { label: "Payment Calculator", href: "/payment-calculator", external: false },
+        { label: "Skip the Dealership", href: "/skip-the-dealership", external: false },
+        { label: "About Us", href: "/about-us", external: false },
+        { label: "Contact Us", href: "/contact-us", external: false },
+      ],
+    },
+    {
+      title: "Follow Us",
+      links: [
+        { label: "Facebook", href: safeD.social_media_facebook, external: true },
+        { label: "Instagram", href: safeD.social_media_instagram, external: true },
+        { label: "TikTok", href: safeD.social_media_tiktok, external: true },
+        { label: "YouTube", href: safeD.social_media_youtube, external: true },
+      ],
+    },
+  ];
   
   // FIX: Prioritize the share link (address_1_bar) over the embed url for redirection
-  const mapsUrl = d.address_1_bar || d.address_map_url_1;
+  const mapsUrl = safeD.address_1_bar || safeD.address_2_bar || safeD.address_map_url_1;
   const pathname = usePathname();
 
   return (
@@ -129,9 +149,9 @@ const Footer = () => {
                 className="text-white block"
               >
                 <address className="not-italic text-[15px] leading-relaxed cursor-pointer">
-                  {d.full_address_1},<br />
-                  {d.city_1}, {d.province_1}<br />
-                  {d.postal_code_1} {d.country_1}
+                  {safeD.full_address_1},<br />
+                  {safeD.city_1}, {safeD.province_1}<br />
+                  {safeD.postal_code_1} {safeD.country_1}
                 </address>
               </a>
             </div>
@@ -146,7 +166,7 @@ const Footer = () => {
       {/* Copyright bar */}
       <div className="pt-6 px-10 pb-5 flex flex-col md:flex-row gap-4 justify-between max-[767px]:justify-center max-[767px]:items-center">
         <div className="text-[13px] text-white uppercase text-center md:text-start">
-          © {new Date().getFullYear()} {d.dealership_name}. <br />
+          © {new Date().getFullYear()} {safeD.dealership_name}. <br />
           <span className="flex items-center gap-2">
             All rights reserved. Powered by
             <a

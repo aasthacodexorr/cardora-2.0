@@ -16,7 +16,8 @@ import { motion } from "framer-motion";
 
 import google from "@/assets/brand/google.png";
 import googleReview from "@/assets/brand/Goolge-Review-Logo.jpg";
-import { SITE_CONFIG } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 
 type Review = {
   initial: string;
@@ -48,6 +49,8 @@ const reviews: Review[] = [
 ];
 
 const Reviews = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   const scrollRef = useRef<HTMLDivElement>(null);
   const isResetting = useRef(false);
   const [slidesToShow, setSlidesToShow] = useState(3);

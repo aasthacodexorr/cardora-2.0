@@ -14,7 +14,8 @@ import { ITEMS, CONTAINER_CLASS, GRID_CLASS } from "./constants";
 import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
 import MapIcon   from "@/assets/icons/MAP-ICON.svg";
 import HeartIcon from "@/assets/icons/HEART-ICON.svg";
-import { SITE_CONFIG } from "@/constants";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
 
 const icons = [
   <Image src={CheckIcon} alt="Check Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
@@ -23,6 +24,8 @@ const icons = [
 ];
 
 const CardoraDifference = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   // Framer Motion parent orchestrator variants
   const containerVariants = {
     hidden: { opacity: 0 },
