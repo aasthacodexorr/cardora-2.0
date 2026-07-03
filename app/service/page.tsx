@@ -145,7 +145,7 @@ const Service = () => {
           className="pt-16 md:pt-20 pb-10"
         >
           <div className="text-start">
-            <p className="text-base md:text-xl text-emerald-600 font-medium tracking-wide">
+            <p className="text-base md:text-xl font-medium tracking-wide">
               Service & Repairs
             </p>
             <h1 className="mt-4 text-4xl md:text-6xl font-bold tracking-tight text-foreground md:leading-[60px]">
