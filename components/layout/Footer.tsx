@@ -191,7 +191,7 @@ const Footer = () => {
         <p className="text-[12.5px] text-white uppercase">
           <Link href="/privacy-policy" className="hover:text-white">Privacy Policy</Link>
           {" | "}
-          <Link href="/terms-and-conditions" className="hover:text-white">Terms & Conditions</Link>
+          <Link href="/terms-conditions" className="hover:text-white">Terms & Conditions</Link>
           {" | "}
           <Link href="/sitemap" className="hover:text-white">Site Map</Link>
         </p>
