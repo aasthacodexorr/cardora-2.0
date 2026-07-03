@@ -129,7 +129,7 @@ const Reviews = () => {
 
   return (
     <section className="w-full bg-[#eaeff5] overflow-hidden mt-14">
-      <div className="mx-auto max-w-[1280px] px-4 md:px-6 pt-12 lg:pt-18 pb-9">
+      <div className="mx-auto max-w-[1280px] px-4 md:px-6 pt-12 lg:pt-12 pb-9">
         <h2 className="text-[26px] md:text-[44px] font-bold text-foreground tracking-tight leading-none text-center mb-5">
           People love buying with {SITE_CONFIG?.dealership.name}
         </h2>
