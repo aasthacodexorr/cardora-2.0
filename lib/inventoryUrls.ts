@@ -104,13 +104,13 @@ export const POPULAR_MAKES = [
 ] as const;
 
 export const POPULAR_CAR_TYPES = [
-  { label: "Used SUVs", bodyType: "SUV" },
-  { label: "Used Vans", bodyType: "Van" },
-  { label: "Used Hatchbacks", bodyType: "Hatchback" },
-  { label: "Used Sedans", bodyType: "Sedan" },
-  { label: "Used Coupes", bodyType: "Coupe" },
-  { label: "Used Convertibles", bodyType: "Convertible" },
-  { label: "Used Pick-up", bodyType: "Pickup Truck" },
+  { label: "Used SUVs", bodyType: ["SUV","Sport Utility Vehicle","SUV-Crossover","Suvs","Sport Utility 4-Door"] },
+  { label: "Used Vans", bodyType: ["Van","Minivan-Van","minivan","Minivan"] },
+  { label: "Used Hatchbacks", bodyType: ["Hatchback","Hatchback 2 Dr."] },
+  { label: "Used Sedans", bodyType: ["Sedan", "Sedan 4 Dr."] },
+  { label: "Used Coupes", bodyType: ["Coupe","Coupes","Coupe 2-Door"] },
+  { label: "Used Convertibles", bodyType: ["Convertible","Convertibles"] },
+  { label: "Used Pick-up", bodyType: ["Pickup Truck","Truck","Pickup-Truck","Trucks"] },
 ] as const;
 
 /**
@@ -173,7 +173,7 @@ export const getInventoryUrlByQuery = (query: string, appConfig: AppConfig) => {
 
 export const getInventoryUrlByRefinement = (
   attribute: string,
-  values: string[],
+  values: readonly string[],
   appConfig: AppConfig
 ): string => {
   const COLLECTION_ID = appConfig?.site?.collection || "";

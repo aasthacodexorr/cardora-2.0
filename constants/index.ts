@@ -158,7 +158,8 @@ export const getConstants = (appConfig: AppConfig) => {
         assetBaseUrl: appConfig.site.cdn_api,
         googleMapsUrl: safeD.address_map_url_1 || safeD.address_1_bar,
         tradeFormByVehicle: "https://cardora.zopsoftware.com/api/templates/render/17",
-        tradeFormByVin: "https://cardora.zopsoftware.com/api/templates/render/18"
+        tradeFormByVin: "https://cardora.zopsoftware.com/api/templates/render/18",
+        bookAppointment:"https://cardora.zopsoftware.com/api/templates/render/23"
       },
       api: {
         saasApi: appConfig.site.saas_api,
