@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
                     <div className="max-w-6xl">
 
                         {/* Main Page Title */}
-                        <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-6">
+                        <h1 className="text-2xl font-bold tracking-tight text-gray-900 mb-6">
                             Privacy Policy
                         </h1>
 
@@ -21,7 +21,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 1 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 1. Purpose and Scope
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -31,7 +31,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 2 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 2. Information We Collect
                             </h2>
                             <ul className="list-disc pl-5 space-y-3 text-[15px] leading-relaxed text-gray-600">
@@ -49,7 +49,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 3 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 3. How We Use Your Information
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-3">
@@ -73,7 +73,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 4 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 4. Security of Information
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -83,7 +83,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 5 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 5. Sharing and Disclosure of Information
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-3">
@@ -107,7 +107,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 6 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 6. Third-Party Links and Advertisements
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -120,7 +120,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 7 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 7. Your Rights and Choices
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-3">
@@ -144,7 +144,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 8 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 8. Policy Updates and Revisions
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -154,7 +154,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 9 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 9. Accountability
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -167,7 +167,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 10 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 10. Security of Information
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-3">
@@ -188,7 +188,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 11 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 11. Indemnification
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -198,7 +198,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section 12 */}
                         <section className="mt-8">
-                            <h2 className="text-base font-bold text-gray-900 mb-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-3">
                                 12. Contact Us
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">

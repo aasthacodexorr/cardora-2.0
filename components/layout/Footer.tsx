@@ -55,7 +55,7 @@ const Footer = () => {
       title: "Popular Car Types",
       links: POPULAR_CAR_TYPES.map(({ label, bodyType }) => ({
         label,
-        href: getInventoryUrlByRefinement("body_type", [bodyType], appConfig),
+        href: getInventoryUrlByRefinement("body_type", bodyType, appConfig),
         external: false,
       })),
     },
@@ -193,7 +193,7 @@ const Footer = () => {
           {" | "}
           <Link href="/terms-conditions" className="hover:text-white">Terms & Conditions</Link>
           {" | "}
-          <Link href="/sitemap" className="hover:text-white">Site Map</Link>
+          <Link href="/#" className="hover:text-white">Site Map</Link>
         </p>
       </div>
     </footer>

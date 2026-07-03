@@ -11,7 +11,7 @@ export default function TermsOfService() {
         <div className="max-w-6xl">
           
           {/* Main Section Header */}
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-6">
+          <h2 className="text-2xl tracking-tight text-gray-900 mb-5">
             OVERVIEW
           </h2>
           
@@ -21,7 +21,7 @@ export default function TermsOfService() {
 
           {/* Website Terms */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               WEBSITE TERMS
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -37,7 +37,7 @@ export default function TermsOfService() {
 
           {/* General Conditions */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               GENERAL CONDITIONS
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -53,7 +53,7 @@ export default function TermsOfService() {
 
           {/* Accuracy of Information */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               ACCURACY, COMPLETENESS AND TIMELINESS OF INFORMATION
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -66,7 +66,7 @@ export default function TermsOfService() {
 
           {/* Modifications */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               MODIFICATIONS TO THE SERVICE AND PRICES
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -79,7 +79,7 @@ export default function TermsOfService() {
 
           {/* Products or Services */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               PRODUCTS OR SERVICES
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -95,7 +95,7 @@ export default function TermsOfService() {
 
           {/* Accuracy of Billing */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               ACCURACY OF BILLING AND ACCOUNT INFORMATION
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -108,7 +108,7 @@ export default function TermsOfService() {
 
           {/* Optional Tools */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               OPTIONAL TOOLS
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -127,7 +127,7 @@ export default function TermsOfService() {
 
           {/* Third Party Links */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               THIRD-PARTY LINKS
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -143,7 +143,7 @@ export default function TermsOfService() {
 
           {/* User Comments */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               USER COMMENTS, FEEDBACK AND OTHER SUBMISSIONS
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -159,7 +159,7 @@ export default function TermsOfService() {
 
           {/* Personal Info */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               PERSONAL INFORMATION
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -169,7 +169,7 @@ export default function TermsOfService() {
 
           {/* Errors and Omissions */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               ERRORS, INACCURACIES AND OMISSIONS
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -182,7 +182,7 @@ export default function TermsOfService() {
 
           {/* Prohibited Uses */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               PROHIBITED USES
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-3">
@@ -205,7 +205,7 @@ export default function TermsOfService() {
 
           {/* Disclaimer */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               DISCLAIMER OF WARRANTIES; LIMITATION OF LIABILITY
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -227,7 +227,7 @@ export default function TermsOfService() {
 
           {/* Indemnification */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               INDEMNIFICATION
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -237,7 +237,7 @@ export default function TermsOfService() {
 
           {/* Severability */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               SEVERABILITY
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -247,7 +247,7 @@ export default function TermsOfService() {
 
           {/* Termination */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               TERMINATION
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -263,7 +263,7 @@ export default function TermsOfService() {
 
           {/* Entire Agreement */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               ENTIRE AGREEMENT
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -279,7 +279,7 @@ export default function TermsOfService() {
 
           {/* Governing Law */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               GOVERNING LAW
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -289,7 +289,7 @@ export default function TermsOfService() {
 
           {/* Changes */}
           <section className="mt-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               CHANGES TO TERMS OF SERVICE
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
@@ -302,14 +302,14 @@ export default function TermsOfService() {
 
           {/* Contact Information Footer */}
           <section className="mt-8 border-t border-gray-100 pt-6">
-            <h3 className="text-base font-bold text-gray-900 mb-3 uppercase">
+            <h3 className="text-2xl text-gray-900 mb-3 uppercase">
               CONTACT INFORMATION
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
               Questions about the Terms of Service should be sent to us at
             </p>
             <div className="mt-2 text-[15px] text-gray-900">
-              <h5 className="text-[17px] font-extrabold text-gray-900 mb-1">
+              <h5 className="text-[17px] font-bold text-gray-900 mb-1">
                 Cardora
               </h5>
               <p className="font-bold">
@@ -317,7 +317,7 @@ export default function TermsOfService() {
               </p>
               <p className="mt-1">
                 <span className="font-bold">Sales: </span>
-                <a href="tel:1-855-514-5500" className="text-blue-600 hover:underline">
+                <a href="tel:1-855-514-5500" className="text-green-600 hover:underline">
                   1-855-514-5500
                 </a>
               </p>
