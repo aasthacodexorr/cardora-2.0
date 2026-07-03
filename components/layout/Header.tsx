@@ -203,11 +203,13 @@ const Header = () => {
 
         {/* Slide-down nav drawer */}
         <div
-          className={`absolute top-full left-0 w-full bg-white overflow-hidden transition-all duration-300 ${
-            isMobileMenuOpen ? "max-h-[100vh] opacity-100" : "max-h-0 opacity-0"
+          className={`absolute top-full left-0 w-full bg-white overflow-hidden transition-all duration-300 z-50 ${
+            isMobileMenuOpen 
+              ? "max-h-[100vh] opacity-100 shadow-[0_15px_30px_rgba(0,0,0,0.12)] border-b border-gray-100" 
+              : "max-h-0 opacity-0 pointer-events-none shadow-none"
           }`}
         >
-          <nav className="flex flex-col px-6 py-6 pb-2">
+          <nav className="flex flex-col px-6 pt-4 pb-6">
             {NAV_ITEMS.map((item) => {
               const isActive =
                 pathname === item.to || pathname?.startsWith(item.to + "/");
@@ -218,30 +220,17 @@ const Header = () => {
                   onClick={(e) => {
                     if (item.to === "/inventory") {
                       e.preventDefault();
-                      // Force a clean page load with no query parameters
                       window.location.href = "/inventory";
                     }
                   }}
-                  className={`py-4 border-b border-gray-100 text-[17px] capitalize flex items-center justify-between ${
-                    "text-gray-900"
+                  className={`py-4 border-b border-gray-100 text-[17px] capitalize flex items-center justify-between transition-colors ${
+                    isActive ? "text-brand-green font-medium" : "text-gray-900"
                   }`}
                 >
                   {item.label}
-                  {/* <span className={isActive ? "text-brand-green" : "text-gray-300"}>→</span> */}
                 </Link>
               );
             })}
-
-            {/* Bottom call-to-action */}
-            {/* <div className="mt-8 pt-6">
-              <a
-                href={PHONE_HREF}
-                className="w-full flex items-center justify-center gap-2 bg-black text-white px-6 py-4 rounded-xl font-bold text-[16px] shadow-md hover:bg-gray-800 transition-colors"
-              >
-                <Phone className="h-5 w-5" />
-                {PHONE_NUMBER}
-              </a>
-            </div> */}
           </nav>
         </div>
       </header>

@@ -73,8 +73,8 @@ export const getConstants = (appConfig: AppConfig) => {
       : mondayToFriday.map((day) => `${day}: ${getHours(day)}`).join(", ");
 
   return {
-    PHONE_NUMBER: safeD.toll_free_number_1 || safeD.sales_number_1,
-    PHONE_HREF: `tel:${safeD.toll_free_number_1 || safeD.sales_number_1}`,
+    PHONE_NUMBER: safeD.sales_number_1 || safeD.toll_free_number_1,
+    PHONE_HREF: `tel:${safeD.sales_number_1 || safeD.toll_free_number_1}`,
     PHONE_NUMBER_2: safeD.toll_free_number_2,
     PHONE_HREF_2: `tel:${safeD.toll_free_number_2}`,
     SALES_PHONE_NUMBER: safeD.sales_number_1,

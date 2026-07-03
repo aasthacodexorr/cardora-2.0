@@ -31,7 +31,7 @@ export default async function ServicePage({ params }: PageProps) {
   return (
     <div className="min-h-screen font-sans bg-white antialiased">
       <Header />
-      
+
       {/* SECTION 1: Hero with Title + Coupon Side by Side */}
       <section className="w-full bg-gradient-to-b from-white  to-[#f4f9fc] py-12 md:py-20 flex items-center lg:mt-28">
         <div className=" md:px-36 px-8 w-full">
@@ -39,7 +39,7 @@ export default async function ServicePage({ params }: PageProps) {
 
             {/* Left: Title and Checklist */}
             <div className="lg:col-span-6 space-y-8 pt-4">
-              <h1 className="text-4xl md:text-[62px] font-bold text-black tracking-tight leading-[1.1]">
+              <h1 className="text-4xl md:text-[63px] font-bold text-black tracking-tight leading-[1.1]">
                 {currentData.cityTitle || `Oil Change in ${appConfig.dealership.city_1}, ${appConfig.dealership.province_1}`}
               </h1>
 
@@ -119,9 +119,11 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 2: Alert Message Intro Container */}
-      <section className="w-full bg-[#e6f4ff] py-1 md:py-5 ">
-        <div className="px-5 xl:px-56 py-0 xl:py-8 text-center text-base md:text-[20px] text-slate-900 tracking-wider">
-          {currentData.introText}
+      <section className="w-full bg-[#e6f4ff] py-8 md:py-5 ">
+        <div className="px-5 xl:px-56 py-0 xl:py-8 text-center text-base md:text-[20px] text-slate-900 tracking-wide flex flex-col gap-1">
+          <p>{currentData.introText1}</p>
+          <p>{currentData.introText2}</p>
+          <p>{currentData.introText3}</p>
         </div>
       </section>
 
@@ -135,6 +137,8 @@ export default async function ServicePage({ params }: PageProps) {
               <h2 className="text-3xl md:text-[44px] font-bold text-black tracking-tight leading-[1.15]">
                 {currentData.section2Title || "Why Regular Oil Changes Matter"}
               </h2>
+
+              <h2 className="text-[20px] lg:text-2xl text-black leading-[1.5]">{currentData.section2Sub}</h2>
 
               <p className="text-[20px] lg::text-[24px] font-medium tracking-wide">
                 {currentData.section2Body}
@@ -157,22 +161,18 @@ export default async function ServicePage({ params }: PageProps) {
 
               {/* Bottom Body Copy */}
               <div className="space-y-3 text-[17px] leading-[1.6] font-medium tracking-wide">
-                <p>
-                  Over time, oil breaks down and becomes less effective. Delaying oil changes can lead to poor performance, engine wear, and expensive repairs.
-                </p>
-                <p>
-                  If you notice dark oil, engine noise, reduced fuel economy, or your oil change light is on, it may be time for service.
-                </p>
+                <p>{currentData?.section2LastBody1}</p>
+                <p>{currentData?.section2LastBody2}</p>
               </div>
             </div>
 
             {/* Right Column Image */}
             <div className="w-full">
-              <div className="w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[11/15] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-slate-100 bg-slate-50 relative">
+              <div className={`w-full sm:aspect-[16/14] lg:aspect-[11/12] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-slate-100 bg-slate-50 relative ${id == "brakes" ? "lg:h-[400px]" : "h-full"}`}>
                 <Image
-                  src={currentData.premiumImg}
+                  src={currentData.section2Img}
                   alt="Pouring fresh engine oil from container"
-                  className="w-full h-full object-cover"
+                  className={`w-full ${id == "brakes" ? "h-auto" : "h-full"} object-cover`}
                   width={400}
                   height={800}
                 />
@@ -184,24 +184,24 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 4: Dual Box Highlights Grid */}
-      <section className="w-full bg-[#e6f4ff] py-16">
+      <section className="w-full bg-[#e6f4ff] py-12">
         <div className="mx-auto px-4 md:px-28">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
 
             {/* Box 1: Signs You Need Service */}
-            <div className="bg-white rounded-[20px] p-7 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col justify-between space-y-6">
-              <div className="space-y-5">
+            <div className="bg-white h-full lg:max-h-96 rounded-[20px] p-7 md:p-7 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col justify-between items-start gap-5">
+              <div className="space-y-2">
                 <div className="flex items-center gap-4">
                   <svg className="w-10 h-10 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                   <h3 className="text-2xl font-bold text-black tracking-tight">
-                    Signs You Need an Oil Change
+                    {currentData?.signtitle1 || "Signs You Need an Oil Change"}
                   </h3>
                 </div>
 
-                <ul className="pl-14 md:pl-2">
-                  {(currentData.signsList || [
+                <ul className="pl-14">
+                  {(currentData.signsList1 || [
                     "Oil change or check engine light is on",
                     "Engine sounds louder than usual",
                     "Burning oil smell",
@@ -217,26 +217,28 @@ export default async function ServicePage({ params }: PageProps) {
                 </ul>
               </div>
 
-              <p className=" text-[15px] md:text-[18px] leading-[1.5] font-medium tracking-wide pt-3 border-t border-slate-50  pl-14 md:pl-2 ">
-                Not sure if it&apos;s time? Our team can inspect your vehicle and recommend the right maintenance schedule.
+              <p className=" text-[15px] md:text-[18px] leading-[1.5] font-medium tracking-wide border-t border-slate-50  pl-14">
+                {currentData?.signLastBody1 || "Not sure if it's time? Our team can inspect your vehicle and recommend the right maintenance schedule."}
               </p>
             </div>
 
             {/* Box 2: What's Included */}
-            <div className="bg-white rounded-[20px] p-8 md:p-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col justify-between space-y-6">
-              <div className="space-y-5">
+            <div className="bg-white h-full lg:max-h-96 rounded-[20px] p-8 md:p-7 shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col justify-between space-y-6">
+              <div className="space-y-2">
                 <div className="flex items-center gap-4">
                   <svg className="w-10 h-10 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   <h3 className="text-xl md:text-2xl font-bold text-black tracking-tight">
-                    Our Oil Change Service Includes
+                    {currentData.signtitle2 || "Our Oil Change Service Includes"}
                   </h3>
                 </div>
+                <p className='text-lg pl-14'>{currentData.signsListBody1}</p>
+                <p className="pl-14 text-lg">{currentData.signsListBody2}</p>
 
-                <ul className="pl-14 md:pl-2">
-                  {(currentData.includesList || [
+                <ul className="pl-14">
+                  {(currentData.signList2 || [
                     "Free inspection for your air and cabin filters",
                     "Drain and replace engine oil and install a new oil filter",
                     "Fluid level inspection",
@@ -252,8 +254,8 @@ export default async function ServicePage({ params }: PageProps) {
                 </ul>
               </div>
 
-              <p className="text-[15px] md:text-[18px] leading-[1.5] font-medium tracking-wide pt-3 border-t border-slate-50  pl-14 md:pl-2 ">
-                We service most makes and models, including domestic, European, and imported vehicles.
+              <p className="text-[15px] md:text-[18px] font-medium pt-3 border-t border-slate-50  pl-14 ">
+                {currentData?.signLastBody2}
               </p>
             </div>
 
@@ -262,77 +264,87 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 5: Premium Service Highlight */}
-      <section className="w-full bg-white py-12 md:py-16 px-4 md:px-32">
-        <div className="">
-          <div className="flex flex-col md:flex-row gap-10 lg:gap-16 items-start">
+      {
+        currentData?.premiumTitle ? <section className="w-full bg-white py-12 md:py-16 px-4 md:px-32">
+          <div className={`flex flex-col md:flex-row gap-10 lg:gap-16 ${id === "wheel-service" ? "items-center" : "items-start"}`}>
 
             {/* Left Column Image */}
-            <div className="w-full lg:max-w-[45%]">
-              <div className=" w-full aspect-[4/5] sm:aspect-[16/14] lg:aspect-[7/10] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] relative">
+            <div className={`w-full   ${["wheel-service", "tire-service"].includes(id) ? "lg:min-w-[50%]" : "lg:max-w-[45%] lg:min-h-[700px]"}  `}>
+              <div className=" w-full aspect-[11/12] sm:aspect-[16/14] lg:aspect-[11/16] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] relative">
                 <Image
                   src={currentData.premiumImg || "image_85aa7b.jpg"}
                   alt="Premium synthetic oil change service execution"
-                  className="w-full h-full object-cover lg:p-3 rounded-2xl"
+                  className={`w-full h-full object-cover lg:p-3 rounded-3xl ${["wheel-service", "tire-service"].includes(id) ? "lg:max-h-[50%]" : "lg:max-w-[95%] lg:min-h-[700px]"}`}
                   fill
                 />
               </div>
             </div>
 
             {/* Right Column Content */}
-            <div className="lg:col-span-6 space-y-4">
+            <div className={`lg:col-span-6 space-y-2 ${id === "wheel-service" ? "lg:-mt-[400px]" : ""}`}>
               <h2 className="text-3xl md:text-[45px] font-bold text-black tracking-tight leading-[1.15]">
                 {currentData.premiumTitle || "Premium Synthetic Oil Change Service"}
               </h2>
 
               <p className=" text-[20px] font-medium tracking-wide">
-                At {SITE_CONFIG?.dealership.name}, we use high-quality synthetic oil designed to provide superior engine protection and performance in all driving conditions.
+                {currentData?.premiumBody1 || `At ${SITE_CONFIG?.dealership.name}, we use high-quality synthetic oil designed to provide superior engine protection and performance in all driving conditions.`}
               </p>
 
-              <div className="text-[20px] tracking-wide ">
-                Synthetic oil helps:
-              </div>
+              {
+                currentData.premiumBody ? <>
+                  <div className="text-[20px] tracking-wide ">
+                    Synthetic oil helps:
+                  </div>
 
-              <ul className="w-full border-t border-slate-100 divide-y divide-slate-100 text-[18px] font-medium tracking-wide">
-                {[
-                  "Protect your engine during extreme Ontario temperatures",
-                  "Improve engine performance and efficiency",
-                  "Reduce engine wear and buildup",
-                  "Last longer than conventional oil",
-                  "Support smoother cold-weather starts"
-                ].map((item, i) => (
-                  <li key={i} className="py-3 text-left">
-                    {item}
-                  </li>
-                ))}
-              </ul>
+                  <ul className="w-full border-t border-slate-100 divide-y divide-slate-100 text-[18px] font-medium tracking-wide">
+                    {[
+                      "Protect your engine during extreme Ontario temperatures",
+                      "Improve engine performance and efficiency",
+                      "Reduce engine wear and buildup",
+                      "Last longer than conventional oil",
+                      "Support smoother cold-weather starts"
+                    ].map((item, i) => (
+                      <li key={i} className="py-3 text-left">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </> : null
+              }
 
-              <div className="space-y-2 text-[18px] leading-[1.6] font-medium tracking-wide">
+              <div className="text-[18px] leading-[1.6] font-medium tracking-wide">
                 <p>
-                  {currentData.premiumBody || `Modern vehicles are designed to perform best with synthetic oil, especially for drivers dealing with daily commuting, stop-and-go traffic, and changing weather conditions around ${appConfig.dealership.city_1} and the GTA.`}
+                  {currentData.premiumBody2}
                 </p>
                 <p>
-                  Our technicians will ensure your vehicle receives the correct synthetic oil and filter recommended for your engine.
+                  {currentData.premiumBody3}
                 </p>
               </div>
             </div>
 
           </div>
-        </div>
-      </section>
+        </section> : null
+      }
 
       {/* SECTION 6: Why Drivers Choose Us */}
-      <section className="w-full bg-[#f5f5f7] py-6 md:py-20">
+      <section className={`w-full bg-[#eeeeee] py-6 md:py-18  ${id === "tire-service" ? "lg:-mt-[450px]" : id === "wheel-service" ? "lg:-mt-[450px]" : null}`}>
         <div className="px-4 md:px-28">
-          <div className="flex flex-col md:flex-row gap-10 lg:gap-12 items-start">
+          {/* Dynamic flex ordering based on the 'id' variable */}
+          <div
+            className={`flex gap-10 lg:gap-12 items-start ${id === "brakes"
+                ? "flex-col-reverse md:flex-row-reverse"
+                : "flex-col md:flex-row"
+              }`}
+          >
 
-            {/* Left Text Grid Features */}
-            <div className="w-full lg:max-w-[45%]  space-y-6">
+            {/* Text Grid Features */}
+            <div className="w-full lg:max-w-[60%]">
               <h2 className="text-3xl md:text-[40px] font-bold text-black tracking-tight leading-[1.15]">
-                Why Drivers in {appConfig.dealership.city_1} Choose {appConfig.dealership.dealership_name}
+                {currentData?.whyTitle || `Why Drivers in ${appConfig.dealership.city_1} Choose ${appConfig.dealership.dealership_name}`}
               </h2>
 
-              <ul className="w-full border-t border-slate-200/60 divide-y divide-slate-200/60 text-[18px] font-medium tracking-wide">
-                {([
+              <ul className="w-full  mt-4 border-slate-200/60 divide-y divide-slate-200/60 text-[18px] font-medium tracking-wide">
+                {(currentData?.whyFeature || [
                   "Honest recommendations with no pressure",
                   "Experienced technicians",
                   "Quick turnaround times",
@@ -340,7 +352,7 @@ export default async function ServicePage({ params }: PageProps) {
                   `Convenient ${appConfig.dealership.city_1} location`,
                   "Trusted customer service experience"
                 ]).map((feature, idx) => (
-                  <li key={idx} className="flex items-center justify-between py-3.5">
+                  <li key={idx} className="flex items-center justify-between py-3">
                     <svg className="w-4 h-4 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
@@ -352,15 +364,15 @@ export default async function ServicePage({ params }: PageProps) {
               </ul>
 
               <p className="text-slate-900 text-[18px] leading-[1.6] font-medium tracking-wide pt-2">
-                We know your time matters. Our goal is to get you back on the road quickly and confidently.
+                {currentData?.whyLastBody || "We know your time matters. Our goal is to get you back on the road quickly and confidently."}
               </p>
             </div>
 
-            {/* Right Side Facility Showcase Image */}
+            {/* Facility Showcase Image */}
             <div className="w-full">
-              <div className="w-full aspect-[4/3] sm:aspect-[16/12] aspect-[16/12] rounded-md overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)] relative">
+              <div className="w-full aspect-[4/3] sm:aspect-[16/12] rounded-md overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)] relative">
                 <Image
-                  src={currentData?.premiumImg || "image_85aa7b.jpg"}
+                  src={currentData?.whyImg || "https://www.cardora.ca/wp-content/uploads/2026/05/cardora-service-1280x904.webp"}
                   alt={`${appConfig.dealership.dealership_name} ${appConfig.dealership.city_1} Facility Storefront with parked vehicles`}
                   className="w-full h-full object-cover max-h-[88%] rounded-2xl"
                   fill
@@ -392,7 +404,7 @@ export default async function ServicePage({ params }: PageProps) {
                 href={card.id === "battery" ? "/book-an-appointment" : `/service/${card.id}`}
                 className="group bg-white pb-6 relative border-2 border-slate-200/70 rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col h-full"
               >
-              <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
+                <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
 
                 <div className="aspect-[16/11] bg-slate-50 overflow-hidden w-full relative ">
                   <Image
@@ -426,7 +438,7 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 8: Google Reviews Grid Block */}
       <section className="w-full bg-[#eaeff5] border-t border-slate-100">
-        <Reviews/>
+        <Reviews />
       </section>
 
       {/* SECTION 9: FAQ Section */}
@@ -443,19 +455,19 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 10: Final Inline CTA Row */}
       <section className="w-full bg-[#eaeff5] border-t border-slate-100 py-8 text-center">
-        <div className="  px-4 md:px-82 md:py-14 space-y-3 py-5">
+        <div className="  px-4 md:px-82 md:py-10 space-y-3 py-5">
           <p className="text-xl md:text-3xl ">
             Book your oil change service today at {appConfig.dealership.dealership_name} {appConfig.dealership.city_1} and keep your vehicle performing at its best.
           </p>
           <div>
-            <Link href="/book-an-appointment" className="inline-block border border-[#00b066] py-3 px-10 rounded-lg transition duration-200 text-xs md:text-lg text-[#00b066] bg-white">
-              Schedule Now
+            <Link href="/book-an-appointment" className="inline-block border border-[#00b066] py-3 px-10 mt-4 rounded-lg transition duration-200 text-xs md:text-lg text-[#00b066] bg-white hover:text-white hover:bg-gradient-to-b from-[#00af66] to-[#00af66a6]">
+              Schedule Service
             </Link>
           </div>
         </div>
       </section>
 
-      <GetInTouch/>
+      <GetInTouch />
 
       <Footer />
     </div>
