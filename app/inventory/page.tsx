@@ -197,8 +197,8 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
 
   if (!results?.__isArtificial && results?.nbHits === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <p className="mt-3 max-w-md">
+      <div className="flex flex-col items-center justify-center flex-1 py-32 text-center w-full min-h-[350px]">
+        <p className="mt-3 max-w-md text-gray-500 font-medium">
           Currently, there are no vehicles that match your criteria.
         </p>
       </div>
@@ -652,6 +652,29 @@ function useHeaderHeight() {
   return height;
 }
 
+// 1. Create a tiny layout wrapper component that sits inside the InstantSearch context
+const MainLayoutWrapper = ({
+  children,
+  isHoveringFilters,
+}: {
+  children: React.ReactNode;
+  isHoveringFilters: boolean;
+}) => {
+  const { results } = useInstantSearch();
+  const hasNoResults = !results?.__isArtificial && results?.nbHits === 0;
+
+  return (
+    <main
+      className={`bg-background ${
+        isHoveringFilters || hasNoResults ? "overflow-hidden h-screen" : "min-h-screen"
+      }`}
+    >
+      {children}
+    </main>
+  );
+};
+
+// 2. Your cleaned up, error-free InventoryContent Component
 const InventoryContent = () => {
   const config = useAppConfig();
   const { searchClient, TYPESENSE_COLLECTION_NAME } = useMemo(() => getTypesenseClient(config), [config]);
@@ -662,6 +685,7 @@ const InventoryContent = () => {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isHoveringFilters, setIsHoveringFilters] = useState(false);
   const headerHeight = useHeaderHeight();
+
 
   useEffect(() => {
     if (isMobileFilterOpen) {
@@ -674,93 +698,78 @@ const InventoryContent = () => {
 
   const renderFilterGroups = () => (
     <div className="space-y-[18px]">
-      <FilterGroup title="LOCATION" isOpen={openFilter === "LOCATION"}
-        onToggle={() => setOpenFilter(openFilter === "LOCATION" ? null : "LOCATION")}>
+      <FilterGroup title="LOCATION" isOpen={openFilter === "LOCATION"} onToggle={() => setOpenFilter(openFilter === "LOCATION" ? null : "LOCATION")}>
         <RefinementList attribute="location" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="VEHICLE TYPE" isOpen={openFilter === "VEHICLE TYPE"}
-        onToggle={() => setOpenFilter(openFilter === "VEHICLE TYPE" ? null : "VEHICLE TYPE")}>
+      <FilterGroup title="VEHICLE TYPE" isOpen={openFilter === "VEHICLE TYPE"} onToggle={() => setOpenFilter(openFilter === "VEHICLE TYPE" ? null : "VEHICLE TYPE")}>
         <RefinementList attribute="vehicle_type" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="PRICE" isOpen={openFilter === "PRICE"}
-        onToggle={() => setOpenFilter(openFilter === "PRICE" ? null : "PRICE")}>
+      <FilterGroup title="PRICE" isOpen={openFilter === "PRICE"} onToggle={() => setOpenFilter(openFilter === "PRICE" ? null : "PRICE")}>
         <PriceRangeFilter />
       </FilterGroup>
-      <FilterGroup title="YEAR" isOpen={openFilter === "YEAR"}
-        onToggle={() => setOpenFilter(openFilter === "YEAR" ? null : "YEAR")}>
+      <FilterGroup title="YEAR" isOpen={openFilter === "YEAR"} onToggle={() => setOpenFilter(openFilter === "YEAR" ? null : "YEAR")}>
         <RefinementList attribute="year" sortBy={["name:desc"]} classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="MAKE" isOpen={openFilter === "MAKE"}
-        onToggle={() => setOpenFilter(openFilter === "MAKE" ? null : "MAKE")}>
+      <FilterGroup title="MAKE" isOpen={openFilter === "MAKE"} onToggle={() => setOpenFilter(openFilter === "MAKE" ? null : "MAKE")}>
         <RefinementList attribute="make" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="MODEL" isOpen={openFilter === "MODEL"}
-        onToggle={() => setOpenFilter(openFilter === "MODEL" ? null : "MODEL")}>
+      <FilterGroup title="MODEL" isOpen={openFilter === "MODEL"} onToggle={() => setOpenFilter(openFilter === "MODEL" ? null : "MODEL")}>
         <RefinementList attribute="model" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="ODOMETER" isOpen={openFilter === "ODOMETER"}
-        onToggle={() => setOpenFilter(openFilter === "ODOMETER" ? null : "ODOMETER")}>
+      <FilterGroup title="ODOMETER" isOpen={openFilter === "ODOMETER"} onToggle={() => setOpenFilter(openFilter === "ODOMETER" ? null : "ODOMETER")}>
         <OdometerRangeFilter />
       </FilterGroup>
-      <FilterGroup title="EXTERIOR COLOR" isOpen={openFilter === "EXTERIOR COLOR"}
-        onToggle={() => setOpenFilter(openFilter === "EXTERIOR COLOR" ? null : "EXTERIOR COLOR")}>
+      <FilterGroup title="EXTERIOR COLOR" isOpen={openFilter === "EXTERIOR COLOR"} onToggle={() => setOpenFilter(openFilter === "EXTERIOR COLOR" ? null : "EXTERIOR COLOR")}>
         <RefinementList attribute="exterior_color" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="BODY TYPE" isOpen={openFilter === "BODY TYPE"}
-        onToggle={() => setOpenFilter(openFilter === "BODY TYPE" ? null : "BODY TYPE")}>
+      <FilterGroup title="BODY TYPE" isOpen={openFilter === "BODY TYPE"} onToggle={() => setOpenFilter(openFilter === "BODY TYPE" ? null : "BODY TYPE")}>
         <RefinementList attribute="body_type" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="TRANSMISSION" isOpen={openFilter === "TRANSMISSION"}
-        onToggle={() => setOpenFilter(openFilter === "TRANSMISSION" ? null : "TRANSMISSION")}>
+      <FilterGroup title="TRANSMISSION" isOpen={openFilter === "TRANSMISSION"} onToggle={() => setOpenFilter(openFilter === "TRANSMISSION" ? null : "TRANSMISSION")}>
         <RefinementList attribute="transmission" classNames={refinementListClassNames} />
       </FilterGroup>
-      <FilterGroup title="FUEL TYPE" isOpen={openFilter === "FUEL TYPE"}
-        onToggle={() => setOpenFilter(openFilter === "FUEL TYPE" ? null : "FUEL TYPE")}>
+      <FilterGroup title="FUEL TYPE" isOpen={openFilter === "FUEL TYPE"} onToggle={() => setOpenFilter(openFilter === "FUEL TYPE" ? null : "FUEL TYPE")}>
         <RefinementList attribute="fuel_type" classNames={refinementListClassNames} />
       </FilterGroup>
     </div>
   );
 
   return (
-    // CHANGED: Restored normal scrolling layout behavior to the main document frame rather than clamping the viewport h-screen
-    <main className={` bg-background ${isHoveringFilters? "overflow-hidden h-screen" : "min-h-screen" }`}>
+    <InstantSearch
+      searchClient={searchClient}
+      indexName={TYPESENSE_COLLECTION_NAME}
+      routing={{
+        router,
+        stateMapping,
+      }}
+    >
+      <ScrollToTopOnSearch />
+      <Configure hitsPerPage={21} />
 
-      {/* ── Header: Fixed/Sticky layout element at the top ── */}
-      <div className="bg-hero-bg sticky top-0 z-40">
-        <Header />
-      </div>
+      {/* Put the layout wrapper here, safe inside InstantSearch context! */}
+      <MainLayoutWrapper isHoveringFilters={isHoveringFilters}>
+        {/* ── Header ── */}
+        <div className="bg-hero-bg sticky top-0 z-40">
+          <Header />
+        </div>
 
-      {/* ── Main content layout container ── */}
-      <section className="bg-[#efefef] px-3 lg:px-14 py-[20px]">
-        <InstantSearch
-          searchClient={searchClient}
-          indexName={TYPESENSE_COLLECTION_NAME}
-          routing={{
-            router,
-            stateMapping,
-          }}
-        >
-          <ScrollToTopOnSearch />
-          <Configure hitsPerPage={21} />
-
-          {/* CHANGED: Configured a clean layout alignment mapping */}
+        {/* ── Main content layout container ── */}
+        <section className="bg-[#efefef] min-h-screen px-3 lg:px-14 py-[20px]">
           <div className="flex flex-col lg:flex-row items-start max-w-[1600px] mx-auto gap-5">
- 
-            {/* ── CHANGED: Filter component sticks naturally right below header when scrolling past it ── */}
+            {/* ── Filter Sidebar ── */}
             <aside
-            onMouseEnter={()=>setIsHoveringFilters(true)}
-            onMouseLeave={()=>setIsHoveringFilters(false)}
+              onMouseEnter={() => setIsHoveringFilters(true)}
+              onMouseLeave={() => setIsHoveringFilters(false)}
               className={[
                 "hidden",
                 "lg:flex lg:flex-col",
                 "lg:shrink-0 lg:w-[320px]",
-                "lg:sticky lg:top-[120px]", // ADJUST THIS VALUE to match your exact desktop Header height component
-                "max-h-[calc(100vh-130px)] overflow-y-auto", // Keeps internal filter options scrollable if they exceed display height
+                "lg:sticky lg:top-[117px]",
+                "max-h-[calc(100vh-130px)] overflow-y-auto",
                 "[&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar-track]:hidden",
                 "lg:[scrollbar-width:none] lg:[-ms-overflow-style:none]",
               ].join(" ")}
             >
-              {/* Inner card — keeps the rounded white box look */}
               <div className="bg-white border border-[#ddd] rounded-[15px] p-[15px] flex-1">
                 <div className="flex flex-col items-center gap-4">
                   <div className="bg-[#00af66] text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm">
@@ -776,13 +785,9 @@ const InventoryContent = () => {
                 {renderFilterGroups()}
               </div>
             </aside>
- 
-            {/* ── CHANGED: Cleaned up fixed classes so the search + cards dynamically scale fluidly to fill workspace width ── */}
-            <div
-              id="results-column"
-              className="w-full flex-1 min-w-0 lg:pt-24"
-            >
-              {/* Search + sort + responsive control bar */}
+
+            {/* ── Results Column ── */}
+            <div id="results-column" className="w-full flex-1 min-w-0 min-h-[100vh] lg:pt-24">
               <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4 px-3">
                 <div className="relative w-full lg:max-w-[440px]">
                   <SearchBox
@@ -800,7 +805,6 @@ const InventoryContent = () => {
                 </div>
 
                 <div className="w-full lg:w-auto flex items-center justify-between sm:justify-end gap-2 mt-1 lg:mt-0">
-                  {/* Mobile filter trigger */}
                   <button
                     type="button"
                     onClick={() => setIsMobileFilterOpen(true)}
@@ -811,17 +815,15 @@ const InventoryContent = () => {
                   </button>
 
                   <div className="flex items-start">
-                    <CustomSortBy sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)} />           
+                    <CustomSortBy sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)} />
                   </div>
                 </div>
               </div>
 
-              {/* Active refinement pills */}
               <div className="px-3">
                 <GroupedCurrentRefinements />
               </div>
 
-              {/* Results grid */}
               <div className="mb-4 mt-3">
                 <SearchResultsWrapper>
                   <NoResultsHandler>
@@ -829,21 +831,13 @@ const InventoryContent = () => {
                   </NoResultsHandler>
                 </SearchResultsWrapper>
               </div>
-
             </div>
-
           </div>
 
-          {/* ── Mobile filter slide-in overlay (unchanged) ── */}
-          <div
-            className={`fixed inset-0 z-50 flex lg:hidden transition-opacity duration-300 ${isMobileFilterOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-              }`}
-          >
+          {/* ── Mobile filter slide-in overlay ── */}
+          <div className={`fixed inset-0 z-50 flex lg:hidden transition-opacity duration-300 ${isMobileFilterOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
             <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileFilterOpen(false)} />
-            <div
-              className={`relative flex w-full max-w-xs flex-col bg-white h-full shadow-xl ml-auto p-4 overflow-y-auto overscroll-contain transition-transform duration-300 ease-in-out ${isMobileFilterOpen ? "translate-x-0" : "translate-x-full"
-                }`}
-            >
+            <div className={`relative flex w-full max-w-xs flex-col bg-white h-full shadow-xl ml-auto p-4 overflow-y-auto overscroll-contain transition-transform duration-300 ease-in-out ${isMobileFilterOpen ? "translate-x-0" : "translate-x-full"}`}>
               <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-4">
                 <h2 className="text-lg font-bold text-black tracking-wider">Filters</h2>
                 <button onClick={() => setIsMobileFilterOpen(false)} className="p-1 rounded-full text-gray-500 hover:bg-gray-100">
@@ -864,11 +858,9 @@ const InventoryContent = () => {
               <div className="flex-1">{renderFilterGroups()}</div>
             </div>
           </div>
-
-        </InstantSearch>
-      </section>
-
-    </main>
+        </section>
+      </MainLayoutWrapper>
+    </InstantSearch>
   );
 };
 

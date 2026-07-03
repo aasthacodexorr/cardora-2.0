@@ -11,23 +11,13 @@ const VehicleForm = () => {
   return (
     <>
       <Header />
-      <div className="bg-white mx-auto px-5 mt-3 mb-32 tracking-wider lg:mt-36">
-        <h4 className="text-3xl my-4">What vehicle needs service or repair?</h4>
-        <div className="space-y-6">
-          <label className="block text-base">
-            Provide the following details about your vehicle:
-          </label>
-
-          <iframe
-            src={SITE_CONFIG.urls.tradeFormByVehicle}
-            title="Vehicle Trade Form"
-            width="100%"
-            className="w-full md:w-11/12 border-0"
-            style={{
-              minHeight: "447px",
-            }}
-          />
-        </div>
+      <div className="bg-white mx-auto w-full px-5  lg:px-64 flex justify-center mt-3 tracking-wider lg:mt-32">
+        <iframe
+          src={SITE_CONFIG.urls.bookAppointment}
+          title="Vehicle Trade Form"
+          className='w-[900px] h-[140vh] "[&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar-track]:hidden",
+                "lg:[scrollbar-width:none] lg:[-ms-overflow-style:none]"'
+        />
       </div>
       <GetInTouch />
       <Footer />
