@@ -113,7 +113,7 @@ const About = () => {
               All our cars are {SITE_CONFIG?.dealership.name} Certified
             </h2>
             
-            <div className="flex flex-col lg:flex-row items-center justify-between mt-12 gap-8 lg:gap-0">
+            <div className="flex flex-col lg:flex-row items-center justify-between mt-12 gap-8 lg:gap-0 lg:mb-20">
               {/* Left Column: Animated Badge List */}
               <div className="flex flex-col items-start w-full lg:w-auto">
                 <motion.div 
@@ -140,11 +140,11 @@ const About = () => {
               </div>
 
               {/* Right Column: Static Car Image */}
-              <div className="w-full md:max-w-[700px] flex justify-center md:justify-end relative min-h-[250px]">
+              <div className="w-full md:max-w-[700px] flex justify-center md:justify-end relative min-h-[250px] ">
                 <Image
                   src={blueCar}
                   alt="Blue Honda Civic Sedan showcasing Cardora Certified quality"
-                  className="w-full h-auto object-contain drop-shadow-2xl md:absolute md:-top-24 md:-right-4"
+                  className="w-full h-auto object-contain drop-shadow-2xl md:absolute -top-10 md:-top-2 md:-right-4"
                   width={1000}
                   height={500}
                 />
