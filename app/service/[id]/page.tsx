@@ -105,8 +105,8 @@ export default async function ServicePage({ params }: PageProps) {
                 </div>
 
                 {/* Action Buttons (Arranged horizontally matching image_f8518a.png) */}
-                <div className="flex justify-start items-start gap-3 mt-14">
-                  <Link href="/book-an-appointment" className="flex items-center w-fit justify-center bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:brightness-95 text-white font-medium py-3 px-6 rounded-xl transition duration-200 text-center text-xs md:text-sm shadow-sm border border-[#00af66]">
+                <div className="flex flex-col lg:flex-row lg:justify-start lg:items-start justify-center items-center gap-3 mt-14">
+                  <Link href="/book-an-appointment" className="flex items-center w-full lg:w-fit justify-center bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:brightness-95 text-white font-medium py-3 px-6 rounded-xl transition duration-200 text-center text-xs md:text-sm shadow-sm border border-[#00af66]">
                     Schedule Service
                   </Link>
                   <DownloadCouponButton

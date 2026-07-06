@@ -111,30 +111,30 @@ export const getConstants = (appConfig: AppConfig) => {
     BUSINESS_HOURS_SALES: {
       weekdays: {
         label: "Mon-Fri",
-        hours: weekdayHours,
+        hours: "10:00 AM to 8:00 PM",
       },
       saturday: {
         label: "Saturday",
-        hours: getHours("Saturday"),
+        hours: "10:00 AM to 6:00 PM",
       },
       sunday: {
         label: "Sunday",
-        hours: getHours("Sunday"),
+        hours: "12:00 PM to 5:00 PM",
       },
     } as const,
 
     BUSINESS_HOURS_SERVICES: {
       weekdays: {
         label: "Mon-Fri",
-        hours: weekdayHours,
+        hours: "8:30 AM to 6:00 PM",
       },
       saturday: {
         label: "Saturday",
-        hours: getHours("Saturday"),
+        hours: "9:00 AM to 2:00 PM",
       },
       sunday: {
         label: "Sunday",
-        hours: getHours("Sunday"),
+        hours: "Closed"
       },
     } as const,
 

@@ -107,7 +107,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
   };
 
   return (
-    <div className={`flex flex-col lg:flex-row gap-[2px] w-full max-w-full xl:max-h-[500px] 2xl:min-h-[550px] overflow-hidden ${centered ? "justify-center" : "justify-start"}`}>
+    <div className={`flex flex-col lg:flex-row gap-[2px] w-full max-w-full lg:max-h-[500px] xl:max-h-[600px] 2xl:min-h-[600px] overflow-hidden ${centered ? "justify-center" : "justify-start"}`}>
       <LightGallery
         onInit={(detail) => {
           lightboxRef.current = detail.instance;
@@ -228,7 +228,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
       {images.length > 1 ? (
         <div 
           ref={desktopThumbsRef}
-          className="hidden md:flex flex-col overflow-y-auto w-[165px] h-[500px] 2xl:w-[200px] pr-1 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="hidden md:flex flex-col overflow-y-auto w-[165px] h-[500px] 2xl:h-[600px] 2xl:w-[200px] pr-1 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {images.map((img, idx) => (
             <button
