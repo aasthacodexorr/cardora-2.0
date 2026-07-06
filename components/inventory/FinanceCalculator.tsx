@@ -117,8 +117,8 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
   };
 
   return (
-    <div className="w-full bg-[#faf9f8] md:py-14 py-6 mt-10 font-sans px-2 md:px-10 2xl:px-24 overflow-hidden">
-      <div className="w-full mx-auto">
+    <div className="w-full bg-[#faf9f8] md:py-14 py-6 mt-10 font-sans px-2 md:px-10 overflow-hidden">
+      <div className="w-full mx-auto max-w-[1620px]">
         <div className="flex flex-col lg:flex-row pl-2 lg:gap-10">
           
           {/* Left column: Content section */}
