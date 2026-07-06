@@ -218,7 +218,7 @@ const ProtectionPlans = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full lg:absolute lg:bottom-0 lg:right-32 lg:w-1/2 lg:w-[45%] flex justify-end items-end pointer-events-none"
+            className="w-full lg:absolute lg:bottom-0 lg:right-32 2xl:right-64 lg:w-1/2 lg:w-[45%] flex justify-end items-end pointer-events-none"
           >
             <Image
               src={rotateCar}

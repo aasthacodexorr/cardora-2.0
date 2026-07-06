@@ -179,7 +179,7 @@ const TradeIn = () => {
 
       {/* Hero / Quote form — Animated on Initial Page Entry */}
       <section className="w-full relative px-4 lg:px-24 lg:mt-18">
-        <div className="mx-auto max-w-[1300px] px-2 md:px-9 pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
+        <div className="mx-auto max-w-[1400px] px-2 md:px-9 pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
 
           {/* Left: Animated Heading Typography Complex */}
           <motion.div 
@@ -367,7 +367,7 @@ const TradeIn = () => {
 
       {/* How it works — Image slides from left, right text block remains static */}
       <section className="w-full lg:px-24 mx-auto -mt-5 lg:-mt-0">
-        <div className="mx-auto lg:max-w-[1300px] px-4 lg:px-0 py-10 lg:py-24">
+        <div className="mx-auto lg:max-w-[1400px] px-4 lg:px-0 py-10 lg:py-24">
           <div className="grid grid-cols-1 items-start gap-6 lg:gap-0 lg:pl-10 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
             
             {/* Left Column: Animated Image Block */}
@@ -426,7 +426,7 @@ const TradeIn = () => {
 
       {/* FAQs — Header layout remains static, list nodes stagger into viewport view */}
       <section className="w-full lg:mb-18 mb-2 lg:mt-10 px-3 lg:px-24">
-        <div className="mx-auto max-w-[1300px] px-2 md:px-9 py-8 lg:py-0">
+        <div className="mx-auto max-w-[1400px] px-2 md:px-9 py-8 lg:py-0">
           <div className="flex items-center gap-3 mb-6 md:mb-10">
             <h2 className="text-[28px] md:text-[36px] lg:text-[44px] font-semibold text-foreground leading-tight">
               Popular sell or trade in questions
