@@ -42,3 +42,7 @@
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2), 0 2px 4px rgba(0, 0, 0, 0.08);
 }
+
+.clip-ribbon {
+      clip-path: polygon(0 0, 92% 0, 100% 50%, 92% 100%, 0 100%);
+    }
