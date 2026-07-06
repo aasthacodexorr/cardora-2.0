@@ -73,10 +73,10 @@ export default async function VehicleDetailsPage({
         so that on large monitors the entire layout centers like the design.
       */}
       <section className="w-full bg-background flex-1 max-w-[1440px] xl:max-w-[1600px] mx-auto lg:mt-24">
-        <div className="w-full pt-[30px] lg:pl-2">
+        <div className="w-full pt-[30px]">
           
           {/* SECTION ROW: Controls the boundaries of the sticky sidebar */}
-          <div className="flex flex-col gap-8 lg:flex-row items-stretch px-5 md:px-8 lg:px-10 relative w-full">
+          <div className="flex flex-col gap-8 lg:flex-row items-stretch px-5 md:px-8 lg:px-10 2xl:px-0 relative w-full">
             
             {/* Left column: gallery + specs + description */}
             <div className={`flex flex-col gap-8 items-start flex-1 w-full ${showSidebar ? "lg:flex-1" : "mx-auto"}`}>
@@ -169,7 +169,7 @@ export default async function VehicleDetailsPage({
 
             {/* Right column: sticky sidebar (desktop) */}
             {showSidebar && (
-              <div className="hidden lg:block lg:w-[450px] xl:w-[450px]">
+              <div className="hidden lg:block lg:w-[450px] xl:w-[450px] 2xl:w-[520px]">
                 <div className="sticky top-6 h-fit space-y-5">
                   <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
                     <VehicleHeader vehicle={vehicle} />
@@ -197,7 +197,7 @@ export default async function VehicleDetailsPage({
       </div>
 
       <div className="w-full bg-black">
-        <div className="max-w-[1440px] xl:max-w-[1600px] mx-auto w-full">
+        <div className="max-w-[1440px] xl:max-w-[1600px] 2xl:max-w-full  mx-auto w-full">
           <GetInTouch />
           <Footer />
         </div>

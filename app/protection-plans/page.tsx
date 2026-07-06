@@ -224,7 +224,7 @@ const ProtectionPlans = () => {
               src={rotateCar}
               alt="Silver Toyota Camry Sedan"
               loading="eager"
-              className="object-contain w-full h-auto max-h-[300px] md:max-h-[400px] lg:max-h-[480px] object-bottom"
+              className="object-contain w-full h-auto max-h-[300px] md:max-h-[400px] lg:max-h-[480px] 2xl:max-h-[400px] object-bottom"
             />
           </motion.div>
 
