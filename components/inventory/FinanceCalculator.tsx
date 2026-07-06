@@ -117,13 +117,13 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
   };
 
   return (
-    <div className="w-full bg-[#faf9f8] md:py-14 py-6 mt-10 font-sans px-2 md:px-10 overflow-hidden">
+    <div className="w-full bg-[#faf9f8] md:py-14 py-6 mt-10 font-sans px-2 md:px-10 2xl:px-24 overflow-hidden">
       <div className="w-full mx-auto">
         <div className="flex flex-col lg:flex-row pl-2 lg:gap-10">
           
           {/* Left column: Content section */}
           <motion.div 
-            className="flex flex-col gap-3 max-w-[700px]"
+            className="flex flex-col gap-3 max-w-[700px] 2xl:max-w-full"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -169,7 +169,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
 
           {/* Right column: Calculator form */}
           <motion.div 
-            className="bg-white lg:rounded-2xl p-6 sm:p-10 flex flex-col gap-7 shadow-sm w-full"
+            className="bg-white lg:rounded-2xl 2xl:max-w-[1200px] p-6 sm:p-10 flex flex-col gap-7 shadow-sm w-full"
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}

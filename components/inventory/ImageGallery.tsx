@@ -107,7 +107,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
   };
 
   return (
-    <div className={`flex flex-col lg:flex-row gap-[2px] w-full max-w-full lg:max-h-[500px] xl:max-h-[600px] 2xl:min-h-[600px] overflow-hidden ${centered ? "justify-center" : "justify-start"}`}>
+    <div className={`flex flex-col lg:flex-row gap-[2px] w-full max-w-full lg:max-h-[500px] xl:max-h-[700px] overflow-hidden ${centered ? "justify-center" : "justify-start"}`}>
       <LightGallery
         onInit={(detail) => {
           lightboxRef.current = detail.instance;
