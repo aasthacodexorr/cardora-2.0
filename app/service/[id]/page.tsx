@@ -33,8 +33,8 @@ export default async function ServicePage({ params }: PageProps) {
       <Header />
 
       {/* SECTION 1: Hero with Title + Coupon Side by Side */}
-      <section className="w-full bg-gradient-to-b from-white  to-[#f4f9fc] py-12 md:py-20 flex items-center lg:mt-28">
-        <div className=" md:px-36 px-8 w-full">
+      <section className="w-full bg-gradient-to-b from-white to-[#f4f9fc] py-12 md:py-20 flex items-center lg:mt-28">
+        <div className="md:px-36 px-8 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
 
             {/* Left: Title and Checklist */}
@@ -62,52 +62,57 @@ export default async function ServicePage({ params }: PageProps) {
 
             {/* Right: Coupon Card */}
             <div className="lg:col-span-6 flex justify-center lg:justify-end">
-              <div className="w-full max-w-[4540px] bg-white border border-dashed border-[#10b981] p-6 shadow-[0_0_30px_rgba(244,249,252,1.3)] rounded-xl">
+              {/* Added "relative" and "pt-8" to accommodate the absolute badge sticking over the top border */}
+              <div className="relative w-full max-w-[500px] bg-white border border-dashed border-[#10b981] p-6 pt-10 shadow-[0_0_30px_rgba(244,249,252,1.3)] rounded-xl">
 
-                {/* Top Label */}
-                <div className="flex items-center gap-1 text-[17px] tracking-wide mb-4 uppercase">
-                  <svg className="w-5.5 h-5.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                {/* Top Label (Ribbon / Badge style matching image_f8518a.png) */}
+                <div className="absolute -top-6 left-4 flex items-center gap-1.5 bg-[#00af66] rounded-l-lg text-white font-bold text-[12px] md:text-[14px] tracking-wider uppercase pl-1 pr-5 py-1 shadow-md clip-ribbon">
+                  <span className='border-l border-t border-b border-dashed border-white/50 rounded-l-lg flex justify-center items-center p-1'><svg className="w-7 h-7  flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 11-4.243-4.243 3 3 0 014.243 4.243z" />
                   </svg>
-                  Limited Time Offer!
+                    Limited Time Offer!</span>
                 </div>
 
                 {/* Coupon Header */}
-                <h3 className="lg:text-4xl font-bold text-black mb-4">
+                <h3 className="text-2xl md:text-3xl font-bold text-black mb-5">
                   {currentData.couponTitle || "Oil Change Coupon"}
                 </h3>
 
-                {/* Main Image Container */}
-                <div className="w-full rounded-md overflow-hidden bg-slate-50 border border-slate-100">
-                  <Image
-                    src={currentData.couponImg || "image_92f420.png"}
-                    alt="Save $20 Oil Change Coupon"
-                    className="w-full h-auto object-cover"
-                    width={500}
-                    height={300}
-                  />
-                </div>
-
-                {/* Expiry Details */}
-                <div className="mt-4 mb-6 space-y-1">
-                  <div className="flex items-center gap-1.5 text-slate-500">
-                    <svg className="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                {/* Main Image Container & Floating Expiry Badge */}
+                <div className="relative w-full mb-6">
+                  <div className="w-full rounded-xl overflow-hidden bg-slate-50 border border-slate-100">
+                    <Image
+                      src={currentData.couponImg || "image_92f420.png"}
+                      alt="Save $20 Oil Change Coupon"
+                      className="w-full h-auto object-cover"
+                      width={500}
+                      height={300}
+                    />
                   </div>
-                  <p className="text-[13px] text-slate-700 uppercase leading-none">
-                    OFFER EXPIRES <span className='font-bold  tracking-wider'>6/30/2026</span>
-                  </p>
+
+                  {/* Overlapping Floating Expiry Badge matching image_f8518a.png */}
+                  <div className="absolute -bottom-6 left-0 bg-white border border-[#10b981] rounded-xl px-2 py-2 flex items-center gap-2.5 shadow-sm">
+                    <div className="text-[#00b066]">
+                      <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[14px] text-slate-800 font-bold tracking-wider uppercase leading-none">OFFER EXPIRES</span>
+                      <span className="text-[20px] font-bold text-[#00b066] leading-tight">6/30/2026</span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="space-y-3">
-                  <Link href="/book-an-appointment" className="block w-full bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:bg-[#0f9f6e] text-white font-medium py-3 px-4 rounded-md transition duration-200 text-center text-sm shadow-sm">
+                {/* Action Buttons (Arranged horizontally matching image_f8518a.png) */}
+                <div className="flex justify-start items-start gap-3 mt-14">
+                  <Link href="/book-an-appointment" className="flex items-center w-fit justify-center bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:brightness-95 text-white font-medium py-3 px-6 rounded-xl transition duration-200 text-center text-xs md:text-sm shadow-sm border border-[#00af66]">
                     Schedule Service
                   </Link>
                   <DownloadCouponButton
                     imageUrl={currentData.couponImg}
                     fileName={currentData.couponTitle || "Coupon"}
+                  // Inside your component, ensure DownloadCouponButton matches this same padding, shape, and background look!
                   />
                 </div>
 
@@ -172,7 +177,7 @@ export default async function ServicePage({ params }: PageProps) {
                 <Image
                   src={currentData.section2Img}
                   alt="Pouring fresh engine oil from container"
-                  className={`w-full ${id == "brakes" ? "h-auto" : "h-full"} object-cover`}
+                  className={`w-full h-full object-cover`}
                   width={400}
                   height={800}
                 />
@@ -274,7 +279,7 @@ export default async function ServicePage({ params }: PageProps) {
                 <Image
                   src={currentData.premiumImg || "image_85aa7b.jpg"}
                   alt="Premium synthetic oil change service execution"
-                  className={`w-full h-full object-cover lg:p-3 rounded-3xl ${["wheel-service", "tire-service"].includes(id) ? "lg:max-h-[50%]" : "lg:max-w-[95%] lg:min-h-[700px]"}`}
+                  className={`w-full h-full object-cover lg:p-3 rounded-3xl ${["wheel-service", "tire-service"].includes(id) ? "lg:max-h-[50%]" : "lg:max-w-[95%]"}`}
                   fill
                 />
               </div>
@@ -327,13 +332,13 @@ export default async function ServicePage({ params }: PageProps) {
       }
 
       {/* SECTION 6: Why Drivers Choose Us */}
-      <section className={`w-full bg-[#eeeeee] py-6 md:py-18  ${id === "tire-service" ? "lg:-mt-[450px]" : id === "wheel-service" ? "lg:-mt-[450px]" : null}`}>
+      <section className={`w-full bg-[#eeeeee] py-6 md:py-18  ${id === "tire-service" ? "lg:-mt-[380px]" : id === "wheel-service" ? "lg:-mt-[380px]" : null}`}>
         <div className="px-4 md:px-28">
           {/* Dynamic flex ordering based on the 'id' variable */}
           <div
             className={`flex gap-10 lg:gap-12 items-start ${id === "brakes"
-                ? "flex-col-reverse md:flex-row-reverse"
-                : "flex-col md:flex-row"
+              ? "flex-col-reverse md:flex-row-reverse"
+              : "flex-col md:flex-row"
               }`}
           >
 
