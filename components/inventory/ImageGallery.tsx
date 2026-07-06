@@ -107,7 +107,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
   };
 
   return (
-    <div className={`flex flex-col lg:flex-row gap-[2px] w-full max-w-full xl:max-h-[500px] overflow-hidden ${centered ? "justify-center" : "justify-start"}`}>
+    <div className={`flex flex-col lg:flex-row gap-[2px] w-full max-w-full xl:max-h-[500px] 2xl:min-h-[550px] overflow-hidden ${centered ? "justify-center" : "justify-start"}`}>
       <LightGallery
         onInit={(detail) => {
           lightboxRef.current = detail.instance;
@@ -135,7 +135,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
           onClick={() => {
             lightboxRef.current?.openGallery(activeIndex);
           }}
-          className="relative rounded-2xl xl:min-w-[775px] xl:max-w-[750px] overflow-hidden bg-gray-100 shadow-sm cursor-zoom-in aspect-[4/3] w-full"
+          className="relative rounded-2xl xl:min-w-[775px] xl:max-w-[750px] 2xl:min-w-[850px] overflow-hidden bg-gray-100 shadow-sm cursor-zoom-in aspect-[4/3] w-full"
         >
           {isSold && (
             <div className="absolute top-4 right-4 z-20 bg-red-600 text-white text-sm font-bold px-4 py-2 rounded-md shadow-lg uppercase">
@@ -228,7 +228,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
       {images.length > 1 ? (
         <div 
           ref={desktopThumbsRef}
-          className="hidden md:flex flex-col overflow-y-auto w-[165px] h-[500px] pr-1 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="hidden md:flex flex-col overflow-y-auto w-[165px] h-[500px] 2xl:w-[200px] pr-1 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {images.map((img, idx) => (
             <button
@@ -236,7 +236,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
               ref={(el) => { thumbRefs.current[idx] = el; }}
               type="button"
               onClick={() => goTo(idx)}
-              className={`w-[155px] h-[121px] flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 mb-1 transition-all duration-200 ${
+              className={`w-full flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 mb-1 transition-all duration-200 ${
                 idx === activeIndex ? "border-transparent" : "border-transparent"
               }`}
             >
@@ -250,13 +250,13 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
             </button>
           ))}
         </div>
-      ) : <div className="hidden md:block w-[165px]">
+      ) : <div className="hidden md:block w-[165px] 2xl:w-[200px]">
           <Image
             src={images[0]}
             alt={`Thumbnail`}
             width={168}
             height={136}
-            className="w-42 h-34 object-cover rounded-lg cursor-pointer"
+            className="w-full object-cover rounded-lg cursor-pointer"
           />
         </div>}
     </div>

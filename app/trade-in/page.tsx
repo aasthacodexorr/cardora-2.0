@@ -366,9 +366,9 @@ const TradeIn = () => {
       </section>
 
       {/* How it works — Image slides from left, right text block remains static */}
-      <section className="w-full lg:px-4 lg:pr-32 -mt-5 lg:ml-12">
-        <div className="mx-auto lg:max-w-[1600px] px-4 py-10 lg:py-20 lg:ml-16">
-          <div className="grid grid-cols-1 items-start gap-6 lg:gap-0 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
+      <section className="w-full lg:px-24 mx-auto -mt-5 lg:-mt-0">
+        <div className="mx-auto lg:max-w-[1300px] px-4 lg:px-0 py-10 lg:py-24">
+          <div className="grid grid-cols-1 items-start gap-6 lg:gap-0 lg:pl-10 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
             
             {/* Left Column: Animated Image Block */}
             <motion.div 
@@ -425,7 +425,7 @@ const TradeIn = () => {
       </section>
 
       {/* FAQs — Header layout remains static, list nodes stagger into viewport view */}
-      <section className="w-full lg:mb-14 mb-2 lg:mt-10 px-3 lg:px-24">
+      <section className="w-full lg:mb-18 mb-2 lg:mt-10 px-3 lg:px-24">
         <div className="mx-auto max-w-[1300px] px-2 md:px-9 py-8 lg:py-0">
           <div className="flex items-center gap-3 mb-6 md:mb-10">
             <h2 className="text-[28px] md:text-[36px] lg:text-[44px] font-semibold text-foreground leading-tight">
