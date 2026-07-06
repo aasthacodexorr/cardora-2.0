@@ -225,7 +225,7 @@ const About = () => {
 
         {/* 3. Built in Canada Section: Image static, Text Content Block slides/fades up repeatedly */}
         <section className="bg-white py-1 pb-12 md:pb-20 md:py-0">
-          <div className="mx-auto max-w-[1250px] xl:max-w-full xl:px-10 px-5 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-16">
+          <div className="mx-auto max-w-[1400px] px-5 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-16">
             
             {/* Left: Static Graphic Illustration */}
             <div className="w-full flex justify-center md:justify-start">

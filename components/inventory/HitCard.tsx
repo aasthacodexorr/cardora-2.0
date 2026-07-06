@@ -51,7 +51,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
             alt={title}
             width={600}
             height={400}
-            className={`w-full object-cover min-h-[240px] md:max-h-[240px] rounded-xl transition-transform duration-500 ${isSold ? "grayscale opacity-80" : ""
+            className={`w-full object-cover min-h-[240px] md:max-h-[240px] 2xl:min-h-[260px]  rounded-xl transition-transform duration-500 ${isSold ? "grayscale opacity-80" : ""
               }`}
           />
 
@@ -78,11 +78,11 @@ export const HitCard = ({ hit }: { hit: any }) => {
               ${price.toLocaleString()}.00
             </p>
             <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
-  {km.toLocaleString()} KM
-  {drivetrain && drivetrain !== "N/A" && (
-    <> &bull; {drivetrain}</>
-  )}
-</p>
+              {km.toLocaleString()} KM
+              {drivetrain && drivetrain !== "N/A" && (
+                <> &bull; {drivetrain}</>
+              )}
+            </p>
           </div>
 
           <hr className="border-gray-200 my-2" />

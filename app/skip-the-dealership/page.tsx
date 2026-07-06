@@ -88,7 +88,7 @@ export default function SkipTheDealership() {
 
                 {/* 2. What Does Skip Mean: Text is static, Image slides/fades in from right */}
                 <section className="bg-white px-6 py-6 lg:py-16 lg:px-32">
-                    <div className="mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div className="mx-auto xl:max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                         <div>
                             <h2 className="text-2xl md:text-5xl font-bold mb-4 tracking-tight">
                                 What Does &ldquo;SKIP THE DEALERSHIP&rdquo; Mean ?

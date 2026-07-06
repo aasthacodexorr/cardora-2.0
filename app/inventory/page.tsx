@@ -755,7 +755,7 @@ const InventoryContent = () => {
 
         {/* ── Main content layout container ── */}
         <section className="bg-[#efefef] min-h-screen px-3 lg:px-14 py-[20px]">
-          <div className="flex flex-col lg:flex-row items-start max-w-[1600px] mx-auto gap-5">
+          <div className="flex flex-col lg:flex-row items-start max-w-[1550px] mx-auto gap-5">
             {/* ── Filter Sidebar ── */}
             <aside
               onMouseEnter={() => setIsHoveringFilters(true)}
@@ -764,6 +764,7 @@ const InventoryContent = () => {
                 "hidden",
                 "lg:flex lg:flex-col",
                 "lg:shrink-0 lg:w-[320px]",
+                "2xl:w-[360px]",
                 "lg:sticky lg:top-[117px]",
                 "max-h-[calc(100vh-130px)] overflow-y-auto",
                 "[&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar-track]:hidden",
