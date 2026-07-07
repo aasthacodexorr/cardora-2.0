@@ -32,7 +32,7 @@ import { fallbackValue, defaultAppConfig } from "@/lib/appConfig";
 
 // Config
 import { getConstants } from "@/constants";
-import { servicesData } from "@/constants/serviceData";
+import { getServicesData } from "@/constants/serviceData";
 import locationIcon from "@/assets/icons/location.png";
 import mapIcon from "@/assets/icons/map-c.png";
 import { useAppConfig } from "@/app/providers";
@@ -130,6 +130,13 @@ const Service = () => {
     address_1_bar: fallbackValue(appConfig.dealership.address_1_bar, defaultD.address_1_bar),
     full_address_1: fallbackValue(appConfig.dealership.full_address_1, defaultD.full_address_1),
   };
+
+  const servicesData = getServicesData({
+    dealership_name: appConfig.dealership.dealership_name,
+    city_1: appConfig.dealership.city_1,
+    province_1: appConfig.dealership.province_1,
+  });
+
   return (
     <div className="min-h-screen bg-background flex flex-col justify-between">
       <Header />
