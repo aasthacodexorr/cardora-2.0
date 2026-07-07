@@ -187,7 +187,6 @@ export const getConstants = (appConfig: AppConfig) => {
         logo: safeD.dealership_logo,
         placeholderImage: safeD.default_placeholder_image,
       },
-      recaptchaSiteKey: "6Lf4uTMtAAAAABXoMsZBjTFgt43oeVgc5BjzlNTW"
     } as const
   }
 }
