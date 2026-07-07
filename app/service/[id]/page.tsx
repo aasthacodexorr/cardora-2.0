@@ -44,12 +44,7 @@ export default async function ServicePage({ params }: PageProps) {
               </h1>
 
               <ul className="w-full divide-y divide-slate-200/60 border-b border-slate-200/60">
-                {(currentData.bannerChecklist || [
-                  "Premium Synthetic Oil",
-                  "Fast & Reliable Service",
-                  "Multi-Point Vehicle Inspection",
-                  "High-Quality Oil Filters"
-                ]).map((item, index) => (
+                {(currentData.bannerChecklist || []).map((item, index) => (
                   <li key={index} className="flex items-center justify-between py-3.5 text-[18px] font-medium tracking-wide">
                     <span>{item}</span>
                     <svg className="w-6 h-6 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -151,13 +146,7 @@ export default async function ServicePage({ params }: PageProps) {
 
               {/* Bordered Clean List Block */}
               <ul className="w-full border-t border-slate-100 divide-y divide-slate-100 text-[18px] font-medium tracking-wide">
-                {(currentData.section2Checklist || [
-                  "Lubricating moving engine parts",
-                  "Reduces friction",
-                  "Preventing sludge buildup",
-                  "Helping improve fuel economy",
-                  "Extending engine life"
-                ]).map((item, i) => (
+                {(currentData.section2Checklist || []).map((item, i) => (
                   <li key={i} className="py-3 text-left">
                     {item}
                   </li>
@@ -206,14 +195,7 @@ export default async function ServicePage({ params }: PageProps) {
                 </div>
 
                 <ul className="pl-14">
-                  {(currentData.signsList1 || [
-                    "Oil change or check engine light is on",
-                    "Engine sounds louder than usual",
-                    "Burning oil smell",
-                    "Poor fuel economy",
-                    "Dirty or dark engine oil",
-                    "Vehicle feels rough while driving"
-                  ]).map((item, i) => (
+                  {(currentData.signsList1 || []).map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-[18px] font-medium tracking-wide">
                       <span className="text-black font-bold text-base select-none leading-none mt-0.5">•</span>
                       <span>{item}</span>
@@ -243,14 +225,7 @@ export default async function ServicePage({ params }: PageProps) {
                 <p className="pl-14 text-lg">{currentData.signsListBody2}</p>
 
                 <ul className="pl-14">
-                  {(currentData.signList2 || [
-                    "Free inspection for your air and cabin filters",
-                    "Drain and replace engine oil and install a new oil filter",
-                    "Fluid level inspection",
-                    "Tire pressure check",
-                    "Visual inspection of major components",
-                    "Reset maintenance reminders (if applicable)"
-                  ]).map((item, i) => (
+                  {(currentData.signList2 || []).map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-slate-900 text-[18px] font-medium tracking-wide">
                       <span className="text-black font-bold text-base select-none leading-none mt-0.5">•</span>
                       <span>{item}</span>
@@ -345,18 +320,11 @@ export default async function ServicePage({ params }: PageProps) {
             {/* Text Grid Features */}
             <div className="w-full lg:max-w-[60%]">
               <h2 className="text-3xl md:text-[40px] font-bold text-black tracking-tight leading-[1.15]">
-                {currentData?.whyTitle || `Why Drivers in ${appConfig.dealership.city_1} Choose ${appConfig.dealership.dealership_name}`}
+                {currentData?.whyTitle}
               </h2>
 
               <ul className="w-full  mt-4 border-slate-200/60 divide-y divide-slate-200/60 text-[18px] font-medium tracking-wide">
-                {(currentData?.whyFeature || [
-                  "Honest recommendations with no pressure",
-                  "Experienced technicians",
-                  "Quick turnaround times",
-                  "Transparent pricing",
-                  `Convenient ${appConfig.dealership.city_1} location`,
-                  "Trusted customer service experience"
-                ]).map((feature, idx) => (
+                {(currentData?.whyFeature || []).map((feature, idx) => (
                   <li key={idx} className="flex items-center justify-between py-3">
                     <svg className="w-4 h-4 text-[#10b981] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -377,7 +345,7 @@ export default async function ServicePage({ params }: PageProps) {
             <div className="w-full">
               <div className="w-full aspect-[4/3] sm:aspect-[16/12] rounded-md overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.01)] relative">
                 <Image
-                  src={currentData?.whyImg || "https://www.cardora.ca/wp-content/uploads/2026/05/cardora-service-1280x904.webp"}
+                  src={currentData?.whyImg}
                   alt={`${appConfig.dealership.dealership_name} ${appConfig.dealership.city_1} Facility Storefront with parked vehicles`}
                   className="w-full h-full object-cover max-h-[88%] rounded-2xl"
                   fill
@@ -413,7 +381,7 @@ export default async function ServicePage({ params }: PageProps) {
 
                 <div className="aspect-[16/11] bg-slate-50 overflow-hidden w-full relative ">
                   <Image
-                    src={card.section2Img || "image_85493b.jpg"}
+                    src={card.section2Img}
                     alt={card.id}
                     className="w-full h-full object-cover"
                     fill

@@ -33,8 +33,6 @@ export interface ServiceContent {
   section2LastBody1: string;
   section2LastBody2: string;
   section2Img: any;
-  signsList: string[];
-  includesList: string[];
   premiumTitle: string;
   premiumImg: any;
   premiumBody: string;
@@ -80,8 +78,8 @@ export const servicesData: Record<string, ServiceContent> = {
     section2Img: section2ImgOil,
     section2LastBody1: "Over time, oil breaks down and becomes less effective. Delaying oil changes can lead to poor performance, engine wear, and expensive repairs.",
     section2LastBody2: "If you notice dark oil, engine noise, reduced fuel economy, or your oil change light is on, it may be time for service.",
-    signsList: ["Oil change or check engine light is on", "Engine sounds louder than usual", "Burning oil smell", "Poor fuel economy", "Dirty or dark engine oil", "Vehicle feels rough while driving"],
-    includesList: ["Free inspection for your air and cabin filters", "Drain and replace engine oil and install a new oil filter", "Fluid level inspection", "Tire pressure check", "Visual inspection of major components"],
+    signsList1: ["Oil change or check engine light is on", "Engine sounds louder than usual", "Burning oil smell", "Poor fuel economy", "Dirty or dark engine oil", "Vehicle feels rough while driving"],
+    signList2: ["Free inspection for your air and cabin filters", "Drain and replace engine oil and install a new oil filter", "Fluid level inspection", "Tire pressure check", "Visual inspection of major components","Reset maintenance reminders (if applicable)"],
     premiumTitle: "Premium Synthetic Oil Change Service",
     signLastBody2: "We service most makes and models, including domestic, European, and imported vehicles.  ",
     premiumImg: premiumImgOil,
@@ -152,9 +150,6 @@ export const servicesData: Record<string, ServiceContent> = {
       { q: "Why does my steering wheel shake when braking?", a: "A shaking or vibrating steering wheel during braking may indicate warped brake rotors or uneven brake wear." },
       { q: "Why choose Cardora for brake repair in Brampton?", a: "Drivers across Brampton trust Cardora for professional brake inspections, honest recommendations, quality replacement parts, and reliable customer service." }
     ],
-    // Added missing keys
-    signsList: [],
-    includesList: []
   },
   "tire-service": {
     id: "tire-service",
@@ -182,7 +177,6 @@ export const servicesData: Record<string, ServiceContent> = {
     signsList1: ["Vehicle handling", "Braking distance", "Ride comfort", "Safety during rain and snow"],
     signLastBody2: "If you’re unsure about the condition of your tires, our technicians can inspect them and recommend the best solution.",
     signList2: ["Uneven tire wear", "Low tread depth", "Vehicle vibration while driving", "Tire pressure warning light", "Cracks or damage on sidewalls", "Poor traction in wet or snowy conditions"],
-    includesList: ["Tire inspection and rotation", "Professional installation", "Wheel balancing", "Tire pressure adjustment", "Free seasonal storage"],
     premiumTitle: "Seasonal Tire Service in Brampton",
     premiumImg: premiumImgTire,
     premiumBody1: "Ontario weather changes quickly throughout the year. Winter tires provide better traction and control during snow and freezing temperatures, while all-season or summer tires perform better in warmer conditions.",
@@ -206,7 +200,6 @@ export const servicesData: Record<string, ServiceContent> = {
     // Added missing keys
     section2LastBody1: "",
     section2LastBody2: "",
-    signsList: [],
     premiumBody: ""
   },
   "wheel-service": {
@@ -235,7 +228,6 @@ export const servicesData: Record<string, ServiceContent> = {
     signLastBody1: "Ignoring alignment issues can shorten tire life and affect vehicle handling.",
     signLastBody2: "Our technicians use professional equipment to ensure accurate alignment adjustments.",
     signList2: ["Alignment inspection", "Precision wheel angle adjustments", "Steering sensors checks", "Tire wear inspection", "Test drive verification"],
-    includesList: ["Tire inspection and rotation", "Professional installation", "Wheel balancing", "Tire pressure adjustment", "Free seasonal storage"],
     premiumTitle: "Why Wheel Alignments Matter in Brampton",
     premiumImg: premiumImgWheel,
     premiumBody1: "Road conditions, potholes, construction zones, and seasonal weather changes around Brampton and the GTA can affect wheel alignment over time. Routine alignment checks help protect your tires and improve your vehicle’s overall performance.",
@@ -257,7 +249,6 @@ export const servicesData: Record<string, ServiceContent> = {
     // Added missing keys
     section2LastBody1: "",
     section2LastBody2: "",
-    signsList: [],
     premiumBody: ""
   },
   "battery": {
@@ -279,8 +270,7 @@ export const servicesData: Record<string, ServiceContent> = {
     section2Checklist: ["Provides reliable engine starting", "Powers all electrical systems", "Ensures safety features work", "Prevents vehicle breakdowns", "Maintains optimal performance"],
     section2Body: "A failing battery can leave you stranded. Regular testing and maintenance prevents unexpected failures and costly towing fees.",
     section2Img: premiumImgWheel,
-    signsList: ["Slow engine cranking", "Dim headlights", "Battery warning light", "Corrosion on terminals", "Age over 3-5 years"],
-    includesList: ["Free battery testing", "Terminal cleaning", "Professional installation", "Recycle old battery", "Warranty coverage"],
+    signsList1: ["Slow engine cranking", "Dim headlights", "Battery warning light", "Corrosion on terminals", "Age over 3-5 years"],
     premiumTitle: "Premium Battery Replacement Package",
     premiumImg: "",
     premiumBody: "We install only premium batteries backed by comprehensive warranties for peace of mind.",
