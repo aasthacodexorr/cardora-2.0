@@ -67,4 +67,5 @@ declare module 'lucide-react' {
   export const PaintBucket: Icon;
   export const Palette: Icon;
   export const Radiation: Icon;
+  export const ChevronUp:Icon
 }
