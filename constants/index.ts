@@ -153,13 +153,15 @@ export const getConstants = (appConfig: AppConfig) => {
 
     SITE_CONFIG: {
       urls: {
-        financeBaseUrl: "https://cardora.zopsoftware.com/api/templates/render/16",
-        financeRenderApiUrl: "https://cardora.zopsoftware.com/api/templates/render/15",
+        financeBaseUrl: `${appConfig.site.saas_api}/api/templates/render/16`,
+        financeRenderApiUrl: `${appConfig.site.saas_api}/api/templates/render/15`,
         assetBaseUrl: appConfig.site.cdn_api,
         googleMapsUrl: safeD.address_map_url_1 || safeD.address_1_bar,
-        tradeFormByVehicle: "https://cardora.zopsoftware.com/api/templates/render/17",
-        tradeFormByVin: "https://cardora.zopsoftware.com/api/templates/render/18",
-        bookAppointment:"https://cardora.zopsoftware.com/api/templates/render/23"
+        tradeFormByVehicle: `${appConfig.site.saas_api}/api/templates/render/17`,
+        tradeFormByVin: `${appConfig.site.saas_api}/api/templates/render/18`,
+        bookAppointment:`${appConfig.site.saas_api}/api/templates/render/23`,
+        contactUsBaseUrl:`${appConfig.site.saas_api}/api/templates/render/22`,
+        vehiclePageContactUsBaseUrl:`${appConfig.site.saas_api}/api/templates/render/7`,
       },
       api: {
         saasApi: appConfig.site.saas_api,
