@@ -3,25 +3,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Captcha from "@/components/common/Captcha";
 import checkout from "@/assets/icons/checkout.png";
 import { Fuel } from "lucide-react";
-
-interface FuelIconProps {
-  size?: number;
-}
-
-const FuelIcon = ({ size = 4 }: FuelIconProps) => (
-  <svg
-    width={size}
-    height={size}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 384 512"
-    fill="currentColor"
-  >
-    <path d="M153.6 42.4C162.5 31.5 176.8 24 192 24s29.5 7.5 38.4 18.4l96 117.3c35.5 43.4 57.6 98.9 57.6 159.3C384 425 298 512 192 512S0 425 0 319c0-60.4 22.1-115.9 57.6-159.3L153.6 42.4z" />
-  </svg>
-);
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
+import { useSearchParams } from "next/navigation";
 
 // 1. PriceAndCTA now owns the state internally
 export const PriceAndCTA = ({ vehicle }: any) => {
@@ -86,8 +72,8 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
           <div
             className={`absolute bottom-full -right-44 -translate-x-1/2 mb-2 w-[240px] sm:w-max max-w-[280px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
-                ? "opacity-100 visible"
-                : "opacity-0 invisible"
+              ? "opacity-100 visible"
+              : "opacity-0 invisible"
               } md:group-hover:opacity-100 md:group-hover:visible`}
           >
             Listed price does not include taxes and licensing fees.
@@ -177,20 +163,10 @@ export const VehicleHeader = ({ vehicle }: any) => (
 
 // 3. MessageModal Overlay
 const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    message: `Hi, I'm interested in the ${vehicle?.year || '2018'} ${vehicle?.make || 'Honda'} ${vehicle?.model || 'Civic'}. Please contact me as soon as you can.`,
-    consent: true,
-  });
-
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [resetCaptcha, setResetCaptcha] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const appConfig = useAppConfig();
+  const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
+  const searchParams = useSearchParams();
+  const inventoryId = searchParams.get("inventory_id") || "";
 
   useEffect(() => {
     if (isOpen) {
@@ -207,77 +183,14 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
     };
   }, [isOpen]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-    const targetValue = type === 'checkbox' ? checked : value;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: targetValue,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // Validate reCAPTCHA
-    if (!captchaToken) {
-      setError("Please complete the reCAPTCHA verification.");
-      return;
-    }
-
-    // Basic validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email.trim())) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    if (formData.phoneNumber.replace(/\D/g, '').length !== 10) {
-      setError("Phone number must be exactly 10 digits.");
-      return;
-    }
-
-    if (!formData.firstName || !formData.lastName) {
-      setError("Please enter your full name.");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    // TODO: Add backend API call here to verify captchaToken server-side
-    // Simulate successful submission
-    setTimeout(() => {
-      setSuccess(true);
-      setLoading(false);
-      // Reset form after brief delay
-      setTimeout(() => {
-        onClose();
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          phoneNumber: '',
-          message: `Hi, I'm interested in the ${vehicle?.year || '2018'} ${vehicle?.make || 'Honda'} ${vehicle?.model || 'Civic'}. Please contact me as soon as you can.`,
-          consent: true,
-        });
-        setCaptchaToken(null);
-        setResetCaptcha(!resetCaptcha);
-        setSuccess(false);
-      }, 1500);
-    }, 1000);
-  };
-
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left lg:mt-28">
-      <div className="bg-white rounded-2xl w-full z-[9999] max-w-[540px] relative shadow-2xl p-6 lg:p-4 flex flex-col max-h-[80vh]">
+      <div className="bg-white rounded-2xl w-full z-[9999] max-w-[620px] relative shadow-2xl p-6 lg:p-5 flex flex-col max-h-[80vh]">
 
-        <button 
-          onClick={onClose} 
+        <button
+          onClick={onClose}
           className="absolute right-5 cursor-pointer top-5 text-gray-400 hover:text-gray-600 transition-colors"
           type="button"
         >
@@ -286,129 +199,15 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
           </svg>
         </button>
 
-        {success ? (
-          <div className="flex items-center justify-center h-[400px]">
-            <div className="text-center">
-              <div className="mb-4">
-                <svg className="w-16 h-16 text-emerald-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Message Sent Successfully!</h3>
-              <p className="text-sm text-gray-600">Thank you for your inquiry. Our team will contact you shortly.</p>
-            </div>
-          </div>
-        ) : (
-          <>
-            <h2 className="text-[24px] font-bold text-gray-900 mb-5 ">Got a question</h2>
-
-            <form onSubmit={handleSubmit} className="overflow-y-auto pr-1 space-y-3 flex-1">
-              {error && (
-                <div className="bg-rose-50 text-rose-600 p-3 rounded-xl text-sm font-medium">
-                  {error}
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-4">
-                <input 
-                  type="text" 
-                  name="firstName"
-                  placeholder="First Name" 
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 disabled:bg-gray-100" 
-                />
-                <input 
-                  type="text" 
-                  name="lastName"
-                  placeholder="Last Name" 
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 disabled:bg-gray-100" 
-                />
-              </div>
-
-              <div className="grid lg:grid-cols-2 gap-4">
-                <input 
-                  type="email" 
-                  name="email"
-                  placeholder="Email" 
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 disabled:bg-gray-100" 
-                />
-                <input 
-                  type="tel" 
-                  name="phoneNumber"
-                  placeholder="Phone Number" 
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 disabled:bg-gray-100" 
-                />
-              </div>
-
-              <div>
-                <textarea 
-                  name="message"
-                  rows={4} 
-                  value={formData.message} 
-                  onChange={handleChange}
-                  disabled={loading}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-[16px] outline-none focus:border-gray-500 resize-none disabled:bg-gray-100" 
-                />
-              </div>
-
-              <div className="flex items-start gap-2 text-[12px] text-gray-700 leading-normal">
-                <input 
-                  type="checkbox" 
-                  name="consent"
-                  id="consent" 
-                  checked={formData.consent}
-                  onChange={handleChange}
-                  disabled={loading}
-                  className="mt-1 accent-[#00A651] cursor-pointer" 
-                />
-                <label htmlFor="consent" className="cursor-pointer">
-                  By submitting this form, you agree to be contacted through phone calls, SMS, WhatsApp, or email regarding your inquiry, offers, and updates. You can opt out anytime by notifying us.
-                </label>
-              </div>
-
-              {/* reCAPTCHA Component */}
-              <div className="flex justify-center">
-                <Captcha 
-                  onVerify={setCaptchaToken}
-                  resetTrigger={resetCaptcha}
-                />
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="flex-1 bg-gray-200 cursor-pointer hover:bg-gray-300 text-gray-900 font-bold py-3 px-8 rounded-xl text-[16px] transition-colors"
-                  disabled={loading}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading || !captchaToken}
-                  className="flex-1 bg-[#00A651] cursor-pointer hover:bg-[#008942] text-white font-bold py-3 px-8 rounded-xl text-[16px] transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Sending...' : 'Submit'}
-                </button>
-              </div>
-            </form>
-          </>
-        )}
+        <h2 className="text-[24px] font-bold text-gray-900 mb-5 ">Got a question</h2>
+        <div className="h-[600px]">
+          <iframe
+            src={`${SITE_CONFIG?.urls.vehiclePageContactUsBaseUrl}?inventory_id=${inventoryId}`}
+            className="w-full rounded-2xl h-full"
+            title="Contact Us"
+            allow="payment"
+          />
+        </div>
       </div>
     </div>
   );

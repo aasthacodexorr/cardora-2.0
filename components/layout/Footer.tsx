@@ -17,12 +17,14 @@ import { usePathname } from "next/navigation";
 import { fallbackValue, defaultAppConfig } from "@/lib/appConfig";
 
 import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getInventoryUrlByRefinement } from "@/lib/inventoryUrls";
+import { getConstants } from "@/constants";
 
 /* Component */
 const Footer = () => {
   const appConfig = useAppConfig();
   const defaultD = defaultAppConfig.dealership;
   const d = appConfig.dealership;
+  const { SITE_CONFIG } = getConstants(appConfig);
 
   // Apply fallback logic for all dealership fields
   const safeD = {
@@ -193,7 +195,7 @@ const Footer = () => {
           {" | "}
           <Link href="/terms-conditions" className="hover:text-white">Terms & Conditions</Link>
           {" | "}
-          <Link href="/#" className="hover:text-white">Site Map</Link>
+          <Link href={`${SITE_CONFIG?.api?.saasApi}/api/website/sitemap`} className="hover:text-white">Site Map</Link>
         </p>
       </div>
     </footer>

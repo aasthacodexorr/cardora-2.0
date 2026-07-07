@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Check, ChevronDown, Search, Settings2, X } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Search, Settings2, X } from "lucide-react";
 
 // Layout
 import { Header, Footer } from "@/components/layout";
@@ -128,8 +128,8 @@ const FilterGroup = ({ title, children, isOpen, onToggle }: FilterGroupProps) =>
       </button>
       <div
         className={`grid transition-all duration-300 ease-in-out ${isOpen
-            ? "grid-rows-[1fr] opacity-100 mt-3 px-[10px]"
-            : "grid-rows-[0fr] opacity-0 mt-0 px-[10px]"
+          ? "grid-rows-[1fr] opacity-100 mt-3 px-[10px]"
+          : "grid-rows-[0fr] opacity-0 mt-0 px-[10px]"
           }`}
       >
         <div className="overflow-hidden">
@@ -338,26 +338,26 @@ const GroupedCurrentRefinements = () => {
 
 const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string }[] }) => {
   const [open, setOpen] = useState(false)
-   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { currentRefinement, refine } = useSortBy({
     items: sortItems,
   });
   useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setOpen(false);
-    }
-  };
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
 
-  document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
 
   useEffect(() => {
@@ -371,7 +371,7 @@ const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  
+
 
   return (
     <div  ref={dropdownRef} className="relative">
@@ -392,11 +392,11 @@ const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string
                 setOpen(false);
               }}
               className={`flex w-full items-start cursor-pointer text-black/70 justify-between px-2 py-3 hover:bg-gray-100 border-b border-slate-200 ${currentRefinement === item.value
-                  ? "font-semibold"
-                  : ""
+                ? "font-semibold"
+                : ""
                 }`}
             >
-             {item.label}
+              {item.label}
             </button>
           ))}
         </div>
@@ -404,7 +404,7 @@ const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string
     </div>
   );
 };
- 
+
 
 const PriceRangeFilter = () => {
   const { start, range, refine } = useRange({ attribute: "selling_price" });
@@ -665,9 +665,8 @@ const MainLayoutWrapper = ({
 
   return (
     <main
-      className={`bg-background ${
-        isHoveringFilters || hasNoResults ? "overflow-hidden h-screen" : "min-h-screen"
-      }`}
+      className={`bg-background ${isHoveringFilters || hasNoResults ? "overflow-hidden h-screen" : "min-h-screen"
+        }`}
     >
       {children}
     </main>
@@ -686,6 +685,50 @@ const InventoryContent = () => {
   const [isHoveringFilters, setIsHoveringFilters] = useState(false);
   const headerHeight = useHeaderHeight();
 
+  // ── Scroll Management State ──
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const lastScrollY = useRef(0);
+  const isVisible = useRef(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const current = window.scrollY;
+
+      // Mobile
+      if (window.innerWidth < 1024) {
+        setShowScrollTop(current > 250);
+        return;
+      }
+
+      // Desktop (existing behavior)
+      const delta = current - lastScrollY.current;
+
+      if (Math.abs(delta) < 8) return;
+
+      if (current <= 250) {
+        isVisible.current = false;
+        setShowScrollTop(false);
+      } else if (delta < 0) {
+        isVisible.current = true;
+        setShowScrollTop(true);
+      } else {
+        isVisible.current = false;
+        setShowScrollTop(false);
+      }
+
+      lastScrollY.current = current;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   useEffect(() => {
     if (isMobileFilterOpen) {
@@ -788,35 +831,85 @@ const InventoryContent = () => {
             </aside>
 
             {/* ── Results Column ── */}
-            <div id="results-column" className="w-full flex-1 min-w-0 min-h-[100vh] lg:pt-24">
-              <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4 px-3">
-                <div className="relative w-full lg:max-w-[440px]">
-                  <SearchBox
-                    classNames={{
-                      root: "w-full",
-                      form: "relative flex items-center",
-                      input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none transition-all",
-                      submitIcon: "hidden",
-                      resetIcon: "hidden",
-                      loadingIcon: "hidden",
-                    }}
-                    placeholder="Search for Anything"
-                  />
-                  <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
-                </div>
+            <div id="results-column" className="w-full flex-1 min-w-0 min-h-[100vh] ">
 
-                <div className="w-full lg:w-auto flex items-center justify-between sm:justify-end gap-2 mt-1 lg:mt-0">
-                  <button
-                    type="button"
-                    onClick={() => setIsMobileFilterOpen(true)}
-                    className="flex lg:hidden items-center justify-center gap-2 h-[42px] px-4 rounded-[12px] border border-[#ddd] bg-white text-black text-[14px] font-bold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer shrink-0"
-                  >
-                    <Settings2 className="h-4 w-4" />
-                    <span>Filters</span>
-                  </button>
+              {/* ── SINGLE SMART CONTROL HEADER BAR ── */}
+              <div className="w-full min-h-[60px] mb-4 relative z-30">
+                <div
+                  className={[
+                    "transition-all duration-300 ease-in-out",
+                    "px-2 py-2",
+                    showScrollTop
+                      ? "lg:fixed top-[75px] left-4 right-4 pt-18 lg:pt-12 bg-[#efefef] md:left-auto md:ml-2 md:right-auto md:w-[calc(100%-32px)] lg:w-[calc(100%-380px)] 2xl:w-[calc(100%-420px)] max-w-[1030px] shadow-xl animate-in slide-in-from-top-4 z-40"
+                      : "relative w-full bg-transparent lg:pt-24"
+                  ].join(" ")}
+                >
+                  <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4 relative">
 
-                  <div className="flex items-start">
-                    <CustomSortBy sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)} />
+                    {/* "Back to top" pill button (Only visible when floating up) */}
+                    <div
+                      className={[
+                        "hidden lg:block absolute right-52 -translate-x-1/2 top-16 lg:-top-1 z-50 transition-all duration-200",
+                        showScrollTop ? "opacity-100 scale-100 visible" : "opacity-0 scale-95 invisible"
+                      ].join(" ")}
+                    >
+                      <button
+                        onClick={scrollToTop}
+                        className="flex items-center cursor-pointer gap-2 bg-[#222] hover:bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full shadow-lg active:scale-95 transition-transform"
+                      >
+                        <ChevronUp className="h-4 w-4" />
+                        <span>Back to top</span>
+                      </button>
+                    </div>
+
+                    <div
+                      className={[
+                        "fixed lg:hidden inset-x-0 top-44 flex justify-center z-50 transition-all duration-200",
+                        showScrollTop
+                          ? "opacity-100 scale-100 visible"
+                          : "opacity-0 scale-95 invisible",
+                      ].join(" ")}
+                    >
+                      <button
+                        onClick={scrollToTop}
+                        className="flex items-center cursor-pointer gap-2 bg-[#222] hover:bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full shadow-lg active:scale-95 transition-transform"
+                      >
+                        <ChevronUp className="h-4 w-4" />
+                        <span>Back to top</span>
+                      </button>
+                    </div>
+
+                    {/* Search Input Box */}
+                    <div className="relative w-full lg:max-w-[440px]">
+                      <SearchBox
+                        classNames={{
+                          root: "w-full",
+                          form: "relative flex items-center",
+                          input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none transition-all focus:border-gray-400",
+                          submitIcon: "hidden",
+                          resetIcon: "hidden",
+                          loadingIcon: "hidden",
+                        }}
+                        placeholder="Search for Anything"
+                      />
+                      <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
+                    </div>
+
+                    <div className="w-full lg:w-auto flex items-center justify-between sm:justify-end gap-2 mt-1 lg:mt-0">
+                      <button
+                        type="button"
+                        onClick={() => setIsMobileFilterOpen(true)}
+                        className="flex lg:hidden items-center justify-center gap-2 h-[42px] px-4 rounded-[12px] border border-[#ddd] bg-white text-black text-[14px] font-bold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer shrink-0"
+                      >
+                        <Settings2 className="h-4 w-4" />
+                        <span>Filters</span>
+                      </button>
+
+                      <div className="flex items-start">
+                        <CustomSortBy sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)} />
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>

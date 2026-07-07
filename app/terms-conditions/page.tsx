@@ -1,7 +1,11 @@
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
+import { getAppConfig } from '@/lib/appConfig';
 
-export default function TermsOfService() {
+export default async function TermsOfService() {
+  const config = await getAppConfig();
+  const { dealership_name, full_address_1, city_1, province_1, sales_number_1, email_1 } = config.dealership;
+  
   return (
     <>
     <Header/>
@@ -16,7 +20,7 @@ export default function TermsOfService() {
           </h2>
           
           <p className="text-[15px] leading-relaxed text-gray-600 mb-6">
-            This website is operated by Cardora. Throughout the site, the terms “we”, “us” and “our” refer to Cardora. Cardora offers this website, including all information, tools and services available from this site to you, the user, conditioned upon your acceptance of all terms, conditions, policies and notices stated here.By visiting our site and/ or contacting us you engage in our “Service” and agree to be bound by the following terms and conditions (“Terms of Service”, “Terms”), including those additional terms and conditions and policies referenced herein and/or available by hyperlink. These Terms of Service apply to all users of the site, including without limitation users who are browsers, vendors, customers, merchants, and/ or contributors of content.Please read these Terms of Service carefully before accessing or using our website. By accessing or using any part of the site, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions of this agreement, then you may not access the website or use any services. If these Terms of Service are considered an offer, acceptance is expressly limited to these Terms of Service.Any new features or tools which are added to the current website shall also be subject to the Terms of Service. You can review the most current version of the Terms of Service at any time on this page. We reserve the right to update, change or replace any part of these Terms of Service by posting updates and/or changes to our website. It is your responsibility to check this page periodically for changes. Your continued use of or access to the website following the posting of any changes constitutes acceptance of those changes.Our website is hosted on Cardora. They provide us with the website platform that lists our available vehicle inventory and services.
+            This website is operated by {dealership_name}. Throughout the site, the terms "we", "us" and "our" refer to {dealership_name}. {dealership_name} offers this website, including all information, tools and services available from this site to you, the user, conditioned upon your acceptance of all terms, conditions, policies and notices stated here.By visiting our site and/ or contacting us you engage in our "Service" and agree to be bound by the following terms and conditions ("Terms of Service", "Terms"), including those additional terms and conditions and policies referenced herein and/or available by hyperlink. These Terms of Service apply to all users of the site, including without limitation users who are browsers, vendors, customers, merchants, and/ or contributors of content.Please read these Terms of Service carefully before accessing or using our website. By accessing or using any part of the site, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions of this agreement, then you may not access the website or use any services. If these Terms of Service are considered an offer, acceptance is expressly limited to these Terms of Service.Any new features or tools which are added to the current website shall also be subject to the Terms of Service. You can review the most current version of the Terms of Service at any time on this page. We reserve the right to update, change or replace any part of these Terms of Service by posting updates and/or changes to our website. It is your responsibility to check this page periodically for changes. Your continued use of or access to the website following the posting of any changes constitutes acceptance of those changes.Our website is hosted on {dealership_name}. They provide us with the website platform that lists our available vehicle inventory and services.
           </p>
 
           {/* Website Terms */}
@@ -83,7 +87,7 @@ export default function TermsOfService() {
               PRODUCTS OR SERVICES
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
-              We have made every effort to display as accurately as possible the colours, images, and trim levels of vehicles available. We cannot guarantee that your computer monitor’s display of any color will be accurate.
+              We have made every effort to display as accurately as possible the colours, images, and trim levels of vehicles available. We cannot guarantee that your computer monitor's display of any color will be accurate.
             </p>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
               We reserve the right, but are not obligated, to limit the sales of our products or Services to any person, geographic region or jurisdiction. We may exercise this right on a case-by-case basis. We reserve the right to limit the quantities of any products or services that we offer. All descriptions of products or product pricing are subject to change at anytime without notice, at the sole discretion of us. We reserve the right to discontinue any product at any time. Any offer for any product or service made on this site is void where prohibited.
@@ -115,7 +119,7 @@ export default function TermsOfService() {
               We may provide you with access to third-party tools over which we neither monitor nor have any control nor input.
             </p>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
-              You acknowledge and agree that we provide access to such tools “as is” and “as available” without any warranties, representations or conditions of any kind and without any endorsement. We shall have no liability whatsoever arising from or relating to your use of optional third-party tools.
+              You acknowledge and agree that we provide access to such tools "as is" and "as available" without any warranties, representations or conditions of any kind and without any endorsement. We shall have no liability whatsoever arising from or relating to your use of optional third-party tools.
             </p>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
               Any use by you of optional tools offered through the site is entirely at your own risk and discretion and you should ensure that you are familiar with and approve of the terms on which tools are provided by the relevant third-party provider(s).
@@ -137,7 +141,7 @@ export default function TermsOfService() {
               Third-party links on this site may direct you to third-party websites that are not affiliated with us. We are not responsible for examining or evaluating the content or accuracy and we do not warrant and will not have any liability or responsibility for any third-party materials or websites, or for any other materials, products, or services of third-parties.
             </p>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
-              We are not liable for any harm or damages related to the purchase or use of goods, services, resources, content, or any other transactions made in connection with any third-party websites. Please review carefully the third-party’s policies and practices and make sure you understand them before you engage in any transaction. Complaints, claims, concerns, or questions regarding third-party products should be directed to the third-party.
+              We are not liable for any harm or damages related to the purchase or use of goods, services, resources, content, or any other transactions made in connection with any third-party websites. Please review carefully the third-party's policies and practices and make sure you understand them before you engage in any transaction. Complaints, claims, concerns, or questions regarding third-party products should be directed to the third-party.
             </p>
           </section>
 
@@ -150,7 +154,7 @@ export default function TermsOfService() {
               If, at our request, you send certain specific submissions (for example contest entries) or without a request from us you send creative ideas, suggestions, proposals, plans, or other materials, whether online, by email, by postal mail, or otherwise (collectively, &apos;comments&apos;), you agree that we may, at any time, without restriction, edit, copy, publish, distribute, translate and otherwise use in any medium any comments that you forward to us. We are and shall be under no obligation (1) to maintain any comments in confidence; (2) to pay compensation for any comments; or (3) to respond to any comments.
             </p>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
-              We may, but have no obligation to, monitor, edit or remove content that we determine in our sole discretion are unlawful, offensive, threatening, libelous, defamatory, pornographic, obscene or otherwise objectionable or violates any party’s intellectual property or these Terms of Service.
+              We may, but have no obligation to, monitor, edit or remove content that we determine in our sole discretion are unlawful, offensive, threatening, libelous, defamatory, pornographic, obscene or otherwise objectionable or violates any party's intellectual property or these Terms of Service.
             </p>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
               You agree that your comments will not violate any right of any third-party, including copyright, trademark, privacy, personality or other personal or proprietary right. You further agree that your comments will not contain libelous or otherwise unlawful, abusive or obscene material, or contain any computer virus or other malware that could in any way affect the operation of the Service or any related website. You may not use a false e-mail address, pretend to be someone other than yourself, or otherwise mislead us or third-parties as to the origin of any comments. You are solely responsible for any comments you make and their accuracy. We take no responsibility and assume no liability for any comments posted by you or any third-party.
@@ -218,10 +222,10 @@ export default function TermsOfService() {
               You agree that from time to time we may remove the service for indefinite periods of time or cancel the service at any time, without notice to you.
             </p>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
-              You expressly agree that your use of, or inability to use, the service is at your sole risk. The service and all products and services delivered to you through the service are (except as expressly stated by us) provided ‘as is’ and ‘as available’ for your use, without any representation, warranties or conditions of any kind, either express or implied, including all implied warranties or conditions of merchantability, merchantable quality, fitness for a particular purpose, durability, title, and non-infringement.
+              You expressly agree that your use of, or inability to use, the service is at your sole risk. The service and all products and services delivered to you through the service are (except as expressly stated by us) provided 'as is' and 'as available' for your use, without any representation, warranties or conditions of any kind, either express or implied, including all implied warranties or conditions of merchantability, merchantable quality, fitness for a particular purpose, durability, title, and non-infringement.
             </p>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
-              In no case shall Cardora, our directors, officers, employees, affiliates, agents, contractors, interns, suppliers, service providers or licensors be liable for any injury, loss, claim, or any direct, indirect, incidental, punitive, special, or consequential damages of any kind, including, without limitation lost profits, lost revenue, lost savings, loss of data, replacement costs, or any similar damages, whether based in contract, tort (including negligence), strict liability or otherwise, arising from your use of any of the service or any products procured using the service, or for any other claim related in any way to your use of the service or any product, including, but not limited to, any errors or omissions in any content, or any loss or damage of any kind incurred as a result of the use of the service or any content (or product) posted, transmitted, or otherwise made available via the service, even if advised of their possibility. Because some states or jurisdictions do not allow the exclusion or the limitation of liability for consequential or incidental damages, in such states or jurisdictions, our liability shall be limited to the maximum extent permitted by law.
+              In no case shall {dealership_name}, our directors, officers, employees, affiliates, agents, contractors, interns, suppliers, service providers or licensors be liable for any injury, loss, claim, or any direct, indirect, incidental, punitive, special, or consequential damages of any kind, including, without limitation lost profits, lost revenue, lost savings, loss of data, replacement costs, or any similar damages, whether based in contract, tort (including negligence), strict liability or otherwise, arising from your use of any of the service or any products procured using the service, or for any other claim related in any way to your use of the service or any product, including, but not limited to, any errors or omissions in any content, or any loss or damage of any kind incurred as a result of the use of the service or any content (or product) posted, transmitted, or otherwise made available via the service, even if advised of their possibility. Because some states or jurisdictions do not allow the exclusion or the limitation of liability for consequential or incidental damages, in such states or jurisdictions, our liability shall be limited to the maximum extent permitted by law.
             </p>
           </section>
 
@@ -231,7 +235,7 @@ export default function TermsOfService() {
               INDEMNIFICATION
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
-              You agree to indemnify, defend and hold harmless Cardora and our parent, subsidiaries, affiliates, partners, officers, directors, agents, contractors, licensors, service providers, subcontractors, suppliers, interns and employees, harmless from any claim or demand, including reasonable attorneys’ fees, made by any third-party due to or arising out of your breach of these Terms of Service or the documents they incorporate by reference, or your violation of any law or the rights of a third-party.
+              You agree to indemnify, defend and hold harmless {dealership_name} and our parent, subsidiaries, affiliates, partners, officers, directors, agents, contractors, licensors, service providers, subcontractors, suppliers, interns and employees, harmless from any claim or demand, including reasonable attorneys' fees, made by any third-party due to or arising out of your breach of these Terms of Service or the documents they incorporate by reference, or your violation of any law or the rights of a third-party.
             </p>
           </section>
 
@@ -283,7 +287,7 @@ export default function TermsOfService() {
               GOVERNING LAW
             </h3>
             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
-              These Terms of Service and any separate agreements whereby we provide you Services shall be governed by and construed in accordance with the laws of .
+              These Terms of Service and any separate agreements whereby we provide you Services shall be governed by and construed in accordance with the laws of {province_1}.
             </p>
           </section>
 
@@ -310,15 +314,15 @@ export default function TermsOfService() {
             </p>
             <div className="mt-2 text-[15px] text-gray-900">
               <h5 className="text-[17px] font-bold text-gray-900 mb-1">
-                Cardora
+                {dealership_name}
               </h5>
               <p className="font-bold">
-                8050 Dixie Rd, Brampton, ON, L6T 4W6
+                {full_address_1}, {city_1}, {province_1}
               </p>
               <p className="mt-1">
                 <span className="font-bold">Sales: </span>
-                <a href="tel:1-855-514-5500" className="text-green-600 hover:underline">
-                  1-855-514-5500
+                <a href={`tel:${sales_number_1}`} className="text-green-600 hover:underline">
+                  {sales_number_1}
                 </a>
               </p>
             </div>
