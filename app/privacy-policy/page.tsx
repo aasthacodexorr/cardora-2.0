@@ -1,7 +1,11 @@
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
+import { getAppConfig } from '@/lib/appConfig';
 
-export default function PrivacyPolicy() {
+export default async function PrivacyPolicy() {
+    const config = await getAppConfig();
+    const { dealership_name } = config.dealership;
+    
     return (
         <>
             <Header />
@@ -39,10 +43,10 @@ export default function PrivacyPolicy() {
                                     <span className="font-bold text-gray-900">Personally Identifiable Information (PII):</span> We may collect personal information such as your name, email address, phone number, mailing address, or other contact details when you voluntarily provide it through forms, applications, or other direct communication with us. This information is collected to facilitate requested services, respond to inquiries, and enhance your experience with us.
                                 </li>
                                 <li>
-                                    <span className="font-bold text-gray-900">Non-Personally Identifiable Information (Non-PII):</span> During regular visits, we may collect non-personal information, such as browsing data, page views, time spent on specific pages, and aggregate information that helps us analyze site usage. This information is collected using cookies, session logs, and other analytics tools and is used to improve our website’s layout, features, and functionality.
+                                    <span className="font-bold text-gray-900">Non-Personally Identifiable Information (Non-PII):</span> During regular visits, we may collect non-personal information, such as browsing data, page views, time spent on specific pages, and aggregate information that helps us analyze site usage. This information is collected using cookies, session logs, and other analytics tools and is used to improve our website's layout, features, and functionality.
                                 </li>
                                 <li>
-                                    <span className="font-bold text-gray-900">Children’s Data:</span> We are committed to protecting children’s privacy and do not knowingly collect personal information from children under the age of 18. Should any data be inadvertently collected from a minor, we encourage parents or guardians to contact us immediately, and we will promptly delete the information.
+                                    <span className="font-bold text-gray-900">Children's Data:</span> We are committed to protecting children's privacy and do not knowingly collect personal information from children under the age of 18. Should any data be inadvertently collected from a minor, we encourage parents or guardians to contact us immediately, and we will promptly delete the information.
                                 </li>
                             </ul>
                         </section>
@@ -100,7 +104,7 @@ export default function PrivacyPolicy() {
                                     <span className="font-bold text-gray-900">Business Partners and Affiliates:</span> We may share non-personally identifiable information with business partners to enhance service offerings, improve marketing efforts, or develop new services. Personal information may be shared with affiliates solely to fulfill requests you have made through our website.
                                 </li>
                                 <li>
-                                    <span className="font-bold text-gray-900">Protection of Cardora and Others:</span> In the event of potential harm to users, <span className="font-bold text-gray-900">Cardora,</span> or the public, we may share information as part of necessary precautions or protective actions.
+                                    <span className="font-bold text-gray-900">Protection of {dealership_name} and Others:</span> In the event of potential harm to users, <span className="font-bold text-gray-900">{dealership_name},</span> or the public, we may share information as part of necessary precautions or protective actions.
                                 </li>
                             </ul>
                         </section>
@@ -158,7 +162,7 @@ export default function PrivacyPolicy() {
                                 9. Accountability
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
-                                <span className="font-bold text-gray-900">Cardora</span> is committed to ensuring the accuracy and protection of the information collected through our website. We take all reasonable measures to confirm that personal data is handled in a manner consistent with this Privacy Policy and industry standards.
+                                <span className="font-bold text-gray-900">{dealership_name}</span> is committed to ensuring the accuracy and protection of the information collected through our website. We take all reasonable measures to confirm that personal data is handled in a manner consistent with this Privacy Policy and industry standards.
                             </p>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
                                 Please be aware that our website may contain links to external sites managed by third parties. We do not control these external sites, and our Privacy Policy does not extend to them. We recommend that you review the privacy practices of any site you visit from links on our platform, especially before providing personal information.
@@ -175,7 +179,7 @@ export default function PrivacyPolicy() {
                             </p>
                             <ul className="list-disc pl-5 space-y-3 text-[15px] leading-relaxed text-gray-600 mb-4">
                                 <li>
-                                    <span className="font-bold text-gray-900">Encryption:</span> For sensitive data, such as credit card information, we use encryption protocols to ensure secure transmission. You can verify this by looking for a closed lock icon in your browser or “https” in the web address.
+                                    <span className="font-bold text-gray-900">Encryption:</span> For sensitive data, such as credit card information, we use encryption protocols to ensure secure transmission. You can verify this by looking for a closed lock icon in your browser or "https" in the web address.
                                 </li>
                                 <li>
                                     <span className="font-bold text-gray-900">Data Access:</span> Access to personal information is restricted to employees and service providers who need it to perform specific tasks, such as processing billing or customer service requests. Our servers and systems are housed in secure environments to prevent unauthorized access.
@@ -192,7 +196,7 @@ export default function PrivacyPolicy() {
                                 11. Indemnification
                             </h2>
                             <p className="text-[15px] leading-relaxed text-gray-600 mb-4">
-                                As a condition of using this website and its services, you agree to indemnify <span className="font-bold text-gray-900">Cardora,</span> including its partners, suppliers, and associated service providers, from any and all claims, liabilities, expenses, or damages arising from your use of the website. This includes any legal fees incurred due to your failure to comply with this Privacy Policy or any breach by you of these terms. This indemnification applies to all claims resulting from your use of the website, including, without limitation, any issues related to user content, your violation of third-party rights, or any unauthorized access to the site.
+                                As a condition of using this website and its services, you agree to indemnify <span className="font-bold text-gray-900">{dealership_name},</span> including its partners, suppliers, and associated service providers, from any and all claims, liabilities, expenses, or damages arising from your use of the website. This includes any legal fees incurred due to your failure to comply with this Privacy Policy or any breach by you of these terms. This indemnification applies to all claims resulting from your use of the website, including, without limitation, any issues related to user content, your violation of third-party rights, or any unauthorized access to the site.
                             </p>
                         </section>
 
