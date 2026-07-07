@@ -34,7 +34,7 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 1: Hero with Title + Coupon Side by Side */}
       <section className="w-full bg-gradient-to-b from-white to-[#f4f9fc] py-12 md:py-20 flex items-center lg:mt-28">
-        <div className="md:px-36 px-8 w-full">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
 
             {/* Left: Title and Checklist */}
@@ -120,7 +120,7 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 2: Alert Message Intro Container */}
       <section className="w-full bg-[#e6f4ff] py-8 md:py-5 ">
-        <div className="px-5 xl:px-56 py-0 xl:py-8 text-center text-base md:text-[20px] text-slate-900 tracking-wide flex flex-col gap-1">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-0 xl:py-8 text-center text-base md:text-[20px] text-slate-900 tracking-wide flex flex-col gap-1">
           <p>{currentData.introText1}</p>
           <p>{currentData.introText2}</p>
           <p>{currentData.introText3}</p>
@@ -129,7 +129,7 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 3: Why Regular Changes Matter */}
       <section className="w-full bg-white py-12 md:py-16">
-        <div className="mx-auto px-4 md:px-32">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
           <div className="flex flex-col md:flex-row md:gap-28 gap-8 items-start">
 
             {/* Left Column Content */}
@@ -179,7 +179,7 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 4: Dual Box Highlights Grid */}
       <section className="w-full bg-[#e6f4ff] py-12">
-        <div className="mx-auto px-4 md:px-28">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
 
             {/* Box 1: Signs You Need Service */}
@@ -245,70 +245,72 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 5: Premium Service Highlight */}
       {
-        currentData?.premiumTitle ? <section className="w-full bg-white py-12 md:py-16 px-4 md:px-32">
-          <div className={`flex flex-col md:flex-row gap-10 lg:gap-16 ${id === "wheel-service" ? "items-center" : "items-start"}`}>
+        currentData?.premiumTitle ? <section className="w-full bg-white py-12 md:py-16">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
+            <div className={`flex flex-col md:flex-row gap-10 lg:gap-16 ${id === "wheel-service" ? "items-center" : "items-start"}`}>
 
-            {/* Left Column Image */}
-            <div className={`w-full   ${["wheel-service", "tire-service"].includes(id) ? "lg:min-w-[50%]" : "lg:max-w-[45%] lg:min-h-[700px]"}  `}>
-              <div className=" w-full aspect-[11/12] sm:aspect-[16/14] lg:aspect-[11/16] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] relative">
-                <Image
-                  src={currentData.premiumImg || "image_85aa7b.jpg"}
-                  alt="Premium synthetic oil change service execution"
-                  className={`w-full h-full object-cover lg:p-3 rounded-3xl ${["wheel-service", "tire-service"].includes(id) ? "lg:max-h-[50%]" : "lg:max-w-[95%]"}`}
-                  fill
-                />
+              {/* Left Column Image */}
+              <div className={`w-full   ${["wheel-service", "tire-service"].includes(id) ? "lg:min-w-[50%]" : "lg:max-w-[45%] lg:min-h-[700px]"}  `}>
+                <div className=" w-full aspect-[11/12] sm:aspect-[16/14] lg:aspect-[11/16] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] relative">
+                  <Image
+                    src={currentData.premiumImg || "image_85aa7b.jpg"}
+                    alt="Premium synthetic oil change service execution"
+                    className={`w-full h-full object-cover lg:p-3 rounded-3xl ${["wheel-service", "tire-service"].includes(id) ? "lg:max-h-[50%]" : "lg:max-w-[95%]"}`}
+                    fill
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Right Column Content */}
-            <div className={`lg:col-span-6 space-y-2 ${id === "wheel-service" ? "lg:-mt-[400px]" : ""}`}>
-              <h2 className="text-3xl md:text-[45px] font-bold text-black tracking-tight leading-[1.15]">
-                {currentData.premiumTitle || "Premium Synthetic Oil Change Service"}
-              </h2>
+              {/* Right Column Content */}
+              <div className={`lg:col-span-6 space-y-2 ${id === "wheel-service" ? "lg:-mt-[400px]" : ""}`}>
+                <h2 className="text-3xl md:text-[45px] font-bold text-black tracking-tight leading-[1.15]">
+                  {currentData.premiumTitle || "Premium Synthetic Oil Change Service"}
+                </h2>
 
-              <p className=" text-[20px] font-medium tracking-wide">
-                {currentData?.premiumBody1 || `At ${SITE_CONFIG?.dealership.name}, we use high-quality synthetic oil designed to provide superior engine protection and performance in all driving conditions.`}
-              </p>
-
-              {
-                currentData.premiumBody ? <>
-                  <div className="text-[20px] tracking-wide ">
-                    Synthetic oil helps:
-                  </div>
-
-                  <ul className="w-full border-t border-slate-100 divide-y divide-slate-100 text-[18px] font-medium tracking-wide">
-                    {[
-                      "Protect your engine during extreme Ontario temperatures",
-                      "Improve engine performance and efficiency",
-                      "Reduce engine wear and buildup",
-                      "Last longer than conventional oil",
-                      "Support smoother cold-weather starts"
-                    ].map((item, i) => (
-                      <li key={i} className="py-3 text-left">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </> : null
-              }
-
-              <div className="text-[18px] leading-[1.6] font-medium tracking-wide">
-                <p>
-                  {currentData.premiumBody2}
+                <p className=" text-[20px] font-medium tracking-wide">
+                  {currentData?.premiumBody1 || `At ${SITE_CONFIG?.dealership.name}, we use high-quality synthetic oil designed to provide superior engine protection and performance in all driving conditions.`}
                 </p>
-                <p>
-                  {currentData.premiumBody3}
-                </p>
+
+                {
+                  currentData.premiumBody ? <>
+                    <div className="text-[20px] tracking-wide ">
+                      Synthetic oil helps:
+                    </div>
+
+                    <ul className="w-full border-t border-slate-100 divide-y divide-slate-100 text-[18px] font-medium tracking-wide">
+                      {[
+                        "Protect your engine during extreme Ontario temperatures",
+                        "Improve engine performance and efficiency",
+                        "Reduce engine wear and buildup",
+                        "Last longer than conventional oil",
+                        "Support smoother cold-weather starts"
+                      ].map((item, i) => (
+                        <li key={i} className="py-3 text-left">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </> : null
+                }
+
+                <div className="text-[18px] leading-[1.6] font-medium tracking-wide">
+                  <p>
+                    {currentData.premiumBody2}
+                  </p>
+                  <p>
+                    {currentData.premiumBody3}
+                  </p>
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
         </section> : null
       }
 
       {/* SECTION 6: Why Drivers Choose Us */}
       <section className={`w-full bg-[#eeeeee] py-6 md:py-18  ${id === "tire-service" ? "lg:-mt-[380px]" : id === "wheel-service" ? "lg:-mt-[380px]" : null}`}>
-        <div className="px-4 md:px-28">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
           {/* Dynamic flex ordering based on the 'id' variable */}
           <div
             className={`flex gap-10 lg:gap-12 items-start ${id === "brakes"
@@ -359,7 +361,7 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 7: Related Services Grid */}
       <section className="w-full bg-white py-12 md:py-16">
-        <div className="  px-4 md:px-28">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
 
           <div className="text-left mb-10 space-y-1.5">
             <h2 className="text-3xl md:text-[40px] font-bold text-black tracking-tight">
@@ -416,7 +418,7 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 9: FAQ Section */}
       <section className="w-full bg-white py-20 border-t border-slate-100">
-        <div className="  px-4 md:px-18">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
           <div className="mb-10">
             <h2 className="text-4xl font-bold text-slate-900">Frequently Asked Questions</h2>
           </div>
@@ -428,7 +430,7 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* SECTION 10: Final Inline CTA Row */}
       <section className="w-full bg-[#eaeff5] border-t border-slate-100 py-8 text-center">
-        <div className="  px-4 md:px-82 md:py-10 space-y-3 py-5">
+        <div className="max-w-4xl mx-auto px-6 md:px-12 py-5 md:py-10 space-y-3">
           <p className="text-xl md:text-3xl ">
             Book your oil change service today at {appConfig.dealership.dealership_name} {appConfig.dealership.city_1} and keep your vehicle performing at its best.
           </p>
