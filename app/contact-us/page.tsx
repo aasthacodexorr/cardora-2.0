@@ -17,6 +17,8 @@ export default function ContactUs() {
     const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
+            console.log("Origin:", event.origin);
+            console.log("Data:", event.data);
             if (event.origin !== SITE_CONFIG?.api?.saasApi) return;
             switch (event.data) {
                 case "redirectToThankYouPage":
