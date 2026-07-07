@@ -15,25 +15,20 @@ export default function ContactUs() {
     const router = useRouter();
     const appConfig = useAppConfig();
     const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
+    const allowedOrigin = SITE_CONFIG.api.saasApi.replace(/\/$/, "");
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
-            console.log("Origin:", event.origin);
-            console.log("Data:", event.data);
-            if (event.origin !== SITE_CONFIG?.api?.saasApi) return;
-            switch (event.data) {
-                case "redirectToThankYouPage":
-                    router.push("/thank-you");
-                    break;
-                default:
-                    break;
+            if (event.origin !== allowedOrigin) return;
+
+            if (event.data === "redirectToThankYouPage") {
+                router.push("/thank-you");
             }
         };
 
         window.addEventListener("message", handleMessage);
-        return () => {
-            window.removeEventListener("message", handleMessage);
-        };
-    }, [router]);
+
+        return () => window.removeEventListener("message", handleMessage);
+    }, [router, allowedOrigin]);
 
     return (
         <>
