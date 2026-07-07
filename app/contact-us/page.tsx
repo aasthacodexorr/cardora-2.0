@@ -1,5 +1,6 @@
 "use client"
-
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
 import Image from 'next/image';
@@ -9,9 +10,29 @@ import { getConstants } from '@/constants';
 import { useAppConfig } from '@/app/providers';
 import Link from 'next/link';
 
+
 export default function ContactUs() {
+    const router = useRouter();
     const appConfig = useAppConfig();
     const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (event.origin !== SITE_CONFIG?.api?.saasApi) return;
+            switch (event.data) {
+                case "redirectToThankYouPage":
+                    router.push("/thank-you");
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        window.addEventListener("message", handleMessage);
+        return () => {
+            window.removeEventListener("message", handleMessage);
+        };
+    }, [router]);
+
     return (
         <>
             <Header />
