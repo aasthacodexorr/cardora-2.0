@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { servicesData } from '@/constants/serviceData';
 import FaqAccordion from '@/components/common/FaqAccordion';
 import { Footer, Header } from '@/components/layout';
 import { Reviews } from '@/components/home';
@@ -9,6 +8,7 @@ import { getAppConfig } from "@/lib/appConfig";
 import { getConstants } from '@/constants';
 import Image from "next/image";
 import DownloadCouponButton from '@/components/service/DownloadCouponButton';
+import { getServicesData } from '@/constants/serviceData';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -19,6 +19,15 @@ export default async function ServicePage({ params }: PageProps) {
   const { SITE_CONFIG } = getConstants(appConfig);
   const { id } = await params;
   const serviceKey = id;
+  
+  // Get dynamic services data with dealership config
+  const dealershipConfig = {
+    dealership_name: appConfig.dealership.dealership_name,
+    city_1: appConfig.dealership.city_1,
+    province_1: appConfig.dealership.province_1
+  };
+  
+  const servicesData = getServicesData(dealershipConfig);
   const currentData = servicesData[serviceKey];
 
   if (!currentData) {
