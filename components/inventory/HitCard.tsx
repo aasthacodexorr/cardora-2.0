@@ -40,8 +40,26 @@ export const HitCard = ({ hit }: { hit: any }) => {
       : firstUrl;
   }
 
+
+  const getVehicleUrl = (hit: any) => {
+    const slug = [
+      hit.inventory_id,
+      hit.year,
+      hit.make,
+      hit.model,
+      hit.trim,
+    ]
+      .filter(Boolean)
+      .join("-")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    return `/inventory/${slug}`;
+  };
+  const vehicleUrl = getVehicleUrl(hit);
   return (
-    <Link href={hit.page_url || "#"} className="block h-full ">
+    <Link href={vehicleUrl|| "/"} className="block h-full ">
       <article className="rounded-[20px] p-[2px] border border-[#ddd] bg-white overflow-hidden flex flex-col h-full hover:shadow-none transition-none relative">
 
         {/* Vehicle image with optional sold overlay */}
