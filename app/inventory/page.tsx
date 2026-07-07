@@ -840,7 +840,7 @@ const InventoryContent = () => {
                     "transition-all duration-300 ease-in-out",
                     "px-2 py-2",
                     showScrollTop
-                      ? "lg:fixed top-[75px] left-4 right-4 pt-18 lg:pt-12 bg-[#efefef] md:left-auto md:ml-2 md:right-auto md:w-[calc(100%-32px)] lg:w-[calc(100%-380px)] 2xl:w-[calc(100%-420px)] max-w-[1030px] shadow-xl animate-in slide-in-from-top-4 z-40"
+                      ? "lg:fixed top-[75px] left-4 right-4 pt-18 lg:pt-12 bg-[#efefef] md:left-auto md:ml-2 md:right-auto md:w-[calc(100%-32px)] lg:w-[calc(100%-380px)] 2xl:w-[calc(100%-420px)] lg:max-w-[1030px] 2xl:max-w-[1150px]  shadow-xl animate-in slide-in-from-top-4 z-40"
                       : "relative w-full bg-transparent lg:pt-24"
                   ].join(" ")}
                 >
