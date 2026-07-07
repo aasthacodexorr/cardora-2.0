@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import { ScriptLoader } from "@/components/ScriptLoader";
 import { getAppConfig, getSafeDealershipConfig } from "@/lib/appConfig";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -30,6 +31,10 @@ export default async function RootLayout({
       lang="en"
       className="h-full antialiased"
     >
+      <head>
+        {/* Load form validation script before any interactive content */}
+        <ScriptLoader />
+      </head>
       <body className="min-h-full flex flex-col">
         <Providers config={appConfig}>{children}</Providers>
       </body>
