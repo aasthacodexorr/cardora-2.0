@@ -1,4 +1,16 @@
 import couponImg from "@/assets/icons/couponImg.png"
+import premiumImgOil from "@/assets/icons/premiumImg-oil.avif"
+import premiumImgTire from "@/assets/icons/premiumImg-tire.jpg"
+import premiumImgWheel from "@/assets/icons/premiumImg-wheel.avif"
+
+import section2ImgOil from "@/assets/icons/section2Img-oil.avif"
+import section2ImgTire from "@/assets/icons/section2Img-tire.jpg"
+import section2Imgbreak from "@/assets/icons/section2Imgbrake.webp"
+import section2ImgWheel from "@/assets/icons/section2Img-wheel.avif"
+
+import whyImgBreak from "@/assets/icons/whyImg-break.jpg"
+import whyImgTire from "@/assets/icons/whyImg-tire.webp"
+
 
 export interface FAQItem {
   q: string;
@@ -20,11 +32,11 @@ export interface ServiceContent {
   section2Body: string;
   section2LastBody1: string;
   section2LastBody2: string;
-  section2Img: string;
+  section2Img: any;
   signsList: string[];
   includesList: string[];
   premiumTitle: string;
-  premiumImg: string;
+  premiumImg: any;
   premiumBody: string;
   cardText: string;
   faqs: FAQItem[];
@@ -42,7 +54,7 @@ export interface ServiceContent {
   whyTitle?: string;
   whyFeature?: string[];
   whyLastBody?: string;
-  whyImg?: string;
+  whyImg?: any;
   premiumBody1?: string;
 }
 
@@ -65,18 +77,22 @@ export const servicesData: Record<string, ServiceContent> = {
     section2Sub: "Your engine oil plays a critical role in protecting your engine by:",
     section2Checklist: ["Lubricating moving engine parts", "Reduces friction", "Preventing sludge buildup", "Helping improve fuel economy", "Extending engine life"],
     section2Body: "",
-    section2Img: "https://www.cardora.ca/wp-content/uploads/2026/05/oil.avif",
+    section2Img: section2ImgOil,
     section2LastBody1: "Over time, oil breaks down and becomes less effective. Delaying oil changes can lead to poor performance, engine wear, and expensive repairs.",
     section2LastBody2: "If you notice dark oil, engine noise, reduced fuel economy, or your oil change light is on, it may be time for service.",
     signsList: ["Oil change or check engine light is on", "Engine sounds louder than usual", "Burning oil smell", "Poor fuel economy", "Dirty or dark engine oil", "Vehicle feels rough while driving"],
     includesList: ["Free inspection for your air and cabin filters", "Drain and replace engine oil and install a new oil filter", "Fluid level inspection", "Tire pressure check", "Visual inspection of major components"],
     premiumTitle: "Premium Synthetic Oil Change Service",
     signLastBody2: "We service most makes and models, including domestic, European, and imported vehicles.  ",
-    premiumImg: "https://www.cardora.ca/wp-content/uploads/2026/05/car-service.avif",
+    premiumImg: premiumImgOil,
     premiumBody: "At Cardora, we use high-quality synthetic oil designed to provide superior engine protection and performance in all driving conditions.",
     premiumBody2: "Modern vehicles are designed to perform best with synthetic oil, especially for drivers dealing with daily commuting, stop-and-go traffic, and changing weather conditions around Brampton and the GTA.",
     premiumBody3: "Our technicians will ensure your vehicle receives the correct synthetic oil and filter recommended for your engine.",
     cardText: "Premium Synthetic Oil & Filter",
+    whyTitle: "Why Drivers in Toronto Choose Cardora",
+    whyFeature: ["Honest recommendations with no pressure", "Experienced technicians", "Quick turnaround times", "Transparent pricing", "Convenient Toronto location", "Trusted customer service experience" ],
+    whyLastBody: "We know your time matters. Our goal is to get you back on the road quickly and confidently.",
+    whyImg: whyImgTire,
     faqs: [
       { q: "How often should I get an oil change?", a: "Most vehicles require an oil change every 8,000 to 10,000 km." },
       { q: "How long does an oil change take?", a: "At Cardora, our oil changes can be completed within 30 minutes!" },
@@ -109,7 +125,7 @@ export const servicesData: Record<string, ServiceContent> = {
     section2Body: "",
     section2LastBody1: "Ignoring brake issues can increase stopping distance and lead to more costly repairs.",
     section2LastBody2: "",
-    section2Img: "https://www.cardora.ca/wp-content/uploads/2026/05/breke.webp",
+    section2Img: section2Imgbreak,
     signtitle1: "Our Brake Services Include",
     signtitle2: "Why Brake Maintenance Matters",
     signsList1: ["Brake pad replacement", "Brake rotor replacement", "Brake fluid checks", "Brake bleeding", "Caliper service"],
@@ -122,8 +138,8 @@ export const servicesData: Record<string, ServiceContent> = {
     whyTitle: "Why Choose Cardora for Brake Service?",
     whyFeature: ["Experienced automotive technicians", "Honest and clear recommendations", "Fast service appointments", "Competitive pricing", "Trusted local service centre in Brampton"],
     whyLastBody: "We explain repairs clearly so you always understand what your vehicle needs.",
-    whyImg: "https://www.cardora.ca/wp-content/uploads/2026/05/break-service.jpg",
-    premiumImg: "https://www.cardora.ca/wp-content/uploads/2026/02/breaks.avif",
+    whyImg: whyImgBreak,
+    premiumImg: premiumImgOil,
     premiumBody: "We use high performance premium parts to keep your drives whisper quiet and incredibly safe.",
     cardText: "Premium Pads, Rotors & Calipers",
     faqs: [
@@ -159,7 +175,7 @@ export const servicesData: Record<string, ServiceContent> = {
     section2Sub: " ",
     section2Checklist: ["Tire replacement", "Tire rotations", "Tire balancing", "Flat tire repair", "Seasonal tire changeovers", "Tire inspections", "Tire pressure checks", "We service all major tire brands and vehicle types."],
     section2Body: "",
-    section2Img: "https://www.cardora.ca/wp-content/uploads/2026/05/tire-service.jpg",
+    section2Img: section2ImgTire,
     signtitle1: "Why Tire Maintenance Is Important",
     signLastBody1: "Regular tire maintenance helps extend tire life and improve overall driving performance.",
     signtitle2: "Signs You May Need Tire Service",
@@ -168,11 +184,11 @@ export const servicesData: Record<string, ServiceContent> = {
     signList2: ["Uneven tire wear", "Low tread depth", "Vehicle vibration while driving", "Tire pressure warning light", "Cracks or damage on sidewalls", "Poor traction in wet or snowy conditions"],
     includesList: ["Tire inspection and rotation", "Professional installation", "Wheel balancing", "Tire pressure adjustment", "Free seasonal storage"],
     premiumTitle: "Seasonal Tire Service in Brampton",
-    premiumImg: "https://www.cardora.ca/wp-content/uploads/2026/05/car-tire.jpg",
+    premiumImg: premiumImgTire,
     premiumBody1: "Ontario weather changes quickly throughout the year. Winter tires provide better traction and control during snow and freezing temperatures, while all-season or summer tires perform better in warmer conditions.",
     premiumBody2: "Cardora offers convenient seasonal tire swap services to help prepare your vehicle for changing weather conditions.",
     premiumBody3: "",
-    whyImg: "https://www.cardora.ca/wp-content/uploads/2026/05/cardora-service-1280x904.webp",
+    whyImg: whyImgTire,
     whyTitle: "Why Drivers Trust Cardora",
     whyFeature: ["Reliable tire expertise", "Friendly customer service", "Honest recommendations", "Convenience", "Quick and efficient appointments"],
     whyLastBody: "We help you choose the right tire solution for your vehicle, driving style, and budget.",
@@ -212,7 +228,7 @@ export const servicesData: Record<string, ServiceContent> = {
     section2Sub: "Wheel alignment adjusts the angles of your vehicle’s wheels so they match manufacturer specifications.",
     section2Checklist: ["Improve steering control", "Reduce uneven tire wear", "Extend tire lifespan", "Create a smoother ride", "Misalignment can happen over time from potholes, rough roads, curbs, and normal driving conditions."],
     section2Body: "Proper alignment helps:",
-    section2Img: "https://www.cardora.ca/wp-content/uploads/2026/05/wheel.avif",
+    section2Img: section2ImgWheel,
     signtitle1: "Signs You Need a Wheel Alignment",
     signtitle2: "Our Wheel Alignment Service Includes",
     signsList1: ["Uneven tire wear", "Steering wheel is crooked", "Steering feels tilted", "Vibrations while driving", "Tires wearing out too quickly"],
@@ -221,10 +237,10 @@ export const servicesData: Record<string, ServiceContent> = {
     signList2: ["Alignment inspection", "Precision wheel angle adjustments", "Steering sensors checks", "Tire wear inspection", "Test drive verification"],
     includesList: ["Tire inspection and rotation", "Professional installation", "Wheel balancing", "Tire pressure adjustment", "Free seasonal storage"],
     premiumTitle: "Why Wheel Alignments Matter in Brampton",
-    premiumImg: "https://www.cardora.ca/wp-content/uploads/2026/05/wheel-a.avif",
+    premiumImg: premiumImgWheel,
     premiumBody1: "Road conditions, potholes, construction zones, and seasonal weather changes around Brampton and the GTA can affect wheel alignment over time. Routine alignment checks help protect your tires and improve your vehicle’s overall performance.",
     cardText: "Computer Alignment & Suspension Check",
-    whyImg: "https://www.cardora.ca/wp-content/uploads/2026/05/cardora-service-1280x904.webp",
+    whyImg: whyImgTire,
     whyTitle: "Why Choose Cardora?",
     whyFeature: ["Experienced service technicians", "Modern alignment equipment", "Honest recommendations", "Fast appointment scheduling", "Convenient Brampton service location"],
     whyLastBody: "We focus on quality workmanship and customer satisfaction every step of the way.",
@@ -262,11 +278,11 @@ export const servicesData: Record<string, ServiceContent> = {
     section2Sub: "A healthy battery is crucial because it:",
     section2Checklist: ["Provides reliable engine starting", "Powers all electrical systems", "Ensures safety features work", "Prevents vehicle breakdowns", "Maintains optimal performance"],
     section2Body: "A failing battery can leave you stranded. Regular testing and maintenance prevents unexpected failures and costly towing fees.",
-    section2Img: "https://www.cardora.ca/wp-content/uploads/2026/02/Battery.jpg",
+    section2Img: premiumImgWheel,
     signsList: ["Slow engine cranking", "Dim headlights", "Battery warning light", "Corrosion on terminals", "Age over 3-5 years"],
     includesList: ["Free battery testing", "Terminal cleaning", "Professional installation", "Recycle old battery", "Warranty coverage"],
     premiumTitle: "Premium Battery Replacement Package",
-    premiumImg: "https://www.cardora.ca/wp-content/uploads/2026/05/car-service.avif",
+    premiumImg: "",
     premiumBody: "We install only premium batteries backed by comprehensive warranties for peace of mind.",
     cardText: "Premium Batteries with Warranty",
     faqs: [
