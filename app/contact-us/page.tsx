@@ -1,6 +1,4 @@
 "use client"
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
 import Image from 'next/image';
@@ -12,23 +10,8 @@ import Link from 'next/link';
 
 
 export default function ContactUs() {
-    const router = useRouter();
     const appConfig = useAppConfig();
     const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
-    const allowedOrigin = SITE_CONFIG.api.saasApi.replace(/\/$/, "");
-    useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            if (event.origin !== allowedOrigin) return;
-
-            if (event.data === "redirectToThankYouPage") {
-                router.push("/thank-you");
-            }
-        };
-
-        window.addEventListener("message", handleMessage);
-
-        return () => window.removeEventListener("message", handleMessage);
-    }, [router, allowedOrigin]);
 
     return (
         <>
