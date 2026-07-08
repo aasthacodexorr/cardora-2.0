@@ -15,7 +15,7 @@ import { AppConfig, fallbackValue, defaultAppConfig } from "@/lib/appConfig";
 // ─── Navigation ───────────────────────────────────────────────────────────────
 export const NAV_ITEMS = [
   { label: "Shop", to: "/inventory" },
-  { label: "Sell/Trade", to: "/trade-in" },
+  { label: "Sell/Trade", to: "/trade-in-my-car" },
   { label: "Finance", to: "/financing" },
   { label: "Protection Plans", to: "/protection-plans" },
   { label: "Service", to: "/service" },
@@ -162,6 +162,7 @@ export const getConstants = (appConfig: AppConfig) => {
         bookAppointment:`${appConfig.site.saas_api}/api/templates/render/23`,
         contactUsBaseUrl:`${appConfig.site.saas_api}/api/templates/render/22`,
         vehiclePageContactUsBaseUrl:`${appConfig.site.saas_api}/api/templates/render/7`,
+        tradeInMyCarVehicle:`${appConfig.site.saas_api}/api/templates/render/20?`,
       },
       api: {
         saasApi: appConfig.site.saas_api,
