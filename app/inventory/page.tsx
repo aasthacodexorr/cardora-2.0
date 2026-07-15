@@ -819,11 +819,11 @@ const InventoryContent = () => {
             </aside>
 
             {/* ── Results Column ── */}
-            <div id="results-column" className="w-full flex-1 mt-1 min-w-0 min-h-screen">
+            <div id="results-column" className="w-full flex-1 mt-2 min-w-0 min-h-screen">
 
               {/* ── Search + Sort bar (sticky below header) ── */}
               <div
-                className="sticky z-40 bg-[#efefef] px-2 py-2"
+                className="sticky z-40 bg-[#efefef] px-4 py-2"
                 // style={{ top: sidebarTop }}
               >
                 <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
@@ -879,7 +879,7 @@ const InventoryContent = () => {
                 </div>
               </div>
 
-              <div className="px-3">
+              <div className="px-4">
                 <GroupedCurrentRefinements />
               </div>
 
