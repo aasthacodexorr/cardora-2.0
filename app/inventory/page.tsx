@@ -183,10 +183,7 @@ const ScrollToTopOnSearch = () => {
       firstLoad.current = false;
       return;
     }
-    const resultsCol = document.getElementById("results-column");
-    if (resultsCol) {
-      resultsCol.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [results?.__isArtificial, results?.nbHits]);
 
   return null;
@@ -313,7 +310,7 @@ const GroupedCurrentRefinements = () => {
   const { items, refine } = useCurrentRefinements();
   if (items.length === 0) return null;
   return (
-    <div className="w-full flex flex-wrap gap-y-2 gap-x-2 mt-2 mb-3">
+    <div className="w-full flex flex-wrap gap-y-2 gap-x-2">
       {items.map((category) => (
         <div key={category.attribute} className="flex flex-wrap items-center gap-[0.5px] bg-transparent">
           {category.refinements.map((refinement) => (
@@ -324,9 +321,9 @@ const GroupedCurrentRefinements = () => {
               <span className="cursor-pointer tracking-wider font-light">{refinement.label}</span>
               <button
                 onClick={() => refine(refinement)}
-                className="text-gray-400 ml-2 hover:text-gray-950 focus:outline-none flex items-center justify-center cursor-pointer"
+                className="ml-2 hover:text-gray-950 focus:outline-none flex items-center justify-center cursor-pointer"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
           ))}
@@ -374,7 +371,7 @@ const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string
 
 
   return (
-    <div  ref={dropdownRef} className="relative">
+    <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setOpen(!open)}
         className={selectClasses}
@@ -641,13 +638,22 @@ function useStartSync(
 // ── CHANGED: measure the Header height dynamically so the two-column layout
 // fills exactly the remaining viewport without hardcoding a pixel offset.
 function useHeaderHeight() {
-  const [height, setHeight] = useState(0);
+  const [height, setHeight] = useState(96);
   useEffect(() => {
-    const header = document.querySelector("header");
-    if (!header) return;
-    const ro = new ResizeObserver(() => setHeight(header.getBoundingClientRect().height));
-    ro.observe(header);
-    return () => ro.disconnect();
+    const update = () => {
+      const headers = document.querySelectorAll("header");
+      const visible = Array.from(headers).find((h) => h.getBoundingClientRect().height > 0);
+      if (visible) setHeight(visible.getBoundingClientRect().height);
+    };
+    update();
+
+    const ro = new ResizeObserver(update);
+    document.querySelectorAll("header").forEach((h) => ro.observe(h));
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
   }, []);
   return height;
 }
@@ -655,18 +661,15 @@ function useHeaderHeight() {
 // 1. Create a tiny layout wrapper component that sits inside the InstantSearch context
 const MainLayoutWrapper = ({
   children,
-  isHoveringFilters,
 }: {
   children: React.ReactNode;
-  isHoveringFilters: boolean;
 }) => {
   const { results } = useInstantSearch();
   const hasNoResults = !results?.__isArtificial && results?.nbHits === 0;
 
   return (
     <main
-      className={`bg-background ${isHoveringFilters || hasNoResults ? "overflow-hidden h-screen" : "min-h-screen"
-        }`}
+      className={`bg-background ${hasNoResults ? "overflow-hidden h-screen" : "min-h-screen"}`}
     >
       {children}
     </main>
@@ -682,8 +685,10 @@ const InventoryContent = () => {
 
   const [openFilter, setOpenFilter] = useState<string | null>("");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  const [isHoveringFilters, setIsHoveringFilters] = useState(false);
   const headerHeight = useHeaderHeight();
+
+  const sidebarTop = headerHeight + 21;
+  const sidebarMaxHeight = `calc(100vh - ${headerHeight + 33}px)`;
 
   // ── Scroll Management State ──
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -693,33 +698,11 @@ const InventoryContent = () => {
   useEffect(() => {
     const handleScroll = () => {
       const current = window.scrollY;
-
-      // Mobile
-      if (window.innerWidth < 1024) {
-        setShowScrollTop(current > 250);
-        return;
-      }
-
-      // Desktop (existing behavior)
-      const delta = current - lastScrollY.current;
-
-      if (Math.abs(delta) < 8) return;
-
-      if (current <= 250) {
-        isVisible.current = false;
-        setShowScrollTop(false);
-      } else if (delta < 0) {
-        isVisible.current = true;
-        setShowScrollTop(true);
-      } else {
-        isVisible.current = false;
-        setShowScrollTop(false);
-      }
-
-      lastScrollY.current = current;
+      setShowScrollTop(current > 0);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // set correct state on mount too
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -790,127 +773,109 @@ const InventoryContent = () => {
       <Configure hitsPerPage={21} />
 
       {/* Put the layout wrapper here, safe inside InstantSearch context! */}
-      <MainLayoutWrapper isHoveringFilters={isHoveringFilters}>
+      <MainLayoutWrapper>
         {/* ── Header ── */}
-        <div className="bg-hero-bg sticky top-0 z-40">
+        <div className="w-full bg-hero-bg">
           <Header />
+          <div className="hidden lg:block" style={{ height: headerHeight }} aria-hidden />
         </div>
 
-        {/* ── Main content layout container ── */}
-        <section className="bg-[#efefef] min-h-screen px-3 lg:px-14 py-[20px]">
-          <div className="flex flex-col lg:flex-row items-start max-w-[1550px] mx-auto gap-5">
+        {/* ── Two-column layout (sidebar sits outside results bg so it slides under header) ── */}
+        <div className="bg-[#efefef] lg:-mt-4 min-h-screen px-3 lg:px-14 py-[20px] overflow-visible">
+          <div className="flex flex-col lg:flex-row items-start max-w-[1550px] mx-auto gap-5 overflow-visible">
             {/* ── Filter Sidebar ── */}
             <aside
-              onMouseEnter={() => setIsHoveringFilters(true)}
-              onMouseLeave={() => setIsHoveringFilters(false)}
               className={[
                 "hidden",
-                "lg:flex lg:flex-col",
-                "lg:shrink-0 lg:w-[320px]",
+                "lg:block lg:shrink-0 lg:w-[320px]",
                 "2xl:w-[360px]",
-                "lg:sticky lg:top-[117px]",
-                "max-h-[calc(100vh-130px)] overflow-y-auto",
-                "[&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar-track]:hidden",
-                "lg:[scrollbar-width:none] lg:[-ms-overflow-style:none]",
+                "lg:sticky lg:self-start lg:z-30",
               ].join(" ")}
+              style={{ top: sidebarTop }}
             >
-              <div className="bg-white border border-[#ddd] rounded-[15px] p-[15px] flex-1">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="bg-[#00af66] text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm">
-                    <CustomHitsCount />
+              <div
+                className={[
+                  "overflow-y-auto overscroll-contain",
+                  "[&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar-track]:hidden",
+                  "lg:[scrollbar-width:none] lg:[-ms-overflow-style:none]",
+                ].join(" ")}
+                style={{ maxHeight: sidebarMaxHeight }}
+              >
+                <div className="bg-white border border-[#ddd] rounded-[15px] p-[15px]">
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="bg-[#00af66] text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm">
+                      <CustomHitsCount />
+                    </div>
+                    <ClearRefinements
+                      classNames={{
+                        button: "text-[12px] mb-[15px] cursor-pointer font-bold text-black disabled:cursor-not-allowed",
+                      }}
+                      translations={{ resetButtonText: "Clear Filters" }}
+                    />
                   </div>
-                  <ClearRefinements
-                    classNames={{
-                      button: "text-[12px] mb-[15px] cursor-pointer font-bold text-black disabled:cursor-not-allowed",
-                    }}
-                    translations={{ resetButtonText: "Clear Filters" }}
-                  />
+                  {renderFilterGroups()}
                 </div>
-                {renderFilterGroups()}
               </div>
             </aside>
 
             {/* ── Results Column ── */}
-            <div id="results-column" className="w-full flex-1 min-w-0 min-h-[100vh] ">
+            <div id="results-column" className="w-full flex-1 mt-1 min-w-0 min-h-screen">
 
-              {/* ── SINGLE SMART CONTROL HEADER BAR ── */}
-              <div className="w-full min-h-[60px] mb-4 relative z-30">
-                <div
-                  className={[
-                    "transition-all duration-300 ease-in-out",
-                    "px-2 py-2",
-                    showScrollTop
-                      ? "lg:fixed top-[75px] left-4 right-4 pt-18 lg:pt-12 bg-[#efefef] md:left-auto md:ml-2 md:right-auto md:w-[calc(100%-32px)] lg:w-[calc(100%-380px)] 2xl:w-[calc(100%-420px)] lg:max-w-[1030px] 2xl:max-w-[1150px]  shadow-xl animate-in slide-in-from-top-4 z-40"
-                      : "relative w-full bg-transparent lg:pt-24"
-                  ].join(" ")}
-                >
-                  <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4 relative">
+              {/* ── Search + Sort bar (sticky below header) ── */}
+              <div
+                className="sticky z-40 bg-[#efefef] px-2 py-2"
+                // style={{ top: sidebarTop }}
+              >
+                <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
 
-                    {/* "Back to top" pill button (Only visible when floating up) */}
-                    <div
-                      className={[
-                        "hidden lg:block absolute right-52 -translate-x-1/2 top-16 lg:-top-1 z-50 transition-all duration-200",
-                        showScrollTop ? "opacity-100 scale-100 visible" : "opacity-0 scale-95 invisible"
-                      ].join(" ")}
-                    >
-                      <button
-                        onClick={scrollToTop}
-                        className="flex items-center cursor-pointer gap-2 bg-[#222] hover:bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full shadow-lg active:scale-95 transition-transform"
-                      >
-                        <ChevronUp className="h-4 w-4" />
-                        <span>Back to top</span>
-                      </button>
-                    </div>
-
-                    <div
-                      className={[
-                        "fixed lg:hidden inset-x-0 top-44 flex justify-center z-50 transition-all duration-200",
-                        showScrollTop
-                          ? "opacity-100 scale-100 visible"
-                          : "opacity-0 scale-95 invisible",
-                      ].join(" ")}
-                    >
-                      <button
-                        onClick={scrollToTop}
-                        className="flex items-center cursor-pointer gap-2 bg-[#222] hover:bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full shadow-lg active:scale-95 transition-transform"
-                      >
-                        <ChevronUp className="h-4 w-4" />
-                        <span>Back to top</span>
-                      </button>
-                    </div>
-
-                    {/* Search Input Box */}
-                    <div className="relative w-full lg:max-w-[440px]">
-                      <SearchBox
-                        classNames={{
-                          root: "w-full",
-                          form: "relative flex items-center",
-                          input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none transition-all focus:border-gray-400",
-                          submitIcon: "hidden",
-                          resetIcon: "hidden",
-                          loadingIcon: "hidden",
-                        }}
-                        placeholder="Search for Anything"
-                      />
-                      <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
-                    </div>
-
-                    <div className="w-full lg:w-auto flex items-center justify-between sm:justify-end gap-2 mt-1 lg:mt-0">
-                      <button
-                        type="button"
-                        onClick={() => setIsMobileFilterOpen(true)}
-                        className="flex lg:hidden items-center justify-center gap-2 h-[42px] px-4 rounded-[12px] border border-[#ddd] bg-white text-black text-[14px] font-bold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer shrink-0"
-                      >
-                        <Settings2 className="h-4 w-4" />
-                        <span>Filters</span>
-                      </button>
-
-                      <div className="flex items-start">
-                        <CustomSortBy sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)} />
+                  <div className="fixed inset-x-0 z-50 pointer-events-none" style={{ top: sidebarTop + 56 }}>
+                    <div className="max-w-[1550px] mx-auto px-3 lg:px-14">
+                      <div className="flex justify-center lg:pl-[340px] 2xl:pl-[380px]">
+                        <button
+                          onClick={scrollToTop}
+                          className={[
+                            "pointer-events-auto cursor-pointer flex items-center gap-2 bg-[#222] hover:bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full shadow-lg active:scale-95 transition-all duration-200",
+                            showScrollTop ? "opacity-100 scale-100 visible" : "opacity-0 scale-95 invisible",
+                          ].join(" ")}
+                        >
+                          <ChevronUp className="h-4 w-4" />
+                          <span>Back to top</span>
+                        </button>
                       </div>
                     </div>
-
                   </div>
+
+                  {/* Search Input Box */}
+                  <div className="relative w-full lg:max-w-[440px]">
+                    <SearchBox
+                      classNames={{
+                        root: "w-full",
+                        form: "relative flex items-center",
+                        input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] border border-[#ddd] shadow-none bg-white text-[14px] text-[#000] outline-none transition-all focus:border-gray-400",
+                        submitIcon: "hidden",
+                        resetIcon: "hidden",
+                        loadingIcon: "hidden",
+                      }}
+                      placeholder="Search for Anything"
+                    />
+                    <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
+                  </div>
+
+                  <div className="w-full lg:w-auto flex items-center justify-between sm:justify-end gap-2 mt-1 lg:mt-0">
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileFilterOpen(true)}
+                      className="flex lg:hidden items-center justify-center gap-2 h-[42px] px-4 rounded-[12px] border border-[#ddd] bg-white text-black text-[14px] font-bold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer shrink-0"
+                    >
+                      <Settings2 className="h-4 w-4" />
+                      <span>Filters</span>
+                    </button>
+
+                    <div className="flex items-start">
+                      <CustomSortBy sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)} />
+                    </div>
+                  </div>
+
                 </div>
               </div>
 
@@ -918,7 +883,7 @@ const InventoryContent = () => {
                 <GroupedCurrentRefinements />
               </div>
 
-              <div className="mb-4 mt-3">
+              <div className="mb-4 mt-3 px-2">
                 <SearchResultsWrapper>
                   <NoResultsHandler>
                     <CustomInfiniteHits hitComponent={HitCard} />
@@ -952,7 +917,7 @@ const InventoryContent = () => {
               <div className="flex-1">{renderFilterGroups()}</div>
             </div>
           </div>
-        </section>
+        </div>
       </MainLayoutWrapper>
     </InstantSearch>
   );

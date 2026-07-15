@@ -195,7 +195,7 @@ const Footer = () => {
           {" | "}
           <Link href="/terms-conditions" className="hover:text-white">Terms & Conditions</Link>
           {" | "}
-          <Link href={`${SITE_CONFIG?.api?.saasApi}api/website/sitemap`} className="hover:text-white">Site Map</Link>
+          <Link href="#" className="hover:text-white">Site Map</Link>
         </p>
       </div>
     </footer>
