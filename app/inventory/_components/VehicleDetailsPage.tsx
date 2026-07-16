@@ -4,7 +4,6 @@
    from Typesense by document ID
 ========================= */
 
-import { notFound } from "next/navigation";
 // Layout
 import { Header, Footer } from "@/components/layout";
 
@@ -36,24 +35,22 @@ const showSidebar = true;
 
 /* Page Component */
 export default async function VehicleDetailsPage({
-    params,
+    vehicleParam,
 }: {
-    params: Promise<{ vehicle: string }>;
+    vehicleParam: string;
 }) {
+    const firstDash = vehicleParam.indexOf("-");
+    if (firstDash === -1) return null;
+
     const appConfig = await getAppConfig();
     const { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } = getConstants(appConfig);
-
-    const { vehicle: vehicleParam } = await params;
-
-    const firstDash = vehicleParam.indexOf("-");
-    if (firstDash === -1) notFound();
 
     const id = vehicleParam.substring(0, firstDash);
     // slug available if you want canonical validation
     const slug = vehicleParam.substring(firstDash + 1);
 
     const vehicle = await getVehicleById(id, appConfig);
-    if (!vehicle) notFound();
+    if (!vehicle) return null;
 
     const description = vehicle?.vehicle_description?.replace(/_{10,}/g, "<hr />");
 
