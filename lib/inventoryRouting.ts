@@ -66,6 +66,91 @@ const PATH_ATTRIBUTES = [
 ] as const;
 type PathFilters = Partial<Record<(typeof PATH_ATTRIBUTES)[number], string[]>>;
 
+function isInventoryListingPath(pathname: string) {
+  const segments = pathname.replace(/^\/inventory\/?/, "").split("/").filter(Boolean);
+  if (!segments.length) return pathname === "/inventory" || pathname === "/inventory/";
+
+  // Vehicle detail links begin with an inventory ID (for example 3019-...);
+  // listing paths may begin with a four-digit vehicle year.
+  const firstToken = segments[0].split("-", 1)[0];
+  const numericValue = Number(firstToken);
+  return !/^\d+$/.test(firstToken) || (numericValue >= 1900 && numericValue <= 2100);
+}
+
+const titleCase = (value: string) => value
+  .split("-")
+  .filter(Boolean)
+  .map((part) => {
+    const acronyms: Record<string, string> = { bmw: "BMW", gmc: "GMC", ram: "RAM", suv: "SUV" };
+    return acronyms[part.toLowerCase()] || `${part.charAt(0).toUpperCase()}${part.slice(1)}`;
+  })
+  .join(" ");
+
+function readPathOnlyFilters(segments: string[], refinementList: PlainObject) {
+  const set = (attribute: keyof PathFilters, value: string) => {
+    if (value && !refinementList[attribute]) refinementList[attribute] = [titleCase(value)];
+  };
+  const [vehicleSegment, detailSegment] = segments.map(decodeURIComponent);
+  if (!vehicleSegment) return;
+
+  let remainingVehicle = vehicleSegment;
+  const yearMatch = remainingVehicle.match(/^(19\d{2}|20\d{2})(?:-|$)/);
+  if (yearMatch) {
+    set("year", yearMatch[1]);
+    remainingVehicle = remainingVehicle.slice(yearMatch[0].length);
+  }
+
+  const bodyTypes = ["sport-utility-vehicle", "suv-crossover", "pickup-truck", "hatchback", "convertible", "minivan", "sedan", "coupe", "truck", "van", "suv"];
+  const bodyType = bodyTypes.find((value) => remainingVehicle === value || remainingVehicle.endsWith(`-${value}`));
+  if (bodyType) {
+    set("body_type", bodyType);
+    remainingVehicle = remainingVehicle.slice(0, -bodyType.length).replace(/-$/, "");
+  }
+
+  const makes = ["mercedes-benz", "aston-martin", "land-rover", "volkswagen", "mitsubishi", "chevrolet", "cadillac", "chrysler", "hyundai", "infiniti", "jaguar", "mazda", "nissan", "subaru", "toyota", "acura", "audi", "bmw", "buick", "dodge", "ford", "gmc", "honda", "jeep", "kia", "lexus", "lincoln", "ram", "volvo"];
+  const make = makes.find((value) => remainingVehicle === value || remainingVehicle.startsWith(`${value}-`));
+  if (make) {
+    set("make", make);
+    set("model", remainingVehicle.slice(make.length).replace(/^-/, ""));
+  } else if (!yearMatch && !detailSegment) {
+    // The established one-segment location form: /inventory/cardora-brampton
+    if (vehicleSegment.toLowerCase().startsWith("cardora-")) set("location", vehicleSegment);
+    else set("make", vehicleSegment);
+  }
+
+  if (!detailSegment) return;
+  let remainingDetail = detailSegment;
+  const vehicleTypes = ["certified-pre-owned", "used", "new"];
+  const vehicleType = vehicleTypes.find((value) => remainingDetail === value || remainingDetail.startsWith(`${value}-`));
+  if (vehicleType) {
+    set("vehicle_type", vehicleType);
+    remainingDetail = remainingDetail.slice(vehicleType.length).replace(/^-/, "");
+  }
+
+  // Locations are serialized last. Cardora locations have a stable prefix,
+  // which lets us separate them even when a colour has multiple words (such
+  // as "Brilliant Red") and is not in a predefined colour list.
+  const cardoraLocationStart = remainingDetail.indexOf("cardora-");
+  const location = cardoraLocationStart >= 0
+    ? remainingDetail.slice(cardoraLocationStart).replace(/^-$/, "")
+    : "";
+  if (cardoraLocationStart >= 0) {
+    remainingDetail = remainingDetail.slice(0, cardoraLocationStart).replace(/-$/, "");
+  }
+
+  const fuelTypes = ["gasoline-fuel", "diesel-fuel", "plug-in-hybrid", "flex-fuel", "hybrid", "electric"];
+  const fuelType = fuelTypes.find((value) => remainingDetail === value || remainingDetail.endsWith(`-${value}`));
+  if (fuelType) {
+    set("fuel_type", fuelType);
+    remainingDetail = remainingDetail === fuelType
+      ? ""
+      : remainingDetail.slice(0, -fuelType.length).replace(/-$/, "");
+  }
+  // The remaining prefix is the colour, regardless of how many words it has.
+  set("exterior_color", remainingDetail);
+  set("location", location);
+}
+
 const slugify = (value: string) =>
   value
     .trim()
@@ -193,6 +278,13 @@ function readRouteState(): PlainObject {
     });
   }
 
+  // A fresh request has no history state. Decode the canonical path values
+  // for any refinements not already supplied in the (non-path) query string.
+  const segments = window.location.pathname.replace(/^\/inventory\/?/, "").split("/").filter(Boolean);
+  if (!pathFilters && isInventoryListingPath(window.location.pathname)) {
+    readPathOnlyFilters(segments, refinementList);
+  }
+
   return route;
 }
 
@@ -244,7 +336,7 @@ export function createInventoryRouter(_config: AppConfig) {
   const notify = () => {
     // Once the user leaves inventory, this router must not restore an old
     // inventory URL over the destination page's URL.
-    if (!window.location.pathname.startsWith("/inventory")) return;
+    if (!isInventoryListingPath(window.location.pathname)) return;
     const route = readRouteState();
     previousRoute = route;
     if (window.location.pathname === "/inventory") {
@@ -259,7 +351,7 @@ export function createInventoryRouter(_config: AppConfig) {
 
     write(nextRoute: PlainObject) {
       if (typeof window === "undefined") return;
-      if (!window.location.pathname.startsWith("/inventory")) return;
+      if (!isInventoryListingPath(window.location.pathname)) return;
 
       pathFilters = getPathFilters(nextRoute);
 

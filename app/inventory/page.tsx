@@ -985,5 +985,5 @@ const InventoryContent = () => {
   );
 };
 
-const InventoryPage = () => <InventoryContent />;
+export const InventoryPage = () => <InventoryContent />;
 export default InventoryPage;
