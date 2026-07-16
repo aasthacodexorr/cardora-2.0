@@ -1,412 +1,292 @@
-/* =========================
-   Inventory Routing
-   Custom InstantSearch router + stateMapping that read/write
-   the URL format required by the client:
-
-   /inventory/?{collection_id}%2Fsort%2F{default_sort}%5Bquery%5D=HONDA
-   &{collection_id}%2Fsort%2F{default_sort}%5BrefinementList%5D%5Blocation%5D%5B0%5D=Cardora Brampton
-
-   i.e. every InstantSearch param key gets the literal prefix
-   "{collection_id}/sort/{default_sort}" stuck in front of it
-   (urlencoded), repeated on every single query param.
-
-   This file exports a `history()`-style custom router (via
-   instantsearch.js's createInfiniteHitsSessionStorageCache-free
-   plain router object) and a stateMapping, both meant to be
-   passed to <InstantSearch routing={{ router, stateMapping }} />.
-========================= */
-
 import { AppConfig } from "@/lib/appConfig";
 import type { UiState } from "instantsearch.js";
 
-// We will pass prefix and collection_id dynamically down from the config
-
-/* -------------------------------------------------------
-   Helpers to turn a nested object into bracketed query keys
-   and back, e.g.
-     { refinementList: { location: ["A","B"] }, query: "honda" }
-   <->
-     PREFIX[refinementList][location][0]=A
-     PREFIX[refinementList][location][1]=B
-     PREFIX[query]=honda
-------------------------------------------------------- */
-
 type PlainObject = Record<string, any>;
 
-// Recursively flatten an object into [bracketPath, value][] pairs.
-// bracketPath does NOT include the leading PREFIX, e.g. "[query]" or
-// "[refinementList][location][0]".
-function flatten(obj: PlainObject, prefix = ""): Array<[string, string]> {
-  const out: Array<[string, string]> = [];
+/**
+ * Public URL names. Typesense field names must never be written to the URL.
+ * Exported so inventoryUrls.ts (which builds links to /inventory from
+ * elsewhere in the site) uses these exact same keys instead of keeping its
+ * own copy — two copies had already drifted apart (year was "year" here but
+ * "years" there), which silently broke the year filter on any link built
+ * from that file.
+ */
+export const FILTER_KEYS: Record<string, string> = {
+  location: "locations",
+  vehicle_type: "vehicleTypes",
+  year: "year",
+  make: "makes",
+  model: "models",
+  exterior_color: "colors",
+  body_type: "bodyStyles",
+  transmission: "transmissions",
+  fuel_type: "fuelTypes",
+};
 
-  Object.keys(obj).forEach((key) => {
-    const value = obj[key];
-    const path = `${prefix}[${key}]`;
+export const RANGE_KEYS: Record<string, readonly [string, string]> = {
+  selling_price: ["priceLow", "priceHigh"],
+  odometer: ["odometerLow", "odometerHigh"],
+};
 
-    if (value === undefined || value === null || value === "") {
-      return;
-    }
-
-    if (Array.isArray(value)) {
-      value.forEach((item, i) => {
-        if (item === undefined || item === null || item === "") return;
-        out.push([`${path}[${i}]`, String(item)]);
-      });
-    } else if (typeof value === "object") {
-      out.push(...flatten(value, path));
-    } else {
-      out.push([path, String(value)]);
-    }
-  });
-
-  return out;
-}
-
-// Parse a flat list of [bracketPath, value] (bracketPath like
-// "[refinementList][location][0]") back into a nested object.
-function unflatten(pairs: Array<[string, string]>): PlainObject {
-  const root: PlainObject = {};
-
-  pairs.forEach(([path, value]) => {
-    // path looks like: [refinementList][location][0]
-    const keys = Array.from(path.matchAll(/\[([^\]]*)\]/g)).map((m) => m[1]);
-    if (keys.length === 0) return;
-
-    let node = root;
-    keys.forEach((key, idx) => {
-      const isLast = idx === keys.length - 1;
-      const nextKey = keys[idx + 1];
-      const nextIsArrayIndex = nextKey !== undefined && /^\d+$/.test(nextKey);
-
-      if (isLast) {
-        // If key is a numeric index, the parent should be an array.
-        if (/^\d+$/.test(key)) {
-          if (!Array.isArray(node)) {
-            // shouldn't normally happen, but guard anyway
-            return;
-          }
-          node[Number(key)] = value;
-        } else {
-          node[key] = value;
-        }
-      } else {
-        const containerKeyIsIndex = /^\d+$/.test(key);
-        if (containerKeyIsIndex) {
-          if (!Array.isArray(node)) return;
-          const idxNum = Number(key);
-          if (node[idxNum] === undefined) {
-            node[idxNum] = nextIsArrayIndex ? [] : {};
-          }
-          node = node[idxNum];
-        } else {
-          if (node[key] === undefined) {
-            node[key] = nextIsArrayIndex ? [] : {};
-          }
-          node = node[key];
-        }
-      }
-    });
-  });
-
-  return root;
-}
-
-/* -------------------------------------------------------
-   stateMapping: translates between InstantSearch's internal
-   uiState and the "route state" object the router persists.
-------------------------------------------------------- */
-
-export const createInventoryStateMapping = (config: AppConfig) => {
-  const TYPESENSE_COLLECTION_NAME = config.site.collection || "";
-  
-  return {
-  stateToRoute(uiState: UiState) {
-    const indexState = uiState[TYPESENSE_COLLECTION_NAME] || {};
-    const route: PlainObject = {};
-
-    if (indexState.query) {
-      route.query = indexState.query;
-    }
-    if (indexState.refinementList && Object.keys(indexState.refinementList).length) {
-      route.refinementList = indexState.refinementList;
-    }
-    if (indexState.range && Object.keys(indexState.range).length) {
-      route.range = indexState.range;
-    }
-
-    // ONLY add sortBy if it's different from the default
-    // This prevents the default sort from being written to the URL on initial load
-    if (indexState.sortBy && indexState.sortBy !== `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`) {
-      route.sortBy = indexState.sortBy;
-    }
- 
-
-    return route;
-  },
-
-  routeToState(routeState: PlainObject | undefined | null) {
-    // Always return explicit values (never "leave as-is") so that
-    // navigating to a URL with fewer/no params actually clears any
-    // refinements/query left over from a previous route, instead of
-    // InstantSearch merging and keeping stale state around.
-    // routeState can be undefined/null (e.g. called before any route has
-    // been read yet, or with an empty URL) - treat that as "no params".
-    const safeRouteState = routeState || {};
-
-    const indexState: PlainObject = {
-      query: safeRouteState.query || "",
-      refinementList: safeRouteState.refinementList || {},
-      range: safeRouteState.range || {},
-      // Don't set default sortBy from URL - only use it if it's explicitly in the URL
-      sortBy: safeRouteState.sortBy || `${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`,
-    };
-
-    return {
-      [TYPESENSE_COLLECTION_NAME]: indexState,
-    };
-  }
-}; // closes returned stateMapping object
-}; // closes createInventoryStateMapping arrow function
-
-/* -------------------------------------------------------
-   router: a minimal custom history-based router compatible
-   with InstantSearch's `routing.router` API:
-     - read(): RouteState
-     - write(routeState): void
-     - createURL(routeState): string
-     - onUpdate(callback): void
-     - dispose(): void
-------------------------------------------------------- */
-
-// Track if we just navigated to a clean inventory URL from the nav
-let preserveCleanUrl = false;
-
-export function setPreserveCleanInventoryUrl() {
-  preserveCleanUrl = true;
-}
-
-function parseUrlToRouteState(PREFIX: string): PlainObject {
-  if (typeof window === "undefined") return {};
-
-  const search = window.location.search.replace(/^\?/, "");
-  
-  // If URL has no query params, return clean state
-  if (!search) {
-    return {};
-  }
-
-  const rawPairs = search.split("&").filter(Boolean);
-  const encodedPrefix = encodeURIComponent(PREFIX);
-
-  const matchingPairs: Array<[string, string]> = [];
-
-  rawPairs.forEach((pair) => {
-    const eqIdx = pair.indexOf("=");
-    const rawKey = eqIdx === -1 ? pair : pair.slice(0, eqIdx);
-    const rawValue = eqIdx === -1 ? "" : pair.slice(eqIdx + 1);
-
-    // rawKey looks like: {encodedPrefix}%5Bquery%5D
-    // or decoded already in some browsers: {PREFIX}[query]
-    let bracketPath: string | null = null;
-
-    if (rawKey.startsWith(encodedPrefix)) {
-      bracketPath = decodeURIComponent(rawKey.slice(encodedPrefix.length));
-    } else if (rawKey.startsWith(PREFIX)) {
-      bracketPath = rawKey.slice(PREFIX.length);
-    } else {
-      // also handle the case where the whole key is already decoded
-      try {
-        const decodedKey = decodeURIComponent(rawKey);
-        if (decodedKey.startsWith(PREFIX)) {
-          bracketPath = decodedKey.slice(PREFIX.length);
-        }
-      } catch {
-        // ignore malformed component
-      }
-    }
-
-    if (bracketPath === null) return;
-
-    let value: string;
-    try {
-      value = decodeURIComponent(rawValue.replace(/\+/g, " "));
-    } catch {
-      value = rawValue;
-    }
-
-    matchingPairs.push([bracketPath, value]);
-  });
-
-  return unflatten(matchingPairs);
-}
-
-// Deeply sorts object keys and array values so two route states that are
-// semantically identical (but built in a different order) serialize to
-// the same JSON string for comparison purposes.
-function normalizeRouteState(value: any): any {
-  if (Array.isArray(value)) {
-    return value.map(normalizeRouteState).sort();
-  }
-  if (value && typeof value === "object") {
-    const out: PlainObject = {};
-    Object.keys(value)
-      .sort()
-      .forEach((key) => {
-        const normalized = normalizeRouteState(value[key]);
-        // Treat empty string/object/array the same as "absent" so e.g.
-        // {query: ""} matches {} - both mean "no query in the URL".
-        const isEmpty =
-          normalized === "" ||
-          normalized === undefined ||
-          normalized === null ||
-          (typeof normalized === "object" && Object.keys(normalized).length === 0);
-        if (!isEmpty) {
-          out[key] = normalized;
-        }
-      });
-    return out;
-  }
-  return value;
-}
-
-function routeStateToSearch(routeState: PlainObject, PREFIX: string): string {
-  const pairs = flatten(routeState);
-  if (pairs.length === 0) return "";
-
-  const encodedPrefix = encodeURIComponent(PREFIX);
-
-  const parts = pairs.map(([bracketPath, value]) => {
-    const encodedPath = bracketPath
-      .replace(/\[/g, "%5B")
-      .replace(/\]/g, "%5D");
-    return `${encodedPrefix}${encodedPath}=${encodeURIComponent(value)}`;
-  });
-
-  return parts.join("&");
-}
-
-// Module-level flag: true only while OUR OWN write() is in the middle of
-// calling history.pushState. Lets the patched history methods below tell
-// "we changed the URL" apart from "something else (e.g. Next.js <Link>
-// navigation) changed the URL".
-let isInternalWrite = false;
-
-// We only want to patch history.pushState/replaceState ONCE per page,
-// no matter how many times createInventoryRouter() runs (e.g. on every
-// remount). A set of listener callbacks is notified on every call.
+let isInternalUrlWrite = false;
 let historyPatched = false;
-const externalChangeListeners = new Set<() => void>();
+const externalUrlListeners = new Set<() => void>();
 
-function ensureHistoryPatched() {
+function watchExternalUrlChanges() {
   if (historyPatched || typeof window === "undefined") return;
   historyPatched = true;
 
   const originalPushState = window.history.pushState.bind(window.history);
   const originalReplaceState = window.history.replaceState.bind(window.history);
+  const notify = () => externalUrlListeners.forEach((listener) => listener());
 
-  window.history.pushState = function patchedPushState(...args: Parameters<typeof originalPushState>) {
+  window.history.pushState = function (...args: Parameters<typeof originalPushState>) {
     const result = originalPushState(...args);
-    if (!isInternalWrite) {
-      externalChangeListeners.forEach((cb) => cb());
-    }
+    if (!isInternalUrlWrite) notify();
     return result;
   };
-
-  window.history.replaceState = function patchedReplaceState(
-    ...args: Parameters<typeof originalReplaceState>
-  ) {
+  window.history.replaceState = function (...args: Parameters<typeof originalReplaceState>) {
     const result = originalReplaceState(...args);
-    if (!isInternalWrite) {
-      externalChangeListeners.forEach((cb) => cb());
-    }
+    if (!isInternalUrlWrite) notify();
     return result;
   };
-
-  // Back/forward browser navigation
-  window.addEventListener("popstate", () => {
-    externalChangeListeners.forEach((cb) => cb());
-  });
+  window.addEventListener("popstate", notify);
 }
 
-export function createInventoryRouter(config: AppConfig) {
-  const COLLECTION_ID = config.site.collection || "";
-  const DEFAULT_SORT = "status_rank:asc,created_at:desc";
-  const PREFIX = `${COLLECTION_ID}/sort/${DEFAULT_SORT}`;
+const FILTER_ATTRIBUTES = Object.keys(FILTER_KEYS);
+const PATH_ATTRIBUTES = [
+  "year",
+  "make",
+  "model",
+  "body_type",
+  "vehicle_type",
+  "exterior_color",
+  "fuel_type",
+  "location",
+] as const;
+type PathFilters = Partial<Record<(typeof PATH_ATTRIBUTES)[number], string[]>>;
 
-  let writeTimer: ReturnType<typeof setTimeout> | null = null;
-  let updateCallback: ((route: PlainObject) => void) | null = null;
-  let lastSearch = typeof window !== "undefined" ? window.location.search : "";
+const slugify = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
-  ensureHistoryPatched();
+function routeValue(value: string) {
+  return encodeURIComponent(slugify(value));
+}
 
-  const onExternalChange = () => {
-    if (typeof window === "undefined") return;
-    if (window.location.search === lastSearch) return;
-    lastSearch = window.location.search;
-     if (updateCallback) {
-    updateCallback(parseUrlToRouteState(PREFIX));
+// Use hyphens instead of %20, while retaining enough information to restore
+// the exact facet value. A literal hyphen becomes "--" before spaces become
+// "-", so "SUV-Crossover" and "Sport Utility Vehicle" stay distinct.
+export function queryValue(value: string) {
+  return encodeURIComponent(value.replace(/-/g, "--").replace(/ /g, "-"));
+}
+
+function parseQueryValue(value: string) {
+  return value.replace(/--/g, "\u0000").replace(/-/g, " ").replace(/\u0000/g, "-");
+}
+
+function getRangeBounds(value: unknown): [unknown, unknown] {
+  if (Array.isArray(value)) return [value[0], value[1]];
+  if (typeof value === "string") {
+    const [low = "", high = ""] = value.split(":", 2);
+    return [low, high];
   }
+  return [undefined, undefined];
+}
+
+function getPathFilters(route: PlainObject): PathFilters {
+  const filters: PathFilters = {};
+  PATH_ATTRIBUTES.forEach((attribute) => {
+    const values = route.refinementList?.[attribute] || [];
+    if (values.length) filters[attribute] = values;
+  });
+  return filters;
+}
+
+function serializePublicUrl(route: PlainObject, pathFilters: PathFilters) {
+  const params: string[] = [];
+  const appended = new Set<string>();
+  const appendFacet = (attribute: string) => {
+    const values: string[] = route.refinementList?.[attribute] || [];
+    if (!values.length || pathFilters[attribute as keyof PathFilters]?.length) return;
+    params.push(`${FILTER_KEYS[attribute]}=${values.map(queryValue).join(",")}`);
+    appended.add(attribute);
+  };
+  const appendRange = (attribute: keyof typeof RANGE_KEYS, index: 0 | 1) => {
+    const [low, high] = getRangeBounds(route.range?.[attribute]);
+    const value = index === 0 ? low : high;
+    if (value !== undefined && value !== "") {
+      params.push(`${RANGE_KEYS[attribute][index]}=${encodeURIComponent(String(value))}`);
+    }
   };
 
-  externalChangeListeners.add(onExternalChange);
+  // Canonical query order, independent of the order in which filters were selected.
+  appendRange("selling_price", 0);
+  appendRange("odometer", 0);
+  appendFacet("transmission");
+  appendRange("selling_price", 1);
+  appendRange("odometer", 1);
+  FILTER_ATTRIBUTES.forEach((attribute) => {
+    if (!appended.has(attribute)) appendFacet(attribute);
+  });
+  if (route.query) params.push(`q=${encodeURIComponent(route.query)}`);
+  if (route.sortBy) params.push(`sort=${encodeURIComponent(route.sortBy)}`);
+  // Path segments are cosmetic only — they're never parsed back out of the
+  // URL text. The exact-case values that actually drive filtering always
+  // come from history.state (see readRouteState), or, on a fresh/external
+  // link, get derived from query params before being upgraded into a path
+  // (see the bootstrap block in createInventoryRouter). That's what makes it
+  // safe to lowercase-slugify them here for a clean, readable URL.
+  const pathValues = (attributes: readonly (keyof PathFilters)[]) =>
+    attributes
+      .map((attribute) => pathFilters[attribute]?.map(routeValue).join(","))
+      .filter((value): value is string => Boolean(value));
+  const vehicleSegments = pathValues(["year", "make", "model", "body_type"]);
+  const detailSegments = pathValues(["vehicle_type", "exterior_color", "fuel_type", "location"]);
+  const path = vehicleSegments.length
+    ? `/inventory/${vehicleSegments.join("-")}${detailSegments.length ? `/${detailSegments.join("-")}` : ""}`
+    : detailSegments.length
+      ? `/inventory/${detailSegments.join("-")}`
+      : "/inventory";
+  return params.length ? `${path}?${params.join("&")}` : path;
+}
+
+function readRouteState(): PlainObject {
+  if (typeof window === "undefined") return {};
+
+  const params = new URLSearchParams(window.location.search);
+  const refinementList: PlainObject = {};
+  const range: PlainObject = {};
+
+  for (const [attribute, key] of Object.entries(FILTER_KEYS)) {
+    const value = params.get(key);
+    if (value) refinementList[attribute] = value.split(",").filter(Boolean).map(parseQueryValue);
+  }
+
+  for (const [attribute, [lowKey, highKey]] of Object.entries(RANGE_KEYS)) {
+    const low = params.get(lowKey);
+    const high = params.get(highKey);
+    if (low !== null || high !== null) {
+      // React InstantSearch stores a range as "low:high".
+      range[attribute] = `${low || ""}:${high || ""}`;
+    }
+  }
+
+  const route: PlainObject = { refinementList, range };
+  const query = params.get("q");
+  const sortBy = params.get("sort");
+  if (query) route.query = query;
+  if (sortBy) route.sortBy = sortBy;
+
+  // The attribute of a bare path value cannot be inferred from the text alone
+  // ("black", for example, could be a colour, make or model). We retain this
+  // small piece of routing metadata in history state. It is never part of the
+  // visible URL and supports refresh/back/forward navigation in the browser.
+  const pathFilters = window.history.state?.__inventoryPathFilters as PathFilters | undefined;
+  if (pathFilters && window.location.pathname.startsWith("/inventory/")) {
+    PATH_ATTRIBUTES.forEach((attribute) => {
+      if (pathFilters[attribute]?.length) refinementList[attribute] = pathFilters[attribute];
+    });
+  }
+
+  return route;
+}
+
+export const createInventoryStateMapping = (config: AppConfig) => {
+  const indexName = config.site.collection || "";
+  const defaultSort = `${indexName}/sort/status_rank:asc,created_at:desc`;
 
   return {
-    read(): PlainObject {
-      return parseUrlToRouteState(PREFIX);
+    stateToRoute(uiState: UiState) {
+      const state = uiState[indexName] || {};
+      return {
+        query: state.query || undefined,
+        refinementList: state.refinementList || {},
+        range: state.range || {},
+        sortBy: state.sortBy && state.sortBy !== defaultSort ? state.sortBy : undefined,
+      };
     },
 
-    write(routeState: PlainObject) {
+    routeToState(routeState: PlainObject | undefined | null) {
+      const route = routeState || {};
+      return {
+        [indexName]: {
+          query: route.query || "",
+          refinementList: route.refinementList || {},
+          range: route.range || {},
+          sortBy: route.sortBy || defaultSort,
+        },
+      };
+    },
+  };
+};
+
+export function createInventoryRouter(_config: AppConfig) {
+  watchExternalUrlChanges();
+  let callback: ((route: PlainObject) => void) | null = null;
+  const initialRoute = readRouteState();
+  let previousRoute = initialRoute;
+  let pathFilters: PathFilters =
+    typeof window !== "undefined"
+      ? window.history.state?.__inventoryPathFilters || getPathFilters(initialRoute)
+      : {};
+
+  if (typeof window !== "undefined" && Object.keys(pathFilters).length && window.location.pathname === "/inventory") {
+    isInternalUrlWrite = true;
+    window.history.replaceState({ ...initialRoute, __inventoryPathFilters: pathFilters }, "", serializePublicUrl(initialRoute, pathFilters));
+    isInternalUrlWrite = false;
+  }
+
+  const notify = () => {
+    // Once the user leaves inventory, this router must not restore an old
+    // inventory URL over the destination page's URL.
+    if (!window.location.pathname.startsWith("/inventory")) return;
+    const route = readRouteState();
+    previousRoute = route;
+    if (window.location.pathname === "/inventory") {
+      pathFilters = getPathFilters(route);
+    }
+    callback?.(route);
+  };
+  externalUrlListeners.add(notify);
+
+  return {
+    read: readRouteState,
+
+    write(nextRoute: PlainObject) {
       if (typeof window === "undefined") return;
+      if (!window.location.pathname.startsWith("/inventory")) return;
 
-      if (writeTimer) clearTimeout(writeTimer);
+      pathFilters = getPathFilters(nextRoute);
 
-      writeTimer = setTimeout(() => {
-        const search = routeStateToSearch(routeState, PREFIX);
-        const newSearch = search ? `?${search}` : "";
+      // This only updates the address bar; it does not navigate away from the
+      // already-mounted inventory page or create a page for every filter.
+      const url = serializePublicUrl(nextRoute, pathFilters);
+      const state = { ...nextRoute, __inventoryPathFilters: pathFilters };
 
-        // No-op if the URL wouldn't actually change. Compare normalized
-        // (parsed) route state rather than raw strings, since key
-        // ordering can differ between an externally-set URL and the one
-        // we'd generate for an equivalent state - a naive string compare
-        // would falsely detect a "change" and rewrite the URL anyway,
-        // causing a visible flicker.
-        const currentRouteState = parseUrlToRouteState(PREFIX);
-        const isSameState =
-          JSON.stringify(normalizeRouteState(currentRouteState)) ===
-          JSON.stringify(normalizeRouteState(routeState));
-
-        if (isSameState) {
-          lastSearch = window.location.search;
-          return;
-        }
-
-        const newUrl = `${window.location.pathname}${newSearch}`;
-        if (newSearch === window.location.search) {
-          return;
-        }
-
-        lastSearch = newSearch;
-
-        isInternalWrite = true;
-        console.count("history.write");
-        window.history.replaceState(routeState, "", newUrl);
-        isInternalWrite = false;
-      }, 150); 
+      previousRoute = nextRoute;
+      isInternalUrlWrite = true;
+      window.history.replaceState(state, "", url);
+      isInternalUrlWrite = false;
     },
 
-    createURL(routeState: PlainObject): string {
-      if (typeof window === "undefined") return "";
-      const search = routeStateToSearch(routeState, PREFIX);
-      return `${window.location.origin}${window.location.pathname}${search ? `?${search}` : ""}`;
+    createURL(routeState: PlainObject) {
+      // InstantSearch only uses this for links; write() is the canonical serializer.
+      const query = routeState.query ? `?q=${encodeURIComponent(routeState.query)}` : "";
+      return `${window.location.origin}/inventory${query}`;
     },
 
-    onUpdate(callback: (route: PlainObject) => void) {
-      updateCallback = callback;
+    onUpdate(nextCallback: (route: PlainObject) => void) {
+      callback = nextCallback;
     },
 
     dispose() {
-      if (writeTimer) clearTimeout(writeTimer);
-      externalChangeListeners.delete(onExternalChange);
+      externalUrlListeners.delete(notify);
+      callback = null;
     },
   };
 }

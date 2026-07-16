@@ -3,25 +3,17 @@
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { Search } from "lucide-react";
+import { getInventoryUrlByQuery } from "@/lib/inventoryUrls";
 
 const HeroSearchPanelContent = () => {
   const appConfig = useAppConfig();
-  const { COLLECTION_ID, DEFAULT_SORT } = getConstants(appConfig);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
-  // Parse [query] parameter from URL and populate search input
   useEffect(() => {
-    const rawQueryString = typeof window !== 'undefined' ? window.location.search : '';
-    
-    // Parse [query] from raw query string using regex
-    // Match both %5Bquery%5D= (URL-encoded) and [query]= (decoded)
-    const queryMatch = rawQueryString.match(/(?:%5Bquery%5D|\[query\])=([^&]*)/);
-    const q = queryMatch ? decodeURIComponent(queryMatch[1]) : "";
-    
+    const q = new URLSearchParams(window.location.search).get("q") || "";
     if (q) {
       setSearchQuery(q);
     }
@@ -33,7 +25,7 @@ const HeroSearchPanelContent = () => {
       return;
     }
 
-    router.push(`/inventory/?${encodeURIComponent(`${COLLECTION_ID}${DEFAULT_SORT}`)}%5Bquery%5D=${encodeURIComponent(searchQuery.trim())}`);
+    router.push(getInventoryUrlByQuery(searchQuery.trim(), appConfig));
   };
 
   return (
