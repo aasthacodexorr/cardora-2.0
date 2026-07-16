@@ -118,7 +118,7 @@ export default async function VehicleDetailsPage({
                                     </div>
                                     <div className="flex-shrink-0 w-full md:w-auto text-center">
                                         <div>
-                                            <a href={`/trade-in?inventory_id=${vehicle.id}`}
+                                            <a href={`/trade-in-my-car?inventory_id=${vehicle.id}`}
                                                 className="inline-block w-full md:w-auto bg-gradient-to-b from-[#00af66] to-[#00af66]/65 hover:opacity-90 shadow-md transition-opacity text-white text-lg font-semibold px-9 py-3.5 rounded-xl no-underline transition-all duration-200 text-center whitespace-nowrap">
                                                 Sell or trade in
                                             </a>

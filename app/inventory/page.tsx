@@ -27,6 +27,7 @@ import {
   useRange,
   useInstantSearch,
   useCurrentRefinements,
+  useRefinementList,
 } from "react-instantsearch";
 
 import { getTypesenseClient } from "@/lib/typesense";
@@ -333,6 +334,73 @@ const GroupedCurrentRefinements = () => {
   );
 };
 
+const SyncMakeModelRelationship = () => {
+  const { items, refine } = useCurrentRefinements();
+  const { hits } = useHits();
+  const { refine: refineMake } = useRefinementList({ attribute: "make" });
+  const resolvedMakeByModel = useRef(new Map<string, string>());
+  const previousMakeValues = useRef(new Set<string>());
+
+  useEffect(() => {
+    const modelItem = items.find((item) => item.attribute === "model");
+    const makeItem = items.find((item) => item.attribute === "make");
+    const modelRefinements = modelItem?.refinements ?? [];
+    const modelValues = new Set(modelRefinements.map((r) => String(r.value)));
+    const makeValues = new Set(
+      (makeItem?.refinements ?? []).map((r) => String(r.value))
+    );
+
+    const removedMakes = [...previousMakeValues.current].filter(
+      (make) => !makeValues.has(make)
+    );
+    const clearedThisPass = new Set<string>();
+    if (removedMakes.length) {
+      modelRefinements.forEach((modelRefinement) => {
+        const modelValue = String(modelRefinement.value);
+        const resolvedMake = resolvedMakeByModel.current.get(modelValue);
+        if (resolvedMake && removedMakes.includes(resolvedMake)) {
+          refine(modelRefinement);
+          resolvedMakeByModel.current.delete(modelValue);
+          clearedThisPass.add(modelValue);
+        }
+      });
+    }
+
+    // Forget bookkeeping for models that are no longer selected.
+    resolvedMakeByModel.current.forEach((_make, modelValue) => {
+      if (!modelValues.has(modelValue)) resolvedMakeByModel.current.delete(modelValue);
+    });
+
+    // Resolve the Make for any Model we haven't handled yet.
+    modelRefinements.forEach((modelRefinement) => {
+      const modelValue = String(modelRefinement.value);
+      if (clearedThisPass.has(modelValue)) return;
+      if (resolvedMakeByModel.current.has(modelValue)) return;
+
+      const hitForModel = hits.find((hit: any) => hit.model === modelValue);
+      const make = hitForModel?.make as string | undefined;
+
+      if (!make) {
+        if (makeValues.size === 1) {
+          resolvedMakeByModel.current.set(modelValue, [...makeValues][0]);
+        }
+        return;
+      }
+
+      resolvedMakeByModel.current.set(modelValue, make);
+
+      makeValues.forEach((existingMake) => {
+        if (existingMake !== make) refineMake(existingMake);
+      });
+      if (!makeValues.has(make)) refineMake(make);
+    });
+
+    previousMakeValues.current = makeValues;
+  }, [items, hits, refine, refineMake]);
+
+  return null;
+};
+
 const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string }[] }) => {
   const [open, setOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -574,8 +642,14 @@ const OdometerRangeFilter = () => {
   const [error, setError] = useState("");
   const [min, setMin] = useState("");
   const [max, setMax] = useState("");
+  const lastAppliedRange = useRef<readonly [number | undefined, number | undefined]>([undefined, undefined]);
 
-  useStartSync(start, setMin, setMax, true);
+  useEffect(() => {
+    const nextMin = start[0] ?? lastAppliedRange.current[0];
+    const nextMax = start[1] ?? lastAppliedRange.current[1];
+    setMin(nextMin === undefined ? "" : String(nextMin));
+    setMax(nextMax === undefined ? "" : String(nextMax));
+  }, [start]);
 
   const handleApply = () => {
     const minValue = min ? Number(min) : undefined;
@@ -589,6 +663,7 @@ const OdometerRangeFilter = () => {
       setError("Minimum odometer cannot be greater than maximum odometer");
       return;
     }
+    lastAppliedRange.current = [minValue, maxValue];
     refine([minValue, maxValue]);
   };
 
@@ -617,23 +692,6 @@ const OdometerRangeFilter = () => {
     </div>
   );
 };
-
-function useStartSync(
-  start: readonly [number | undefined, number | undefined],
-  setMin: (v: any) => void,
-  setMax: (v: any) => void,
-  asStrings = false
-) {
-  useEffect(() => {
-    if (asStrings) {
-      setMin(start[0] !== undefined ? String(start[0]) : "");
-      setMax(start[1] !== undefined ? String(start[1]) : "");
-    } else {
-      setMin(start[0] ?? "");
-      setMax(start[1] ?? "");
-    }
-  }, [start[0], start[1]]);
-}
 
 // ── CHANGED: measure the Header height dynamically so the two-column layout
 // fills exactly the remaining viewport without hardcoding a pixel offset.
@@ -769,6 +827,7 @@ const InventoryContent = () => {
         stateMapping,
       }}
     >
+      <SyncMakeModelRelationship />
       <ScrollToTopOnSearch />
       <Configure hitsPerPage={21} />
 
@@ -819,7 +878,7 @@ const InventoryContent = () => {
             </aside>
 
             {/* ── Results Column ── */}
-            <div id="results-column" className="w-full flex-1 mt-2 min-w-0 min-h-screen">
+            <div id="results-column" className="w-full flex-1 mt-3 min-w-0 min-h-screen">
 
               {/* ── Search + Sort bar (sticky below header) ── */}
               <div
@@ -828,7 +887,7 @@ const InventoryContent = () => {
               >
                 <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
 
-                  <div className="fixed inset-x-0 z-50 pointer-events-none" style={{ top: sidebarTop + 56 }}>
+                  <div className="fixed inset-x-0 z-50 pointer-events-none" style={{ top: sidebarTop + 26 }}>
                     <div className="max-w-[1550px] mx-auto px-3 lg:px-14">
                       <div className="flex justify-center lg:pl-[340px] 2xl:pl-[380px]">
                         <button
@@ -883,7 +942,7 @@ const InventoryContent = () => {
                 <GroupedCurrentRefinements />
               </div>
 
-              <div className="mb-4 mt-3 px-2">
+              <div className="mb-4  px-2">
                 <SearchResultsWrapper>
                   <NoResultsHandler>
                     <CustomInfiniteHits hitComponent={HitCard} />
