@@ -34,7 +34,7 @@ export default function ContactUs() {
 
                                 <div className="relative z-10">
                                     <h2 className="text-xl font-bold mb-1">Call us</h2>
-                                    <p className="text-gray-600">{appConfig.dealership.sales_number_1 || "Call Us Anytime Now"}</p>
+                                    <p className="text-gray-600">Call Us Anytime Now</p>
                                 </div>
 
                                 <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-[#00af66] flex items-center justify-center">
@@ -57,7 +57,7 @@ export default function ContactUs() {
 
                                 <div className="relative z-10">
                                     <h2 className="text-xl font-bold mb-1">Email</h2>
-                                    <p className="text-gray-600">{appConfig.dealership.email_1 || "Send Us an Email"}</p>
+                                    <p className="text-gray-600">Send Us an Email</p>
                                 </div>
 
                                 <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-[#00af66] flex items-center justify-center">

@@ -153,7 +153,7 @@ const Footer = () => {
                 <address className="not-italic text-[15px] leading-relaxed cursor-pointer">
                   {safeD.full_address_1},<br />
                   {safeD.city_1}, {safeD.province_1}<br />
-                  {safeD.postal_code_1} {safeD.country_1}
+                  {safeD.postal_code_1}
                 </address>
               </a>
             </div>

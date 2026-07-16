@@ -136,7 +136,7 @@ const Reviews = () => {
 
         <div className="flex justify-center items-center w-full sm:px-10 mb-7">
           <a
-            href="https://www.google.com"
+            href="https://www.google.com/search?q=cardora&oq=cardora&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIGCAEQRRg8MgYIAhBFGDwyDwgDEC4YChivARjHARiABDILCAQQABgKGAsYgAQyCwgFEAAYChgLGIAEMgsIBhAAGAoYCxiABDIGCAcQRRg80gEIMjgxMGowajeoAgiwAgHxBRTGNHBoyF19&sourceid=chrome&ie=UTF-8&zx=1764666449357&no_sw_cr=1#lrd=0x882b3f8957c9a033:0x9a07057d8dafccb0,1,,,,"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[16px] font-semibold text-foreground w-full md:w-auto"
