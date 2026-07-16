@@ -894,7 +894,10 @@ const InventoryContent = () => {
                           onClick={scrollToTop}
                           className={[
                             "pointer-events-auto cursor-pointer flex items-center gap-2 bg-[#222] hover:bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full shadow-lg active:scale-95 transition-all duration-200",
-                            showScrollTop ? "opacity-100 scale-100 visible" : "opacity-0 scale-95 invisible",
+                            "-translate-y-7 lg:translate-y-0",
+                            showScrollTop
+                              ? "opacity-100 scale-100 visible"
+                              : "opacity-0 scale-95 invisible",
                           ].join(" ")}
                         >
                           <ChevronUp className="h-4 w-4" />
