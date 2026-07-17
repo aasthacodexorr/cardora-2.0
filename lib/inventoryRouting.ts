@@ -28,6 +28,31 @@ export const RANGE_KEYS: Record<string, readonly [string, string]> = {
   odometer: ["odometerLow", "odometerHigh"],
 };
 
+// URL sort names are part of the public API and do not necessarily match the
+// Typesense fields used internally. Keep that translation in one place.
+const PUBLIC_SORT_FIELDS: Record<string, string> = {
+  selling_price: "price",
+};
+
+function getPublicSort(sortBy: unknown) {
+  if (typeof sortBy !== "string") return null;
+
+  const sortExpression = sortBy.split("/sort/")[1];
+  if (!sortExpression) return null;
+
+  const [field, direction] = sortExpression.split(",")[0].split(":", 2);
+  if (!field || !direction) return null;
+
+  return {
+    field: PUBLIC_SORT_FIELDS[field] || field,
+    direction: direction.toUpperCase(),
+  };
+}
+
+function getInternalSortField(field: string) {
+  return Object.entries(PUBLIC_SORT_FIELDS).find(([, publicField]) => publicField === field)?.[0] || field;
+}
+
 let isInternalUrlWrite = false;
 let historyPatched = false;
 const externalUrlListeners = new Set<() => void>();
@@ -219,7 +244,11 @@ function serializePublicUrl(route: PlainObject, pathFilters: PathFilters) {
     if (!appended.has(attribute)) appendFacet(attribute);
   });
   if (route.query) params.push(`q=${encodeURIComponent(route.query)}`);
-  if (route.sortBy) params.push(`sort=${encodeURIComponent(route.sortBy)}`);
+  const sort = getPublicSort(route.sortBy);
+  if (sort) {
+    params.push(`sortField=${encodeURIComponent(sort.field)}`);
+    params.push(`sortDirection=${encodeURIComponent(sort.direction)}`);
+  }
   // Path segments are cosmetic only — they're never parsed back out of the
   // URL text. The exact-case values that actually drive filtering always
   // come from history.state (see readRouteState), or, on a fresh/external
@@ -263,9 +292,17 @@ function readRouteState(): PlainObject {
 
   const route: PlainObject = { refinementList, range };
   const query = params.get("q");
+  const sortField = params.get("sortField");
+  const sortDirection = params.get("sortDirection")?.toUpperCase();
   const sortBy = params.get("sort");
   if (query) route.query = query;
-  if (sortBy) route.sortBy = sortBy;
+  if (sortField && (sortDirection === "ASC" || sortDirection === "DESC")) {
+    route.sortField = sortField;
+    route.sortDirection = sortDirection;
+  } else if (sortBy) {
+    // Continue accepting old shared links, but only write the new public format.
+    route.sortBy = sortBy;
+  }
 
   // The attribute of a bare path value cannot be inferred from the text alone
   // ("black", for example, could be a colour, make or model). We retain this
@@ -305,12 +342,15 @@ export const createInventoryStateMapping = (config: AppConfig) => {
 
     routeToState(routeState: PlainObject | undefined | null) {
       const route = routeState || {};
+      const sortBy = route.sortField && (route.sortDirection === "ASC" || route.sortDirection === "DESC")
+        ? `${indexName}/sort/${getInternalSortField(route.sortField)}:${route.sortDirection.toLowerCase()}`
+        : route.sortBy || defaultSort;
       return {
         [indexName]: {
           query: route.query || "",
           refinementList: route.refinementList || {},
           range: route.range || {},
-          sortBy: route.sortBy || defaultSort,
+          sortBy,
         },
       };
     },
