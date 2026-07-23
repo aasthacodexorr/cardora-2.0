@@ -1,6 +1,12 @@
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
 import { getAppConfig } from '@/lib/appConfig';
+import { generateMetadata as generateMetadataHelper } from '@/lib/metadataHelper';
+import type { Metadata } from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateMetadataHelper({ pageType: "privacy_policy" });
+}
 
 export default async function PrivacyPolicy() {
     const config = await getAppConfig();
