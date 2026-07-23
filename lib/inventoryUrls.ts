@@ -63,3 +63,22 @@ export async function getVehicleById(id: string, appConfig: AppConfig): Promise<
   const data = await res.json();
   return data.hits?.[0]?.document ?? null;
 }
+
+/**
+ * Shared server utility to fetch vehicle by slug for both metadata and page rendering
+ * Slug format: "{id}-{slug}"
+ * 
+ * @param slugArray - The slug array from params (e.g., ["12345-2023-honda-civic"])
+ * @param appConfig - The app configuration object
+ * @returns The vehicle document or null if not found
+ */
+export async function getVehicleBySlug(slugArray: string[], appConfig: AppConfig): Promise<Record<string, any> | null> {
+  if (!slugArray || slugArray.length === 0) return null;
+  
+  const vehicleParam = slugArray[0];
+  const firstDash = vehicleParam.indexOf("-");
+  if (firstDash === -1) return null;
+  
+  const id = vehicleParam.substring(0, firstDash);
+  return getVehicleById(id, appConfig);
+}
