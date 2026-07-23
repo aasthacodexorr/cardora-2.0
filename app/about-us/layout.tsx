@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { getAppConfig, getSafeDealershipConfig } from "@/lib/appConfig";
+import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const appConfig = await getAppConfig();
-  const safeD = getSafeDealershipConfig(appConfig.dealership);
-  
-  return {
-  title: `${safeD.dealership_name} | About Us`,
-  description: `Learn more about ${safeD.dealership_name} in ${safeD.city_1}, ${safeD.province_1}.`,
-};
+  return generateMetadataHelper({
+    pageType: "contact_us",
+    customTitle: "About Us",
+    customDescription: "Learn more about our dealership and our commitment to customer service."
+  });
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {

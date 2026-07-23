@@ -1,6 +1,12 @@
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
 import { getAppConfig } from '@/lib/appConfig';
+import { generateMetadata as generateMetadataHelper } from '@/lib/metadataHelper';
+import type { Metadata } from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateMetadataHelper({ pageType: "terms_and_conditions" });
+}
 
 export default async function TermsOfService() {
   const config = await getAppConfig();

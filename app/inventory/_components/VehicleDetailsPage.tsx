@@ -16,7 +16,7 @@ import { GetInTouch } from "@/components/common";
 
 // Config, assets & services
 import { getConstants } from "@/constants";
-import { getVehicleById } from "@/lib/inventoryUrls";
+import { getVehicleById, getVehicleBySlug } from "@/lib/inventoryUrls";
 import { stripHtml, parseImageUrls } from "@/utils/formatters";
 import { getAppConfig } from "@/lib/appConfig";
 
@@ -46,9 +46,8 @@ export default async function VehicleDetailsPage({
     const { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } = getConstants(appConfig);
 
     const id = vehicleParam.substring(0, firstDash);
-    // slug available if you want canonical validation
-    const slug = vehicleParam.substring(firstDash + 1);
-
+    
+    // Use the shared utility to fetch vehicle by ID
     const vehicle = await getVehicleById(id, appConfig);
     if (!vehicle) return null;
 
