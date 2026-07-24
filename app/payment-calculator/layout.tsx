@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
+import { getAppConfig } from "@/lib/appConfig";
 import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return generateMetadataHelper({ pageType: "payment_calculator" });
+  const appConfig = await getAppConfig();
+  return generateMetadataHelper({
+    title: appConfig.site.payment_calculator_page_title,
+    description: appConfig.site.payment_calculator_page_description,
+  });
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {

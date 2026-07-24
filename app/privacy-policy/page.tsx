@@ -5,7 +5,11 @@ import { generateMetadata as generateMetadataHelper } from '@/lib/metadataHelper
 import type { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {
-  return generateMetadataHelper({ pageType: "privacy_policy" });
+  const appConfig = await getAppConfig();
+  return generateMetadataHelper({
+    title: appConfig.site.privacy_policy_page_title,
+    description: appConfig.site.privacy_policy_page_description,
+  });
 }
 
 export default async function PrivacyPolicy() {

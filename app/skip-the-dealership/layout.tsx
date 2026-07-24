@@ -3,9 +3,8 @@ import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
-    pageType: "contact_us",
-    customTitle: "Skip the Dealership - Buy Your Car Online",
-    customDescription: "Buy your next car 100% online without the dealership hassle. Fast approvals, transparent pricing, and home delivery options available."
+    title: "Skip The Dealership | Buy Cars Online in Canada - Cardora",
+    description: "Buy your next car online without dealership pressure. Browse, finance, and get delivery across Canada with Cardora . Fast, simple, and transparent."
   });
 }
 

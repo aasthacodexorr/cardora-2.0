@@ -3,9 +3,8 @@ import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
-    pageType: "contact_us",
-    customTitle: "About Us",
-    customDescription: "Learn more about our dealership and our commitment to customer service."
+    title: "Why Cardora | Canada’s Smarter Way to Buy & Sell Cars",
+    description: "Learn more about our dealership and our commitment to customer service."
   });
 }
 

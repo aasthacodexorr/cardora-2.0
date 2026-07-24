@@ -6,7 +6,11 @@ import { getAppConfig } from "@/lib/appConfig";
 import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return generateMetadataHelper({ pageType: "home" });
+  const appConfig = await getAppConfig();
+  return generateMetadataHelper({
+    title: appConfig.site.home_page_title,
+    description: appConfig.site.home_page_description,
+  });
 }
 
 export default async function RootLayout({
