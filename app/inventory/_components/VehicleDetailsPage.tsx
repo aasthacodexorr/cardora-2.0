@@ -4,6 +4,8 @@
    from Typesense by document ID
 ========================= */
 
+import type { Metadata } from "next";
+
 // Layout
 import { Header, Footer } from "@/components/layout";
 
@@ -19,6 +21,7 @@ import { getConstants } from "@/constants";
 import { getVehicleById, getVehicleBySlug } from "@/lib/inventoryUrls";
 import { stripHtml, parseImageUrls } from "@/utils/formatters";
 import { getAppConfig } from "@/lib/appConfig";
+import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
 
 import doller from "@/assets/icons/doller-1.png";
 import protectShield from "@/assets/icons/trade-shield.png";
@@ -31,6 +34,52 @@ import CoverageModal from "@/components/inventory/CoverageModal";
 
 // Force dynamic rendering — vehicle data changes frequently
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}): Promise<Metadata> {
+  try {
+    const { slug } = await params;
+    const vehicleParam = slug?.[0] || "";
+    const firstDash = vehicleParam.indexOf("-");
+    
+    if (firstDash === -1) {
+      throw new Error("Invalid vehicle param");
+    }
+
+    const appConfig = await getAppConfig();
+    const id = vehicleParam.substring(0, firstDash);
+    const vehicle = await getVehicleById(id, appConfig);
+
+    if (!vehicle) {
+      throw new Error("Vehicle not found");
+    }
+
+    const titleTemplate = appConfig.site.vdp_page_title_template;
+    const descriptionTemplate = appConfig.site.vdp_page_description_template;
+
+    return generateMetadataHelper({
+      title: titleTemplate,
+      description: descriptionTemplate,
+      additionalReplacements: {
+        year: String(vehicle.year),
+        make: vehicle.make,
+        model: vehicle.model,
+        trim: vehicle.trim || "",
+        dynamic_price_placeholder: "$" + (vehicle.selling_price ? vehicle.selling_price.toLocaleString() : "0"),
+      },
+    });
+  } catch (error) {
+    // Fallback to default VDP metadata from config
+    const appConfig = await getAppConfig();
+    return generateMetadataHelper({
+      title: appConfig.site.vdp_page_title_template,
+      description: appConfig.site.vdp_page_description_template,
+    });
+  }
+}
 const showSidebar = true;
 
 /* Page Component */
