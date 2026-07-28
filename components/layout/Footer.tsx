@@ -18,6 +18,7 @@ import { fallbackValue, defaultAppConfig } from "@/lib/appConfig";
 
 import { POPULAR_MAKES, POPULAR_CAR_TYPES, getMakeUrl, getInventoryUrlByRefinement } from "@/lib/inventoryUrls";
 import { getConstants } from "@/constants";
+import { COLORS } from "@/lib/colors";
 
 /* Component */
 const Footer = () => {
@@ -90,7 +91,7 @@ const Footer = () => {
   const pathname = usePathname();
 
   return (
-    <footer className="w-full bg-[#121319] border-t-0 -mt-5 ">
+    <footer className={`w-full border-t-0 -mt-5`} style={{ backgroundColor: COLORS.component.footer.background }}>
       <div className="mx-auto max-w-[1600px] px-5 lg:px-10 pb-5">
 
         {/* Link columns grid */}

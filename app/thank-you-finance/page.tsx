@@ -4,6 +4,7 @@ import { GetInTouch } from "@/components/common";
 import { Footer, Header } from "@/components/layout";
 import { useAppConfig } from "../providers";
 import { getConstants } from "@/constants";
+import { COLORS } from "@/lib/colors";
 import { Lock, Mail, Smartphone, Smile } from "lucide-react";
 
 export default function ThankYouFinance() {
@@ -14,8 +15,9 @@ export default function ThankYouFinance() {
         <>
             <Header />
 
-            <div className="bg-gradient-to-b from-[#e6f4ff] to-white lg:mt-20 pt-14 lg:pt-28 lg:pb-14 px-4 pb-10 lg:px-44 w-full flex flex-col justify-center items-center">
-                <h1 className="lg:text-[40px] text-[26px] flex gap-2 text-center font-semibold text-[#00af66] leading-none">
+            <div className="lg:mt-20 pt-14 lg:pt-28 lg:pb-14 px-4 pb-10 lg:px-44 w-full flex flex-col justify-center items-center"
+              style={{ backgroundImage: `linear-gradient(to bottom, ${COLORS.background.prequalifyBlue}, white)` }}>
+                <h1 className="lg:text-[40px] text-[26px] flex gap-2 text-center font-semibold leading-none" style={{ color: COLORS.primary.green }}>
                     Congratulations! <Smile size={35}/>
                 </h1>
                 <p className="text-center font-medium max-w-2xl text-[17px] mt-4">Our smart approval system is now securely matching your profile with <strong>{SITE_CONFIG?.dealership?.name}'s trusted lender network</strong> to find the <strong>best possible approval.</strong></p>
@@ -31,7 +33,7 @@ export default function ThankYouFinance() {
             </div>
 
             <div className="mx-auto w-fit mb-20">
-                <ul className="flex flex-col items-center gap-[6px] text-[13px] font-light leading-[1.4] text-[#8c8c8c]">
+                <ul className="flex flex-col items-center gap-[6px] text-[13px] font-light leading-[1.4]" style={{ color: COLORS.neutral.mediumGray3 }}>
                     <li className="inline-flex items-center gap-[4px]">
                         <Lock size={15} strokeWidth={2} />
                         <span>Safe • Encrypted • Takes under a minute</span>

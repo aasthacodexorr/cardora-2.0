@@ -3,6 +3,7 @@
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
 import { useAppConfig } from '@/app/providers';
+import { COLORS } from '@/lib/colors';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -72,7 +73,7 @@ export default function PaymentCalculator() {
     return (
         <>
             <Header />
-            <div className="lg:mt-20 mx-auto px-5 lg:px-16 py-8 lg:py-12 bg-[#f4f4f4] shadow-sm font-sans text-gray-700">
+            <div className="lg:mt-20 mx-auto px-5 lg:px-16 py-8 lg:py-12 shadow-sm font-sans text-gray-700" style={{ backgroundColor: COLORS.neutral.lightGray2 }}>
                 <h1 className="text-3xl md:text-5xl font-bold mb-8 text-black">Payment Calculator</h1>
 
                 <div className=' bg-white'>
@@ -84,12 +85,13 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-black  text-base font-lg mb-1">Vehicle Price</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-[#999]">$</span>
+                                <span className="absolute left-3 top-[12px] text-xl font-light" style={{ color: COLORS.special.inputText }}>$</span>
                                 <input
                                     type="number"
                                     value={vehiclePrice || ''}
                                     onChange={(e) => setVehiclePrice(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 border border-[#c4c4c4] rounded-xl transition-all duration-200 outline-none  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl transition-all duration-200 outline-none  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    style={{ borderColor: COLORS.border.lightGray }}
                                 />
                             </div>
                         </div>
@@ -97,13 +99,14 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-black text-base font-lg mb-1">Down Payment</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-[#999]">$</span>
+                                <span className="absolute left-3 top-[12px] text-xl font-light" style={{ color: COLORS.special.inputText }}>$</span>
                                 <input
                                     type="number"
                                     value={downPayment || ''}
                                     onChange={(e) => setDownPayment(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 border border-[#c4c4c4] rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0.00"
+                                    style={{ borderColor: COLORS.border.lightGray }}
                                 />
                             </div>
                         </div>
@@ -111,13 +114,14 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-black text-base font-lg mb-1">Additional Fees</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-[#999]">$</span>
+                                <span className="absolute left-3 top-[12px] text-xl font-light" style={{ color: COLORS.special.inputText }}>$</span>
                                 <input
                                     type="number"
                                     value={additionalFees || ''}
                                     placeholder="0.00"
                                     onChange={(e) => setAdditionalFees(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 border border-[#c4c4c4] rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    style={{ borderColor: COLORS.border.lightGray }}
                                 />
                             </div>
                         </div>
@@ -125,13 +129,14 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-black text-base font-lg mb-1">Finance Fee</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-[#999]">$</span>
+                                <span className="absolute left-3 top-[12px] text-xl font-light" style={{ color: COLORS.special.inputText }}>$</span>
                                 <input
                                     type="number"
                                     value={financeFee || ''}
                                     placeholder="0.00"
                                     onChange={(e) => setFinanceFee(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 border border-[#c4c4c4] rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    style={{ borderColor: COLORS.border.lightGray }}
                                 />
                             </div>
                         </div>
@@ -139,12 +144,13 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-black text-base font-lg mb-1">Gap Fee</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-[#999]">$</span>
+                                <span className="absolute left-3 top-[12px] text-xl font-light" style={{ color: COLORS.special.inputText }}>$</span>
                                 <input
                                     type="number"
                                     value={gapFee || ''}
                                     onChange={(e) => setGapFee(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 border border-[#c4c4c4] rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    style={{ borderColor: COLORS.border.lightGray }}
                                 />
                             </div>
                         </div>
@@ -152,13 +158,14 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-black text-base font-lg mb-1">Warranty Cost</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-[#999]">$</span>
+                                <span className="absolute left-3 top-[12px] text-xl font-light" style={{ color: COLORS.special.inputText }}>$</span>
                                 <input
                                     type="number"
                                     value={warrantyCost || ''}
                                     onChange={(e) => setWarrantyCost(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 border border-[#c4c4c4] rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0.00"
+                                    style={{ borderColor: COLORS.border.lightGray }}
                                 />
                             </div>
                         </div>
@@ -173,10 +180,15 @@ export default function PaymentCalculator() {
                                                 key={m}
                                                 type="button"
                                                 onClick={() => setTerm(m)}
-                                                className={`px-7 py-3 text-sm font-medium rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] cursor-pointer border transition-all duration-200 border-slate-300 text-gray-700 hover:border-[#c4c4c4] ${term === m
-                                                        ? 'border-[#00af66] bg-gradient-to-b from-[#00af66] to-[#00af66a6] text-white border-none shadow-[0_4px_0_0_#00af66] md:shadow-[0_0_10px_rgba(0,0,0,0.1)] md:hover:shadow-[0_4px_0_0_#00af66]'
+                                                className={`px-7 py-3 text-sm font-medium rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] cursor-pointer border transition-all duration-200 border-slate-300 text-gray-700 ${term === m
+                                                        ? 'text-white border-none shadow-[0_0_10px_rgba(0,0,0,0.1)] md:shadow-[0_0_10px_rgba(0,0,0,0.1)]'
                                                         : 'hover:shadow-[0_4px_0_0_#00af66]'
                                                     }`}
+                                                style={term === m ? {
+                                                    borderColor: COLORS.primary.green,
+                                                    background: `linear-gradient(to bottom, ${COLORS.primary.green}, ${COLORS.primary.greenAlpha})`,
+                                                    boxShadow: `0 4px 0 0 ${COLORS.primary.green}`
+                                                } : undefined}
                                             >
                                                 {m}
                                             </button>
@@ -188,13 +200,14 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-black text-base font-lg mb-1">Trade-In Value</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-[#999]">$</span>
+                                <span className="absolute left-3 top-[12px] text-xl font-light" style={{ color: COLORS.special.inputText }}>$</span>
                                 <input
                                     type="number"
                                     value={tradeInValue || ''}
                                     onChange={(e) => setTradeInValue(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 border border-[#c4c4c4] rounded-xl focus:outline-none focus:ring-1 focus: -blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl focus:outline-none focus:ring-1 focus: -blue-400 focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0.00"
+                                    style={{ borderColor: COLORS.border.lightGray }}
                                 />
                             </div>
                         </div>
@@ -202,13 +215,14 @@ export default function PaymentCalculator() {
                         <div>
                             <label className="block text-black text-base font-lg mb-1">Existing vehicle loan balance</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-[#999]">$</span>
+                                <span className="absolute left-3 top-[12px] text-xl font-light" style={{ color: COLORS.special.inputText }}>$</span>
                                 <input
                                     type="number"
                                     value={loanBalance || ''}
                                     onChange={(e) => setLoanBalance(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 border border-[#c4c4c4] rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0.00"
+                                    style={{ borderColor: COLORS.border.lightGray }}
                                 />
                             </div>
                         </div>
@@ -229,10 +243,14 @@ export default function PaymentCalculator() {
                                             if (score === 'Fair') setApr(9.99);
                                             if (score === 'Poor') setApr(14.99);
                                         }}
-                                        className={`px-4 lg:px-6 py-2 border border-slate-300 rounded-xl text-sm font-medium transition-colors cursor-pointer ${creditScore === score
-                                                ? 'bg-gradient-to-b from-[#00af66] to-[#00af66a6] text-white border-none shadow-[0_4px_0_0_#00af66] md:shadow-none md:hover:shadow-[0_4px_0_0_#00af66]'
-                                                : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-[0_4px_0_0_#00af66]'
+                                        className={`px-4 lg:px-6 py-2 border rounded-xl text-sm font-medium hover:shadow-[0_4px_0_0_#00af66] transition-colors cursor-pointer ${creditScore === score
+                                                ? 'text-white border-none hover:shadow-[0_4px_0_0_#00af66]'
+                                                : 'bg-white text-gray-700 hover:bg-gray-50 border-slate-300'
                                             }`}
+                                        style={creditScore === score ? {
+                                            background: `linear-gradient(to bottom, ${COLORS.primary.green}, ${COLORS.primary.greenAlpha})`,
+                                            boxShadow: `0 4px 0 0 ${COLORS.primary.green}`
+                                        } : {}}
                                     >
                                         {score}
                                     </button>
@@ -250,7 +268,7 @@ export default function PaymentCalculator() {
                                     onChange={(e) => setApr(Number(e.target.value))}
                                     className="w-full pr-8 pl-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
-                                <span className="absolute right-3 top-[9px] text-[#999]">%</span>
+                                <span className="absolute right-3 top-[9px]" style={{ color: COLORS.special.inputText }}>%</span>
                             </div>
                         </div>
 
@@ -280,7 +298,7 @@ export default function PaymentCalculator() {
 
                             <Link href={"/finance"}>
 
-                            <button  className="w-full cursor-pointer bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:bg-[#0f9f6e] text-white font-semibold py-3 px-4 rounded-xl transition-colors shadow-sm mb-6">
+                            <button  className="w-full cursor-pointer text-white font-semibold py-3 px-4 rounded-xl transition-colors shadow-sm mb-6 hover:brightness-95" style={{ background: `linear-gradient(to bottom, ${COLORS.primary.green}, ${COLORS.primary.greenAlpha})` }}>
                                 Get pre-approved
                             </button>
                             
@@ -292,7 +310,7 @@ export default function PaymentCalculator() {
                         <div className=" ">
                             <label className="block text-base mb-2 text-left">Desired Bi-Weekly Payment</label>
                             <div className="relative mb-3">
-                                <span className="absolute left-3 top-[9px] text-[#999]">$</span>
+                                <span className="absolute left-3 top-[9px]" style={{ color: COLORS.special.inputText }}>$</span>
                                 <input
                                     type="number"
                                     value={desiredPayment}

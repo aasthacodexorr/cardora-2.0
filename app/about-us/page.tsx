@@ -17,6 +17,7 @@ import { motion, Variants } from "framer-motion";
 import { Header, Footer } from "@/components/layout";
 // Shared components
 import { GetInTouch } from "@/components/common";
+import { COLORS } from "@/lib/colors";
 import Image from "next/image";
 import about from "@/assets/icons/about.png";
 import blueCar from "@/assets/icons/cardora-blue-car.png";
@@ -128,7 +129,8 @@ const About = () => {
                       key={index}
                       variants={slideInLeft}
                       whileHover={{ y: -2, scale: 1.01, transition: { duration: 0.15 } }}
-                      className="flex items-center gap-3 bg-[#e6f4ff] rounded-full px-5 py-5 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.06)] cursor-default"
+                      className="flex items-center gap-3 rounded-full px-5 py-5 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.06)] cursor-default"
+                      style={{ backgroundColor: COLORS.background.prequalifyBlue }}
                     >
                       <Check className="h-5 w-5 text-emerald-600 flex-shrink-0" strokeWidth={2.5} />
                       <span className="text-base font-medium text-black">
@@ -154,7 +156,7 @@ const About = () => {
         </section>
 
         {/* 1. After-Sale Service Section: Image static, Text Block Animates up repeatedly */}
-        <section className="bg-[#eaeff5] py-16 md:py-20 px-0">
+        <section className="py-16 md:py-20 px-0" style={{ backgroundColor: COLORS.background.reviewBlue }}>
           <div className="mx-auto max-w-[1240px] px-6 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-12">
             
             {/* Left: Static Image Container */}

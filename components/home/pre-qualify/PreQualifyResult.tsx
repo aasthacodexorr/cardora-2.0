@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { motion, useMotionValue, useInView, animate } from "framer-motion";
+import { COLORS } from "@/lib/colors";
 import type { PreQualifyResultProps } from "./types";
 
 const PreQualifyResult = ({ biWeeklyPayment, rate, loanAmount }: PreQualifyResultProps) => {
@@ -42,17 +43,19 @@ const PreQualifyResult = ({ biWeeklyPayment, rate, loanAmount }: PreQualifyResul
       transition={{ duration: 0.5 }}
       className="flex flex-col items-center lg:mt-6 min-w-[229px]"
     >
-      <div className="w-full rounded-[10px] bg-[#e6f4ff] px-[15px] sm:px-[15px] pt-4 sm:pt-4 pb-[24px] sm:pb-[32px] text-center overflow-hidden border border-blue-100">
+      <div className="w-full rounded-[10px] px-[15px] sm:px-[15px] pt-4 sm:pt-4 pb-[24px] sm:pb-[32px] text-center overflow-hidden border border-blue-100"
+        style={{ backgroundColor: COLORS.background.prequalifyBlue }}>
         <p className="text-[16px] sm:text-[15px] tracking-wider mb-0 capitalize">
           Est. Bi-Weekly
         </p>
         <div 
           ref={textRef}
-          className="my-1 lg:mt-[5px] text-[55px] sm:text-[50px] font-semibold text-[#333] leading-none text-center font-[Poppins,sans-serif]"
-        >
+          className="my-1 lg:mt-[5px] text-[55px] sm:text-[50px] font-semibold leading-none text-center font-[Poppins,sans-serif]"
+          style={{ color: COLORS.neutral.darkGray2 }}>
           $0.00
         </div>
-        <div className="mt-3 sm:mt-3 inline-block rounded-md bg-[#00AF66] text-white px-4 sm:px-5 py-[4px] text-[16px] sm:text-[15px] font-semibold shadow-sm font-[Poppins,sans-serif]">
+        <div className="mt-3 sm:mt-3 inline-block rounded-md text-white px-4 sm:px-5 py-[4px] text-[16px] sm:text-[15px] font-semibold shadow-sm font-[Poppins,sans-serif]"
+          style={{ backgroundColor: COLORS.primary.green }}>
           at {rate.toFixed(2)}% APR
         </div>
       </div>
@@ -61,8 +64,11 @@ const PreQualifyResult = ({ biWeeklyPayment, rate, loanAmount }: PreQualifyResul
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         href="/financing"
-        className="mt-7 sm:mt-[10px] w-full min-w-full block text-center rounded-[10px] sm:rounded-[12px] border border-[#00b066] bg-gradient-to-b from-[#00af66] to-[#00af66]/75 text-white py-[12px] sm:py-[10px] text-[18px] sm:text-[16px] font-medium hover:opacity-90 lg:shadow-md transition-opacity"
-      >
+        className="mt-7 sm:mt-[10px] w-full min-w-full block text-center rounded-[10px] sm:rounded-[12px] text-white py-[12px] sm:py-[10px] text-[18px] sm:text-[16px] font-medium hover:opacity-90 lg:shadow-md transition-opacity"
+        style={{
+          border: `1px solid ${COLORS.primary.green2}`,
+          background: `linear-gradient(to bottom, ${COLORS.primary.green}, ${COLORS.primary.green}75)`
+        }}>
         Get pre-qualified
       </motion.a>
 

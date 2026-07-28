@@ -60,19 +60,8 @@ export const getConstants = (appConfig: AppConfig) => {
     working_hours: d.working_hours ?? defaultD.working_hours,
   };
 
-  const workingHours = safeD.working_hours ?? [];
-
-  const getHours = (day: string) =>
-    workingHours.find(({ day: d }: any) => d === day)?.hours ?? "Closed";
-
-  const mondayToFriday = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
-  const weekdayHours =
-    mondayToFriday.every((day) => getHours(day) === getHours("Monday"))
-      ? getHours("Monday")
-      : mondayToFriday.map((day) => `${day}: ${getHours(day)}`).join(", ");
-
   return {
+    // Contact info
     PHONE_NUMBER: safeD.sales_number_1 || safeD.toll_free_number_1,
     PHONE_HREF: `tel:${safeD.sales_number_1 || safeD.toll_free_number_1}`,
     PHONE_NUMBER_2: safeD.toll_free_number_2,
@@ -108,6 +97,7 @@ export const getConstants = (appConfig: AppConfig) => {
       googleReview: safeD.social_media_google_review,
     } as const,
 
+    // Business hours - keep hardcoded as before
     BUSINESS_HOURS_SALES: {
       weekdays: {
         label: "Mon-Fri",

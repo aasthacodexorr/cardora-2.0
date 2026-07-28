@@ -12,6 +12,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Image from "next/image";
+import { COLORS } from "@/lib/colors";
 
 import google from "@/assets/brand/google.png";
 import googleReview from "@/assets/brand/Goolge-Review-Logo.jpg";
@@ -128,7 +129,7 @@ const Reviews = () => {
   }, [slidesToShow]);
 
   return (
-    <section className="w-full bg-[#eaeff5] overflow-hidden mt-14">
+    <section className="w-full overflow-hidden mt-14" style={{ backgroundColor: COLORS.background.reviewBlue }}>
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 pt-12 lg:pt-16 pb-16">
         <h2 className="text-[26px] md:text-[44px] font-bold text-foreground tracking-tight leading-none text-center mb-5">
           People love buying with {SITE_CONFIG?.dealership.name}
@@ -141,7 +142,7 @@ const Reviews = () => {
             rel="noopener noreferrer"
             className="text-[16px] font-semibold text-foreground w-full md:w-auto"
           >
-            <div className="flex items-center justify-center gap-3 rounded-[40px] overflow-hidden border border-[#e2e2e2] bg-transparent shadow-none py-[10px] lg:px-4 px-6 lg:w-[500px] max-w-full flex-wrap">
+            <div className="flex items-center justify-center gap-3 rounded-[40px] overflow-hidden bg-transparent shadow-none py-[10px] lg:px-4 px-6 lg:w-[500px] max-w-full flex-wrap" style={{ border: `1px solid ${COLORS.neutral.mediumGray2}` }}>
               <Image src={google} alt="Google" className="h-[29px] w-[85px] object-contain" />
               <div className="flex items-center gap-1">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -179,7 +180,7 @@ const Reviews = () => {
                 >
                   <article className="rounded-2xl bg-card p-5 md:p-6 shadow-md flex flex-col h-full border border-border transition-shadow duration-300 hover:shadow-lg">
                     <div className="flex items-center gap-4">
-                      <div className="h-[65px] w-[65px] rounded-full bg-[#512da8] flex items-center justify-center text-white text-[35px] font-medium flex-shrink-0">
+                      <div className="h-[65px] w-[65px] rounded-full flex items-center justify-center text-white text-[35px] font-medium flex-shrink-0" style={{ backgroundColor: COLORS.special.avatarPurple }}>
                         {r.initial}
                       </div>
                       <div>

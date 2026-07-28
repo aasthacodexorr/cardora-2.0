@@ -2,6 +2,7 @@
 import { useAppConfig } from "@/app/providers";
 import { fallbackValue, defaultAppConfig } from "@/lib/appConfig";
 import { useState, useRef, useEffect } from "react";
+import { COLORS } from "@/lib/colors";
 
 const Terms = ({ vehicle }: any) => {
     const appConfig = useAppConfig();
@@ -107,10 +108,11 @@ const Terms = ({ vehicle }: any) => {
                         </button>
 
                         <div
-                            className={`absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-full sm:w-[420px] bg-[#222] text-white text-[12px] py-3 rounded-lg shadow-xl z-50 transition-all duration-200 ${showTermsTooltip
+                            className={`absolute bottom-full mb-3 left-1/2 -translate-x-1/2 w-full sm:w-[420px] text-white text-[12px] py-3 rounded-lg shadow-xl z-50 transition-all duration-200 ${showTermsTooltip
                                     ? "opacity-100 visible"
                                     : "opacity-0 invisible"
                                 } md:group-hover:opacity-100 md:group-hover:visible`}
+                            style={{ backgroundColor: COLORS.neutral.darkGray }}
                         >
                             <div className="lg:text-center text-start px-4 lg:px-0">
                                 <p className="font-bold underline mb-1 text-center">
@@ -126,7 +128,7 @@ const Terms = ({ vehicle }: any) => {
                                 
                             </div>
 
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-3 h-3 bg-[#222] rotate-45 -mt-1.5" />
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 -mt-1.5" style={{ backgroundColor: COLORS.neutral.darkGray }} />
                         </div>
                     </div>
 
