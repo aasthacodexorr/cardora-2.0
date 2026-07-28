@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { COLORS } from '@/lib/colors';
 
 export interface FAQItem {
   q?: string;
@@ -21,7 +22,8 @@ export default function FaqAccordion({ faqs }: { faqs: FAQItem[] }) {
         return (
           <div
             key={index}
-            className="border border-slate-200 rounded-lg overflow-hidden shadow-sm bg-[#e6f4ff] hover:shadow-md transition-all duration-300"
+            className="border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+            style={{ backgroundColor: COLORS.background.prequalifyBlue }}
           >
             <button
               onClick={() => setOpenIndex(isOpen ? null : index)}

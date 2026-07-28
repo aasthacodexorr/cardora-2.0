@@ -1,5 +1,6 @@
 import { INPUT_CLASS, LABEL_CLASS, LOAN_TERMS, APR_MAP } from "./constants";
 import type { PreQualifyFormProps } from "./types";
+import { COLORS } from "@/lib/colors";
 
 const PreQualifyForm = ({
   vehiclePrice,
@@ -98,11 +99,11 @@ const PreQualifyForm = ({
           }`}
         >
           <span
-            className={`inline-block h-5 w-5 cursor-pointer transform rounded-full transition-transform ${
-              includeTradeIn
-                ? "translate-x-6 bg-[#1bb776]"
-                : "translate-x-1 bg-[#1bb776]"
-            }`}
+            className="inline-block h-5 w-5 cursor-pointer transform rounded-full transition-transform"
+            style={{
+              backgroundColor: COLORS.primary.green,
+              transform: includeTradeIn ? 'translateX(24px)' : 'translateX(4px)'
+            }}
           />
         </button>
         <span className="text-[16px] font-medium text-foreground">Include Trade-In</span>

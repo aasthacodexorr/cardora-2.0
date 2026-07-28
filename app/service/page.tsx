@@ -29,6 +29,7 @@ import { Header, Footer } from "@/components/layout";
 // Shared components
 import { GetInTouch } from "@/components/common";
 import { fallbackValue, defaultAppConfig } from "@/lib/appConfig";
+import { COLORS } from "@/lib/colors";
 
 // Config
 import { getConstants } from "@/constants";
@@ -112,10 +113,6 @@ const containerVariants:Variants = {
     opacity: 1,
     transition: { staggerChildren: 0.1, delayChildren: 0.05 }
   }
-};
-
-const cardHover: Variants = {
-  hover: { y: -6, boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.08)", transition: { duration: 0.2, ease: "easeInOut" } }
 };
 
 const Service = () => {
@@ -234,7 +231,7 @@ const Service = () => {
                 <h3 className="text-xl md:text-[30px] font-bold text-gray-900">
                   Find the time that Works best for you.
                 </h3>
-                <Link href={"/book-an-appointment"} className="block text-center cursor-pointer text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-gradient-to-b from-[#00af66] to-[#00af66a6]">
+                <Link href={"/book-an-appointment"} className="block text-center cursor-pointer text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px]" style={{ background: `linear-gradient(to bottom, ${COLORS.primary.green}, ${COLORS.primary.greenAlpha})` }}>
                   <button className="w-full h-full cursor-pointer">
                     Schedule Online
                   </button>
@@ -276,7 +273,7 @@ const Service = () => {
                 className="w-full sm:w-[48%] md:w-[31%] lg:w-[19%] bg-white border-2 border-gray-100 rounded-2xl overflow-hidden flex flex-col justify-between shadow-sm group cursor-pointer"
               >
                 <Link href={id === "battery" ? "/book-an-appointment" : `/service/${id}`} className="h-full flex flex-col justify-between relative">
-                  <div className="absolute inset-0 bg-[#2f41390a] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" style={{ backgroundColor: COLORS.special.darkOverlay }} />
                   
                   <div className="relative z-20 pb-5 h-full flex flex-col justify-between">
                     <div>
@@ -327,14 +324,36 @@ const Service = () => {
             <motion.div variants={fadeInUp} className="w-full lg:flex-1 lg:min-w-0">
               <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-2">
                 {additionalServices.map(({ renderIcon: RenderIcon, label }) => (
-                  <Link
+                  <div
                     key={label}
-                    href="/book-an-appointment"
-                    className="shrink-0 inline-flex items-center gap-2 bg-white border border-[#00b066] hover:bg-gradient-to-b from-[#00af66] to-[#00af66a6] hover:text-white text-[#00b066] rounded-xl px-4 py-3 transition-all duration-150 hover:shadow-sm"
+                    className="shrink-0"
+                    onMouseEnter={(e) => {
+                      const link = e.currentTarget.querySelector('a') as HTMLAnchorElement;
+                      if (link) {
+                        link.style.background = `linear-gradient(to bottom, ${COLORS.primary.green}, ${COLORS.primary.greenAlpha})`;
+                        link.style.color = 'white';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      const link = e.currentTarget.querySelector('a') as HTMLAnchorElement;
+                      if (link) {
+                        link.style.background = 'white';
+                        link.style.color = COLORS.primary.green2;
+                      }
+                    }}
                   >
-                    <RenderIcon className="h-4 w-4 shrink-0" />
-                    <span className="text-sm whitespace-nowrap mt-[3px]">{label}</span>
-                  </Link>
+                    <Link
+                      href="/book-an-appointment"
+                      className="shrink-0 inline-flex items-center gap-2 bg-white rounded-xl px-4 py-3 transition-all duration-150 hover:shadow-sm hover:text-white text-white"
+                      style={{
+                        border: `1px solid ${COLORS.primary.green2}`,
+                        color: COLORS.primary.green2
+                      }}
+                    >
+                      <RenderIcon className="h-4 w-4 shrink-0" />
+                      <span className="text-sm whitespace-nowrap mt-[3px]">{label}</span>
+                    </Link>
+                  </div>
                 ))}
               </div>
             </motion.div>

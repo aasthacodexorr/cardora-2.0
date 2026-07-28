@@ -1,5 +1,24 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
+
+/* ════════════════════════════════════════════════════════════════
+   CSS Variables for Global Colors
+   These map to lib/colors.ts for centralized color management
+═════════════════════════════════════════════════════════════════ */
+:root {
+  /* Primary Colors */
+  --color-primary-green: #00af66;
+  --color-primary-green-dark: #05B169;
+  
+  /* Neutral Colors */
+  --color-neutral-white: #ffffff;
+  
+  /* Semantic Colors */
+  --color-slider-thumb: #10b981;
+  --color-shadow-green: rgba(16, 185, 129, 0.2);
+  --color-shadow-dark: rgba(0, 0, 0, 0.08);
+}
+
 .finance-slider {
   -webkit-appearance: none;
   appearance: none;
@@ -25,10 +44,10 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #ffffff;
-  border: 6px solid #10b981; 
+  background: var(--color-neutral-white);
+  border: 6px solid var(--color-slider-thumb);
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2), 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 10px var(--color-shadow-green), 0 2px 4px var(--color-shadow-dark);
   margin-top: 0px; /* Aligns thumb perfectly on center */
 }
 
@@ -37,10 +56,10 @@
   width: 20px; 
   height: 20px;
   border-radius: 50%;
-  background: #ffffff;
-  border: 6px solid #10b981;
+  background: var(--color-neutral-white);
+  border: 6px solid var(--color-slider-thumb);
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2), 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 10px var(--color-shadow-green), 0 2px 4px var(--color-shadow-dark);
 }
 
 .clip-ribbon {
