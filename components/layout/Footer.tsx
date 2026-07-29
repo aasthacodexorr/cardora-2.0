@@ -67,7 +67,7 @@ const Footer = () => {
       links: [
         { label: "Home", href: "/", external: false },
         { label: "Find Your Car", href: "/inventory", external: false },
-        { label: "Sell or Trade In", href: "/trade-in", external: false },
+        { label: "Sell or Trade In", href: "/trade-in-my-car", external: false },
         { label: "Car Finance", href: "/financing", external: false },
         { label: "Payment Calculator", href: "/payment-calculator", external: false },
         { label: "Skip the Dealership", href: "/skip-the-dealership", external: false },

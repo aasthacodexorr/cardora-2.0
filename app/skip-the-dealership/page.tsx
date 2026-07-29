@@ -73,17 +73,18 @@ export default function SkipTheDealership() {
                         >
                             <Link
                                 href="/inventory"
-                                className="bg-white px-8 py-3 rounded-xl shadow-sm hover:shadow-md hover:text-white transition-all duration-200"
+                                className="bg-white px-8 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
                                 style={{
-                                  color: COLORS.primary.green2,
-                                  borderWidth: '1px',
-                                  borderColor: COLORS.primary.green2
+                                    color: COLORS.primary.green2,
+                                    border: `1px solid ${COLORS.primary.green2}`,
                                 }}
                                 onMouseEnter={(e) => {
-                                  e.currentTarget.style.background = `linear-gradient(180deg,${COLORS.primary.greenAlpha},${COLORS.primary.green})`;
+                                    e.currentTarget.style.background = `linear-gradient(180deg, ${COLORS.primary.greenAlpha}, ${COLORS.primary.green})`;
+                                    e.currentTarget.style.color = "#fff";
                                 }}
                                 onMouseLeave={(e) => {
-                                  e.currentTarget.style.background = 'white';
+                                    e.currentTarget.style.background = "white";
+                                    e.currentTarget.style.color = COLORS.primary.green2;
                                 }}
                             >
                                 Browse Inventory
@@ -98,9 +99,11 @@ export default function SkipTheDealership() {
                                 }}
                                 onMouseEnter={(e) => {
                                   e.currentTarget.style.background = `linear-gradient(180deg,${COLORS.primary.greenAlpha},${COLORS.primary.green})`;
+                                  e.currentTarget.style.color = "#fff";
                                 }}
                                 onMouseLeave={(e) => {
                                   e.currentTarget.style.background = 'white';
+                                  e.currentTarget.style.color = COLORS.primary.green2;
                                 }}
                             >
                                 Get Pre-Approved
