@@ -57,51 +57,51 @@ const getSortItems = (collectionName: string) => [
   },
   {
     label: "Price (Low to High)",
-    value: `${collectionName}/sort/selling_price:asc`,
+    value: `${collectionName}/sort/status_rank:asc,selling_price:asc`,
   },
   {
     label: "Price (High to Low)",
-    value: `${collectionName}/sort/selling_price:desc`,
+    value: `${collectionName}/sort/status_rank:asc,selling_price:desc`,
   },
   {
     label: "Odometer (Low to High)",
-    value: `${collectionName}/sort/odometer:asc`,
+    value: `${collectionName}/sort/status_rank:asc,odometer:asc`,
   },
   {
     label: "Odometer (High to Low)",
-    value: `${collectionName}/sort/odometer:desc`,
+    value: `${collectionName}/sort/status_rank:asc,odometer:desc`,
   },
   {
     label: "Make (A - Z)",
-    value: `${collectionName}/sort/make_rank:asc`,
+    value: `${collectionName}/sort/status_rank:asc,make_rank:asc`,
   },
   {
     label: "Make (Z - A)",
-    value: `${collectionName}/sort/make_rank:desc`,
+    value: `${collectionName}/sort/status_rank:asc,make_rank:desc`,
   },
   {
     label: "Model (A - Z)",
-    value: `${collectionName}/sort/model_rank:asc`,
+    value: `${collectionName}/sort/status_rank:asc,model_rank:asc`,
   },
   {
     label: "Model (Z - A)",
-    value: `${collectionName}/sort/model_rank:desc`,
+    value: `${collectionName}/sort/status_rank:asc,model_rank:desc`,
   },
   {
     label: "Year (Low to High)",
-    value: `${collectionName}/sort/year:desc`,
+    value: `${collectionName}/sort/status_rank:asc,year:desc`,
   },
   {
     label: "Year (High to Low)",
-    value: `${collectionName}/sort/year:asc`,
+    value: `${collectionName}/sort/status_rank:asc,year:asc`,
   },
   {
     label: "Image Count (Low to High)",
-    value: `${collectionName}/sort/image_count:asc`,
+    value: `${collectionName}/sort/status_rank:asc,image_count:asc`,
   },
   {
     label: "Image Count (High to Low)",
-    value: `${collectionName}/sort/image_count:desc`,
+    value: `${collectionName}/sort/status_rank:asc,image_count:desc`,
   },
 ];
 
@@ -119,7 +119,7 @@ const FilterGroup = ({ title, children, isOpen, onToggle }: FilterGroupProps) =>
     <div className={`border-b border-border py-[7px] mb-0 last:border-b-0 first:border-t first:border-t-border transition-all duration-300 ${isOpen ? "pb-4" : ""}`}>
       <button onClick={onToggle} className="w-full cursor-pointer">
         <div className={`flex items-center justify-between rounded-[10px] px-[10px] py-[8px] transition-colors duration-200 hover:bg-gray-50 ${isOpen ? "bg-gray-100" : ""}`}>
-          <span className="text-[16px] font-medium tracking-[0.5px] text-left normal-case text-primary">
+          <span className="text-[16px] font-medium tracking-[0.5px] text-left normal-case">
             {title}
           </span>
           <ChevronDown
@@ -140,16 +140,6 @@ const FilterGroup = ({ title, children, isOpen, onToggle }: FilterGroupProps) =>
     </div>
   );
 };
-
-// ── CHANGED ──────────────────────────────────────────────────────────────
-// Previously this swapped the ENTIRE results grid for a skeleton on every
-// `status === "loading"` — but that status also fires while paginating
-// (showMore()), search-box typing, refinements, sort changes, etc. That
-// caused the whole card grid to disappear/reappear (the "blinking").
-// Now we only show the full-page skeleton when we don't have any hits yet
-// (i.e. a genuinely fresh search / initial load). Once hits exist, we let
-// the grid stay mounted and rely on CustomInfiniteHits' own inline loader
-// for pagination feedback instead of tearing down the whole results pane.
 const SearchResultsWrapper = ({ children }: { children: React.ReactNode }) => {
   const { status } = useInstantSearch();
   const { results } = useHits();
@@ -206,25 +196,12 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// ── CHANGED ──────────────────────────────────────────────────────────────
-// Pagination loading is now tracked with LOCAL state (`isLoadingMore`)
-// instead of the global InstantSearch `status`. That global status flips
-// to "loading"/"stalled" for lots of unrelated reasons (typing in the
-// search box, toggling a filter, changing sort) which was causing the
-// spinner / button to flicker even when the user wasn't paginating at all.
-//
-// `isLoadingMore` is only ever set true by an explicit showMore() call
-// (either from scrolling to the sentinel or tapping the button), and is
-// cleared as soon as the hits array actually grows — so it accurately
-// reflects "we're fetching the next page" and nothing else.
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   const { hits, isLastPage, showMore } = useInfiniteHits();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const prevHitsLength = useRef(hits.length);
-
-  // Clear the "loading more" flag once new hits have actually arrived
-  // (or once a fresh search reset the hits array).
+ 
   useEffect(() => {
     if (hits.length !== prevHitsLength.current) {
       setIsLoadingMore(false);
