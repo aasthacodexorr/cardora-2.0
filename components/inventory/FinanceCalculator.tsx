@@ -59,6 +59,19 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
   const [loanTerm, setLoanTerm] = useState<number>(appConfig.payment_calculator.duration / 12); // in years
   const [interestRate, setInterestRate] = useState<number>(appConfig.payment_calculator.interest_rate); // percentage
 
+  const min = 6;
+  const max = 15;
+
+  // Local text buffer for the interest rate input so users can freely type
+  // (e.g. clear the field, type "1", then "12", then "12.5") without the
+  // value being clamped/reformatted on every keystroke.
+  const [interestRateInput, setInterestRateInput] = useState<string>(interestRate.toFixed(2));
+
+  // Keep the text input in sync when the rate changes from the slider
+  useEffect(() => {
+    setInterestRateInput(interestRate.toFixed(2));
+  }, [interestRate]);
+
   // Calculation logic
   const loanAmount = Math.max(0, purchasePrice - depositAmount);
   const monthlyRate = interestRate / 100 / 12;
@@ -93,8 +106,29 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
     setDepositAmount(num);
   };
 
-  const min = 6;
-  const max = 15;
+  // Let the user type freely; only push a valid, clamped value into
+  // interestRate (and therefore into the slider/calculation) once the
+  // typed text parses to a real number.
+  const handleInterestRateInputChange = (value: string) => {
+    // Allow only digits and a single decimal point while typing
+    if (value !== "" && !/^\d*\.?\d*$/.test(value)) return;
+
+    setInterestRateInput(value);
+
+    const parsed = parseFloat(value);
+    if (!isNaN(parsed)) {
+      const clamped = Math.min(max, Math.max(min, parsed));
+      setInterestRate(clamped);
+    }
+  };
+
+  // On blur, snap the visible text to a valid, clamped, formatted value
+  const handleInterestRateBlur = () => {
+    const parsed = parseFloat(interestRateInput);
+    const valid = isNaN(parsed) ? interestRate : Math.min(max, Math.max(min, parsed));
+    setInterestRate(valid);
+    setInterestRateInput(valid.toFixed(2));
+  };
 
   const sliderPercent = ((interestRate - min) / (max - min)) * 100;
 
@@ -240,8 +274,23 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                   <label className="text-base text-black">Interest rate</label>
                   <p className="text-base text-black">Slide between 6% and 15%</p>
                 </div>
-                <div className="border border-gray-200 bg-white rounded-xl px-5 py-3 font-bold text-gray-900 flex items-center gap-0.5 shadow-sm text-xl">
-                  <span>{interestRate.toFixed(2)}</span>
+
+                {/* Editable interest rate input (replaces static display) */}
+                <div className="border border-gray-200 bg-white rounded-xl px-5 py-3 font-bold text-gray-900 flex items-center gap-0.5 shadow-sm text-xl focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/10 transition-all">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    aria-label="Interest rate percentage"
+                    value={interestRateInput}
+                    onChange={(e) => handleInterestRateInputChange(e.target.value)}
+                    onBlur={handleInterestRateBlur}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        (e.target as HTMLInputElement).blur();
+                      }
+                    }}
+                    className="w-14 text-right outline-none border-none bg-transparent p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
                   <span className="text-gray-500 font-medium text-sm ml-0.5">%</span>
                 </div>
               </div>
