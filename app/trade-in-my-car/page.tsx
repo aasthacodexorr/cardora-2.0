@@ -24,7 +24,6 @@ import { GetInTouch } from "@/components/common";
 // Assets
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
-import { COLORS } from "@/lib/colors";
 import sell from "@/assets/pages/sell.jpg";
 
 /* Static Data */
@@ -223,7 +222,7 @@ const TradeIn = () => {
                   <path
                     d="M 0,310 C 350,310 400,340 648,313 C 800,295 1000,270 1440,310"
                     fill="none"
-                    stroke={COLORS.primary.green3}
+                    stroke="var(--color-primary-green3)"
                     strokeWidth="12"
                     strokeLinecap="round"
                   />
@@ -235,8 +234,8 @@ const TradeIn = () => {
 
                 {/* Vertical Transparent Connector Bar Structure */}
                 <div className="relative h-28 w-[38px] flex items-center justify-center z-0">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00b074]/15 to-[#00b074]/20" />
-                  <div className="absolute inset-y-0 w-full bg-gradient-to-b from-[#dff8ed] via-[#a8ebc9] to-[#7ee0af]" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary-green2/15 to-primary-green2/20" />
+                  <div className="absolute inset-y-0 w-full bg-trade-gradient" />
                   <div className="absolute inset-y-4 w-[2px]">
                     <div
                       className="h-full w-full opacity-80"
@@ -250,11 +249,11 @@ const TradeIn = () => {
                 
                 {/* Anchor Marker Circle Dot */}
                 <div className="absolute top-[37%] z-20 flex items-center justify-center">
-                  <div className="h-6 w-6 rounded-full bg-white border-[3.5px] border-[#00b074] shadow-md" />
+                  <div className="h-6 w-6 rounded-full bg-white border-[3.5px] border-primary-green2 shadow-md" />
                 </div>
 
                 {/* Valuation Floating Popup Tag */}
-                <div className="bg-[#cdf5e3] text-center px-8 py-3 rounded-xl shadow-md border border-[#b2edd1]/40 mt-1 z-20">
+                <div className="bg-background-greenCard text-center px-8 py-3 rounded-xl shadow-md border border-background-greenGradientBorder/40 mt-1 z-20">
                   <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Jan 9, 2026</div>
                   <div className="text-xl font-black text-gray-900 mt-0.5">$18,400</div>
                 </div>
@@ -269,13 +268,9 @@ const TradeIn = () => {
             initial="hidden"
             animate="visible"
             variants={heroFormVariants}
-            className="rounded-2xl shadow-xl lg:mr-7 p-5 md:p-8 pb-12 md:pb-24 w-full max-w-[440px] lg:justify-self-end z-10"
-            style={{
-              backgroundColor: COLORS.neutral.white,
-              borderWidth: '1px',
-              borderColor: `${COLORS.neutral.lightGray}cc`
-            }}>
-            <div className="flex mb-6 cursor-pointer" style={{ borderBottomWidth: '1px', borderBottomColor: COLORS.neutral.mediumGray }}>
+            className="rounded-2xl shadow-xl lg:mr-7 p-5 md:p-8 pb-12 md:pb-24 w-full max-w-[440px] lg:justify-self-end z-10 bg-white border border-border-lightGray/80"
+          >
+            <div className="flex mb-6 cursor-pointer border-b border-border-standard">
               <button
                 onClick={() => setMode("vehicle")}
                 className={`flex-1 text-center pb-3 text-[16px] md:text-[18px] font-bold transition-all relative cursor-pointer ${
@@ -284,7 +279,7 @@ const TradeIn = () => {
               >
                 By Vehicle
                 {mode === "vehicle" && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full" style={{ backgroundColor: COLORS.primary.green2 }} />
+                  <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-brand2" />
                 )}
               </button>
 
@@ -296,7 +291,7 @@ const TradeIn = () => {
               >
                 VIN
                 {mode === "vin" && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#00b074] rounded-full" />
+                  <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-primary-green2 rounded-full" />
                 )}
               </button>
             </div>
@@ -331,7 +326,7 @@ const TradeIn = () => {
               <path
                 d="M 0,310 C 350,310 400,340 648,313 C 800,295 1000,270 1440,310"
                 fill="none"
-                stroke="#00b872"
+                stroke="var(--color-primary-green3)"
                 strokeWidth="12"
                 strokeLinecap="round"
               />
@@ -341,8 +336,8 @@ const TradeIn = () => {
           <div className="absolute bottom-0 left-1/2 -translate-x-16 flex flex-col items-center z-10">
             {/* Vertical Transparent Connector Bar */}
             <div className="relative h-96 w-[44px] flex items-end justify-center ">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent via-[#00b074]/15 to-[#00b074]/20" />
-              <div className="absolute inset-y-0 rounded-full bg-gradient-to-b from-[#dff8ed] via-[#a8ebc9] to-[#7ee0af]" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent via-primary-green2/15 to-primary-green2/20" />
+              <div className="absolute inset-y-0 rounded-full bg-trade-gradient" />
               <div className="absolute inset-y-6 w-[2px]">
                 <div
                   className="h-full w-full opacity-80"
@@ -356,13 +351,13 @@ const TradeIn = () => {
 
             {/* Marker */}
             <div className="absolute bottom-[29%] z-20 flex items-center justify-center">
-              <div className="h-8 w-8 rounded-full bg-white border-[4px] border-[#00b074] shadow-md" />
+              <div className="h-8 w-8 rounded-full bg-white border-[4px] border-primary-green2 shadow-md" />
             </div>
 
-            <div className="absolute top-full left-1/2 -mt-5 -translate-x-1/2 w-[44px] h-32 bg-gradient-to-b from-[#a8ebc9]/50 to-transparent" />
+            <div className="absolute top-full left-1/2 -mt-5 -translate-x-1/2 w-[44px] h-32 bg-gradient-to-b from-background-greenGradientMid/50 to-transparent" />
 
             {/* Valuation Floating Popup Tag */}
-            <div className="bg-[#cdf5e3] text-center px-9 py-4 rounded-xl shadow-md -translate-y-4 z-20">
+            <div className="bg-background-greenCard text-center px-9 py-4 rounded-xl shadow-md -translate-y-4 z-20">
               <div className="text-[10px] text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
               <div className="text-2xl font-semibold font-black text-gray-900 mt-0.5">$18,400</div>
             </div>
@@ -450,21 +445,17 @@ const TradeIn = () => {
               <motion.div 
                 key={faq.q} 
                 variants={fadeInUp}
-                className="border overflow-hidden"
-                style={{
-                  backgroundColor: COLORS.neutral.white,
-                  borderColor: COLORS.border.light
-                }}>
+                className="border overflow-hidden bg-white border-border-light"
+              >
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className={`w-full flex items-center justify-between px-4 md:px-6 text-left cursor-pointer transition-colors duration-200`}
-                  style={{
-                    backgroundColor: openFaq !== i ? COLORS.background.light : COLORS.neutral.white
-                  }}>
+                  className={`w-full flex items-center justify-between px-4 md:px-6 text-left cursor-pointer transition-colors duration-200 ${
+                    openFaq !== i ? "bg-background-light" : "bg-white"
+                  }`}
+                >
                   <span className={`font-bold leading-none transition-colors duration-200 ${
-                    openFaq !== i ? "py-5 md:py-6" : "py-4 md:py-5"
-                  } text-[18px] md:text-[20px] pr-4`}
-                    style={{ color: openFaq !== i ? COLORS.neutral.darkGray4 : COLORS.neutral.darkGray2 }}>
+                    openFaq !== i ? "py-5 md:py-6 text-neutral-darkGray4" : "py-4 md:py-5 text-neutral-darkGray2"
+                  } text-[18px] md:text-[20px] pr-4`}>
                     {faq.q}
                   </span>
                   <motion.div
@@ -485,9 +476,9 @@ const TradeIn = () => {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                      style={{ backgroundColor: COLORS.neutral.white }}>
-                      <div className="px-4 md:px-6 pb-5 text-[16px] md:text-[16px] leading-normal" style={{ color: COLORS.neutral.darkGray3 }}>
+                      className="overflow-hidden bg-white"
+                    >
+                      <div className="px-4 md:px-6 pb-5 text-[16px] md:text-[16px] leading-normal text-neutral-darkGray3">
                         {faq.a}
                       </div>
                     </motion.div>

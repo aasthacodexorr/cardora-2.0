@@ -16,9 +16,6 @@ import FinanceCalculator from "@/components/inventory/FinanceCalculator";
 // Shared components
 import { GetInTouch } from "@/components/common";
 
-// Color palette
-import { COLORS } from "@/lib/colors";
-
 // Config, assets & services
 import { getConstants } from "@/constants";
 import { getVehicleById, getVehicleBySlug } from "@/lib/inventoryUrls";
@@ -167,10 +164,7 @@ export default async function VehicleDetailsPage({
                                     <div className="flex-shrink-0 w-full md:w-auto text-center">
                                         <div>
                                             <a href={`/trade-in-my-car?inventory_id=${vehicle.id}`}
-                                                className="inline-block w-full md:w-auto hover:opacity-90 shadow-md transition-opacity text-white text-lg font-semibold px-9 py-3.5 rounded-xl no-underline transition-all duration-200 text-center whitespace-nowrap"
-                                                style={{
-                                                    background: `linear-gradient(to bottom, ${COLORS.primary.green}, rgba(0, 175, 102, 0.4))`
-                                                }}>
+                                                className="inline-block w-full md:w-auto hover:opacity-90 shadow-md transition-opacity text-white text-lg font-semibold px-9 py-3.5 rounded-xl no-underline transition-all duration-200 text-center whitespace-nowrap bg-brand-btn-gradient">
                                                 Sell or trade in
                                             </a>
                                         </div>
@@ -247,7 +241,7 @@ export default async function VehicleDetailsPage({
             </section>
 
             {/* Disclaimers & Info banner footer base */}
-            <div className="w-full text-left text-xs md:text-[12px] px-2 md:px-10 bg-[#666]/10 pt-10 pb-16 italic text-black">
+            <div className="w-full text-left text-xs md:text-[12px] px-2 md:px-10 bg-neutral-mediumDarkGray/10 pt-10 pb-16 italic text-black">
                 <div className="max-w-[1440px] xl:max-w-[1600px] mx-auto">
                     Every reasonable effort is made to ensure the accuracy of the information listed above. Vehicle pricing, incentives, options (including standard equipment), and technical specifications listed for the {vehicle.year} {vehicle.make} {vehicle.model} {vehicle.trim} may not match the exact vehicle displayed. {appConfig.site.inventory_pricing_verbage} Please confirm with a sales representative the accuracy of this information.
                 </div>

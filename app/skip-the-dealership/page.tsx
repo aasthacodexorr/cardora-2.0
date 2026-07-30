@@ -6,7 +6,6 @@ import { Check, FileText, Home, CarFront } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { Footer, Header } from '@/components/layout';
 import { GetInTouch } from '@/components/common';
-import { COLORS } from '@/lib/colors';
 import skipDeal from "@/assets/cards/skipDeal.png";
 import newWay from "@/assets/cards/newWay.png";
 import { getConstants } from '@/constants';
@@ -53,8 +52,8 @@ export default function SkipTheDealership() {
             <Header />
             <div className="w-full font-sans antialiased text-gray-900 selection:bg-yellow-200 lg:mt-20 overflow-hidden">
 
-                {/* 1. Hero / Banner Section: Buttons animate top-to-bottom */}
-                <section className="lg:py-18 py-9 px-4 text-center" style={{ backgroundColor: COLORS.special.highlightYellow }}>
+                {/* 1. Banner Section */}
+                <section className="lg:py-18 py-9 px-4 text-center bg-[var(--color-special-highlight-yellow)]">
                     <div className="max-w-4xl mx-auto">
                         <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
                             Skip the dealership.
@@ -73,38 +72,13 @@ export default function SkipTheDealership() {
                         >
                             <Link
                                 href="/inventory"
-                                className="bg-white px-8 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
-                                style={{
-                                    color: COLORS.primary.green2,
-                                    border: `1px solid ${COLORS.primary.green2}`,
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = `linear-gradient(180deg, ${COLORS.primary.greenAlpha}, ${COLORS.primary.green})`;
-                                    e.currentTarget.style.color = "#fff";
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = "white";
-                                    e.currentTarget.style.color = COLORS.primary.green2;
-                                }}
+                                className="bg-white px-8 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-brand2 text-brand2 hover:bg-brand-btn-gradient hover:text-white"
                             >
                                 Browse Inventory
                             </Link>
                             <Link
                                 href="/financing"
-                                className="bg-white px-8 py-3 rounded-xl shadow-sm hover:shadow-md hover:text-white transition-all duration-200"
-                                style={{
-                                  color: COLORS.primary.green2,
-                                  borderWidth: '1px',
-                                  borderColor: COLORS.primary.green2
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.background = `linear-gradient(180deg,${COLORS.primary.greenAlpha},${COLORS.primary.green})`;
-                                  e.currentTarget.style.color = "#fff";
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.background = 'white';
-                                  e.currentTarget.style.color = COLORS.primary.green2;
-                                }}
+                                className="bg-white px-8 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-brand2 text-brand2 hover:bg-brand-btn-gradient hover:text-white"
                             >
                                 Get Pre-Approved
                             </Link>
@@ -112,7 +86,7 @@ export default function SkipTheDealership() {
                     </div>
                 </section>
 
-                {/* 2. What Does Skip Mean: Text is static, Image slides/fades in from right */}
+                {/* 2. What Does Skip Mean */}
                 <section className="bg-white px-6 py-6 lg:py-16 lg:px-32">
                     <div className="mx-auto xl:max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                         <div>
@@ -165,8 +139,8 @@ export default function SkipTheDealership() {
                     </div>
                 </section>
 
-                {/* 3. The New Way to Buy a Car: Image is static, Feature Blocks Content animates up */}
-                <section className="py-1 px-4" style={{ backgroundColor: COLORS.background.lightBlue }}>
+                {/* 3. The New Way to Buy a Car */}
+                <section className="py-1 px-4 bg-light-blue">
                     <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-6 items-center py-5">
 
                         {/* Static Image Box */}
@@ -195,7 +169,7 @@ export default function SkipTheDealership() {
 
                             <div className="space-y-4">
                                 {/* Feature 1 */}
-                                <div className="bg-white p-5 rounded-xl shadow-sm flex justify-between items-start gap-4" style={{ borderWidth: '1px', borderColor: COLORS.component.shadow.light }}>
+                                <div className="bg-white p-5 rounded-xl shadow-sm flex justify-between items-start gap-4 border border-gray-100">
                                     <div>
                                         <h4 className="font-bold text-xl text-gray-900 mb-1">Choose Your Car</h4>
                                         <p className="text-base">Browse real inventory with transparent pricing.</p>
@@ -204,7 +178,7 @@ export default function SkipTheDealership() {
                                 </div>
 
                                 {/* Feature 2 */}
-                                <div className="bg-white p-5 rounded-xl shadow-sm flex justify-between items-start gap-4" style={{ borderWidth: '1px', borderColor: COLORS.component.shadow.light }}>
+                                <div className="bg-white p-5 rounded-xl shadow-sm flex justify-between items-start gap-4 border border-gray-100">
                                     <div>
                                         <h4 className="font-bold text-xl text-gray-900 mb-1">Get Approved Instantly</h4>
                                         <p className="text-base">No impact, fast approvals — even with bad credit.</p>
@@ -213,7 +187,7 @@ export default function SkipTheDealership() {
                                 </div>
 
                                 {/* Feature 3 */}
-                                <div className="bg-white p-5 rounded-xl shadow-sm flex justify-between items-start gap-4" style={{ borderWidth: '1px', borderColor: COLORS.component.shadow.light }}>
+                                <div className="bg-white p-5 rounded-xl shadow-sm flex justify-between items-start gap-4 border border-gray-100">
                                     <div>
                                         <h4 className="font-bold text-xl text-gray-900 mb-1">Pick Delivery or Pickup</h4>
                                         <p className="text-base">Get it delivered to your door or come in when you&rsquo;re ready.</p>
@@ -226,7 +200,7 @@ export default function SkipTheDealership() {
                     </div>
                 </section>
 
-                {/* 4. Comparison Section: Header text is static, Two Cards stagger/scale into view */}
+                {/* 4. Comparison Section */}
                 <section className="bg-white py-6 md:py-16 px-4">
                     <div className="w-full md:max-w-4xl mx-auto">
                         <div className="text-center mb-12">
@@ -243,7 +217,7 @@ export default function SkipTheDealership() {
                             className="grid grid-cols-1 md:grid-cols-2 gap-7"
                         >
                             {/* Traditional Dealership Column */}
-                            <motion.div variants={scaleUp} className="rounded-2xl p-6 md:p-4" style={{ backgroundColor: COLORS.background.prequalifyBlue, borderWidth: '1px', borderColor: COLORS.border.light }}>
+                            <motion.div variants={scaleUp} className="rounded-2xl p-6 md:p-4 bg-prequalify-blue border border-border-light">
                                 <h5 className="text-xl font-bold text-gray-900 border-b border-gray-200 py-7">
                                     Traditional Dealership
                                 </h5>
@@ -264,7 +238,7 @@ export default function SkipTheDealership() {
                             </motion.div>
 
                             {/* Cardora Column */}
-                            <motion.div variants={scaleUp} className="rounded-2xl p-6 md:p-4" style={{ backgroundColor: COLORS.background.prequalifyBlue, borderWidth: '1px', borderColor: COLORS.border.light }}>
+                            <motion.div variants={scaleUp} className="rounded-2xl p-6 md:p-4 bg-prequalify-blue border border-border-light">
                                 <h5 className="text-xl font-bold text-black border-b border-slate-200 py-7">
                                     {SITE_CONFIG?.dealership.name}
                                 </h5>

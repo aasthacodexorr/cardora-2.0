@@ -51,6 +51,13 @@ export const getInventoryUrlByRange = (attribute: string, range: string, _appCon
   return query ? `/inventory?${query}` : "/inventory";
 };
 
+export function isVehicleDetailSlug(slug: string[] | undefined | null): boolean {
+  if (!slug || slug.length !== 1) return false;
+  const leadingToken = slug[0].split("-", 1)[0] || "";
+  const leadingNumber = Number(leadingToken);
+  return /^\d+$/.test(leadingToken) && (leadingNumber < 1900 || leadingNumber > 2100);
+}
+
 export async function getVehicleById(id: string, appConfig: AppConfig): Promise<Record<string, any> | null> {
   const apiKey = appConfig.site.inventory_search_only_key;
   const collection = appConfig.site.collection;
@@ -78,7 +85,12 @@ export async function getVehicleBySlug(slugArray: string[], appConfig: AppConfig
   const vehicleParam = slugArray[0];
   const firstDash = vehicleParam.indexOf("-");
   if (firstDash === -1) return null;
-  
+
   const id = vehicleParam.substring(0, firstDash);
+  // Vehicle detail slugs always start with a numeric ID (e.g. "12345-2023-honda-civic").
+  // Listing paths can also contain dashes (e.g. "cardora-brampton,cardora-guelph" or
+  // "toyota-corolla"), so without this check they'd be misread as an unknown vehicle id
+  // and the page would incorrectly render "Vehicle Not Found".
+  if (!/^\d+$/.test(id)) return null;
   return getVehicleById(id, appConfig);
 }

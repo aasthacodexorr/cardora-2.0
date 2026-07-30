@@ -235,36 +235,35 @@ export const COLORS = {
 };
 
 // ═════════════════════════════════════════════════════════════════════════════
-// CSS VARIABLE HELPERS (for use with CSS modules or inline styles)
+// CSS VARIABLE HELPERS (Single Source of Truth -> CSS Custom Properties)
 // ═════════════════════════════════════════════════════════════════════════════
 
+const toKebab = (str: string) => str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+
 /**
- * Generate CSS variable definitions for use in stylesheets
- * Usage: in globals.css or a CSS module
- * 
- * :root {
- *   // CSS variables auto-generated from lib/colors.ts
- *   // --color-primary-green: #00af66;
- *   // --color-primary-green-light: #A8E5CC;
- *   // ...
- * }
+ * Recursively generates CSS variable definitions from the COLORS object
  */
-export const generateCSSVariables = (): string => {
-  const vars: string[] = [];
-  
-  Object.entries(COLORS).forEach(([category, colors]) => {
-    if (typeof colors === 'object') {
-      Object.entries(colors).forEach(([colorName, colorValue]) => {
-        if (typeof colorValue === 'string') {
-          const varName = `--color-${category}-${colorName}`.replace(/([A-Z])/g, '-$1').toLowerCase();
-          vars.push(`${varName}: ${colorValue};`);
-        }
-      });
+export const generateCSSVariables = (obj: Record<string, any>, prefix = '--color'): Record<string, string> => {
+  const vars: Record<string, string> = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const kebabKey = toKebab(key);
+      const varName = `${prefix}-${kebabKey}`;
+      const value = obj[key];
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        Object.assign(vars, generateCSSVariables(value, varName));
+      } else if (typeof value === 'string' || typeof value === 'number') {
+        vars[varName] = String(value);
+      }
     }
-  });
-  
-  return vars.join('\n  ');
+  }
+  return vars;
 };
+
+/**
+ * Single source of truth CSS variables object for global injection (app/layout.tsx)
+ */
+export const CSS_VARIABLES: Record<string, string> = generateCSSVariables(COLORS);
 
 /**
  * Create a color alias map for common use cases
@@ -304,3 +303,4 @@ export const colorAliases = {
   'status-info': COLORS.semantic.info,
   'status-warning': COLORS.semantic.warning,
 };
+

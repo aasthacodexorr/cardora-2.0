@@ -7,7 +7,7 @@ export const APR_MAP: Record<string, number> = {
 
 export const LOAN_TERMS = ["96","84","72","60","48","36","24","12"];
 
-export const INPUT_CLASS = "w-full rounded-[8px] border border-[#c4c4c4] bg-transparent px-[10px] py-3 text-[16px] text-foreground outline-none focus:border-brand-green  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
+export const INPUT_CLASS = "w-full rounded-[8px] border border-neutral-mediumGray bg-transparent px-[10px] py-3 text-[16px] text-foreground outline-none focus:border-brand-green  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
 export const LABEL_CLASS = "block text-[15px] font-medium text-foreground/80 mb-2";
 

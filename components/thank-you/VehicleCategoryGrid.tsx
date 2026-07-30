@@ -8,7 +8,7 @@ import car4 from "@/assets/icons/verification-car4.png";
 import car5 from "@/assets/icons/verification-car5.png";
 import dollarIcon from "@/assets/icons/verification-dollar.png";
 import Image from 'next/image';
-import { COLORS } from "@/lib/colors";
+
 
 const VehicleCategoryGrid = () => {
   const router = useRouter();
@@ -35,16 +35,7 @@ const VehicleCategoryGrid = () => {
             <div
               key={index}
               onClick={() => handleCategoryClick(vehicle.bodyTypes)}
-              className="bg-white rounded-lg p-5 h-28 flex flex-col justify-between items-start shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group"
-              style={{
-                backgroundColor: 'white'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = COLORS.neutral.lightGray;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'white';
-              }}
+              className="bg-white rounded-lg p-5 h-28 flex flex-col justify-between items-start shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group hover:bg-light-gray"
             >
               {/* Top Row: Icon aligned center/right using flex placement */}
               <div className="w-full flex justify-center items-center h-10 relative">

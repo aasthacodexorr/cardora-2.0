@@ -11,7 +11,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { COLORS } from "@/lib/colors";
 import callIcon from "@/assets/icons/call_icon.svg";
 import messageIcon from "@/assets/icons/message_icon.svg";
 import envelopIcon from "@/assets/icons/envelop_icon.svg";
@@ -59,7 +58,7 @@ const GetInTouch = () => {
 ];
 
   return (
-    <section className="w-full text-white" style={{ backgroundColor: COLORS.neutral.charcoal }}>
+    <section className="w-full text-white bg-neutral-charcoal">
       <div className="mx-auto max-w-[1600px] md:px-10 px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-10">
 
@@ -69,18 +68,16 @@ const GetInTouch = () => {
               Get in touch with us, we're here to help
             </h2>
 
-            <div className="mt-8 rounded-xl bg-transparent p-[10px]" style={{ borderWidth: '1px', borderColor: COLORS.border.darkCharcoal }}>
+            <div className="mt-8 rounded-xl bg-transparent p-[10px] border border-border-darkCharcoal">
               {/* Sales / Service tab switcher */}
               <div className="flex gap-2">
                 {(["Sales", "Service"] as const).map((t) => (
                   <button
                     key={t}
                     onClick={() => setTab(t)}
-                    className={`px-[30px] py-[5px] rounded-[10px] text-[15px] font-semibold transition-colors border-none cursor-pointer relative z-[11] leading-[1.7em] max-w-full text-white hover:text-white`}
-                    style={{
-                      backgroundColor: COLORS.border.darkCharcoal,
-                      color: tab === t ? COLORS.primary.greenAlt : 'white'
-                    }}
+                    className={`px-[30px] py-[5px] rounded-[10px] text-[15px] font-semibold transition-colors border-none cursor-pointer relative z-[11] leading-[1.7em] max-w-full bg-border-darkCharcoal hover:text-white ${
+                      tab === t ? "text-primary-greenAlt" : "text-white"
+                    }`}
                   >
                     {t}
                   </button>
@@ -105,8 +102,7 @@ const GetInTouch = () => {
               <a
                 key={item.title}
                 href={item.href}
-                className={`${item.order} rounded-xl bg-transparent p-6 flex items-center justify-between hover:bg-white/10 transition-colors`}
-                style={{ borderWidth: '1px', borderColor: COLORS.border.darkCharcoal }}
+                className={`${item.order} rounded-xl bg-transparent p-6 flex items-center justify-between hover:bg-white/10 transition-colors border border-border-darkCharcoal`}
               >
                 <div className="flex items-center justify-between w-full flex-wrap">
                   <div>
@@ -117,7 +113,7 @@ const GetInTouch = () => {
                   </div>
 
                   {/* Icon circle */}
-                  <div className="h-[55px] w-[55px] rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.primary.green }}>
+                  <div className="h-[55px] w-[55px] rounded-full flex items-center justify-center bg-brand">
                     <Image
                       src={item.icon}
                       alt={item.title}

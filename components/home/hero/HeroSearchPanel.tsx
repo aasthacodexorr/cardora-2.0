@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAppConfig } from "@/app/providers";
 import { Search } from "lucide-react";
 import { getInventoryUrlByQuery } from "@/lib/inventoryUrls";
-import { COLORS } from "@/lib/colors";
+
 
 const HeroSearchPanelContent = () => {
   const appConfig = useAppConfig();
@@ -30,7 +30,7 @@ const HeroSearchPanelContent = () => {
   };
 
   return (
-    <div className="w-full max-w-[550px] flex justify-center rounded-[10px] lg:mt-4 lg:pt-2" style={{ backgroundColor: COLORS.background.prequalifyBlue }}>
+    <div className="w-full max-w-[550px] flex justify-center rounded-[10px] lg:mt-4 lg:pt-2 bg-prequalify-blue">
       <div className="overflow-hidden rounded-[10px] p-4 lg:p-[30px_25px_18px] w-full">
         {/* Search input */}
         <div className="flex items-center bg-white overflow-hidden shadow relative rounded-[10px]">
@@ -63,20 +63,16 @@ const HeroSearchPanelContent = () => {
         {/* Browse all Cars button */}
         <Link
           href={`/inventory/`}
-          className="block text-center text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px]"
-          style={{ background: `linear-gradient(to bottom, ${COLORS.primary.green}, ${COLORS.primary.greenAlpha})` }}
+          className="block text-center text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-brand-btn-gradient"
         >
           Browse all Cars
         </Link>
 
         {/* Sell / valuation CTA */}
-        <p className="text-center mt-2 mb-3 text-base text-black p-0 bg-transparent cursor-pointer" style={{ '--hover-color': COLORS.primary.green } as React.CSSProperties}>
+        <p className="text-center mt-2 mb-3 text-base text-black p-0 bg-transparent cursor-pointer">
           <Link
             href="/financing"
-            className="cursor-pointer text-black bg-transparent p-2 text-[14.5px] transition-colors hover:text-opacity-80"
-            style={{ '--original-color': 'black' } as React.CSSProperties}
-            onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary.green)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
+            className="cursor-pointer text-black bg-transparent p-2 text-[14.5px] transition-colors hover:text-brand-green"
           >
             Looking to sell your car? Get a valuation
           </Link>
@@ -88,7 +84,7 @@ const HeroSearchPanelContent = () => {
 
 const HeroSearchPanel = () => {
   return (
-    <Suspense fallback={<div className="w-full max-w-[550px] h-[300px] rounded-[10px]" style={{ backgroundColor: COLORS.background.prequalifyBlue }} />}>
+    <Suspense fallback={<div className="w-full max-w-[550px] h-[300px] rounded-[10px] bg-prequalify-blue" />}>
       <HeroSearchPanelContent />
     </Suspense>
   );
