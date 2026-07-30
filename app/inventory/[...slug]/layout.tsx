@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getAppConfig, getSafeDealershipConfig } from "@/lib/appConfig";
-import { getVehicleBySlug } from "@/lib/inventoryUrls";
+import { getVehicleBySlug, isVehicleDetailSlug } from "@/lib/inventoryUrls";
 
 export async function generateMetadata({
   params,
@@ -8,6 +8,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string[] }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+
+  if (!isVehicleDetailSlug(slug)) {
+    return {};
+  }
 
   const appConfig = await getAppConfig();
   const dealership = getSafeDealershipConfig(appConfig.dealership);
