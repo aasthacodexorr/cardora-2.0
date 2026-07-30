@@ -5,7 +5,6 @@ import sec2Img from "@/assets/icons/comp-verify-2.jpg"
 import sec3Img from "@/assets/icons/comp-verify-3.jpg"
 import Image from 'next/image';
 import Link from 'next/link';
-import { COLORS } from '@/lib/colors';
 import VehicleCategoryGrid from '@/components/thank-you/VehicleCategoryGrid';
 
 export default function CarLoanLanding() {
@@ -14,7 +13,7 @@ export default function CarLoanLanding() {
       <Header />
       <main className="mt-20 font-sans text-gray-800 bg-white">
         {/* 1. Confirmation Banner Section */}
-        <section className="py-20 pb-8 text-gray-900" style={{ backgroundColor: COLORS.background.light }}>
+        <section className="py-20 pb-8 text-gray-900 bg-background-light">
           <div className="max-w-7xl mx-auto px-4 text-center">
             {/* Heading */}
             <h2 className="text-2xl md:text-[30px] font-bold">
@@ -28,18 +27,15 @@ export default function CarLoanLanding() {
 
             {/* Buttons Container */}
             <div className="flex flex-col sm:flex-row justify-between items-center mt-20 gap-4 sm:gap-12 md:gap-24 w-full px-4">
-              <Link href={"/inventory"} className="whitespace-nowrap cursor-pointer text-white text-base py-3 px-6 rounded-xl transition duration-200 shadow-sm hover:opacity-90"
-                style={{ backgroundColor: COLORS.primary.green }}>
+              <Link href={"/inventory"} className="whitespace-nowrap cursor-pointer text-white text-base py-3 px-6 rounded-xl transition duration-200 shadow-sm hover:opacity-90 bg-brand">
                 View In-Stock Inventory
               </Link>
 
-              <Link href={"/about-us"} className="whitespace-nowrap cursor-pointer text-white text-base py-3 px-6 rounded-xl transition duration-200 shadow-sm hover:opacity-90"
-                style={{ backgroundColor: COLORS.primary.green }}>
+              <Link href={"/about-us"} className="whitespace-nowrap cursor-pointer text-white text-base py-3 px-6 rounded-xl transition duration-200 shadow-sm hover:opacity-90 bg-brand">
                 Call Dealership
               </Link>
 
-              <Link href={"/"} className="whitespace-nowrap cursor-pointer text-white text-base py-3 px-6 rounded-xl transition duration-200 shadow-sm hover:opacity-90"
-                style={{ backgroundColor: COLORS.primary.green }}>
+              <Link href={"/"} className="whitespace-nowrap cursor-pointer text-white text-base py-3 px-6 rounded-xl transition duration-200 shadow-sm hover:opacity-90 bg-brand">
                 Go Back to Home Page
               </Link>
             </div>
@@ -69,8 +65,7 @@ export default function CarLoanLanding() {
                 Complete our online car loan application in minutes to pre-qualify for the car of your choice. We offer financing options for all credit situations.
               </p>
 
-              <Link className="w-fit text-white text-sm font-semibold py-3 px-8 cursor-pointer rounded-xl transition duration-200 hover:opacity-90" href={"/finance"}
-                style={{ backgroundColor: COLORS.primary.green }}>
+              <Link className="w-fit text-white text-sm font-semibold py-3 px-8 cursor-pointer rounded-xl transition duration-200 hover:opacity-90 bg-brand" href={"/finance"}>
                 Get started
               </Link>
             </div>
@@ -78,56 +73,55 @@ export default function CarLoanLanding() {
         </section>
 
         {/* 3. "How It Works" Section */}
-        <section className="py-16 md:py-24" style={{ backgroundColor: COLORS.neutral.lightGray2 }}>
+        <section className="py-16 md:py-24 bg-light-gray2">
           <div className="max-w-7xl mx-auto px-4 text-center">
-            <span className="text-base uppercase font-bold block mb-2" style={{ color: COLORS.primary.greenDark }}>
+            <span className="text-base uppercase font-bold block mb-2 text-brand-green-dark">
               How it works
             </span>
-            <h2 className="text-2xl md:text-5xl font-bold mb-4" style={{ color: COLORS.neutral.darkGray2 }}>
+            <h2 className="text-2xl md:text-5xl font-bold mb-4 text-neutral-darkGray2">
               A convenient way to get approved for your auto loan
             </h2>
-            <p className="text-base mx-auto mb-12" style={{ color: COLORS.neutral.darkGray4 }}>
+            <p className="text-base mx-auto mb-12 text-neutral-darkGray4">
               Complete our car loan application online, and one of our team members will call you to discuss your financing and vehicle options.
             </p>
 
             <div className="grid gap-8 md:grid-cols-3 relative">
               {/* Step 1 */}
               <div className="flex flex-col items-center">
-                <div className="w-12 h-12 text-white rounded-full flex items-center justify-center font-bold text-lg mb-4" style={{ backgroundColor: COLORS.primary.greenDark }}>
+                <div className="w-12 h-12 text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 bg-brand-green-dark">
                   1
                 </div>
                 <h3 className="text-lg font-bold mb-2">APPLY ONLINE</h3>
-                <p className="text-base max-w-sm leading-relaxed" style={{ color: COLORS.neutral.darkGray4 }}>
+                <p className="text-base max-w-sm leading-relaxed text-neutral-darkGray4">
                   We won't take "you're declined" as an answer! <br /> We promise to secure you the best car loan approval at the lowest rate.
                 </p>
               </div>
 
               {/* Step 2 */}
               <div className="flex flex-col items-center">
-                <div className="w-12 h-12 text-white rounded-full flex items-center justify-center font-bold text-lg mb-4" style={{ backgroundColor: COLORS.primary.greenDark }}>
+                <div className="w-12 h-12 text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 bg-brand-green-dark">
                   2
                 </div>
                 <h3 className="text-lg font-bold mb-2">GET APPROVED</h3>
-                <p className="text-base max-w-sm leading-relaxed" style={{ color: COLORS.neutral.darkGray4 }}>
+                <p className="text-base max-w-sm leading-relaxed text-neutral-darkGray4">
                   Receive lightning-fast credit approval from our dedicated and qualified team. We provide approval for all credit types.
                 </p>
               </div>
 
               {/* Step 3 */}
               <div className="flex flex-col items-center">
-                <div className="w-12 h-12 text-white rounded-full flex items-center justify-center font-bold text-lg mb-4" style={{ backgroundColor: COLORS.primary.greenDark }}>
+                <div className="w-12 h-12 text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 bg-brand-green-dark">
                   3
                 </div>
                 <h3 className="text-lg font-bold mb-2">DRIVE AWAY</h3>
-                <p className="text-base max-w-sm leading-relaxed" style={{ color: COLORS.neutral.darkGray4 }}>
+                <p className="text-base max-w-sm leading-relaxed text-neutral-darkGray4">
                   Get ready for the best part! Grab the keys and start enjoying your new or used vehicle!
                 </p>
               </div>
             </div>
 
             <div className="mt-12">
-              <Link className="w-fit text-white text-base font-semibold py-3 px-8 cursor-pointer rounded-xl transition duration-200 hover:opacity-90" href={"/finance"}
-                style={{ backgroundColor: COLORS.primary.green }}>
+              <Link className="w-fit text-white text-base font-semibold py-3 px-8 cursor-pointer rounded-xl transition duration-200 hover:opacity-90 bg-brand" href={"/finance"}>
                 Get started
               </Link>
             </div>
@@ -146,7 +140,7 @@ export default function CarLoanLanding() {
               />
             </div>
             <div className="w-full">
-              <span className="text-base uppercase tracking-widest font-bold block mb-2" style={{ color: COLORS.primary.greenDark }}>
+              <span className="text-base uppercase tracking-widest font-bold block mb-2 text-brand-green-dark">
                 Let us do the hard work
               </span>
               <h2 className="text-3xl md:text-[64px] 2xl:text-6xl font-bold text-gray-900 leading-tight mb-6">
@@ -167,7 +161,7 @@ export default function CarLoanLanding() {
           <div className="grid gap-8 md:grid-cols-2 items-start">
             {/* Left Column: Content */}
             <div className="max-w-xl md:mt-10">
-              <span className="text-base uppercase tracking-widest font-extrabold block mb-4" style={{ color: COLORS.primary.green }}>
+              <span className="text-base uppercase tracking-widest font-extrabold block mb-4 text-brand">
                 Lets get started
               </span>
               <h2 className="text-4xl sm:text-5xl lg:text-[67px] font-bold text-gray-900 tracking-wide leading-[1.1] mb-6">
@@ -176,8 +170,7 @@ export default function CarLoanLanding() {
               <p className="text-gray-600 text-base mb-8">
                 Ready to get started? Talk to a real human today.
               </p>
-              <Link className="w-fit text-white text-base py-5 px-10 cursor-pointer rounded-xl transition duration-200 hover:opacity-90" href={"/contact-us"}
-                style={{ backgroundColor: COLORS.primary.green }}>
+              <Link className="w-fit text-white text-base py-5 px-10 cursor-pointer rounded-xl transition duration-200 hover:opacity-90 bg-brand" href={"/contact-us"}>
                 Get started
               </Link>
             </div>
@@ -195,7 +188,7 @@ export default function CarLoanLanding() {
         </section>
 
         {/* 6. Clients Testimonial / Carousel Placeholder */}
-        <section className="py-16 md:py-20" style={{ backgroundColor: COLORS.background.heroBlue }}>
+        <section className="py-16 md:py-20 bg-hero-bg">
           <div className="max-w-6xl mx-auto text-start px-4">
             <h3 className="text-xs md:text-2xl 2xl:text-4xl uppercase font-bold mb-4">
               A WORD FROM OUR CLIENTS
@@ -207,7 +200,7 @@ export default function CarLoanLanding() {
         </section>
 
         {/* 7. Featured Vehicles Category Grid */}
-        <div className="mx-auto px-4 md:px-44 pt-14 pb-10" style={{ backgroundColor: COLORS.neutral.lightGray }}>
+        <div className="mx-auto px-4 md:px-44 pt-14 pb-10 bg-light-gray">
           {/* Section Header */}
           <h3 className="text-3xl max-w-7xl mx-auto md:text-4xl font-bold tracking-tight text-gray-900 mb-8 uppercase text-left">
             Featured Vehicles
@@ -227,8 +220,7 @@ export default function CarLoanLanding() {
                 </h4>
                 <Link
                   href="/inventory"
-                  className="font-semibold text-sm flex items-center gap-1 transition-colors hover:opacity-80"
-                  style={{ color: COLORS.primary.green }}
+                  className="font-semibold text-sm flex items-center gap-1 transition-colors hover:opacity-80 text-brand"
                 >
                   See all vehicles
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3">

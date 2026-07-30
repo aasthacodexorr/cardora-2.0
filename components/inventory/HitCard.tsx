@@ -13,7 +13,7 @@ import Link from "next/link";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import Image from "next/image";
-import { COLORS } from "@/lib/colors";
+
 
 /*  Component */
 export const HitCard = ({ hit }: { hit: any }) => {
@@ -61,7 +61,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
   const vehicleUrl = getVehicleUrl(hit);
   return (
     <Link href={vehicleUrl|| "/"} className="block h-full ">
-      <article className="rounded-[20px] p-[2px] bg-white overflow-hidden flex flex-col h-full hover:shadow-none transition-none relative" style={{ border: `1px solid ${COLORS.border.standard}` }}>
+      <article className="rounded-[20px] p-[2px] bg-white overflow-hidden flex flex-col h-full hover:shadow-none transition-none relative border border-border-standard">
 
         {/* Vehicle image with optional sold overlay */}
         <div className="relative overflow-hidden rounded-xl p-2">
@@ -76,7 +76,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
           {/* SOLD Ribbon */}
           {isSold && (
-            <div className="absolute top-4 -left-10 rotate-[-45deg] text-white text-[14px] font-bold uppercase tracking-[3px] shadow-lg w-[160px] text-center py-[6px] z-10" style={{ backgroundColor: COLORS.special.sold }}>
+            <div className="absolute top-4 -left-10 rotate-[-45deg] text-white text-[14px] font-bold uppercase tracking-[3px] shadow-lg w-[160px] text-center py-[6px] z-10 bg-sold-overlay">
               Sold
             </div>
           )}
@@ -84,7 +84,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
         {/* Card body */}
         <div className="flex flex-col flex-1 px-[15px] pb-0 text-start">
-          <h3 className="text-[16px] font-[600] text-[#000] leading-[22px] overflow-hidden text-ellipsis line-clamp-2 min-h-[44px]">
+          <h3 className="text-[16px] font-[600] text-foreground leading-[22px] overflow-hidden text-ellipsis line-clamp-2 min-h-[44px]">
             {title}
           </h3>
 
@@ -93,7 +93,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
           {/* Price and mileage */}
           <div>
-            <p className="text-[20px] font-bold text-[#000] leading-5 mt-2 py-[3px] px-[0.5px]">
+            <p className="text-[20px] font-bold text-foreground leading-5 mt-2 py-[3px] px-[0.5px]">
               ${price.toLocaleString()}.00
             </p>
             <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
@@ -109,8 +109,8 @@ export const HitCard = ({ hit }: { hit: any }) => {
           <p className="text-[12px] mb-2 font-light">Stock #: {stock}</p>
 
           {/* Pre-qualify CTA */}
-          <div className="w-full rounded-[12px] mb-3" style={{ backgroundColor: COLORS.background.prequalifyBlue }}>
-            <div className="lg:text-[10.5px] text-[10px] font-semibold text-center leading-[16px] py-[9px] lg:px-[12px]" style={{ color: COLORS.semantic.info }}>
+          <div className="w-full rounded-[12px] mb-3 bg-prequalify-blue">
+            <div className="lg:text-[10.5px] text-[10px] font-semibold text-center leading-[16px] py-[9px] lg:px-[12px] text-[#005dff]">
 
               <span className="inline">
                 Get pre-qualified to see your personalized bi-weekly payment

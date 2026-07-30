@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import type { NextRideCardProps } from "./types";
-import { COLORS } from "@/lib/colors";
+
 
 const NextRideCard = ({ image, alt, title, subtitle, to }: NextRideCardProps) => {
   return (
@@ -13,7 +13,7 @@ const NextRideCard = ({ image, alt, title, subtitle, to }: NextRideCardProps) =>
       href={to}
       className="group rounded-2xl relative border-2 border-border bg-card overflow-hidden flex flex-col hover:shadow-md transition-shadow w-full h-full"
     >
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" style={{ backgroundColor: COLORS.special.darkOverlay }} />
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 bg-[#2f413936]" />
 
       {/* Card image container */}
       <div className="aspect-[4/4] overflow-hidden bg-muted relative w-full h-full">

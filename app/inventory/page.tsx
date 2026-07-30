@@ -11,7 +11,6 @@ import { HitCard } from "@/components/inventory";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
-import { COLORS } from "@/lib/colors";
 
 import { useSortBy } from "react-instantsearch";
 
@@ -120,7 +119,7 @@ const FilterGroup = ({ title, children, isOpen, onToggle }: FilterGroupProps) =>
     <div className={`border-b border-border py-[7px] mb-0 last:border-b-0 first:border-t first:border-t-border transition-all duration-300 ${isOpen ? "pb-4" : ""}`}>
       <button onClick={onToggle} className="w-full cursor-pointer">
         <div className={`flex items-center justify-between rounded-[10px] px-[10px] py-[8px] transition-colors duration-200 hover:bg-gray-50 ${isOpen ? "bg-gray-100" : ""}`}>
-          <span className="text-[16px] font-medium tracking-[0.5px] text-left normal-case" style={{ color: COLORS.text.primary }}>
+          <span className="text-[16px] font-medium tracking-[0.5px] text-left normal-case text-primary">
             {title}
           </span>
           <ChevronDown
@@ -564,8 +563,7 @@ const PriceRangeFilter = () => {
           onChange={(e) => handleInputChange("min", e.target.value)}
           onBlur={handleApply}
           onKeyDown={handleKeyDown}
-          className="w-full h-[40px] px-3 border rounded-[6px] text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-          style={{ borderColor: COLORS.border.lightGray }}
+          className="w-full h-[40px] px-3 border border-border-lightGray rounded-[6px] text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         <span className="text-gray-400 font-medium">—</span>
         <input
@@ -577,8 +575,7 @@ const PriceRangeFilter = () => {
           onChange={(e) => handleInputChange("max", e.target.value)}
           onBlur={handleApply}
           onKeyDown={handleKeyDown}
-          className="w-full h-[40px] px-3 border rounded-[6px] text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-          style={{ borderColor: COLORS.border.lightGray }}
+          className="w-full h-[40px] px-3 border border-border-lightGray rounded-[6px] text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </div>
 
@@ -679,18 +676,15 @@ const OdometerRangeFilter = () => {
       <div className="flex items-center gap-2">
         <input type="number" min={400} value={min} onChange={(e) => setMin(e.target.value)}
           onKeyDown={handleKeyDown} placeholder="400"
-          className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
-          style={{ borderColor: error ? '#ef4444' : COLORS.border.lightGray }}
+          className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? 'border-red-500' : 'border-border-lightGray'}`}
         />
         <span className="text-[16px] text-gray-700">To</span>
         <input type="number" min={400} value={max} onChange={(e) => setMax(e.target.value)}
           onKeyDown={handleKeyDown} placeholder="Max"
-          className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
-          style={{ borderColor: error ? '#ef4444' : COLORS.border.lightGray }}
+          className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? 'border-red-500' : 'border-border-lightGray'}`}
         />
         <button type="button" onClick={handleApply}
-          className="h-[36px] px-4 text-white rounded-[4px] cursor-pointer"
-          style={{ backgroundColor: COLORS.primary.green }}>
+          className="h-[36px] px-4 text-white rounded-[4px] cursor-pointer bg-brand">
           Go
         </button>
       </div>
@@ -788,18 +782,18 @@ const InventoryContent = () => {
     return () => { document.body.style.overflow = ""; };
   }, [isMobileFilterOpen]);
 
-  // Apply COLORS.background.greenCard to RefinementList count badges
+  // Apply CSS variables to RefinementList count badges and SearchBox
   useEffect(() => {
     const countBadges = document.querySelectorAll('.ais-RefinementList-count');
     countBadges.forEach((badge) => {
-      (badge as HTMLElement).style.backgroundColor = COLORS.background.greenCard;
+      (badge as HTMLElement).style.backgroundColor = "var(--color-background-green-card)";
     });
 
     // Apply styles to SearchBox input
     const searchInput = document.querySelector('input[placeholder="Search for Anything"]') as HTMLInputElement;
     if (searchInput) {
-      searchInput.style.borderColor = COLORS.border.standard;
-      searchInput.style.color = COLORS.text.primary;
+      searchInput.style.borderColor = "var(--color-border-standard)";
+      searchInput.style.color = "var(--color-text-primary)";
     }
   }, []);
 
@@ -863,7 +857,7 @@ const InventoryContent = () => {
         </div>
 
         {/* ── Two-column layout (sidebar sits outside results bg so it slides under header) ── */}
-        <div className="bg-[#efefef] lg:-mt-4 min-h-screen px-3 lg:px-14 py-[20px] overflow-visible" style={{ backgroundColor: COLORS.neutral.lightGray }}>
+        <div className="bg-light-gray lg:-mt-4 min-h-screen px-3 lg:px-14 py-[20px] overflow-visible">
           <div className="flex flex-col lg:flex-row items-start max-w-[1550px] mx-auto gap-5 overflow-visible">
             {/* ── Filter Sidebar ── */}
             <aside
@@ -883,9 +877,9 @@ const InventoryContent = () => {
                 ].join(" ")}
                 style={{ maxHeight: sidebarMaxHeight }}
               >
-                <div className="bg-white rounded-[15px] p-[15px]" style={{ border: `1px solid ${COLORS.border.standard}` }}>
+                <div className="bg-white rounded-[15px] p-[15px] border border-border-standard">
                   <div className="flex flex-col items-center gap-4">
-                    <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm" style={{ backgroundColor: COLORS.primary.green }}>
+                    <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
                       <CustomHitsCount />
                     </div>
                     <ClearRefinements
@@ -904,11 +898,7 @@ const InventoryContent = () => {
             <div id="results-column" className="w-full flex-1 mt-3 min-w-0 min-h-screen">
 
               {/* ── Search + Sort bar (sticky below header) ── */}
-              <div
-                className="sticky z-40 px-4 py-2"
-                style={{ backgroundColor: COLORS.neutral.lightGray }}
-                // style={{ top: sidebarTop }}
-              >
+              <div className="sticky z-40 px-4 py-2 bg-light-gray">
                 <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
 
                   <div className="fixed inset-x-0 z-50 pointer-events-none" style={{ top: sidebarTop + 26 }}>
@@ -951,8 +941,7 @@ const InventoryContent = () => {
                     <button
                       type="button"
                       onClick={() => setIsMobileFilterOpen(true)}
-                      className="flex lg:hidden items-center justify-center gap-2 h-[42px] px-4 rounded-[12px] bg-white text-black text-[14px] font-bold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer shrink-0"
-                      style={{ border: `1px solid ${COLORS.border.standard}` }}
+                      className="flex lg:hidden items-center justify-center gap-2 h-[42px] px-4 rounded-[12px] bg-white text-black text-[14px] font-bold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer shrink-0 border border-border-standard"
                     >
                       <Settings2 className="h-4 w-4" />
                       <span>Filters</span>
@@ -991,7 +980,7 @@ const InventoryContent = () => {
                 </button>
               </div>
               <div className="mb-4">
-                <div className="text-white text-center py-2.5 px-4 rounded-xl font-bold text-[13px] w-full shadow-sm mb-3" style={{ backgroundColor: COLORS.primary.green }}>
+                <div className="text-white text-center py-2.5 px-4 rounded-xl font-bold text-[13px] w-full shadow-sm mb-3 bg-brand">
                   <CustomHitsCount />
                 </div>
                 <ClearRefinements

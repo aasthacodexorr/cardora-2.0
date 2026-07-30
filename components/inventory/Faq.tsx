@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { COLORS } from "@/lib/colors";
+
 
 interface AccordionProps {
   standardJson: string;          // From vehicle.standard
@@ -108,8 +108,7 @@ export default function VehicleSpecificationsAccordion({
           <div key={key} className="border border-gray-200 rounded overflow-hidden shadow-sm">
             <button
               onClick={() => toggleSection(key)}
-              className="w-full cursor-pointer text-white font-semibold text-[14px] px-4 py-3 flex items-center justify-between"
-              style={{ backgroundColor: COLORS.component.accordion.header }}
+              className="w-full cursor-pointer text-white font-semibold text-[14px] px-4 py-3 flex items-center justify-between bg-brand-green"
             >
               <span className="tracking-wide">{config.label}</span>
               <div className="flex items-center justify-center w-5 h-5">
@@ -143,8 +142,7 @@ export default function VehicleSpecificationsAccordion({
                             <span>{feature}</span>
                             <svg 
                               xmlns="http://www.w3.org/2000/svg" 
-                              className="w-4 h-4 stroke-[2.5] flex-shrink-0 ml-4"
-                              style={{ color: COLORS.component.accordion.checkmark }}
+                              className="w-4 h-4 stroke-[2.5] flex-shrink-0 ml-4 text-brand-green"
                               fill="none" 
                               viewBox="0 0 24 24" 
                               stroke="currentColor"

@@ -9,7 +9,7 @@ import yearIcon from "@/assets/icons/year-icon.png";
 import vdpCar from "@/assets/icons/vdp-car.png";
 
 import { useAppConfig } from "@/app/providers";
-import { COLORS } from "@/lib/colors";
+
 
 interface FinanceCalculatorProps {
   vehiclePrice?: number;
@@ -118,8 +118,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
   };
 
   return (
-    <div className="md:py-14 py-6 mt-10 font-sans px-2 md:px-10 overflow-hidden w-full"
-      style={{ backgroundColor: COLORS.background.lightBeige }}>
+    <div className="md:py-14 py-6 mt-10 font-sans px-2 md:px-10 overflow-hidden w-full bg-background-lightBeige">
       <div className="w-full mx-auto max-w-[1620px]">
         <div className="flex flex-col lg:flex-row pl-2 lg:gap-10">
           
@@ -215,22 +214,8 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                       key={year}
                       type="button"
                       onClick={() => handleTermClick(year)}
-                      className="relative flex items-center justify-center rounded-xl py-4 px-4 font-semibold cursor-pointer text-center text-xl sm:text-base transition-colors"
-                      style={{ 
-                        overflow: "hidden",
-                        borderColor: `${COLORS.primary.green}45`,
-                        borderWidth: '1px',
-                        borderStyle: 'solid'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = `${COLORS.primary.green}45`;
-                        e.currentTarget.style.backgroundImage = 'none';
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isActive) {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }
-                      }}
+                      className={`relative flex items-center justify-center rounded-xl py-4 px-4 font-semibold cursor-pointer text-center text-xl sm:text-base transition-colors border border-brand-green/25 hover:bg-brand-green/25 ${isActive ? 'bg-transparent' : 'bg-transparent'}`}
+                      style={{ overflow: "hidden" }}
                     >
                       {/* Smooth background/border bubble selection layer */}
                       {isActive && (
@@ -264,7 +249,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
               <div className="relative py-4">
                 <div className="relative w-full h-9 flex items-center">
                   {/* Gray Track */}
-                  <div className="absolute inset-0 rounded-full" style={{ backgroundColor: COLORS.background.greenTrack }} />
+                  <div className="absolute inset-0 rounded-full bg-background-greenTrack" />
 
                   {/* Green Fill */}
                   <motion.div
@@ -273,14 +258,14 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                     transition={{ type: "tween", ease: "linear", duration: 0.05 }}
                     style={{
                       background:
-                        `linear-gradient(90deg, ${COLORS.primary.greenLight} 0%, ${COLORS.primary.greenMedium} 50%, ${COLORS.primary.greenDark} 100%)`,
+                        `linear-gradient(90deg, var(--color-primary-green-light) 0%, var(--color-primary-green-medium) 50%, var(--color-primary-green-dark) 100%)`,
                     }}
                   />
 
                   {/* Dots */}
                   <div className="absolute inset-0 flex justify-between items-center px-4 pointer-events-none z-10">
                     {Array.from({ length: 10 }).map((_, i) => (
-                      <span key={i} className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: `${COLORS.special.indicatorGreen}99` }} />
+                      <span key={i} className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--color-special-indicator-green)', opacity: 0.6 }} />
                     ))}
                   </div>
 
@@ -299,28 +284,23 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
 
             {/* Bi-weekly Repayment Result Box */}
             <motion.div 
-              className="rounded-2xl p-5 text-center flex flex-col gap-3"
-              style={{ backgroundColor: COLORS.background.lightBeige }}
+              className="rounded-2xl p-5 text-center flex flex-col gap-3 bg-background-lightBeige"
               layout
             >
-              <h4 className="text-base font-semibold tracking-wide" style={{ color: `${COLORS.neutral.darkGray}80` }}>Your estimated Bi-weekly repayment</h4>
+              <h4 className="text-base font-semibold tracking-wide text-neutral-darkGray/80">Your estimated Bi-weekly repayment</h4>
               
-              <h2 className="text-5xl sm:text-4xl font-extrabold tracking-tight my-1" style={{ color: COLORS.neutral.darkGray2 }}>
+              <h2 className="text-5xl sm:text-4xl font-extrabold tracking-tight my-1 text-neutral-darkGray2">
                 $<AnimatedCounter value={biWeeklyPayment} />
                 <span className="text-5xl sm:text-4xl font-bold">/Bi-weekly*</span>
               </h2>
               
-              <div className="text-base tracking-wide uppercase" style={{ color: COLORS.neutral.darkGray2 }}>
+              <div className="text-base tracking-wide uppercase text-neutral-darkGray2">
                 <span>O.A.C + HST + licensing</span>
               </div>
               
               <motion.a
                 href={`/finance?inventory_id=${inventoryId}`}
-                className="mt-2 block w-full text-white font-bold text-base py-4 px-6 rounded-xl text-center no-underline transition-all"
-                style={{
-                  background: `linear-gradient(to bottom, ${COLORS.primary.green}, ${COLORS.primary.green}a5)`,
-                  boxShadow: `0 2px 10px ${COLORS.component.shadow.brandGreenDark}`
-                }}
+                className="mt-2 block w-full text-white font-bold text-base py-4 px-6 rounded-xl text-center no-underline transition-all bg-brand-btn-gradient shadow-[0_2px_10px_rgba(16,185,129,0.1)]"
                 whileHover={{ scale: 1.01, filter: "brightness(1.05)" }}
                 whileTap={{ scale: 0.99 }}
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}

@@ -4,6 +4,7 @@ import { Providers } from "./providers";
 import { ScriptLoader } from "@/components/ScriptLoader";
 import { getAppConfig } from "@/lib/appConfig";
 import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
+import { CSS_VARIABLES } from "@/lib/colors";
 
 export async function generateMetadata(): Promise<Metadata> {
   const appConfig = await getAppConfig();
@@ -24,6 +25,7 @@ export default async function RootLayout({
     <html
       lang="en"
       className="h-full antialiased"
+      style={CSS_VARIABLES as React.CSSProperties}
     >
       <head>
         {/* Load form validation script before any interactive content */}

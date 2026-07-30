@@ -1,6 +1,6 @@
 import { INPUT_CLASS, LABEL_CLASS, LOAN_TERMS, APR_MAP } from "./constants";
 import type { PreQualifyFormProps } from "./types";
-import { COLORS } from "@/lib/colors";
+
 
 const PreQualifyForm = ({
   vehiclePrice,
@@ -18,7 +18,7 @@ const PreQualifyForm = ({
 }: PreQualifyFormProps) => {
   return (
     <div className="w-full">
-      <h2 className="text-[26px] sm:text-[30px] lg:text-[36px] font-bold text-[#333] leading-tight tracking-tight ">
+      <h2 className="text-[26px] sm:text-[30px] lg:text-[36px] font-bold text-neutral-darkGray2 leading-tight tracking-tight ">
         Pre-qualify with no impact to your credit
       </h2>
 
@@ -99,9 +99,8 @@ const PreQualifyForm = ({
           }`}
         >
           <span
-            className="inline-block h-5 w-5 cursor-pointer transform rounded-full transition-transform"
+            className="inline-block h-5 w-5 cursor-pointer transform rounded-full transition-transform bg-brand-green"
             style={{
-              backgroundColor: COLORS.primary.green,
               transform: includeTradeIn ? 'translateX(24px)' : 'translateX(4px)'
             }}
           />

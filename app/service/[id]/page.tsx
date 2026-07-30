@@ -9,7 +9,6 @@ import { getConstants } from '@/constants';
 import Image from "next/image";
 import DownloadCouponButton from '@/components/service/DownloadCouponButton';
 import { getServicesData } from '@/constants/serviceData';
-import { COLORS } from "@/lib/colors";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -43,7 +42,7 @@ export default async function ServicePage({ params }: PageProps) {
       <Header />
 
       {/* SECTION 1: Hero with Title + Coupon Side by Side */}
-      <section className="w-full py-12 md:py-20 flex items-center lg:mt-28" style={{ background: `linear-gradient(to bottom, ${COLORS.neutral.white}, ${COLORS.background.prequalifyBlue})` }}>
+      <section className="w-full py-12 md:py-20 flex items-center lg:mt-28 bg-gradient-to-b from-white to-prequalify-blue">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
 
@@ -57,7 +56,7 @@ export default async function ServicePage({ params }: PageProps) {
                 {(currentData.bannerChecklist || []).map((item, index) => (
                   <li key={index} className="flex items-center justify-between py-3.5 text-[18px] font-medium tracking-wide">
                     <span>{item}</span>
-                    <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ color: COLORS.primary.green2 }}>
+                    <svg className="w-6 h-6 flex-shrink-0 text-brand2" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </li>
@@ -68,10 +67,10 @@ export default async function ServicePage({ params }: PageProps) {
             {/* Right: Coupon Card */}
             <div className="lg:col-span-6 flex justify-center lg:justify-end">
               {/* Added "relative" and "pt-8" to accommodate the absolute badge sticking over the top border */}
-              <div className="relative w-full max-w-[500px] bg-white p-6 pt-10 rounded-xl" style={{ boxShadow: `0 0 30px ${COLORS.component.shadow.lightBlue}`, border: `2px dashed ${COLORS.primary.green2}` }}>
+              <div className="relative w-full max-w-[500px] bg-white p-6 pt-10 rounded-xl shadow-md border-2 border-dashed border-brand2">
 
                 {/* Top Label (Ribbon / Badge style matching image_f8518a.png) */}
-                <div className="absolute -top-6 left-4 flex items-center gap-1.5 rounded-l-lg text-white font-bold text-[12px] md:text-[14px] tracking-wider uppercase pl-1 pr-5 py-1 shadow-md clip-ribbon" style={{ backgroundColor: COLORS.primary.green }}>
+                <div className="absolute -top-6 left-4 flex items-center gap-1.5 rounded-l-lg text-white font-bold text-[12px] md:text-[14px] tracking-wider uppercase pl-1 pr-5 py-1 shadow-md clip-ribbon bg-brand">
                   <span className='border-l border-t border-b border-dashed border-white/50 rounded-l-lg flex justify-center items-center p-1'><svg className="w-7 h-7  flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 11-4.243-4.243 3 3 0 014.243 4.243z" />
                   </svg>
@@ -96,22 +95,22 @@ export default async function ServicePage({ params }: PageProps) {
                   </div>
 
                   {/* Overlapping Floating Expiry Badge matching image_f8518a.png */}
-                  <div className="absolute -bottom-6 left-0 rounded-xl px-2 py-2 flex items-center gap-2.5 shadow-sm bg-white" style={{ border: `1px solid ${COLORS.primary.green2}` }}>
-                    <div style={{ color: COLORS.primary.green3 }}>
+                  <div className="absolute -bottom-6 left-0 rounded-xl px-2 py-2 flex items-center gap-2.5 shadow-sm bg-white border border-brand2">
+                    <div className="text-primary-green3">
                       <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
                     <div className="flex flex-col">
                       <span className="text-[14px] text-slate-800 font-bold tracking-wider uppercase leading-none">OFFER EXPIRES</span>
-                      <span className="text-[20px] font-bold leading-tight" style={{ color: COLORS.primary.green3 }}>6/30/2026</span>
+                      <span className="text-[20px] font-bold leading-tight text-primary-green3">6/30/2026</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Action Buttons (Arranged horizontally matching image_f8518a.png) */}
                 <div className="flex flex-col lg:flex-row lg:justify-start lg:items-start justify-center items-center gap-3 mt-14">
-                  <Link href="/book-an-appointment" className="flex items-center w-full lg:w-fit justify-center hover:brightness-95 text-white font-medium py-3 px-6 rounded-xl transition duration-200 text-center text-xs md:text-sm shadow-sm" style={{ background: `linear-gradient(to bottom, ${COLORS.primary.green}, ${COLORS.primary.greenAlpha})`, border: `1px solid ${COLORS.primary.green}` }}>
+                  <Link href="/book-an-appointment" className="flex items-center w-full lg:w-fit justify-center hover:brightness-95 text-white font-medium py-3 px-6 rounded-xl transition duration-200 text-center text-xs md:text-sm shadow-sm bg-brand-btn-gradient border border-brand">
                     Schedule Service
                   </Link>
                   <DownloadCouponButton
@@ -129,7 +128,7 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 2: Alert Message Intro Container */}
-      <section className="w-full py-8 md:py-5" style={{ backgroundColor: COLORS.background.prequalifyBlue }}>
+      <section className="w-full py-8 md:py-5 bg-prequalify-blue">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-0 xl:py-8 text-center text-base md:text-[20px] text-slate-900 tracking-wide flex flex-col gap-1">
           <p>{currentData.introText1}</p>
           <p>{currentData.introText2}</p>
@@ -188,15 +187,15 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 4: Dual Box Highlights Grid */}
-      <section className="w-full py-12" style={{ backgroundColor: COLORS.background.prequalifyBlue }}>
+      <section className="w-full py-12 bg-prequalify-blue">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
 
             {/* Box 1: Signs You Need Service */}
-            <div className="bg-white h-full lg:max-h-96 rounded-[20px] p-7 md:p-7 flex flex-col justify-between items-start gap-5" style={{ boxShadow: `0 10px 30px ${COLORS.component.shadow.medium}` }}>
+            <div className="bg-white h-full lg:max-h-96 rounded-[20px] p-7 md:p-7 flex flex-col justify-between items-start gap-5 shadow-xl">
               <div className="space-y-2">
                 <div className="flex items-center gap-4">
-                  <svg className="w-10 h-10 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: COLORS.primary.green2 }}>
+                  <svg className="w-10 h-10 flex-shrink-0 text-brand2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                   <h3 className="text-2xl font-bold text-black tracking-tight">
@@ -220,10 +219,10 @@ export default async function ServicePage({ params }: PageProps) {
             </div>
 
             {/* Box 2: What's Included */}
-            <div className="bg-white h-full lg:max-h-96 rounded-[20px] p-8 md:p-7 flex flex-col justify-between space-y-6" style={{ boxShadow: `0 10px 30px ${COLORS.component.shadow.medium}` }}>
+            <div className="bg-white h-full lg:max-h-96 rounded-[20px] p-8 md:p-7 flex flex-col justify-between space-y-6 shadow-xl">
               <div className="space-y-2">
                 <div className="flex items-center gap-4">
-                  <svg className="w-10 h-10 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: COLORS.primary.green2 }}>
+                  <svg className="w-10 h-10 flex-shrink-0 text-brand2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
@@ -319,7 +318,7 @@ export default async function ServicePage({ params }: PageProps) {
       }
 
       {/* SECTION 6: Why Drivers Choose Us */}
-      <section className={`w-full py-6 md:py-18 ${id === "tire-service" ? "lg:-mt-[380px]" : id === "wheel-service" ? "lg:-mt-[380px]" : ""}`} style={{ backgroundColor: COLORS.neutral.lightGray }}>
+      <section className={`w-full py-6 md:py-18 bg-light-gray ${id === "tire-service" ? "lg:-mt-[380px]" : id === "wheel-service" ? "lg:-mt-[380px]" : ""}`}>
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
           {/* Dynamic flex ordering based on the 'id' variable */}
           <div
@@ -338,7 +337,7 @@ export default async function ServicePage({ params }: PageProps) {
               <ul className="w-full  mt-4 border-slate-200/60 divide-y divide-slate-200/60 text-[18px] font-medium tracking-wide">
                 {(currentData?.whyFeature || []).map((feature, idx) => (
                   <li key={idx} className="flex items-center justify-between py-3">
-                    <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ color: COLORS.primary.green }}>
+                    <svg className="w-4 h-4 flex-shrink-0 text-brand" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                     <span className="text-slate-900 text-right font-medium">
@@ -389,7 +388,7 @@ export default async function ServicePage({ params }: PageProps) {
                 href={card.id === "battery" ? "/book-an-appointment" : `/service/${card.id}`}
                 className="group bg-white pb-6 relative border-2 border-slate-200/70 rounded-2xl overflow-hidden transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col h-full"
               >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" style={{ backgroundColor: COLORS.special.darkOverlay }} />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none bg-black/20" />
 
                 <div className="aspect-[16/11] bg-slate-50 overflow-hidden w-full relative ">
                   <Image
@@ -405,7 +404,7 @@ export default async function ServicePage({ params }: PageProps) {
                     <h4 className="text-[17px] font-bold text-slate-900 capitalize tracking-tight">
                       {card.id.replace('-', ' ')}
                     </h4>
-                    <svg className="w-4 h-4 flex-shrink-0 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" style={{ color: COLORS.primary.green }}>
+                    <svg className="w-4 h-4 flex-shrink-0 transform group-hover:translate-x-0.5 transition-transform text-brand" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
                   </div>
@@ -422,7 +421,7 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 8: Google Reviews Grid Block */}
-      <section className="w-full border-t border-slate-100" style={{ backgroundColor: COLORS.background.reviewBlue }}>
+      <section className="w-full border-t border-slate-100 bg-review-blue">
         <Reviews />
       </section>
 
@@ -439,13 +438,14 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 10: Final Inline CTA Row */}
-      <section className="w-full border-t border-slate-100 py-8 text-center" style={{ backgroundColor: COLORS.background.reviewBlue }}>
+      <section className="w-full border-t border-slate-100 py-8 text-center bg-review-blue">
         <div className="max-w-4xl mx-auto px-6 md:px-12 py-5 md:py-10 space-y-3">
           <p className="text-xl md:text-3xl ">
             Book your oil change service today at {appConfig.dealership.dealership_name} {appConfig.dealership.city_1} and keep your vehicle performing at its best.
           </p>
           <div>
-            <Link href="/book-an-appointment" className="inline-block py-3 px-10 mt-4 rounded-lg transition duration-200 text-xs md:text-lg bg-white hover:text-white hover:bg-gradient-to-b hover:brightness-90" style={{ color: COLORS.primary.green2, borderWidth: '1px', borderColor: COLORS.primary.green2, backgroundImage: `linear-gradient(to bottom, ${COLORS.primary.greenAlpha}, ${COLORS.primary.greenAlpha})` }}>
+            <Link href="/book-an-appointment" className="inline-block py-3 px-10 mt-4 rounded-lg transition duration-200 text-xs md:text-lg bg-brand-green-alpha text-white border border-brand2 hover:brightness-90 hover:text-white"
+            >
               Schedule Service
             </Link>
           </div>

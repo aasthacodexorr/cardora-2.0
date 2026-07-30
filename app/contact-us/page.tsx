@@ -37,7 +37,7 @@ export default function ContactUs() {
                                     <p className="text-gray-600">Call Us Anytime Now</p>
                                 </div>
 
-                                <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-[#00af66] flex items-center justify-center">
+                                <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-brand-green flex items-center justify-center">
                                     <Image
                                         src={callIcon}
                                         alt="Call icon"
@@ -60,7 +60,7 @@ export default function ContactUs() {
                                     <p className="text-gray-600">Send Us an Email</p>
                                 </div>
 
-                                <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-[#00af66] flex items-center justify-center">
+                                <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-brand-green flex items-center justify-center">
                                     <Image
                                         src={envelopIcon}
                                         alt="Email icon"

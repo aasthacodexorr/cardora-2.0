@@ -32,7 +32,6 @@ import { CardoraDifference } from "@/components/home";
 import Image from "next/image";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
-import { COLORS } from '@/lib/colors';
 
 /* Static Data */
 const includes = [
@@ -204,8 +203,7 @@ const ProtectionPlans = () => {
                 <motion.div
                   variants={itemVariants}
                   key={label}
-                  className="flex items-center gap-3 rounded-full px-5 py-4 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.1)]"
-                  style={{ backgroundColor: COLORS.background.prequalifyBlue }}
+                  className="flex items-center gap-3 rounded-full px-5 py-4 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.1)] bg-prequalify-blue"
                 >
                   <Check className="h-6 w-6 text-emerald-500 shrink-0" strokeWidth={2} />
                   <span className="text-base font-medium text-neutral-800">{label}</span>
@@ -234,7 +232,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/* Section 2: We stand behind our cars */}
-      <section className="w-full border-t border-neutral-100/60 py-14 md:py-20 xl:mt-20 mt-7" style={{ backgroundColor: COLORS.background.prequalifyBlue }}>
+      <section className="w-full border-t border-neutral-100/60 py-14 md:py-20 xl:mt-20 mt-7 bg-prequalify-blue">
         <div className="mx-auto xl:max-w-[1240px] px-5 md:px-1 flex flex-col items-center text-center">
 
           <motion.h2
@@ -269,7 +267,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/* How Cardora keeps you covered */}
-      <section className="py-16 md:py-20 px-0" style={{ backgroundColor: COLORS.background.reviewBlue }}>
+      <section className="py-16 md:py-20 px-0 bg-review-blue">
         <div className="mx-auto max-w-[1240px] px-6 md:px-1">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -297,16 +295,7 @@ const ProtectionPlans = () => {
                 variants={itemVariants}
                 whileHover={{ y: -4, scale: 1.02 }}
                 key={label}
-                className="w-ful min-w-[160px] sm:min-w-[180px] lg:min-w-0 shrink-0 lg:shrink grow bg-card rounded-xl cursor-pointer px-4 py-3 flex items-center justify-center gap-3 transition-colors duration-200"
-                style={{ borderWidth: '1px', borderColor: COLORS.primary.green2, color: COLORS.primary.green2 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = 'white';
-                  e.currentTarget.style.backgroundImage = `linear-gradient(to bottom, ${COLORS.primary.greenAlpha}, ${COLORS.primary.greenAlpha})`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = COLORS.primary.green2;
-                  e.currentTarget.style.backgroundImage = 'none';
-                }}
+                className="w-ful min-w-[160px] sm:min-w-[180px] lg:min-w-0 shrink-0 lg:shrink grow bg-card rounded-xl cursor-pointer px-4 py-3 flex items-center justify-center gap-3 transition-all duration-200 border border-brand2 text-brand2 hover:text-white hover:bg-brand-green-alpha"
               >
                 <Icon className="h-5 w-5 shrink-0" strokeWidth={2} />
                 <p className="mt-1 text-sm whitespace-nowrap lg:whitespace-normal">{label}</p>
@@ -317,7 +306,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/* What's included */}
-      <section className="lg:py-1 px-0" style={{ backgroundColor: COLORS.background.reviewBlue }}>
+      <section className="lg:py-1 px-0 bg-review-blue">
         <div className="mx-auto max-w-[1240px] px-6 md:px-1 pb-10">
           <h2 className="text-start text-3xl md:text-4xl font-semibold tracking-tight text-foreground mb-7">
             What's included?
@@ -361,7 +350,7 @@ const ProtectionPlans = () => {
               Gap Coverage
             </h2>
             <div className="mt-2">
-              <span className="inline-block text-base px-8 py-3 rounded-full uppercase tracking-wider" style={{ backgroundColor: COLORS.background.prequalifyBlue, boxShadow: `0 2px 18px ${COLORS.component.shadow.light}` }}>
+              <span className="inline-block text-base px-8 py-3 rounded-full uppercase tracking-wider bg-prequalify-blue shadow-[0_2px_18px_rgba(0,0,0,0.05)]">
                 Optional
               </span>
             </div>

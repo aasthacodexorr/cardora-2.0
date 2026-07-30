@@ -4,7 +4,6 @@ import { GetInTouch } from "@/components/common";
 import { Footer, Header } from "@/components/layout";
 import { useAppConfig } from "../providers";
 import { getConstants } from "@/constants";
-import { COLORS } from "@/lib/colors";
 import { Lock, Mail, Smartphone } from "lucide-react";
 
 export default function ThankYouTradeIn() {
@@ -15,9 +14,8 @@ export default function ThankYouTradeIn() {
         <>
             <Header />
 
-            <div className="lg:mt-20 pt-14 lg:pt-28 lg:pb-14 px-4 pb-10 lg:px-44 w-full flex flex-col justify-center items-center"
-              style={{ backgroundImage: `linear-gradient(to bottom, ${COLORS.background.prequalifyBlue}, white)` }}>
-                <h1 className="lg:text-[40px] text-[26px] text-center font-semibold leading-none" style={{ color: COLORS.primary.green }}>
+            <div className="lg:mt-20 pt-14 lg:pt-28 lg:pb-14 px-4 pb-10 lg:px-44 w-full flex flex-col justify-center items-center bg-gradient-to-b from-prequalify-blue to-white">
+                <h1 className="lg:text-[40px] text-[26px] text-center font-semibold leading-none text-brand">
                     Your Vehicle Value Is Being
                     <br />
                     Calculated
@@ -40,7 +38,7 @@ export default function ThankYouTradeIn() {
             </div>
 
             <div className="mx-auto w-fit mb-20">
-                <ul className="flex flex-col items-center gap-[6px] text-[13px] font-light leading-[1.4]" style={{ color: COLORS.neutral.mediumGray3 }}>
+                <ul className="flex flex-col items-center gap-[6px] text-[13px] font-light leading-[1.4] text-neutral-mediumGray3">
                     <li className="inline-flex items-center gap-[4px]">
                         <Lock size={15} strokeWidth={2} />
                         <span>Safe • Encrypted • Takes under a minute</span>

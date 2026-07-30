@@ -8,7 +8,7 @@ import { Fuel } from "lucide-react";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { useSearchParams } from "next/navigation";
-import { COLORS } from "@/lib/colors";
+
 
 // 1. PriceAndCTA now owns the state internally
 export const PriceAndCTA = ({ vehicle }: any) => {
@@ -44,7 +44,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
       }
 
       <div className="flex items-center justify-center gap-1 my-3">
-        <p className="text-[32px] font-extrabold leading-none" style={{ color: COLORS.special.price }}>
+        <p className="text-[32px] font-extrabold leading-none text-price-green">
           ${Number(vehicle?.selling_price || 0).toLocaleString("en-CA")}.00
         </p>
 
@@ -90,7 +90,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
       <div className="mt-1 space-y-3">
         <a href={`/finance/?inventory_id=${vehicle?.id}`}>
-          <button className="cursor-pointer my-3 font-bold w-full rounded-[10px] sm:rounded-[12px] border text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[20px] hover:opacity-90 shadow-md transition-opacity" style={{ borderColor: COLORS.component.button.border, backgroundImage: `linear-gradient(to bottom, ${COLORS.primary.green}, ${COLORS.primary.green}a5)` }}>
+          <button className="cursor-pointer my-3 font-bold w-full rounded-[10px] sm:rounded-[12px] border text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[20px] hover:opacity-90 shadow-md transition-opacity bg-brand-btn-gradient border-brand-green">
             Get started
           </button>
         </a>
@@ -98,19 +98,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
         {/* Triggers local state change */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="w-full bg-white cursor-pointer border-2 font-bold py-3 rounded-xl transition-colors text-[16px] sm:text-[20px]"
-          style={{ 
-            borderColor: COLORS.primary.greenAlpha,
-            color: COLORS.special.price
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = COLORS.primary.greenAlpha;
-            e.currentTarget.style.color = 'white';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'white';
-            e.currentTarget.style.color = COLORS.special.price;
-          }}
+          className="w-full bg-white cursor-pointer border-2 font-bold py-3 rounded-xl transition-colors text-[16px] sm:text-[20px] border-brand-green-alpha text-price-green hover:bg-brand-green-alpha hover:text-white hover:border-brand-green-alpha"
         >
           Send message
         </button>
@@ -128,7 +116,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
 // 2. This sub-component stays completely decoupled and lightweight
 export const VehicleHeader = ({ vehicle }: any) => (
-  <div className="rounded-t-xl px-5 py-6 text-center w-full" style={{ backgroundColor: COLORS.background.lightBlue }}>
+  <div className="rounded-t-xl px-5 py-6 text-center w-full bg-light-blue">
     <h1 className="text-[28px] font-bold text-gray-900 leading-tight tracking-wide">
       {vehicle?.year}{vehicle?.make}{vehicle?.model}
     </h1>
