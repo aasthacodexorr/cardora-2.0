@@ -1,3 +1,5 @@
+'use client';
+
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
 import { useAppConfig } from '@/app/providers';
