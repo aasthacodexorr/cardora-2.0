@@ -27,7 +27,7 @@ export default async function RootLayout({
     >
       <head>
         {/* Load form validation script before any interactive content */}
-        {/* <ScriptLoader /> */}
+        <ScriptLoader />
       </head>
       <body className="min-h-full flex flex-col">
         <Providers config={appConfig}>{children}</Providers>
