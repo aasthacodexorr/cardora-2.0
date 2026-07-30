@@ -7,7 +7,6 @@ import checkout from "@/assets/icons/checkout.png";
 import { Fuel } from "lucide-react";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
-import { useSearchParams } from "next/navigation";
 
 
 // 1. PriceAndCTA now owns the state internally
@@ -166,8 +165,7 @@ export const VehicleHeader = ({ vehicle }: any) => (
 const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
   const appConfig = useAppConfig();
   const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
-  const searchParams = useSearchParams();
-  const inventoryId = searchParams.get("inventory_id") || "";
+  const inventoryId = vehicle?.id;
 
   useEffect(() => {
     if (isOpen) {
