@@ -33,7 +33,7 @@ import {
 import { getTypesenseClient } from "@/lib/typesense";
 
 // Custom router/stateMapping that produces the client-required URL format
-import { createInventoryRouter, createInventoryStateMapping } from "@/lib/inventoryRouting";
+import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, setModelMakeMap } from "@/lib/inventoryRouting";
 import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton } from "@/components/inventory/HitCardSkeleton";
 
@@ -311,71 +311,152 @@ const GroupedCurrentRefinements = () => {
   );
 };
 
-const SyncMakeModelRelationship = () => {
-  const { items, refine } = useCurrentRefinements();
-  const { hits } = useHits();
-  const { refine: refineMake } = useRefinementList({ attribute: "make" });
-  const resolvedMakeByModel = useRef(new Map<string, string>());
-  const previousMakeValues = useRef(new Set<string>());
+const MakeRefinementList = () => {
+  const { items: currentRefinements, refine } = useCurrentRefinements();
 
-  useEffect(() => {
-    const modelItem = items.find((item) => item.attribute === "model");
-    const makeItem = items.find((item) => item.attribute === "make");
-    const modelRefinements = modelItem?.refinements ?? [];
-    const modelValues = new Set(modelRefinements.map((r) => String(r.value)));
-    const makeValues = new Set(
-      (makeItem?.refinements ?? []).map((r) => String(r.value))
-    );
+  const {
+    items: makeItems,
+    refine: refineMake,
+  } = useRefinementList({
+    attribute: "make",
+  });
 
-    const removedMakes = [...previousMakeValues.current].filter(
-      (make) => !makeValues.has(make)
-    );
-    const clearedThisPass = new Set<string>();
-    if (removedMakes.length) {
-      modelRefinements.forEach((modelRefinement) => {
-        const modelValue = String(modelRefinement.value);
-        const resolvedMake = resolvedMakeByModel.current.get(modelValue);
-        if (resolvedMake && removedMakes.includes(resolvedMake)) {
-          refine(modelRefinement);
-          resolvedMakeByModel.current.delete(modelValue);
-          clearedThisPass.add(modelValue);
-        }
+  const {
+    items: modelItems,
+    refine: refineModel,
+  } = useRefinementList({
+    attribute: "model",
+  });
+
+  const handleToggle = (item: typeof makeItems[number]) => {
+    const make = item.value as string;
+
+    if (item.isRefined) {
+      // When removing a make, also remove all associated models
+      const modelMakeMap = getModelMakeMap();
+      
+      // Get all models that are currently refined and belong to this make
+      const modelsToRemove = modelItems.filter(
+        (m) => m.isRefined && modelMakeMap.get(m.value as string) === make
+      );
+
+      console.log("[toggle] removing make:", JSON.stringify(make));
+      console.log("[toggle] modelMakeMap:", Array.from(modelMakeMap.entries()));
+      console.log("[toggle] refined models:", modelItems.filter(m => m.isRefined).map(m => m.value));
+      console.log("[toggle] models to remove for this make:", modelsToRemove.map(m => m.value));
+
+      // Remove associated models first
+      modelsToRemove.forEach((model) => {
+        console.log(`[toggle] removing model: ${model.value}`);
+        refineModel(model.value as string);
       });
+
+      // Then remove the make
+      console.log(`[toggle] removing make: ${make}`);
+      refineMake(make);
+      return;
     }
 
-    // Forget bookkeeping for models that are no longer selected.
-    resolvedMakeByModel.current.forEach((_make, modelValue) => {
-      if (!modelValues.has(modelValue)) resolvedMakeByModel.current.delete(modelValue);
-    });
+    refineMake(make);
+  };
 
-    // Resolve the Make for any Model we haven't handled yet.
-    modelRefinements.forEach((modelRefinement) => {
-      const modelValue = String(modelRefinement.value);
-      if (clearedThisPass.has(modelValue)) return;
-      if (resolvedMakeByModel.current.has(modelValue)) return;
+  return (
+    <ul className={refinementListClassNames.list}>
+      {makeItems.map((item) => (
+        <li key={item.value}>
+          <label className={refinementListClassNames.label}>
+            <input
+              type="checkbox"
+              checked={item.isRefined}
+              onChange={() => handleToggle(item)}
+              className={refinementListClassNames.checkbox}
+            />
 
-      const hitForModel = hits.find((hit: any) => hit.model === modelValue);
-      const make = hitForModel?.make as string | undefined;
+            <span className={refinementListClassNames.labelText}>
+              {item.label}
+            </span>
 
-      if (!make) {
-        if (makeValues.size === 1) {
-          resolvedMakeByModel.current.set(modelValue, [...makeValues][0]);
-        }
-        return;
+            <span className={refinementListClassNames.count}>
+              {item.count}
+            </span>
+          </label>
+        </li>
+      ))}
+    </ul>
+  );
+};
+ 
+
+const ModelRefinementList = () => {
+  const {
+    items: makeItems,
+    refine: refineMake,
+  } = useRefinementList({
+    attribute: "make",
+  });
+
+  const {
+    items: modelItems,
+    refine: refineModel,
+  } = useRefinementList({
+    attribute: "model",
+  });
+
+  const selectedMakes = useMemo(
+    () =>
+      new Set(
+        makeItems
+          .filter((item) => item.isRefined)
+          .map((item) => item.value as string)
+      ),
+    [makeItems]
+  );
+
+  const handleToggle = (item: typeof modelItems[number]) => {
+    const model = item.value as string;
+    const make = getModelMakeMap().get(model);
+
+    console.log(`[ModelRefinementList] toggling model: ${model}, make: ${make}, isRefined: ${item.isRefined}, selectedMakes: ${Array.from(selectedMakes).join(",")}`);
+
+    // Selecting a model
+    if (!item.isRefined) {
+      if (make && !selectedMakes.has(make)) {
+        console.log(`[ModelRefinementList] auto-selecting make: ${make}`);
+        refineMake(make);
       }
 
-      resolvedMakeByModel.current.set(modelValue, make);
+      refineModel(model);
+      return;
+    }
 
-      makeValues.forEach((existingMake) => {
-        if (existingMake !== make) refineMake(existingMake);
-      });
-      if (!makeValues.has(make)) refineMake(make);
-    });
+    // Deselecting a model
+    refineModel(model);
+  };
 
-    previousMakeValues.current = makeValues;
-  }, [items, hits, refine, refineMake]);
+  return (
+    <ul className={refinementListClassNames.list}>
+      {modelItems.map((item) => (
+        <li key={item.value}>
+          <label className={refinementListClassNames.label}>
+            <input
+              type="checkbox"
+              checked={item.isRefined}
+              onChange={() => handleToggle(item)}
+              className={refinementListClassNames.checkbox}
+            />
 
-  return null;
+            <span className={refinementListClassNames.labelText}>
+              {item.label}
+            </span>
+
+            <span className={refinementListClassNames.count}>
+              {item.count}
+            </span>
+          </label>
+        </li>
+      ))}
+    </ul>
+  );
 };
 
 const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string }[] }) => {
@@ -713,6 +794,68 @@ const MainLayoutWrapper = ({
   );
 };
 
+
+
+const SyncModelMakeMap = () => {
+  const { hits } = useHits();
+
+  useEffect(() => {
+    const existing = getModelMakeMap();
+    const merged = new Map(existing);
+
+    hits.forEach((hit: any) => {
+      if (hit.model && hit.make) {
+        merged.set(hit.model as string, hit.make as string);
+      }
+    });
+
+    setModelMakeMap(Array.from(merged.entries()));
+  }, [hits]);
+
+  return null;
+};
+
+// Sync component to remove orphaned models when makes change
+const SyncOrphanedModels = () => {
+  const { items: makeItems } = useRefinementList({
+    attribute: "make",
+  });
+
+  const { items: modelItems, refine: refineModel } = useRefinementList({
+    attribute: "model",
+  });
+
+  useEffect(() => {
+    const selectedMakes = new Set(
+      makeItems
+        .filter((item) => item.isRefined)
+        .map((item) => item.value as string)
+    );
+
+    const modelMakeMap = getModelMakeMap();
+
+    // Check each refined model to see if its make is still selected
+    const modelsToRemove = modelItems.filter((model) => {
+      if (!model.isRefined) return false;
+      const make = modelMakeMap.get(model.value as string);
+      // Remove if make is known but not in selectedMakes
+      return make && !selectedMakes.has(make);
+    });
+
+    if (modelsToRemove.length > 0) {
+      console.log(
+        "[SyncOrphanedModels] found orphaned models to remove:",
+        modelsToRemove.map((m) => m.value)
+      );
+      modelsToRemove.forEach((model) => {
+        refineModel(model.value as string);
+      });
+    }
+  }, [makeItems, modelItems, refineModel]);
+
+  return null;
+};
+
 // 2. Your cleaned up, error-free InventoryContent Component
 const InventoryContent = () => {
   const config = useAppConfig();
@@ -789,10 +932,12 @@ const InventoryContent = () => {
         <RefinementList attribute="year" sortBy={["name:desc"]} classNames={refinementListClassNames} />
       </FilterGroup>
       <FilterGroup title="MAKE" isOpen={openFilter === "MAKE"} onToggle={() => setOpenFilter(openFilter === "MAKE" ? null : "MAKE")}>
-        <RefinementList attribute="make" classNames={refinementListClassNames} />
+        {/* <RefinementList attribute="make" classNames={refinementListClassNames} /> */}
+          <MakeRefinementList />
       </FilterGroup>
       <FilterGroup title="MODEL" isOpen={openFilter === "MODEL"} onToggle={() => setOpenFilter(openFilter === "MODEL" ? null : "MODEL")}>
-        <RefinementList attribute="model" classNames={refinementListClassNames} />
+        {/* <RefinementList attribute="model" classNames={refinementListClassNames} /> */}
+        <ModelRefinementList />
       </FilterGroup>
       <FilterGroup title="ODOMETER" isOpen={openFilter === "ODOMETER"} onToggle={() => setOpenFilter(openFilter === "ODOMETER" ? null : "ODOMETER")}>
         <OdometerRangeFilter />
@@ -821,7 +966,9 @@ const InventoryContent = () => {
         stateMapping,
       }}
     >
-      <SyncMakeModelRelationship />
+      <SyncModelMakeMap/>
+      <SyncOrphanedModels/>
+      {/* <SyncMakeModelRelationship /> */}
       <ScrollToTopOnSearch />
       <Configure hitsPerPage={21} />
 

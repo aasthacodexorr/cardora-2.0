@@ -185,8 +185,8 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left lg:mt-28">
-      <div className="bg-white rounded-2xl w-full z-[9999] max-w-[620px] relative shadow-2xl p-6 lg:p-5 flex flex-col max-h-[80vh]">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left lg:mt-20">
+      <div className="bg-white rounded-2xl w-full z-[9999] max-w-[620px] relative shadow-2xl p-6 lg:p-5 flex flex-col max-h-[88vh]">
 
         <button
           onClick={onClose}
@@ -199,7 +199,7 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
         </button>
 
         <h2 className="text-[24px] font-bold text-gray-900 mb-5 ">Got a question</h2>
-        <div className="h-[600px]">
+        <div className="h-[500px]">
           <iframe
             src={`${SITE_CONFIG?.urls.vehiclePageContactUsBaseUrl}?inventory_id=${inventoryId}`}
             className="w-full rounded-2xl h-full"
