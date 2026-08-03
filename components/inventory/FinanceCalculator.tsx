@@ -110,17 +110,26 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
   // interestRate (and therefore into the slider/calculation) once the
   // typed text parses to a real number.
   const handleInterestRateInputChange = (value: string) => {
-    // Allow only digits and a single decimal point while typing
-    if (value !== "" && !/^\d*\.?\d*$/.test(value)) return;
+  // Allow empty value
+  if (value === "") {
+    setInterestRateInput("");
+    return;
+  }
 
-    setInterestRateInput(value);
+  // Allow only numbers with up to 2 decimal places
+  if (!/^\d*\.?\d{0,2}$/.test(value)) {
+    return;
+  }
 
-    const parsed = parseFloat(value);
-    if (!isNaN(parsed)) {
-      const clamped = Math.min(max, Math.max(min, parsed));
-      setInterestRate(clamped);
-    }
-  };
+  setInterestRateInput(value);
+
+  const parsed = parseFloat(value);
+
+  if (!isNaN(parsed)) {
+    const clamped = Math.min(max, Math.max(min, parsed));
+    setInterestRate(clamped);
+  }
+};
 
   // On blur, snap the visible text to a valid, clamped, formatted value
   const handleInterestRateBlur = () => {
@@ -278,19 +287,19 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                 {/* Editable interest rate input (replaces static display) */}
                 <div className="border border-gray-200 bg-white rounded-xl px-5 py-3 font-bold text-gray-900 flex items-center gap-0.5 shadow-sm text-xl focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/10 transition-all">
                   <input
-                    type="text"
-                    inputMode="decimal"
-                    aria-label="Interest rate percentage"
-                    value={interestRateInput}
-                    onChange={(e) => handleInterestRateInputChange(e.target.value)}
-                    onBlur={handleInterestRateBlur}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        (e.target as HTMLInputElement).blur();
-                      }
-                    }}
-                    className="w-14 text-right outline-none border-none bg-transparent p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  />
+  type="text"
+  inputMode="decimal"
+  aria-label="Interest rate percentage"
+  value={interestRateInput}
+  onChange={(e) => handleInterestRateInputChange(e.target.value)}
+  onBlur={handleInterestRateBlur}
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      (e.target as HTMLInputElement).blur();
+    }
+  }}
+  className="w-14 text-right outline-none border-none bg-transparent p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+/>
                   <span className="text-gray-500 font-medium text-sm ml-0.5">%</span>
                 </div>
               </div>
