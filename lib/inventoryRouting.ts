@@ -3,14 +3,18 @@ import type { UiState } from "instantsearch.js";
 
 type PlainObject = Record<string, any>;
 
-/**
- * Public URL names. Typesense field names must never be written to the URL.
- * Exported so inventoryUrls.ts (which builds links to /inventory from
- * elsewhere in the site) uses these exact same keys instead of keeping its
- * own copy — two copies had already drifted apart (year was "year" here but
- * "years" there), which silently broke the year filter on any link built
- * from that file.
- */
+const MODEL_TO_MAKE = new Map<string, string>();
+
+export function setModelMakeMap(entries: Iterable<[string, string]>) {
+  for (const [model, make] of entries) {
+    MODEL_TO_MAKE.set(model, make);
+  }
+}
+
+export function getModelMakeMap() {
+  return MODEL_TO_MAKE;
+}
+ 
 export const FILTER_KEYS: Record<string, string> = {
   location: "locations",
   vehicle_type: "vehicleTypes",
@@ -22,14 +26,21 @@ export const FILTER_KEYS: Record<string, string> = {
   transmission: "transmissions",
   fuel_type: "fuelTypes",
 };
+ 
+export const modelMakeAssociations = new Map<string, string>();
+
+let activeRouterResync: (() => void) | null = null;
+
+export function resyncInventoryUrl() {
+  activeRouterResync?.();
+}
 
 export const RANGE_KEYS: Record<string, readonly [string, string]> = {
   selling_price: ["priceLow", "priceHigh"],
   odometer: ["odometerLow", "odometerHigh"],
 };
 
-// URL sort names are part of the public API and do not necessarily match the
-// Typesense fields used internally. Keep that translation in one place.
+ 
 const PUBLIC_SORT_FIELDS: Record<string, string> = {
   selling_price: "price",
 };
@@ -39,10 +50,7 @@ function getPublicSort(sortBy: unknown) {
 
   const sortExpression = sortBy.split("/sort/")[1];
   if (!sortExpression) return null;
-
-  // status_rank:asc is an automatic prefix applied to every sort option (it keeps sold
-  // vehicles at the end of the list) — it's not itself a user-facing sort choice, so skip
-  // it when picking which criterion to expose as the public sortField/sortDirection.
+ 
   const criteria = sortExpression.split(",");
   const primaryCriterion = criteria.find((c) => !c.startsWith("status_rank:")) || criteria[0];
   const [field, direction] = primaryCriterion.split(":", 2);
@@ -198,9 +206,6 @@ function routeValue(value: string) {
   return encodeURIComponent(slugify(value));
 }
 
-// Use hyphens instead of %20, while retaining enough information to restore
-// the exact facet value. A literal hyphen becomes "--" before spaces become
-// "-", so "SUV-Crossover" and "Sport Utility Vehicle" stay distinct.
 export function queryValue(value: string) {
   return encodeURIComponent(value.replace(/-/g, "--").replace(/ /g, "-"));
 }
@@ -224,16 +229,68 @@ function getPathFilters(route: PlainObject): PathFilters {
     const values = route.refinementList?.[attribute] || [];
     if (values.length === 1) filters[attribute] = values;
   });
+  if (filters.model && !filters.make) delete filters.model;
   return filters;
 }
 
 function serializePublicUrl(route: PlainObject, pathFilters: PathFilters) {
   const params: string[] = [];
   const appended = new Set<string>();
+  
+  // Get the currently selected makes from the route
+  const selectedMakes = new Set<string>(route.refinementList?.make || []);
+  
+  // Clean up the route state to remove orphaned models BEFORE serialization
+  // This ensures models are always removed when their make is removed
+  if (route.refinementList?.model && route.refinementList.model.length > 0 && selectedMakes.size > 0) {
+    const modelMakeMap = getModelMakeMap();
+    const validModels = route.refinementList.model.filter((model: string) => {
+      const make = modelMakeMap.get(model);
+      // Keep model if its make is in selectedMakes or if make is unknown
+      return !make || selectedMakes.has(make);
+    });
+    
+    // Update the route state in-place to remove orphaned models
+    if (validModels.length !== route.refinementList.model.length) {
+      console.log(`[serializePublicUrl] cleaning up orphaned models from route state. Before: ${route.refinementList.model.join(",")}, After: ${validModels.join(",")}`);
+      if (validModels.length === 0) {
+        delete route.refinementList.model;
+      } else {
+        route.refinementList.model = validModels;
+      }
+    }
+  }
+  
   const appendFacet = (attribute: string) => {
     const values: string[] = route.refinementList?.[attribute] || [];
     if (!values.length || pathFilters[attribute as keyof PathFilters]?.length) return;
-    params.push(`${FILTER_KEYS[attribute]}=${values.map(queryValue).join(",")}`);
+
+    let serializedValues: string[];
+    if (attribute === "model") {
+      // Filter models to only include those whose make is in selectedMakes
+      serializedValues = values
+        .filter((model) => {
+          const make = modelMakeAssociations.get(model);
+          // Keep the model if:
+          // 1. Its make is in selectedMakes, OR
+          // 2. Its make is unknown (not yet in map - will be resolved when data loads)
+          const isValid = !make || selectedMakes.has(make);
+          if (!isValid) {
+            console.log(`[serializePublicUrl] filtering out orphaned model: ${model} (make: ${make}, selected: ${Array.from(selectedMakes).join(",")})`);
+          }
+          return isValid;
+        })
+        .map((model) => {
+          const make = modelMakeAssociations.get(model);
+          return make ? `${queryValue(make)};${queryValue(model)}` : queryValue(model);
+        });
+      // If no valid models remain, don't add the parameter at all
+      if (!serializedValues.length) return;
+    } else {
+      serializedValues = values.map(queryValue);
+    }
+    
+    params.push(`${FILTER_KEYS[attribute]}=${serializedValues.join(",")}`);
     appended.add(attribute);
   };
   const appendRange = (attribute: keyof typeof RANGE_KEYS, index: 0 | 1) => {
@@ -256,15 +313,12 @@ function serializePublicUrl(route: PlainObject, pathFilters: PathFilters) {
   if (route.query) params.push(`q=${encodeURIComponent(route.query)}`);
   const sort = getPublicSort(route.sortBy);
   if (sort) {
-    params.push(`sortField=${encodeURIComponent(sort.field)}`);
-    params.push(`sortDirection=${encodeURIComponent(sort.direction)}`);
+    // field/direction are always safe internal identifiers (letters, digits,
+    // underscores) and ':' / ',' are valid unencoded in a query string, so
+    // this is left un-percent-encoded for a readable URL.
+    params.push(`sortBy=status_rank:asc,${sort.field}:${sort.direction.toLowerCase()}`);
   }
-  // Path segments are cosmetic only — they're never parsed back out of the
-  // URL text. The exact-case values that actually drive filtering always
-  // come from history.state (see readRouteState), or, on a fresh/external
-  // link, get derived from query params before being upgraded into a path
-  // (see the bootstrap block in createInventoryRouter). That's what makes it
-  // safe to lowercase-slugify them here for a clean, readable URL.
+  
   const pathValues = (attributes: readonly (keyof PathFilters)[]) =>
     attributes
       .map((attribute) => pathFilters[attribute]?.map(routeValue).join(","))
@@ -285,10 +339,36 @@ function readRouteState(): PlainObject {
   const params = new URLSearchParams(window.location.search);
   const refinementList: PlainObject = {};
   const range: PlainObject = {};
+  
+  let hasExplicitModelEncoding = false;
 
   for (const [attribute, key] of Object.entries(FILTER_KEYS)) {
     const value = params.get(key);
-    if (value) refinementList[attribute] = value.split(",").filter(Boolean).map(parseQueryValue);
+    if (!value) continue;
+
+    if (attribute === "model") {
+      const models: string[] = [];
+      const impliedMakes: string[] = [];
+      value.split(",").filter(Boolean).forEach((entry) => {
+        const [rawMake, rawModel] = entry.includes(";") ? entry.split(";", 2) : [undefined, entry];
+        const model = parseQueryValue(rawModel);
+        models.push(model);
+        if (rawMake) {
+          hasExplicitModelEncoding = true;
+          const make = parseQueryValue(rawMake);
+          impliedMakes.push(make);
+          modelMakeAssociations.set(model, make);
+        }
+      });
+      refinementList.model = models;
+      if (impliedMakes.length) {
+        const existingMakes: string[] = refinementList.make || [];
+        refinementList.make = [...new Set([...existingMakes, ...impliedMakes])];
+      }
+      continue;
+    }
+
+    refinementList[attribute] = value.split(",").filter(Boolean).map(parseQueryValue);
   }
 
   for (const [attribute, [lowKey, highKey]] of Object.entries(RANGE_KEYS)) {
@@ -301,23 +381,51 @@ function readRouteState(): PlainObject {
   }
 
   const route: PlainObject = { refinementList, range };
-  const query = params.get("q");
-  const sortField = params.get("sortField");
-  const sortDirection = params.get("sortDirection")?.toUpperCase();
-  const sortBy = params.get("sort");
-  if (query) route.query = query;
-  if (sortField && (sortDirection === "ASC" || sortDirection === "DESC")) {
-    route.sortField = sortField;
-    route.sortDirection = sortDirection;
-  } else if (sortBy) {
-    // Continue accepting old shared links, but only write the new public format.
-    route.sortBy = sortBy;
+  
+  // Clean up orphaned models ONLY if they came from explicit make;model encoding
+  // This prevents removing models when the page first loads with just makes in the URL
+  if (hasExplicitModelEncoding && refinementList.model && refinementList.model.length > 0 && refinementList.make && refinementList.make.length > 0) {
+    const selectedMakes = new Set<string>(refinementList.make);
+    const validModels = refinementList.model.filter((model: string) => {
+      const make = modelMakeAssociations.get(model);
+      // Keep model if its make is in selectedMakes or if we don't know its make yet
+      return !make || selectedMakes.has(make);
+    });
+    
+    // Only update if we actually filtered something out
+    if (validModels.length === 0) {
+      delete refinementList.model;
+    } else if (validModels.length < refinementList.model.length) {
+      refinementList.model = validModels;
+    }
   }
+  
+  const query = params.get("q");
+  if (query) route.query = query;
 
-  // The attribute of a bare path value cannot be inferred from the text alone
-  // ("black", for example, could be a colour, make or model). We retain this
-  // small piece of routing metadata in history state. It is never part of the
-  // visible URL and supports refresh/back/forward navigation in the browser.
+  // Current format: a single sortBy param carrying the full criteria list,
+  // including status_rank, e.g. "status_rank:asc,price:asc".
+  const sortByParam = params.get("sortBy");
+  // Legacy formats, still accepted so previously shared links keep working.
+  const legacySortField = params.get("sortField");
+  const legacySortDirection = params.get("sortDirection")?.toUpperCase();
+  const legacySort = params.get("sort");
+
+  if (sortByParam) {
+    const criteria = sortByParam.split(",").filter(Boolean);
+    const primaryCriterion = criteria.find((c) => !c.startsWith("status_rank:")) || criteria[0];
+    const [field, direction] = primaryCriterion?.split(":", 2) ?? [];
+    if (field && direction && (direction.toUpperCase() === "ASC" || direction.toUpperCase() === "DESC")) {
+      route.sortField = field;
+      route.sortDirection = direction.toUpperCase();
+    }
+  } else if (legacySortField && (legacySortDirection === "ASC" || legacySortDirection === "DESC")) {
+    route.sortField = legacySortField;
+    route.sortDirection = legacySortDirection;
+  } else if (legacySort) {
+    route.sortBy = legacySort;
+  }
+ 
   const pathFilters = window.history.state?.__inventoryPathFilters as PathFilters | undefined;
   if (pathFilters && window.location.pathname.startsWith("/inventory/")) {
     PATH_ATTRIBUTES.forEach((attribute) => {
@@ -383,9 +491,22 @@ export function createInventoryRouter(_config: AppConfig) {
     isInternalUrlWrite = false;
   }
 
+  const performWrite = (route: PlainObject, filters: PathFilters) => {
+    if (typeof window === "undefined") return;
+    if (!isInventoryListingPath(window.location.pathname)) return;
+
+    const url = serializePublicUrl(route, filters);
+    const state = { ...route, __inventoryPathFilters: filters };
+
+    isInternalUrlWrite = true;
+    window.history.replaceState(state, "", url);
+    isInternalUrlWrite = false;
+  };
+
+  const resync = () => performWrite(previousRoute, pathFilters);
+  activeRouterResync = resync;
+
   const notify = () => {
-    // Once the user leaves inventory, this router must not restore an old
-    // inventory URL over the destination page's URL.
     if (!isInventoryListingPath(window.location.pathname)) return;
     const route = readRouteState();
     previousRoute = route;
@@ -400,21 +521,12 @@ export function createInventoryRouter(_config: AppConfig) {
     read: readRouteState,
 
     write(nextRoute: PlainObject) {
-      if (typeof window === "undefined") return;
-      if (!isInventoryListingPath(window.location.pathname)) return;
-
       pathFilters = getPathFilters(nextRoute);
-
-      // This only updates the address bar; it does not navigate away from the
-      // already-mounted inventory page or create a page for every filter.
-      const url = serializePublicUrl(nextRoute, pathFilters);
-      const state = { ...nextRoute, __inventoryPathFilters: pathFilters };
-
       previousRoute = nextRoute;
-      isInternalUrlWrite = true;
-      window.history.replaceState(state, "", url);
-      isInternalUrlWrite = false;
+      performWrite(nextRoute, pathFilters);
     },
+
+    resync,
 
     createURL(routeState: PlainObject) {
       // InstantSearch only uses this for links; write() is the canonical serializer.
@@ -428,6 +540,7 @@ export function createInventoryRouter(_config: AppConfig) {
 
     dispose() {
       externalUrlListeners.delete(notify);
+      if (activeRouterResync === resync) activeRouterResync = null;
       callback = null;
     },
   };

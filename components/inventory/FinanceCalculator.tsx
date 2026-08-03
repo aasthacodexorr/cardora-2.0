@@ -333,17 +333,17 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
 
             {/* Bi-weekly Repayment Result Box */}
             <motion.div 
-              className="rounded-2xl p-5 text-center flex flex-col gap-3 bg-background-lightBeige"
+              className="rounded-2xl p-5 text-center flex flex-col gap-1 bg-background-lightBeige"
               layout
             >
-              <h4 className="text-base font-semibold tracking-wide text-neutral-darkGray/80">Your estimated Bi-weekly repayment</h4>
+              <h4 className="text-base font-semibold tracking-wide text-neutral-darkGray/40">Your estimated Bi-weekly repayment</h4>
               
-              <h2 className="text-5xl sm:text-4xl font-extrabold tracking-tight my-1 text-neutral-darkGray2">
+              <h2 className="text-5xl sm:text-5xl font-semibold tracking-tight my-1 text-neutral-darkGray2">
                 $<AnimatedCounter value={biWeeklyPayment} />
-                <span className="text-5xl sm:text-4xl font-bold">/Bi-weekly*</span>
+                <span className="text-5xl sm:text-5xl font-semibold">/Bi-weekly*</span>
               </h2>
               
-              <div className="text-base tracking-wide uppercase text-neutral-darkGray2">
+              <div className="text-base tracking-wide text-neutral-darkGray2">
                 <span>O.A.C + HST + licensing</span>
               </div>
               
