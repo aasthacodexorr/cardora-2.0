@@ -48,7 +48,7 @@ const AnimatedCounter = ({ value }: { value: number }) => {
     requestAnimationFrame(animate);
   }, [value]);
 
-  return <span>{displayValue.toFixed(2)}</span>;
+  return <span>{displayValue?.toFixed(2)}</span>;
 };
 
 const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalculatorProps) => {
@@ -65,11 +65,11 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
   // Local text buffer for the interest rate input so users can freely type
   // (e.g. clear the field, type "1", then "12", then "12.5") without the
   // value being clamped/reformatted on every keystroke.
-  const [interestRateInput, setInterestRateInput] = useState<string>(interestRate.toFixed(2));
+  const [interestRateInput, setInterestRateInput] = useState<string | number>(interestRate);
 
   // Keep the text input in sync when the rate changes from the slider
   useEffect(() => {
-    setInterestRateInput(interestRate.toFixed(2));
+    setInterestRateInput(interestRate);
   }, [interestRate]);
 
   // Calculation logic
@@ -110,35 +110,54 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
   // interestRate (and therefore into the slider/calculation) once the
   // typed text parses to a real number.
   const handleInterestRateInputChange = (value: string) => {
-  // Allow empty value
   if (value === "") {
     setInterestRateInput("");
     return;
   }
 
   // Allow only numbers with up to 2 decimal places
-  if (!/^\d*\.?\d{0,2}$/.test(value)) {
+  if (!/^\d{0,2}(\.\d{0,2})?$/.test(value)) {
     return;
   }
 
-  setInterestRateInput(value);
-
   const parsed = parseFloat(value);
 
-  if (!isNaN(parsed)) {
-    const clamped = Math.min(max, Math.max(min, parsed));
-    setInterestRate(clamped);
+  // Allow incomplete values while typing 10–15
+  if (["1", "10", "11", "12", "13", "14", "15", "15."].includes(value)) {
+    setInterestRateInput(value);
+
+    if (!isNaN(parsed) && parsed >= 10) {
+      setInterestRate(parsed);
+    }
+
+    return;
   }
+
+  if (!isNaN(parsed)) {
+    // Block values outside 6–15
+    if (parsed < 6 || parsed > 15) {
+      return;
+    }
+
+    setInterestRate(parsed);
+  }
+
+  setInterestRateInput(value);
 };
 
   // On blur, snap the visible text to a valid, clamped, formatted value
-  const handleInterestRateBlur = () => {
-    const parsed = parseFloat(interestRateInput);
-    const valid = isNaN(parsed) ? interestRate : Math.min(max, Math.max(min, parsed));
-    setInterestRate(valid);
-    setInterestRateInput(valid.toFixed(2));
-  };
+const handleInterestRateBlur = () => {
+  let parsed = parseFloat(String(interestRateInput));
 
+  if (isNaN(parsed)) {
+    parsed = interestRate;
+  }
+
+  parsed = Math.min(15, Math.max(6, parsed));
+
+  setInterestRate(parsed);
+  setInterestRateInput(parsed.toFixed(2));
+};
   const sliderPercent = ((interestRate - min) / (max - min)) * 100;
 
   const fillWidth =
@@ -352,8 +371,8 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                 <span className="text-5xl sm:text-5xl font-semibold">/Bi-weekly*</span>
               </h2>
               
-              <div className="text-base tracking-wide text-neutral-darkGray2">
-                <span>O.A.C + HST + licensing</span>
+              <div className="text-base tracking-wide font-light">
+                <span className="text-grey-200 font-light">O.A.C + HST + licensing</span>
               </div>
               
               <motion.a

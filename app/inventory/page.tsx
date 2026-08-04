@@ -144,9 +144,19 @@ const SearchResultsWrapper = ({ children }: { children: React.ReactNode }) => {
   const { status } = useInstantSearch();
   const { results } = useHits();
 
-  const hasHits = (results?.nbHits ?? 0) > 0;
+  // Cache the last known non-null hit count so a transient `undefined`
+  // between refinements doesn't cause a skeleton/content flicker.
+  const lastNbHitsRef = useRef(0);
+  if (typeof results?.nbHits === "number") {
+    lastNbHitsRef.current = results.nbHits;
+  }
+  const hasHits = lastNbHitsRef.current > 0;
 
-  if (status === "loading" && !hasHits) {
+  // Only show the skeleton once the search has genuinely stalled —
+  // not on every fast refinement.
+  const isStalled = status === "stalled";
+
+  if (isStalled && !hasHits) {
     return <InventoryGridSkeleton />;
   }
 
@@ -197,11 +207,21 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
 };
 
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
+  const { status } = useInstantSearch();
   const { hits, isLastPage, showMore } = useInfiniteHits();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const prevHitsLength = useRef(hits.length);
- 
+
+  const settled = status === "idle";
+  const safeIsLastPage = settled ? isLastPage : true;
+
+  // Show the shimmer grid any time a search is stalled — whether hits
+  // are empty (first load / new filter combo) or still populated from
+  // the previous query. Same card shapes as the real grid, so nothing
+  // visually jumps.
+  const showSkeleton = status === "stalled";
+
   useEffect(() => {
     if (hits.length !== prevHitsLength.current) {
       setIsLoadingMore(false);
@@ -210,38 +230,29 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   }, [hits.length]);
 
   const handleShowMore = () => {
-    if (isLoadingMore || isLastPage) return;
+    if (isLoadingMore || safeIsLastPage) return;
     setIsLoadingMore(true);
     showMore();
   };
 
   useEffect(() => {
-    if (isLastPage || isLoadingMore) return;
-
+    if (safeIsLastPage || isLoadingMore) return;
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          handleShowMore();
-        }
-      },
-      {
-        root: null,
-        rootMargin: "300px",
-      }
+      ([entry]) => entry.isIntersecting && handleShowMore(),
+      { root: null, rootMargin: "300px" }
     );
-
     const current = loadMoreRef.current;
     if (current) observer.observe(current);
-
-    return () => {
-      if (current) observer.unobserve(current);
-    };
+    return () => { if (current) observer.unobserve(current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLastPage, isLoadingMore]);
+  }, [safeIsLastPage, isLoadingMore]);
+
+  if (showSkeleton) {
+    return <InventoryGridSkeleton />;
+  }
 
   return (
     <div>
-      {/* Results grid — this never unmounts on pagination anymore */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
         {hits.map((hit) => (
           <div key={hit.objectID} className="flex flex-col h-full p-[9px]">
@@ -250,14 +261,9 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
         ))}
       </div>
 
-      {/* Sentinel used to auto-trigger the next page while scrolling */}
-      {!isLastPage && <div ref={loadMoreRef} style={{ height: 1 }} />}
+      {!safeIsLastPage && <div ref={loadMoreRef} style={{ height: 1 }} />}
 
-      {/* ── Bottom control: fixed-height container so nothing jumps ──
-          Idle -> "Show More Results" button.
-          Loading (either from scroll-trigger OR button tap) -> spinner
-          shown in the SAME slot, so there's no flicker/layout shift. */}
-      {!isLastPage && (
+      {!safeIsLastPage && (
         <div className="mt-8 mb-12 flex justify-start pl-[9px] min-h-[52px] items-center">
           <button
             type="button"
@@ -273,8 +279,7 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
         </div>
       )}
 
-      {/* Footer only shows when we're genuinely done */}
-      {isLastPage && hits.length > 0 && (
+      {safeIsLastPage && hits.length > 0 && (
         <div className="mt-12 transition-opacity duration-300 ease-in">
           <GetInTouch />
           <Footer />
@@ -965,6 +970,7 @@ const InventoryContent = () => {
         router,
         stateMapping,
       }}
+       stalledSearchDelay={300}
     >
       <SyncModelMakeMap/>
       <SyncOrphanedModels/>
