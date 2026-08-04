@@ -33,7 +33,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   }, []);
 
   return (
-    <div className="bg-white rounded-2xl px-5 pb-2 text-center">
+    <div className="bg-white rounded-2xl px-5 pb-2 text-center tracking-wide">
       {
         vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString()
           ? null :
@@ -115,8 +115,8 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
 // 2. This sub-component stays completely decoupled and lightweight
 export const VehicleHeader = ({ vehicle }: any) => (
-  <div className="rounded-t-xl px-5 py-6 text-center w-full bg-light-blue">
-    <h1 className="text-[28px] font-bold text-gray-900 leading-tight tracking-wide">
+  <div className="rounded-t-xl px-5 py-6 text-center w-full bg-light-blue tracking-wide">
+    <h1 className="text-[30px] font-bold text-gray-900 leading-tight tracking-wide">
       {vehicle?.year}{vehicle?.make}{vehicle?.model}
     </h1>
 
@@ -125,7 +125,7 @@ export const VehicleHeader = ({ vehicle }: any) => (
     )}
 
     <div className="flex items-center justify-center gap-3 mt-4 text-black flex-wrap">
-      <div className="flex items-center gap-1 text-[14px]">
+      <div className="flex items-center gap-1 text-[16px]">
         <svg
           className="w-4 h-4"
           xmlns="http://www.w3.org/2000/svg"
@@ -138,14 +138,14 @@ export const VehicleHeader = ({ vehicle }: any) => (
       </div>
 
       {vehicle?.fuel_type && (
-        <div className="flex items-center gap-1 text-[14px]">
+        <div className="flex items-center gap-1 text-[16px]">
           <Fuel size={15} />
           <span>{vehicle?.fuel_type}</span>
         </div>
       )}
 
       {vehicle?.transmission && (
-        <div className="flex items-center gap-1 text-[14px]">
+        <div className="flex items-center gap-1 text-[16px]">
           <svg
             className="w-4 h-4 text-black"
             xmlns="http://www.w3.org/2000/svg"
