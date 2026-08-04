@@ -183,7 +183,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
           
           {/* Left column: Content section */}
           <motion.div 
-            className="flex flex-col gap-3 max-w-[700px] 2xl:max-w-full"
+            className="flex flex-col gap-3 max-w-[1300px] 2xl:max-w-full"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -355,7 +355,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
 
             {/* Bi-weekly Repayment Result Box */}
             <motion.div 
-              className="rounded-2xl p-5 text-center flex flex-col gap-1 bg-background-lightBeige"
+              className="rounded-2xl p-5 text-center flex flex-col gap-2 bg-background-lightBeige"
               layout
             >
               <h4 className="text-base font-semibold tracking-wide text-neutral-darkGray/40">Your estimated Bi-weekly repayment</h4>
