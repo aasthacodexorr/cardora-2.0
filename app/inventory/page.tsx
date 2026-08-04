@@ -36,6 +36,32 @@ import { getTypesenseClient } from "@/lib/typesense";
 import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, setModelMakeMap } from "@/lib/inventoryRouting";
 import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton } from "@/components/inventory/HitCardSkeleton";
+import { AD_CARDS } from "@/components/inventory/AdCard";
+
+const AD_BLOCK_CYCLE = 6 + 7 + 8;  
+const AD_SLOT_TO_INDEX: Record<number, number> = { 6: 0, 13: 1, 0: 2 };
+
+type DisplayItem =
+  | { kind: "hit"; hit: any }
+  | { kind: "ad"; adIndex: number; key: string };
+
+function buildDisplayItems(hits: any[]): DisplayItem[] {
+  const items: DisplayItem[] = [];
+  let realCount = 0;
+
+  hits.forEach((hit) => {
+    items.push({ kind: "hit", hit });
+    realCount += 1;
+
+    const cyclePosition = realCount % AD_BLOCK_CYCLE;
+    const adIndex = AD_SLOT_TO_INDEX[cyclePosition];
+    if (adIndex !== undefined) {
+      items.push({ kind: "ad", adIndex, key: `ad-${realCount}` });
+    }
+  });
+
+  return items;
+}
 
 /* Shared class name configs for InstantSearch widgets */
 const refinementListClassNames = {
@@ -260,14 +286,27 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
     return <InventoryGridSkeleton />;
   }
 
+  const displayItems = buildDisplayItems(hits);
+
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
-        {hits.map((hit) => (
-          <div key={hit.objectID} className="flex flex-col h-full p-[9px]">
-            <HitComponent hit={hit} />
-          </div>
-        ))}
+        {displayItems.map((item) => {
+          if (item.kind === "hit") {
+            return (
+              <div key={item.hit.objectID} className="flex flex-col h-full p-[9px]">
+                <HitComponent hit={item.hit} />
+              </div>
+            );
+          }
+
+          const AdComponent = AD_CARDS[item.adIndex];
+          return (
+            <div key={item.key} className="flex flex-col h-full p-[9px]">
+              <AdComponent />
+            </div>
+          );
+        })}
       </div>
 
       {!safeIsLastPage && <div ref={loadMoreRef} style={{ height: 1 }} />}
