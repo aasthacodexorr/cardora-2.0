@@ -140,23 +140,32 @@ const FilterGroup = ({ title, children, isOpen, onToggle }: FilterGroupProps) =>
     </div>
   );
 };
+
 const SearchResultsWrapper = ({ children }: { children: React.ReactNode }) => {
   const { status } = useInstantSearch();
   const { results } = useHits();
 
-  // Cache the last known non-null hit count so a transient `undefined`
-  // between refinements doesn't cause a skeleton/content flicker.
+  // Cache the last known non-null, REAL hit count so a transient
+  // undefined/artificial result between refinements doesn't flicker.
   const lastNbHitsRef = useRef(0);
-  if (typeof results?.nbHits === "number") {
+  if (typeof results?.nbHits === "number" && !results?.__isArtificial) {
     lastNbHitsRef.current = results.nbHits;
   }
   const hasHits = lastNbHitsRef.current > 0;
 
-  // Only show the skeleton once the search has genuinely stalled —
-  // not on every fast refinement.
-  const isStalled = status === "stalled";
+  // ── NEW: only flip this once we've received a genuine first response
+  // (idle status + a non-artificial results object). Using state (not a
+  // ref) guarantees React re-renders the moment this becomes true.
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    if (!isHydrated && status === "idle" && results && !results.__isArtificial) {
+      setIsHydrated(true);
+    }
+  }, [status, results, isHydrated]);
 
-  if (isStalled && !hasHits) {
+  const showSkeleton = (!isHydrated || status === "stalled") && !hasHits;
+
+  if (showSkeleton) {
     return <InventoryGridSkeleton />;
   }
 
