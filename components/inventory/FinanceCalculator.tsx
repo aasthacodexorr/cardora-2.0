@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import ratesIcon from "@/assets/icons/rates-icon.png";
 import onlineIcon from "@/assets/icons/online-icon.png";
 import yearIcon from "@/assets/icons/year-icon.png";
 import vdpCar from "@/assets/icons/vdp-car.png";
 
 import { useAppConfig } from "@/app/providers";
-
 
 interface FinanceCalculatorProps {
   vehiclePrice?: number;
@@ -18,10 +17,18 @@ interface FinanceCalculatorProps {
 
 // Simple internal component to animate price counting numbers smoothly
 const AnimatedCounter = ({ value }: { value: number }) => {
-  const [displayValue, setDisplayValue] = useState(value);
+  const [displayValue, setDisplayValue] = useState<number>(value);
+  const [mounted, setMounted] = useState(false);
+
+  // Initialize on client only to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
-    let start = displayValue;
+    if (!mounted) return;
+    
+    const start = displayValue;
     const end = value;
     if (start === end) return;
 
@@ -46,13 +53,15 @@ const AnimatedCounter = ({ value }: { value: number }) => {
     };
 
     requestAnimationFrame(animate);
-  }, [value]);
+  }, [value, mounted, displayValue]);
 
-  return <span>{displayValue?.toFixed(2)}</span>;
+  // Always render the same value on both server and client initially
+  return <span>{displayValue.toFixed(2)}</span>;
 };
 
 const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalculatorProps) => {
   const appConfig = useAppConfig();
+  
   // State management
   const [purchasePrice, setPurchasePrice] = useState<number>(vehiclePrice || appConfig.payment_calculator.vehicle_price);
   const [depositAmount, setDepositAmount] = useState<number>(appConfig.payment_calculator.downpayment);
@@ -62,9 +71,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
   const min = 6;
   const max = 15;
 
-  // Local text buffer for the interest rate input so users can freely type
-  // (e.g. clear the field, type "1", then "12", then "12.5") without the
-  // value being clamped/reformatted on every keystroke.
+  // Local text buffer for the interest rate input
   const [interestRateInput, setInterestRateInput] = useState<string | number>(interestRate);
 
   // Keep the text input in sync when the rate changes from the slider
@@ -85,7 +92,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
       (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
   }
 
-  // Convert to bi-weekly (26 periods per year, 12 months per year)
+  // Convert to bi-weekly (26 periods per year)
   const biWeeklyPayment = (monthlyPayment * 12) / 26;
 
   const handleTermClick = (years: number) => {
@@ -106,72 +113,62 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
     setDepositAmount(num);
   };
 
-  // Let the user type freely; only push a valid, clamped value into
-  // interestRate (and therefore into the slider/calculation) once the
-  // typed text parses to a real number.
   const handleInterestRateInputChange = (value: string) => {
-  if (value === "") {
-    setInterestRateInput("");
-    return;
-  }
-
-  // Allow only numbers with up to 2 decimal places
-  if (!/^\d{0,2}(\.\d{0,2})?$/.test(value)) {
-    return;
-  }
-
-  const parsed = parseFloat(value);
-
-  // Allow incomplete values while typing 10–15
-  if (["1", "10", "11", "12", "13", "14", "15", "15."].includes(value)) {
-    setInterestRateInput(value);
-
-    if (!isNaN(parsed) && parsed >= 10) {
-      setInterestRate(parsed);
-    }
-
-    return;
-  }
-
-  if (!isNaN(parsed)) {
-    // Block values outside 6–15
-    if (parsed < 6 || parsed > 15) {
+    if (value === "") {
+      setInterestRateInput("");
       return;
     }
 
+    if (!/^\d{0,2}(\.\d{0,2})?$/.test(value)) {
+      return;
+    }
+
+    const parsed = parseFloat(value);
+
+    if (["1", "10", "11", "12", "13", "14", "15", "15."].includes(value)) {
+      setInterestRateInput(value);
+
+      if (!isNaN(parsed) && parsed >= 10) {
+        setInterestRate(parsed);
+      }
+
+      return;
+    }
+
+    if (!isNaN(parsed)) {
+      if (parsed < 6 || parsed > 15) {
+        return;
+      }
+
+      setInterestRate(parsed);
+    }
+
+    setInterestRateInput(value);
+  };
+
+  const handleInterestRateBlur = () => {
+    let parsed = parseFloat(String(interestRateInput));
+
+    if (isNaN(parsed)) {
+      parsed = interestRate;
+    }
+
+    parsed = Math.min(15, Math.max(6, parsed));
+
     setInterestRate(parsed);
-  }
+    setInterestRateInput(parsed.toFixed(2));
+  };
 
-  setInterestRateInput(value);
-};
-
-  // On blur, snap the visible text to a valid, clamped, formatted value
-const handleInterestRateBlur = () => {
-  let parsed = parseFloat(String(interestRateInput));
-
-  if (isNaN(parsed)) {
-    parsed = interestRate;
-  }
-
-  parsed = Math.min(15, Math.max(6, parsed));
-
-  setInterestRate(parsed);
-  setInterestRateInput(parsed.toFixed(2));
-};
+  // Safari-safe Percentage Calculation (prevents calc() interpolation crashes in WebKit)
   const sliderPercent = ((interestRate - min) / (max - min)) * 100;
 
-  const fillWidth =
-    interestRate === min
-      ? "18px"  
-      : `calc(${sliderPercent}% + 9px)`;  
-
   // Animation variants
-  const fadeInUp:Variants = {
+  const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   };
 
-  const staggerContainer:Variants = {
+  const staggerContainer: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -211,7 +208,7 @@ const handleInterestRateBlur = () => {
                 <motion.li 
                   key={index} 
                   variants={fadeInUp}
-                  className="flex items-center lg:items-start  gap-1 text-[14px] text-gray-700 font-medium leading-tight"
+                  className="flex items-center lg:items-start gap-1 text-[14px] text-gray-700 font-medium leading-tight"
                 >
                   <Image src={item.icon} alt="Icon" className="w-10 h-10 object-contain -mt-[3px] flex-shrink-0" />
                   <span>{item.text}</span>
@@ -241,7 +238,7 @@ const handleInterestRateBlur = () => {
             <h3 className="text-3xl font-semibold text-gray-900">How much do you want to spend?</h3>
 
             {/* Purchase Price and Deposit */}
-            <div className="grid lg:grid-cols-2 lg:gap-10 gap-5 ">
+            <div className="grid lg:grid-cols-2 lg:gap-10 gap-5">
               <div className="flex flex-col gap-2">
                 <label className="text-xl md:text-sm font-semibold text-gray-500 tracking-wider">Purchase price</label>
                 <input
@@ -276,17 +273,15 @@ const handleInterestRateBlur = () => {
                       key={year}
                       type="button"
                       onClick={() => handleTermClick(year)}
-                      className={`relative flex items-center justify-center rounded-xl py-4 px-4 font-semibold cursor-pointer text-center text-xl sm:text-base transition-colors border border-brand-green/25 hover:bg-brand-green/25 ${isActive ? 'bg-transparent' : 'bg-transparent'}`}
-                      style={{ overflow: "hidden" }}
+                      className="relative flex items-center justify-center rounded-xl py-4 px-4 font-semibold cursor-pointer text-center text-xl sm:text-base transition-colors border border-brand-green/25 hover:bg-brand-green/25 bg-transparent overflow-hidden"
                     >
-                      {/* Smooth background/border bubble selection layer */}
                       {isActive && (
                         <motion.div 
                           className="absolute inset-0 border-2 border-emerald-500 bg-emerald-50/20 rounded-xl pointer-events-none"
-                          transition={{ type: "spring", }}
+                          transition={{ type: "spring" }}
                         />
                       )}
-                      <span className={`relative z-10  font-light text-black`}>
+                      <span className="relative z-10 font-light text-black">
                         {year}
                       </span>
                     </button>
@@ -303,22 +298,21 @@ const handleInterestRateBlur = () => {
                   <p className="text-base text-black">Slide between 6% and 15%</p>
                 </div>
 
-                {/* Editable interest rate input (replaces static display) */}
                 <div className="border border-gray-200 bg-white rounded-xl px-5 py-3 font-bold text-gray-900 flex items-center gap-0.5 shadow-sm text-xl focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/10 transition-all">
                   <input
-  type="text"
-  inputMode="decimal"
-  aria-label="Interest rate percentage"
-  value={interestRateInput}
-  onChange={(e) => handleInterestRateInputChange(e.target.value)}
-  onBlur={handleInterestRateBlur}
-  onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      (e.target as HTMLInputElement).blur();
-    }
-  }}
-  className="w-14 text-right outline-none border-none bg-transparent p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-/>
+                    type="text"
+                    inputMode="decimal"
+                    aria-label="Interest rate percentage"
+                    value={interestRateInput}
+                    onChange={(e) => handleInterestRateInputChange(e.target.value)}
+                    onBlur={handleInterestRateBlur}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        (e.target as HTMLInputElement).blur();
+                      }
+                    }}
+                    className="w-14 text-right outline-none border-none bg-transparent p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
                   <span className="text-gray-500 font-medium text-sm ml-0.5">%</span>
                 </div>
               </div>
@@ -328,14 +322,14 @@ const handleInterestRateBlur = () => {
                   {/* Gray Track */}
                   <div className="absolute inset-0 rounded-full bg-background-greenTrack" />
 
-                  {/* Green Fill */}
+                  {/* Green Fill (Cross-browser Safari Fix applied) */}
                   <motion.div
-                    className="absolute left-0 top-0 h-full rounded-full"
-                    animate={{ width: fillWidth }}
+                    className="absolute left-0 top-0 h-full rounded-full pointer-events-none"
+                    animate={{ width: `${Math.max(sliderPercent, 2)}%` }}
                     transition={{ type: "tween", ease: "linear", duration: 0.05 }}
                     style={{
-                      background:
-                        `linear-gradient(90deg, var(--color-primary-green-light) 0%, var(--color-primary-green-medium) 50%, var(--color-primary-green-dark) 100%)`,
+                      background: `linear-gradient(90deg, var(--color-primary-green-light) 0%, var(--color-primary-green-medium) 50%, var(--color-primary-green-dark) 100%)`,
+                      minWidth: "18px",
                     }}
                   />
 
@@ -353,7 +347,7 @@ const handleInterestRateBlur = () => {
                     step="0.01"
                     value={interestRate}
                     onChange={handleSliderChange}
-                    className="finance-slider absolute inset-0 z-20 w-full h-9 opacity-0 cursor-pointer"
+                    className="finance-slider absolute inset-0 z-20 w-full h-9 opacity-0 cursor-pointer appearance-none webkit-appearance-none"
                   />
                 </div>  
               </div>

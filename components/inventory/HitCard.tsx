@@ -8,11 +8,11 @@
    Image URLs are semicolon-separated strings from Typesense.
 ========================= */
 
-import React from "react";
-import Link from "next/link";
+"use client";
+
+import Image from "next/image";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
-import Image from "next/image";
 
 
 /*  Component */
@@ -60,8 +60,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
   };
   const vehicleUrl = getVehicleUrl(hit);
   return (
-    <Link href={vehicleUrl|| "/"} className="block h-full ">
-      <article className="rounded-[20px] p-[2px] bg-white overflow-hidden flex flex-col h-full hover:shadow-none transition-none relative border border-border-standard">
+    <div className="block h-full rounded-[20px] cursor-pointer p-[2px] bg-white overflow-hidden flex flex-col h-full hover:shadow-none transition-none relative border border-border-standard">
+      <article onClick={() => {
+        window.location.href = vehicleUrl;
+      }}>
 
         {/* Vehicle image with optional sold overlay */}
         <div className="relative overflow-hidden rounded-xl p-2">
@@ -70,6 +72,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
             alt={title}
             width={600}
             height={400}
+            style={{
+              width: "auto",
+              height: "auto",
+            }}
             className={`w-full object-cover min-h-[240px] md:max-h-[240px] 2xl:min-h-[260px]  rounded-xl transition-transform duration-500 ${isSold ? "grayscale opacity-80" : ""
               }`}
           />
@@ -88,7 +94,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
             {title}
           </h3>
 
-         
+
           <hr className="border-gray-200 mt-[4px]" />
 
           {/* Price and mileage */}
@@ -109,21 +115,22 @@ export const HitCard = ({ hit }: { hit: any }) => {
           <p className="text-[12px] mb-2 font-light">Stock #: {stock}</p>
 
           {/* Pre-qualify CTA */}
-          <div className="w-full rounded-[12px] mb-3 bg-prequalify-blue">
-            <div className="lg:text-[10.5px] text-[10px] font-semibold text-center leading-[16px] py-[9px] lg:px-[12px] text-[#005dff]">
 
-              <span className="inline">
-                Get pre-qualified to see your personalized bi-weekly payment
-              </span>
-
-              <span className="inline ml-[2px] text-[14px] leading-none font-normal">
-                &rarr;
-              </span>
-
-            </div>
-          </div>
         </div>
       </article>
-    </Link>
+      <div className="w-full rounded-[12px] mb-3 px-2">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = `/finance?inventory_id=${hit.inventory_id}`;
+          }}
+          className="mt-7 cursor-pointer sm:mt-[10px] w-full min-w-full block text-center rounded-[10px] sm:rounded-[12px] text-white py-[12px] sm:py-[10px] text-[18px] sm:text-[16px] font-medium hover:opacity-90 lg:shadow-md transition-opacity bg-brand-btn-gradient border border-brand-green2"
+        >
+          Get pre-qualified
+        </button>
+      </div>
+    </div>
   );
 };
