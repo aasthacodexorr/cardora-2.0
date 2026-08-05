@@ -54,7 +54,7 @@ export const FinanceAdCard = () => {
 
       {/* Call to Action Button */}
       <span className="mt-2 inline-block rounded-lg bg-brand text-white text-[14px] px-6 py-2.5 hover:opacity-90 transition-opacity transition-colors cursor-pointer">
-        Get Pre-Qualified
+        Get pre-qualified
       </span>
     </CardShell>
   );
@@ -90,7 +90,7 @@ export const TradeInAdCard = () => {
       </p>
 
       {/* Call to Action Button */}
-      <span className="mt-2 inline-block rounded-lg bg-brand text-white text-[14px] px-6 py-2.5 hover:opacity-90 transition-opacity transition-colors cursor-pointer">
+       <span className="mt-2 inline-block rounded-lg bg-brand text-white text-[14px] px-6 py-2.5 hover:opacity-90 transition-opacity transition-colors cursor-pointer">
         Get your offer
       </span>
     </CardShell>
@@ -115,7 +115,7 @@ export const GreatDealsAdCard = () => {
       </div>
 
       {/* Heading with Info Icon */}
-      <h3 className="text-[22px] font-bold tracking-tight text-[#051329] leading-none flex items-center justify-center gap-1.5 flex-wrap">
+      <h3 className="text-[22px] font-bold tracking-tight text-[#051329] leading-[26px] flex items-center justify-center gap-1.5 flex-wrap">
         <span>Every vehicle you see is Cardora Certified.</span>
 
       </h3>
@@ -125,10 +125,6 @@ export const GreatDealsAdCard = () => {
        Thoroughly inspected and serviced by our certified technicians.
       </p>
 
-      {/* Call to Action Button */}
-      <span className="mt-2 inline-block rounded-lg bg-brand text-white text-[14px] px-6 py-2.5 hover:opacity-90 transition-opacity transition-colors cursor-pointer">
-        Shop now
-      </span>
     </CardShell>
   );
 };

@@ -29,10 +29,10 @@ export default function WishlistPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-light-gray py-14 px-4">
-        <div className="max-w-[1400px] mx-auto">
+      <main className="min-h-screen bg-white py-14 px-4">
+        <div className="max-w-[1280px] mx-auto">
           {/* Header Section */}
-          <div className="mb-2 lg:mt-10 text-center">
+          <div className="mb-2 lg:mt-10 text-left">
             <h1 className="text-[36px] lg:text-[48px] font-bold text-foreground">
               My Wishlist
             </h1>
