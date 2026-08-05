@@ -3,6 +3,7 @@ import AdCard1 from '@/assets/icons/ad-card-1.jpg'
 import AdCard2 from '@/assets/icons/ad-card-2.jpg'
 import AdCard3 from '@/assets/icons/ad-card-3.jpg'
 
+
 const CardShell = ({
   onClick,
   className = "",
@@ -105,11 +106,13 @@ export const GreatDealsAdCard = () => {
       className="bg-white text-[#0B1A30] justify-center items-center gap-4 px-6 py-8 text-center border border-gray-200 rounded-2xl shadow-sm"
     >
       {/* Graphic / Image */}
-      <img
-        src={AdCard3?.src}
-        alt="Great Deals"
-        className="w-48 h-auto mx-auto mb-2"
-      />
+      <div className="w-full flex items-center justify-center my-4 bg-white">
+        <img
+          src={AdCard3?.src}
+          alt="Cardora Certified"
+          className="w-72 h-auto object-contain transform -rotate-12 bg-white transition-transform duration-300"
+        />
+      </div>
 
       {/* Heading with Info Icon */}
       <h3 className="text-[22px] font-bold tracking-tight text-[#051329] leading-none flex items-center justify-center gap-1.5 flex-wrap">
