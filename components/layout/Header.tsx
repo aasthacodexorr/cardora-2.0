@@ -96,7 +96,7 @@ const Header = () => {
           <div className="flex-[0.2] flex justify-end pr-5 items-center gap-4">
             <a
               href="/wishlist"
-              className={`text-[20px] font-semibold flex items-center gap-[5px] text-brand-green hover:opacity-80 transition-opacity relative`}
+              className={`text-[20px] font-semibold flex items-center gap-[5px] text-black hover:opacity-80 transition-opacity relative`}
               aria-label="Wishlist"
             >
               <svg className="w-[30px] h-[30px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
