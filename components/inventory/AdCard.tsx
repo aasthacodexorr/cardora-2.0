@@ -1,4 +1,7 @@
 "use client";
+import AdCard1 from '@/assets/icons/ad-card-1.jpg'
+import AdCard2 from '@/assets/icons/ad-card-2.jpg'
+import AdCard3 from '@/assets/icons/ad-card-3.jpg'
 
 const CardShell = ({
   onClick,
@@ -21,94 +24,107 @@ const CardShell = ({
    1) Finance ad — Carvana-style wordmark, green theme, links to Finance page
 ------------------------------------------------------------------------- */
 export const FinanceAdCard = () => {
-  const financeUrl =  `/financing`;
+  const financeUrl = `/financing`;
 
   return (
     <CardShell
-      onClick={() => { window.location.href = financeUrl; }}
-      className="bg-[#004d31] text-white justify-center items-center gap-6 px-6 text-center"
+      onClick={() => {
+        window.location.href = financeUrl;
+      }}
+      className="bg-white text-[#0B1A30] justify-center items-center gap-4 px-6 py-8 text-center border border-gray-200 rounded-2xl shadow-sm"
     >
-      {/* Carvana-style wordmark: rounded, lowercase, green-on-white pill */}
-      <div className="bg-white rounded-full px-6 py-2 shadow-md">
-        <span className="text-[26px] font-extrabold tracking-tight text-[#00AF66] lowercase">
-          drivo<span className="text-[#004d31]">finance</span>
-        </span>
-      </div>
+      {/* Top Graphic/Image */}
+      <img
+        src={AdCard1?.src}
+        alt="Finance Illustration"
+        className="w-44 h-auto mx-auto mb-2"
+      />
 
-      <div className="space-y-2">
-        <p className="text-[22px] font-bold leading-tight">
-          Get Pre-Qualified
-        </p>
-        <p className="text-[14px] text-white/80 max-w-[240px] mx-auto">
-          See your real rate in minutes, with no impact to your credit score.
-        </p>
-      </div>
+      {/* Heading */}
+      <h3 className="text-[22px] font-bold tracking-tight text-[#051329]">
+        Finance with Cardora
+      </h3>
 
-      <span className="mt-2 inline-block rounded-full bg-[#00AF66] text-white text-[14px] font-semibold px-6 py-2.5 hover:bg-[#00994f] transition-colors">
-        Start Financing
+      {/* Subtext */}
+      <p className="text-[14px] text-gray-500 leading-snug max-w-[240px] mx-auto">
+        Real, personalized financing terms in less than 2 minutes, with no hit
+        to your credit.
+      </p>
+
+      {/* Call to Action Button */}
+      <span className="mt-2 inline-block rounded-lg bg-brand text-white text-[14px] px-6 py-2.5 hover:opacity-90 transition-opacity transition-colors cursor-pointer">
+        Get Pre-Qualified
       </span>
     </CardShell>
   );
 };
-
 /* -------------------------------------------------------------------------
    2) Trade-In ad — links to Trade-In page
 ------------------------------------------------------------------------- */
 export const TradeInAdCard = () => {
-  const tradeInUrl =  "/trade-in-my-car";
+  const tradeInUrl = "/trade-in-my-car";
 
   return (
     <CardShell
-      onClick={() => { window.location.href = tradeInUrl; }}
-      className="bg-gray-900 text-white justify-center items-center gap-6 px-6 text-center"
+      onClick={() => {
+        window.location.href = tradeInUrl;
+      }}
+      className="bg-white text-[#0B1A30] justify-center items-center gap-4 px-6 py-8 text-center border border-gray-200 rounded-2xl shadow-sm"
     >
-      <svg className="w-12 h-12 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4M16 17H4m0 0l4 4m-4-4l4-4" />
-      </svg>
+      {/* Graphic / Image */}
+      <img
+        src={AdCard2?.src}
+        alt="Trade in your car"
+        className="w-48 h-auto mx-auto mb-2"
+      />
 
-      <div className="space-y-2">
-        <p className="text-[22px] font-bold leading-tight">
-          What's Your Trade Worth?
-        </p>
-        <p className="text-[14px] text-white/70 max-w-[240px] mx-auto">
-          Get an instant estimate and apply it toward your next vehicle.
-        </p>
-      </div>
+      {/* Heading */}
+      <h3 className="text-[22px] font-bold tracking-tight text-[#051329]">
+        Trade in your car
+      </h3>
 
-      <span className="mt-2 inline-block rounded-full bg-white text-gray-900 text-[14px] font-semibold px-6 py-2.5 hover:bg-gray-200 transition-colors">
-        Value My Trade-In
+      {/* Subtext */}
+      <p className="text-[14px] text-gray-500 leading-snug max-w-[240px] mx-auto">
+        Get a real offer in less than 2 minutes. Sell, trade or track your value.
+      </p>
+
+      {/* Call to Action Button */}
+      <span className="mt-2 inline-block rounded-lg bg-brand text-white text-[14px] px-6 py-2.5 hover:opacity-90 transition-opacity transition-colors cursor-pointer">
+        Get your offer
       </span>
     </CardShell>
   );
 };
-
 /* -------------------------------------------------------------------------
    3) Clutch-style ad — bold orange/black marketplace styling
 ------------------------------------------------------------------------- */
-export const ClutchStyleAdCard = () => {
-
+export const GreatDealsAdCard = () => {
   return (
     <CardShell
-      onClick={() => {}}
-      className="bg-black text-white justify-center items-center gap-6 px-6 text-center"
+      onClick={() => { }}
+      className="bg-white text-[#0B1A30] justify-center items-center gap-4 px-6 py-8 text-center border border-gray-200 rounded-2xl shadow-sm"
     >
-      <div className="rounded-full border-2 border-[#FF6A39] px-6 py-2">
-        <span className="text-[24px] font-black tracking-tight text-[#FF6A39]">
-          clutch<span className="text-white">.</span>
-        </span>
-      </div>
+      {/* Graphic / Image */}
+      <img
+        src={AdCard3?.src}
+        alt="Great Deals"
+        className="w-48 h-auto mx-auto mb-2"
+      />
 
-      <div className="space-y-2">
-        <p className="text-[22px] font-bold leading-tight">
-          100% Online. Delivered.
-        </p>
-        <p className="text-[14px] text-white/70 max-w-[240px] mx-auto">
-          Browse, buy, and get your next car delivered straight to your door.
-        </p>
-      </div>
+      {/* Heading with Info Icon */}
+      <h3 className="text-[22px] font-bold tracking-tight text-[#051329] flex items-center justify-center gap-1.5 flex-wrap">
+        <span>Save $1,500+ with these great deals</span>
 
-      <span className="mt-2 inline-block rounded-full bg-[#FF6A39] text-black text-[14px] font-semibold px-6 py-2.5 hover:bg-[#e85f30] transition-colors">
-        Explore Now
+      </h3>
+
+      {/* Subtext */}
+      <p className="text-[14px] text-gray-500 leading-snug max-w-[250px] mx-auto">
+        Browse cars that save you $1,500 or more.
+      </p>
+
+      {/* Call to Action Button */}
+      <span className="mt-2 inline-block rounded-lg bg-brand text-white text-[14px] px-6 py-2.5 hover:opacity-90 transition-opacity transition-colors cursor-pointer">
+        Shop now
       </span>
     </CardShell>
   );
@@ -121,5 +137,5 @@ export const ClutchStyleAdCard = () => {
 export const AD_CARDS: React.ComponentType[] = [
   FinanceAdCard,
   TradeInAdCard,
-  ClutchStyleAdCard,
+  GreatDealsAdCard,
 ];
