@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { Heart } from "lucide-react";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
+import { useWishlist } from "@/context/WishlistContext";
 
 /* =========================
    MessageModal Overlay
@@ -63,7 +65,8 @@ const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
 export const HitCard = ({ hit }: { hit: any }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const appConfig = useAppConfig();
-  const { SITE_CONFIG,PHONE_NUMBER, DEFAULT_PLACEHOLDER_IMAGE } = getConstants(appConfig);
+  const { SITE_CONFIG, PHONE_NUMBER, DEFAULT_PLACEHOLDER_IMAGE } = getConstants(appConfig);
+  const { isInWishlist, addToWishlist, removeFromWishlist, isHydrated } = useWishlist();
 
   // Phone number fallback strategy
   const phoneNumber = PHONE_NUMBER || "";
@@ -103,26 +106,26 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
     return `/inventory/${slug}`;
   };
-  
+
   const vehicleUrl = getVehicleUrl(hit);
 
   return (
     <>
-      <div className="block h-full rounded-[20px] cursor-pointer p-[2px] bg-white overflow-hidden flex flex-col gap-2 hover:shadow-none transition-none relative border border-border-standard">
+      <div className="block h-full rounded-[20px] cursor-pointer bg-white overflow-hidden flex flex-col gap-2 hover:shadow-none transition-none relative border border-border-standard">
         <article
           onClick={() => {
             window.location.href = vehicleUrl;
           }}
         >
-          {/* Vehicle image with optional sold overlay */}
-          <div className="relative overflow-hidden rounded-xl p-2">
+          {/* Vehicle image with heart overlay */}
+          <div className="relative overflow-hidden rounded-t-[19px] p-3">
             <Image
               src={imageSrc}
               alt={title}
               width={600}
               height={400}
               style={{
-                width: "auto",
+                width: "100%",
                 height: "auto",
               }}
               className={`w-full object-cover min-h-[240px] md:max-h-[240px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${
@@ -136,10 +139,49 @@ export const HitCard = ({ hit }: { hit: any }) => {
                 Sold
               </div>
             )}
+
+            {/* Wishlist Button Overlaid Directly on Image */}
+            {isHydrated && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (isInWishlist(hit.inventory_id)) {
+                    removeFromWishlist(hit.inventory_id);
+                  } else {
+                    addToWishlist({
+                      inventory_id: hit.inventory_id,
+                      title,
+                      price,
+                      odometer: km,
+                      image_url: imageSrc,
+                      year: hit.year,
+                      make: hit.make,
+                      model: hit.model,
+                      trim: hit.trim || "",
+                      stock_no: stock,
+                      drivetrain,
+                      status: hit.status,
+                    });
+                  }
+                }}
+                className="absolute top-3 right-3 p-2 cursor-pointer rounded-full bg-white/90 hover:bg-white transition-colors shadow-md z-20"
+                aria-label={isInWishlist(hit.inventory_id) ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart
+                  className={`w-5 h-5 ${
+                    isInWishlist(hit.inventory_id)
+                      ? "fill-brand-green stroke-brand-green"
+                      : "stroke-gray-600"
+                  } transition-colors`}
+                />
+              </button>
+            )}
           </div>
 
           {/* Card body */}
-          <div className="flex flex-col flex-1 px-[15px] pb-0 text-start">
+          <div className="flex flex-col flex-1 px-[15px] pt-3 pb-0 text-start">
             <h3 className="text-[16px] font-[600] text-foreground leading-[22px] overflow-hidden text-ellipsis line-clamp-2 min-h-[44px]">
               {title}
             </h3>
@@ -166,7 +208,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
         </article>
 
         {/* Action Buttons */}
-        <div className="w-full rounded-[12px] mb-3 px-2 mt-auto grid grid-cols-2 gap-2">
+        <div className="w-full rounded-[12px] mb-3 px-3 mt-auto grid grid-cols-2 gap-2">
           {/* Call Button */}
           <a
             href={phoneNumber ? `tel:${phoneNumber}` : "#"}

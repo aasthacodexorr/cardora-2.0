@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createContext, useContext, useState } from "react";
 import { AppConfig, defaultAppConfig } from "@/lib/appConfig";
+import { WishlistProvider } from "@/context/WishlistContext";
 
 export const AppConfigContext = createContext<AppConfig>(defaultAppConfig);
 
@@ -16,7 +17,9 @@ export function Providers({ children, config }: { children: React.ReactNode; con
   return (
     <AppConfigContext.Provider value={config}>
       <QueryClientProvider client={queryClient}>
-        {children}
+        <WishlistProvider>
+          {children}
+        </WishlistProvider>
       </QueryClientProvider>
     </AppConfigContext.Provider>
   );
