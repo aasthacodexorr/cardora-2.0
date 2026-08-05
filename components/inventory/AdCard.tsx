@@ -112,14 +112,14 @@ export const GreatDealsAdCard = () => {
       />
 
       {/* Heading with Info Icon */}
-      <h3 className="text-[22px] font-bold tracking-tight text-[#051329] flex items-center justify-center gap-1.5 flex-wrap">
-        <span>Save $1,500+ with these great deals</span>
+      <h3 className="text-[22px] font-bold tracking-tight text-[#051329] leading-none flex items-center justify-center gap-1.5 flex-wrap">
+        <span>Every vehicle you see is Cardora Certified.</span>
 
       </h3>
 
       {/* Subtext */}
       <p className="text-[14px] text-gray-500 leading-snug max-w-[250px] mx-auto">
-        Browse cars that save you $1,500 or more.
+       Thoroughly inspected and serviced by our certified technicians.
       </p>
 
       {/* Call to Action Button */}
