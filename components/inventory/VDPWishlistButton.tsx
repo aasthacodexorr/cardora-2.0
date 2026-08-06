@@ -47,15 +47,15 @@ export default function VDPWishlistButton({ vehicle }: VDPWishlistButtonProps) {
     <>
       <button
         onClick={handleClick}
-        className={`flex items-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-300`}
+        className={`flex items-center gap-2 px-4 cursor-pointer py-3 rounded-lg font-semibold transition-all duration-300`}
         aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
       >
         <svg
           className={`w-6 h-6 transition-colors duration-300`}
           fill={inWishlist ? "#00af66" : "none"}
-          stroke={inWishlist ? "none" : "currentColor"}
+          stroke={inWishlist ? "#00af66" : "currentColor"}
           viewBox="0 0 24 24"
-          strokeWidth={inWishlist ? 0 : 2}
+          strokeWidth={2}
         >
           <path
             strokeLinecap="round"
