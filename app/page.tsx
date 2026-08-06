@@ -20,7 +20,7 @@ import {
   NextRide,
   FeaturedVehicles,
   Reviews,
-  CardoraDifference,
+  DealershipDifference,
 } from "@/components/home";
 
 // Shared/reusable sections
@@ -42,7 +42,7 @@ const HomePage = () => {
       <NextRide />
       <FeaturedVehicles />
       <Reviews />
-      <CardoraDifference />
+      <DealershipDifference />
       <GetInTouch />
       <Footer />
     </main>

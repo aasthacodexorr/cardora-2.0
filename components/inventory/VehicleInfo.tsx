@@ -162,7 +162,7 @@ export const VehicleHeader = ({ vehicle }: any) => (
 );
 
 // 3. MessageModal Overlay
-const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
+export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
   const appConfig = useAppConfig();
   const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
   const inventoryId = vehicle?.id;

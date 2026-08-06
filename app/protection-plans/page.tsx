@@ -28,7 +28,7 @@ import { GetInTouch } from "@/components/common";
 // Assets
 import rotateCar from "@/assets/cars/rotate-car.png";
 import greenCar from "@/assets/cars/green-car.png";
-import { CardoraDifference } from "@/components/home";
+import { DealershipDifference } from "@/components/home";
 import Image from "next/image";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
@@ -432,7 +432,7 @@ const ProtectionPlans = () => {
 
       {/* The Cardora Difference Section */}
       <div className="w-full mx-auto lg:mb-5 lg:px-28 lg:-mt-20 -mt-5">
-        <CardoraDifference />
+        <DealershipDifference />
       </div>
 
       <GetInTouch />
