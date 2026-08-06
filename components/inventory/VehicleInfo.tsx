@@ -9,12 +9,35 @@ import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 
 
-// 1. PriceAndCTA now owns the state internally
 export const PriceAndCTA = ({ vehicle }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [showSticky, setShowSticky] = useState(false);
 
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const inlineContainerRef = useRef<HTMLDivElement>(null);
+
+  // 1. Detect when inline CTAs are scrolled out of view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // When the inline CTA leaves the screen top/bottom, show the sticky bar on mobile
+        setShowSticky(!entry.isIntersecting);
+      },
+      {
+        root: null,
+        threshold: 0, // Triggers as soon as the element is completely out of view
+      }
+    );
+
+    if (inlineContainerRef.current) {
+      observer.observe(inlineContainerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // 2. Tooltip outside click handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -26,90 +49,108 @@ export const PriceAndCTA = ({ vehicle }: any) => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
-    <div className="bg-white rounded-2xl px-5 pb-2 text-center tracking-wide">
-      {
-        vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString()
-          ? null :
+    <>
+      {/* Primary Inline Container (Observed) */}
+      <div
+        ref={inlineContainerRef}
+        className="bg-white rounded-2xl px-5 pb-2 text-center tracking-wide"
+      >
+        {vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString() ? null : (
           <p className="text-[12px] font-extrabold text-black line-through leading-none my-3">
             ${vehicle?.price?.toLocaleString()}.00
           </p>
-      }
+        )}
 
-      <div className="flex items-center justify-center gap-1 my-3">
-        <p className="text-[32px] font-extrabold leading-none text-price-green">
-          ${Number(vehicle?.selling_price || 0).toLocaleString("en-CA")}.00
-        </p>
-
-        <div
-          ref={tooltipRef}
-          className="relative inline-flex items-center group"
-        >
-          <button
-            type="button"
-            onClick={() => setShowTooltip(!showTooltip)}
-            className="flex items-center"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-4 h-4 text-gray-500 cursor-pointer"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
+        <div className="flex items-center justify-center gap-1 my-3">
+          <p className="text-[32px] font-extrabold leading-none text-price-green">
+            ${Number(vehicle?.selling_price || 0).toLocaleString("en-CA")}.00
+          </p>
 
           <div
-            className={`absolute bottom-full -right-44 -translate-x-1/2 mb-2 w-[240px] sm:w-max max-w-[280px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
-              ? "opacity-100 visible"
-              : "opacity-0 invisible"
-              } md:group-hover:opacity-100 md:group-hover:visible`}
+            ref={tooltipRef}
+            className="relative inline-flex items-center group"
           >
-            Listed price does not include taxes and licensing fees.
+            <button
+              type="button"
+              onClick={() => setShowTooltip(!showTooltip)}
+              className="flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="w-4 h-4 text-gray-500 cursor-pointer"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
 
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
+            <div
+              className={`absolute bottom-full -right-44 -translate-x-1/2 mb-2 w-[240px] sm:w-max max-w-[280px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${
+                showTooltip ? "opacity-100 visible" : "opacity-0 invisible"
+              } md:group-hover:opacity-100 md:group-hover:visible`}
+            >
+              Listed price does not include taxes and licensing fees.
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
+            </div>
           </div>
+        </div>
+
+        <div className="mt-1">
+          <Image src={checkout} alt="Express Checkout" />
+        </div>
+
+        <div className="mt-1 space-y-3">
+          <a href={`/finance/?inventory_id=${vehicle?.id}`}>
+            <button className="cursor-pointer my-3 font-bold w-full rounded-[10px] sm:rounded-[12px] border text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[20px] hover:opacity-90 shadow-md transition-opacity bg-brand-btn-gradient border-brand-green">
+              Get started
+            </button>
+          </a>
+
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full bg-white cursor-pointer border-2 font-bold py-3 rounded-xl transition-colors text-[16px] sm:text-[20px] border-brand-green-alpha text-price-green hover:bg-brand-green-alpha hover:text-white hover:border-brand-green-alpha"
+          >
+            Send message
+          </button>
         </div>
       </div>
 
-      <div className="mt-1">
-        <Image src={checkout} alt="Express Checkout" />
-      </div>
-
-      <div className="mt-1 space-y-3">
-        <a href={`/finance/?inventory_id=${vehicle?.id}`}>
-          <button className="cursor-pointer my-3 font-bold w-full rounded-[10px] sm:rounded-[12px] border text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[20px] hover:opacity-90 shadow-md transition-opacity bg-brand-btn-gradient border-brand-green">
+      {/* Dynamic Sticky Mobile Action Bar */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-3 shadow-2xl lg:hidden flex gap-3 transition-transform duration-300 ease-in-out ${
+          showSticky ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <a href={`/finance/?inventory_id=${vehicle?.id}`} className="flex-1">
+          <button className="w-full font-bold rounded-xl text-white py-3 text-[15px] bg-brand-btn-gradient border border-brand-green shadow-md">
             Get started
           </button>
         </a>
-
-        {/* Triggers local state change */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="w-full bg-white cursor-pointer border-2 font-bold py-3 rounded-xl transition-colors text-[16px] sm:text-[20px] border-brand-green-alpha text-price-green hover:bg-brand-green-alpha hover:text-white hover:border-brand-green-alpha"
+          className="flex-1 bg-white border-2 font-bold py-3 rounded-xl text-[15px] border-brand-green-alpha text-price-green"
         >
           Send message
         </button>
       </div>
 
-      {/* The modal is safely self-contained right here */}
       <MessageModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         vehicle={vehicle}
       />
-    </div>
+    </>
   );
 };
 
@@ -185,7 +226,7 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left lg:mt-20">
+    <div className="fixed inset-0 min-h-[100vh] bg-black/50 flex justify-center items-center z-[9999] px-4 text-left lg:mt-20">
       <div className="bg-white rounded-2xl w-full z-[9999] max-w-[620px] relative shadow-2xl p-6 lg:p-5 flex flex-col max-h-[88vh]">
 
         <button
@@ -199,7 +240,7 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
         </button>
 
         <h2 className="text-[24px] font-bold text-gray-900 mb-5 ">Got a question</h2>
-        <div className="h-[500px]">
+        <div className="h-[600px]">
           <iframe
             src={`${SITE_CONFIG?.urls.vehiclePageContactUsBaseUrl}?inventory_id=${inventoryId}`}
             className="w-full rounded-2xl h-full"

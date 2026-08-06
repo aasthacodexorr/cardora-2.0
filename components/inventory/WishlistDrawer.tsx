@@ -120,7 +120,7 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 mb-10">
               {wishlist.map((item, index) => (
                 <div key={index} className="rounded-lg overflow-hidden bg-white">
                   <HitCard hit={convertToHitFormat(item)} />
