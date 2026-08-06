@@ -37,6 +37,7 @@ import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, se
 import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton } from "@/components/inventory/HitCardSkeleton";
 import { AD_CARDS } from "@/components/inventory/AdCard";
+import { useDrawer } from "@/context/DrawerContext";
 
 const AD_BLOCK_CYCLE = 6 + 7 + 8;  
 const AD_SLOT_TO_INDEX: Record<number, number> = { 6: 0, 13: 1, 0: 2 };
@@ -912,6 +913,7 @@ const SyncOrphanedModels = () => {
 // 2. Your cleaned up, error-free InventoryContent Component
 const InventoryContent = () => {
   const config = useAppConfig();
+  const { isWishlistDrawerOpen } = useDrawer();
   const { searchClient, TYPESENSE_COLLECTION_NAME } = useMemo(() => getTypesenseClient(config), [config]);
   const router = useMemo(() => createInventoryRouter(config), [config]);
   const stateMapping = useMemo(() => createInventoryStateMapping(config), [config]);
@@ -954,6 +956,14 @@ const InventoryContent = () => {
     }
     return () => { document.body.style.overflow = ""; };
   }, [isMobileFilterOpen]);
+
+  // Blur search input when drawer opens
+  useEffect(() => {
+    const searchInput = document.querySelector('input[placeholder="Search for Anything"]') as HTMLInputElement;
+    if (isWishlistDrawerOpen && searchInput === document.activeElement) {
+      searchInput?.blur();
+    }
+  }, [isWishlistDrawerOpen]);
 
   // Apply CSS variables to RefinementList count badges and SearchBox
   useEffect(() => {
@@ -1105,12 +1115,13 @@ const InventoryContent = () => {
                       classNames={{
                         root: "w-full",
                         form: "relative flex items-center",
-                        input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px]  shadow-none bg-white text-[14px] outline-none transition-all focus:border-gray-400",
+                        input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[14px] outline-none transition-all focus:border-gray-400",
                         submitIcon: "hidden",
                         resetIcon: "hidden",
                         loadingIcon: "hidden",
                       }}
                       placeholder="Search for Anything"
+                      autoFocus={false}
                     />
                     <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
                   </div>
