@@ -6,58 +6,8 @@ import { Heart } from "lucide-react";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { useWishlist } from "@/context/WishlistContext";
+import { MessageModal } from "./VehicleInfo";
 
-/* =========================
-   MessageModal Overlay
-========================= */
-const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
-  const appConfig = useAppConfig();
-  const { SITE_CONFIG } = getConstants(appConfig);
-  const inventoryId = vehicle?.inventory_id || vehicle?.id;
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-      document.body.style.touchAction = "none";
-    } else {
-      document.body.style.overflow = "";
-      document.body.style.touchAction = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.touchAction = "";
-    };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left lg:mt-20">
-      <div className="bg-white rounded-2xl w-full z-[9999] max-w-[620px] relative shadow-2xl p-6 lg:p-5 flex flex-col max-h-[88vh]">
-        <button
-          onClick={onClose}
-          className="absolute right-5 cursor-pointer top-5 text-gray-400 hover:text-gray-600 transition-colors"
-          type="button"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        <h2 className="text-[24px] font-bold text-gray-900 mb-5">Check Availability</h2>
-        <div className="h-[500px]">
-          <iframe
-            src={`${SITE_CONFIG?.urls?.vehiclePageContactUsBaseUrl}?inventory_id=${inventoryId}`}
-            className="w-full rounded-2xl h-full"
-            title="Contact Us"
-            allow="payment"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 /* =========================
    HitCard Component (Inventory)
@@ -166,7 +116,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
                     });
                   }
                 }}
-                className="absolute top-[11px] right-[10.5px] p-1 cursor-pointer rounded-full bg-white/90 hover:bg-white transition-colors shadow-md z-20"
+                className="absolute top-[12px] right-[12px] p-1 cursor-pointer rounded-full bg-white/90 hover:bg-white transition-colors shadow-md z-20"
                 aria-label={isInWishlist(hit.inventory_id) ? "Remove from wishlist" : "Add to wishlist"}
               >
                 <Heart
@@ -213,7 +163,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
           <a
             href={phoneNumber ? `tel:${phoneNumber}` : "#"}
             onClick={(e) => e.stopPropagation()}
-            className="cursor-pointer text-center w-26 rounded-[10px] sm:rounded-[12px] text-gray-800 bg-white hover:bg-gray-100 py-[10px] text-[14px] sm:text-[15px] font-medium transition-colors border border-gray-300 flex items-center justify-center gap-1"
+            className="cursor-pointer text-center w-26 rounded-[10px] sm:rounded-[12px] text-gray-800 bg-white hover:bg-gray-100 py-[10px] text-[14px] sm:text-[15px] font-medium transition-colors border border-gray-300 flex items-center justify-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />

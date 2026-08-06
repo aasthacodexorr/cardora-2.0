@@ -54,7 +54,7 @@ const Header = () => {
     <>
       {/*  Desktop Header */}
       <header className={`hidden lg:block fixed top-0 z-50 w-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] px-8 bg-white`}>        
-      <div className="mx-auto flex max-w-[1600px] items-center justify-between py-[7.4px]">
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between py-[12px]">
 
           {/* Logo */}
           <div className="flex-[0.2] [&_img]:w-full [&_img]:object-[initial] [&_img]:h-auto [&_img]:max-w-[165px]">
