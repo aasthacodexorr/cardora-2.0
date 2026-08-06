@@ -234,13 +234,13 @@ const Header = () => {
                 openWishlistDrawer();
                 setIsMobileMenuOpen(false);
               }}
-              className={`py-4 border-b border-gray-100 text-[17px] flex items-center justify-start transition-colors w-full text-left font-normal text-gray-900 hover:text-brand-green`}
+              className={`py-4 border-b cursor-pointer border-gray-100 text-[17px] flex items-center justify-start transition-colors w-full text-left font-normal text-gray-900 hover:text-brand-green`}
             >
-              <span className="flex items-center gap-3 relative">
-                Wishlist
-                {wishlistCount > 0 && (
-                  <span className="inline-flex items-center justify-center bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5">
-                    {wishlistCount}
+              <span className="flex items-center gap-2 relative">
+                Favourites
+                {wishlistCount >= 0 && (
+                  <span className="text-[17px]">
+                    ({wishlistCount})
                   </span>
                 )}
               </span>
