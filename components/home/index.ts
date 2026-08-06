@@ -9,5 +9,5 @@ export { default as PreQualify }        from "./pre-qualify/PreQualify";
 export { default as NextRide }          from "./next-ride/NextRide";
 export { default as FeaturedVehicles }  from "./FeaturedVehicles";
 export { default as Reviews }           from "./Reviews";
-export { default as CardoraDifference } from "./cardora-difference/CardoraDifference";
-export { default as DifferenceCard }    from "./cardora-difference/DifferenceCard";
+export { default as DealershipDifference } from "./dealership-difference/DealershipDifference";
+export { default as DifferenceCard }    from "./dealership-difference/DifferenceCard";

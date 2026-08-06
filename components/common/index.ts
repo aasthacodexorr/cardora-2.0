@@ -5,7 +5,7 @@
 ========================= */
 
 // Existing components
-export { default as CardoraLogo } from "./CardoraLogo";
+export { default as Logo } from "./Logo";
 export { NavLink } from "./NavLink";
 export { default as GetInTouch } from "./GetInTouch";
 export { default as DreamVehicleCTA } from "./DreamVehicleCTA";

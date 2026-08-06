@@ -20,7 +20,7 @@ import facebook from "@/assets/social/fb.png";
 import instagram from "@/assets/social/insta-1.png";
 import famicons from "@/assets/icons/famicons_call.svg";
 
-import CardoraLogo from "@/components/common/CardoraLogo";
+import Logo from "@/components/common/Logo";
 import { getConstants, NAV_ITEMS } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { useWishlist } from "@/context/WishlistContext";
@@ -59,7 +59,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-[0.2] [&_img]:w-full [&_img]:object-[initial] [&_img]:h-auto [&_img]:max-w-[165px]">
             <Link href="/" aria-label="Cardora home">
-              <CardoraLogo />
+              <Logo />
             </Link>
           </div>
 
@@ -128,7 +128,7 @@ const Header = () => {
         {/* Top bar: logo + social icons */}
         <div className="flex items-center justify-between pl-[12px] pr-[29px] py-[5px]">
           <Link href="/" aria-label="Cardora home" className="[&_img]:max-w-[125px] [&_img]:h-auto">
-            <CardoraLogo />
+            <Logo />
           </Link>
 
           <div className="flex items-center gap-5">
@@ -241,7 +241,7 @@ const Header = () => {
                 {wishlistCount >= 0 && (
                   <span className="text-[17px]">
                     ({wishlistCount})
-                  </span>
+                  </span> 
                 )}
               </span>
             </button>

@@ -10,7 +10,7 @@ import Image from "next/image";
 import { useAppConfig } from "@/app/providers";
 import { fallbackValue, defaultAppConfig } from "@/lib/appConfig";
 
-const CardoraLogo = () => {
+const Logo = () => {
   const appConfig = useAppConfig();
   const defaultD = defaultAppConfig.dealership;
   
@@ -31,4 +31,4 @@ const CardoraLogo = () => {
   );
 };
 
-export default CardoraLogo;
+export default Logo;

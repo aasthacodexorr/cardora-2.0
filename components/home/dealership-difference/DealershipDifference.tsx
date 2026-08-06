@@ -23,7 +23,7 @@ const icons = [
   <Image src={HeartIcon} alt="Heart Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
 ];
 
-const CardoraDifference = () => {
+const DealershipDifference = () => {
   const appConfig = useAppConfig();
   const { SITE_CONFIG } = getConstants(appConfig);
   // Framer Motion parent orchestrator variants
@@ -82,4 +82,4 @@ const CardoraDifference = () => {
   );
 };
 
-export default CardoraDifference;
+export default DealershipDifference;

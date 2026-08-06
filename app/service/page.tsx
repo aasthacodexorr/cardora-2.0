@@ -40,7 +40,7 @@ import { useAppConfig } from "@/app/providers";
 import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
 import MapIcon   from "@/assets/icons/MAP-ICON.svg";
 import HeartIcon from "@/assets/icons/HEART-ICON.svg";
-import DifferenceCard from "@/components/home/cardora-difference/DifferenceCard";
+import DifferenceCard from "@/components/home/dealership-difference/DifferenceCard";
 
 const icons = [
   <Image src={CheckIcon} alt="Check Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
