@@ -67,14 +67,16 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const removeFromWishlist = (inventoryId: string) => {
+  const removeFromWishlist = (inventoryId: string | number) => {
+    const id = String(inventoryId);
     setWishlist((prev) =>
-      prev.filter((item) => item.inventory_id !== inventoryId)
+      prev.filter((item) => String(item.inventory_id) !== id)
     );
   };
 
-  const isInWishlist = (inventoryId: string) => {
-    return wishlist.some((item) => item.inventory_id === inventoryId);
+  const isInWishlist = (inventoryId: string | number): boolean => {
+    const id = String(inventoryId);
+    return wishlist.some((item) => String(item.inventory_id) === id);
   };
 
   const clearWishlist = () => {

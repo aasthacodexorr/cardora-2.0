@@ -24,6 +24,7 @@ import CardoraLogo from "@/components/common/CardoraLogo";
 import { getConstants, NAV_ITEMS } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { useWishlist } from "@/context/WishlistContext";
+import { useDrawer } from "@/context/DrawerContext";
 
 
 /*  Component */
@@ -33,6 +34,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { wishlist, isHydrated } = useWishlist();
+  const { openWishlistDrawer, isWishlistDrawerOpen } = useDrawer();
   const wishlistCount = isHydrated ? wishlist?.length : 0;
 
   // Close mobile menu whenever the route changes
@@ -51,7 +53,7 @@ const Header = () => {
   return (
     <>
       {/*  Desktop Header */}
-      <header className={`hidden lg:block fixed top-0 z-[999] w-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] px-8 bg-white`}>        
+      <header className={`hidden lg:block fixed top-0 z-50 w-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] px-8 bg-white`}>        
       <div className="mx-auto flex max-w-[1600px] items-center justify-between py-[7.4px]">
 
           {/* Logo */}
@@ -93,21 +95,22 @@ const Header = () => {
           </nav>
 
           {/* Call-Us Button */}
-          <div className="flex-[0.2] flex justify-end pr-5 items-center gap-4">
-            <a
-              href="/wishlist"
-              className={`text-[20px] font-semibold flex items-center gap-[5px] text-black hover:opacity-80 transition-opacity relative`}
+          <div className="flex justify-end pr-5 items-center gap-4">
+            <button
+              onClick={openWishlistDrawer}
+              className={`text-[18px] cursor-pointer flex items-center gap-[5px] text-black hover:opacity-80 transition-opacity relative`}
               aria-label="Wishlist"
             >
-              <svg className="w-[30px] h-[30px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              <svg className="w-[26px] h-[26px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
+              <span>Favourites</span>
               {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {wishlistCount}
+                <span className="text-black text-[18px]  flex items-center justify-center">
+                  ({wishlistCount})
                 </span>
               )}
-            </a>
+            </button>
             <a
               href={PHONE_HREF}
               className={`text-[20px] font-semibold flex items-center gap-[5px] text-brand-green`}
@@ -226,11 +229,12 @@ const Header = () => {
           }`}
         >
           <nav className="flex flex-col px-6 pt-4 pb-6">
-            <Link
-              href="/wishlist"
-              className={`py-4 border-b border-gray-100 text-[17px] flex items-center justify-between transition-colors ${
-                pathname === "/wishlist" ? "font-medium" : "text-gray-900"
-              }`}
+            <button
+              onClick={() => {
+                openWishlistDrawer();
+                setIsMobileMenuOpen(false);
+              }}
+              className={`py-4 border-b border-gray-100 text-[17px] flex items-center justify-start transition-colors w-full text-left font-normal text-gray-900 hover:text-brand-green`}
             >
               <span className="flex items-center gap-3 relative">
                 Wishlist
@@ -240,7 +244,7 @@ const Header = () => {
                   </span>
                 )}
               </span>
-            </Link>
+            </button>
 
             {NAV_ITEMS.map((item) => {
               const isActive =

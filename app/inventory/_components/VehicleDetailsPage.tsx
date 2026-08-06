@@ -12,6 +12,7 @@ import { Header, Footer } from "@/components/layout";
 // Inventory components
 import { ImageGallery } from "@/components/inventory";
 import FinanceCalculator from "@/components/inventory/FinanceCalculator";
+import VDPWishlistButton from "@/components/inventory/VDPWishlistButton";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
@@ -36,49 +37,49 @@ import CoverageModal from "@/components/inventory/CoverageModal";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
-  params,
+    params,
 }: {
-  params: Promise<{ slug: string[] }>;
+    params: Promise<{ slug: string[] }>;
 }): Promise<Metadata> {
-  try {
-    const { slug } = await params;
-    const vehicleParam = slug?.[0] || "";
-    const firstDash = vehicleParam.indexOf("-");
-    
-    if (firstDash === -1) {
-      throw new Error("Invalid vehicle param");
+    try {
+        const { slug } = await params;
+        const vehicleParam = slug?.[0] || "";
+        const firstDash = vehicleParam.indexOf("-");
+
+        if (firstDash === -1) {
+            throw new Error("Invalid vehicle param");
+        }
+
+        const appConfig = await getAppConfig();
+        const id = vehicleParam.substring(0, firstDash);
+        const vehicle = await getVehicleById(id, appConfig);
+
+        if (!vehicle) {
+            throw new Error("Vehicle not found");
+        }
+
+        const titleTemplate = appConfig.site.vdp_page_title_template;
+        const descriptionTemplate = appConfig.site.vdp_page_description_template;
+
+        return generateMetadataHelper({
+            title: titleTemplate,
+            description: descriptionTemplate,
+            additionalReplacements: {
+                year: String(vehicle.year),
+                make: vehicle.make,
+                model: vehicle.model,
+                trim: vehicle.trim || "",
+                dynamic_price_placeholder: "$" + (vehicle.selling_price ? vehicle.selling_price.toLocaleString() : "0"),
+            },
+        });
+    } catch (error) {
+        // Fallback to default VDP metadata from config
+        const appConfig = await getAppConfig();
+        return generateMetadataHelper({
+            title: appConfig.site.vdp_page_title_template,
+            description: appConfig.site.vdp_page_description_template,
+        });
     }
-
-    const appConfig = await getAppConfig();
-    const id = vehicleParam.substring(0, firstDash);
-    const vehicle = await getVehicleById(id, appConfig);
-
-    if (!vehicle) {
-      throw new Error("Vehicle not found");
-    }
-
-    const titleTemplate = appConfig.site.vdp_page_title_template;
-    const descriptionTemplate = appConfig.site.vdp_page_description_template;
-
-    return generateMetadataHelper({
-      title: titleTemplate,
-      description: descriptionTemplate,
-      additionalReplacements: {
-        year: String(vehicle.year),
-        make: vehicle.make,
-        model: vehicle.model,
-        trim: vehicle.trim || "",
-        dynamic_price_placeholder: "$" + (vehicle.selling_price ? vehicle.selling_price.toLocaleString() : "0"),
-      },
-    });
-  } catch (error) {
-    // Fallback to default VDP metadata from config
-    const appConfig = await getAppConfig();
-    return generateMetadataHelper({
-      title: appConfig.site.vdp_page_title_template,
-      description: appConfig.site.vdp_page_description_template,
-    });
-  }
 }
 const showSidebar = true;
 
@@ -124,8 +125,10 @@ export default async function VehicleDetailsPage({
         so that on large monitors the entire layout centers like the design.
       */}
             <section className="w-full bg-background lg:mt-24">
-                <div className="w-full pt-[30px] flex-1  mx-auto">
-
+                <div className="w-full pt-[2px] flex-1  mx-auto">
+                    <div className="flex justify-end mb-2 mr-6">
+                        <VDPWishlistButton vehicle={vehicle} />
+                    </div>
                     {/* SECTION ROW: Controls the boundaries of the sticky sidebar */}
                     <div className="flex flex-col gap-8 max-w-[1440px] xl:max-w-[1600px] mx-auto lg:flex-row items-stretch px-5 md:px-8 lg:px-10 2xl:px-0 relative w-full">
 
