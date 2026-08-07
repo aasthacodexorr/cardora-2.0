@@ -7,6 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
     title: appConfig.site.book_an_appointment_page_title,
     description: appConfig.site.book_an_appointment_page_description,
+    canonicalPath: "/book-an-appointment",
   });
 }
 

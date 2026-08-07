@@ -4,7 +4,8 @@ import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper
 export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
     title: "Why Cardora | Canada’s Smarter Way to Buy & Sell Cars",
-    description: "Learn more about our dealership and our commitment to customer service."
+    description: "Learn more about our dealership and our commitment to customer service.",
+    canonicalPath: "/about-us",
   });
 }
 

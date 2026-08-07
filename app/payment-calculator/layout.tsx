@@ -7,6 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
     title: appConfig.site.payment_calculator_page_title,
     description: appConfig.site.payment_calculator_page_description,
+    canonicalPath: "/payment-calculator",
   });
 }
 

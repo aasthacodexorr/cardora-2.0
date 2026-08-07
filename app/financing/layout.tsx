@@ -7,6 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
     title: appConfig.site.finance_page_title,
     description: appConfig.site.finance_page_description,
+    canonicalPath: "/financing",
   });
 }
 

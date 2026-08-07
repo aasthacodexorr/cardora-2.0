@@ -7,6 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
     title: appConfig.site.contact_us_page_title,
     description: appConfig.site.contact_us_page_description,
+    canonicalPath: "/contact-us",
   });
 }
 
