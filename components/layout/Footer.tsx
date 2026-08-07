@@ -196,7 +196,7 @@ const Footer = () => {
           {" | "}
           <Link href="/terms-conditions" className="hover:text-white">Terms & Conditions</Link>
           {" | "}
-          <Link href="#" className="hover:text-white">Site Map</Link>
+          <Link href="https://www.cardora.ca/sitemap.xml" className="hover:text-white">Site Map</Link>
         </p>
       </div>
     </footer>
