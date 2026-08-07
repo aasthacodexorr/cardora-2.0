@@ -7,6 +7,7 @@ import checkout from "@/assets/icons/checkout.png";
 import { Fuel } from "lucide-react";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
+import { createPortal } from "react-dom";
 
 
 export const PriceAndCTA = ({ vehicle }: any) => {
@@ -96,9 +97,8 @@ export const PriceAndCTA = ({ vehicle }: any) => {
             </button>
 
             <div
-              className={`absolute bottom-full -right-44 -translate-x-1/2 mb-2 w-[240px] sm:w-max max-w-[280px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${
-                showTooltip ? "opacity-100 visible" : "opacity-0 invisible"
-              } md:group-hover:opacity-100 md:group-hover:visible`}
+              className={`absolute bottom-full -right-44 -translate-x-1/2 mb-2 w-[240px] sm:w-max max-w-[280px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip ? "opacity-100 visible" : "opacity-0 invisible"
+                } md:group-hover:opacity-100 md:group-hover:visible`}
             >
               Listed price does not include taxes and licensing fees.
               <div className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
@@ -128,9 +128,8 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
       {/* Dynamic Sticky Mobile Action Bar */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-3 shadow-2xl lg:hidden flex gap-3 transition-transform duration-300 ease-in-out ${
-          showSticky ? "translate-y-0" : "translate-y-full"
-        }`}
+        className={`fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-3 shadow-2xl lg:hidden flex gap-3 transition-transform duration-300 ease-in-out ${showSticky ? "translate-y-0" : "translate-y-full"
+          }`}
       >
         <a href={`/finance/?inventory_id=${vehicle?.id}`} className="flex-1">
           <button className="w-full font-bold rounded-xl text-white py-3 text-[15px] bg-brand-btn-gradient border border-brand-green shadow-md">
@@ -206,7 +205,10 @@ export const VehicleHeader = ({ vehicle }: any) => (
 export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
   const appConfig = useAppConfig();
   const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
-  const inventoryId = vehicle?.id;
+  const inventoryId = vehicle?.id || vehicle?.inventory_id;
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (isOpen) {
@@ -223,10 +225,10 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 min-h-[100vh] bg-black/50 flex justify-center items-center z-[9999] px-4 text-left lg:mt-20">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left min-h-screen">
       <div className="bg-white rounded-2xl w-full z-[9999] max-w-[620px] relative shadow-2xl p-6 lg:p-5 flex flex-col max-h-[88vh]">
 
         <button
@@ -249,6 +251,7 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
           />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
