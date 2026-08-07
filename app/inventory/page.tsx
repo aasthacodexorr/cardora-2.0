@@ -39,7 +39,7 @@ import { InventoryGridSkeleton } from "@/components/inventory/HitCardSkeleton";
 import { AD_CARDS } from "@/components/inventory/AdCard";
 import { useDrawer } from "@/context/DrawerContext";
 
-const AD_BLOCK_CYCLE = 6 + 7 + 8;  
+const AD_BLOCK_CYCLE = 6 + 7 + 8;
 const AD_SLOT_TO_INDEX: Record<number, number> = { 6: 0, 13: 1, 0: 2 };
 
 type DisplayItem =
@@ -289,6 +289,10 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
 
   const displayItems = buildDisplayItems(hits);
 
+  // ── CHANGED: this component now only owns the grid + "show more" control.
+  // The GetInTouch/Footer block used to live here, but that pinned it to the
+  // width of the results column. It now renders once, full-width, via
+  // <PageFooter /> below the two-column layout in InventoryContent.
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
@@ -327,14 +331,39 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
           </button>
         </div>
       )}
-
-      {safeIsLastPage && hits.length > 0 && (
-        <div className="mt-12 transition-opacity duration-300 ease-in">
-          <GetInTouch />
-          <Footer />
-        </div>
-      )}
     </div>
+  );
+};
+ 
+const PageFooter = () => {
+  const { status } = useInstantSearch();
+  const { hits, isLastPage } = useInfiniteHits();
+ 
+  const shouldShowFooter = status === "idle" && isLastPage && hits.length > 0;
+
+  if (!shouldShowFooter) return null;
+
+  return (
+    <div className="mt-12 transition-opacity duration-300 ease-in">
+      <GetInTouch />
+      <Footer />
+    </div>
+  );
+};
+
+const ClearFiltersButton = ({ mobile = false }: { mobile?: boolean }) => {
+  const { items } = useCurrentRefinements();
+  if (items.length === 0) return null;
+
+  return (
+    <ClearRefinements
+      classNames={{
+        button: mobile
+          ? "w-full py-2 text-[12px] border border-gray-300 rounded-xl cursor-pointer font-bold text-black disabled:cursor-not-allowed text-center block bg-gray-50"
+          : "text-[12px] mb-[15px] cursor-pointer font-bold text-black disabled:cursor-not-allowed",
+      }}
+      translations={{ resetButtonText: mobile ? "Clear Active Filters" : "Clear Filters" }}
+    />
   );
 };
 
@@ -388,25 +417,18 @@ const MakeRefinementList = () => {
     if (item.isRefined) {
       // When removing a make, also remove all associated models
       const modelMakeMap = getModelMakeMap();
-      
+
       // Get all models that are currently refined and belong to this make
       const modelsToRemove = modelItems.filter(
         (m) => m.isRefined && modelMakeMap.get(m.value as string) === make
       );
 
-      console.log("[toggle] removing make:", JSON.stringify(make));
-      console.log("[toggle] modelMakeMap:", Array.from(modelMakeMap.entries()));
-      console.log("[toggle] refined models:", modelItems.filter(m => m.isRefined).map(m => m.value));
-      console.log("[toggle] models to remove for this make:", modelsToRemove.map(m => m.value));
-
       // Remove associated models first
       modelsToRemove.forEach((model) => {
-        console.log(`[toggle] removing model: ${model.value}`);
         refineModel(model.value as string);
       });
 
       // Then remove the make
-      console.log(`[toggle] removing make: ${make}`);
       refineMake(make);
       return;
     }
@@ -439,7 +461,7 @@ const MakeRefinementList = () => {
     </ul>
   );
 };
- 
+
 
 const ModelRefinementList = () => {
   const {
@@ -470,12 +492,9 @@ const ModelRefinementList = () => {
     const model = item.value as string;
     const make = getModelMakeMap().get(model);
 
-    console.log(`[ModelRefinementList] toggling model: ${model}, make: ${make}, isRefined: ${item.isRefined}, selectedMakes: ${Array.from(selectedMakes).join(",")}`);
-
     // Selecting a model
     if (!item.isRefined) {
       if (make && !selectedMakes.has(make)) {
-        console.log(`[ModelRefinementList] auto-selecting make: ${make}`);
         refineMake(make);
       }
 
@@ -897,10 +916,6 @@ const SyncOrphanedModels = () => {
     });
 
     if (modelsToRemove.length > 0) {
-      console.log(
-        "[SyncOrphanedModels] found orphaned models to remove:",
-        modelsToRemove.map((m) => m.value)
-      );
       modelsToRemove.forEach((model) => {
         refineModel(model.value as string);
       });
@@ -923,7 +938,7 @@ const InventoryContent = () => {
   const headerHeight = useHeaderHeight();
 
   const sidebarTop = headerHeight + 21;
-  const sidebarMaxHeight = `calc(100vh - ${headerHeight + 33}px)`;
+  const sidebarMaxHeight = `calc(100vh - ${headerHeight + 50}px)`;
 
   // ── Scroll Management State ──
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -995,11 +1010,9 @@ const InventoryContent = () => {
         <RefinementList attribute="year" sortBy={["name:desc"]} classNames={refinementListClassNames} />
       </FilterGroup>
       <FilterGroup title="MAKE" isOpen={openFilter === "MAKE"} onToggle={() => setOpenFilter(openFilter === "MAKE" ? null : "MAKE")}>
-        {/* <RefinementList attribute="make" classNames={refinementListClassNames} /> */}
-          <MakeRefinementList />
+        <MakeRefinementList />
       </FilterGroup>
       <FilterGroup title="MODEL" isOpen={openFilter === "MODEL"} onToggle={() => setOpenFilter(openFilter === "MODEL" ? null : "MODEL")}>
-        {/* <RefinementList attribute="model" classNames={refinementListClassNames} /> */}
         <ModelRefinementList />
       </FilterGroup>
       <FilterGroup title="ODOMETER" isOpen={openFilter === "ODOMETER"} onToggle={() => setOpenFilter(openFilter === "ODOMETER" ? null : "ODOMETER")}>
@@ -1032,7 +1045,6 @@ const InventoryContent = () => {
     >
       <SyncModelMakeMap/>
       <SyncOrphanedModels/>
-      {/* <SyncMakeModelRelationship /> */}
       <ScrollToTopOnSearch />
       <Configure hitsPerPage={21} />
 
@@ -1047,39 +1059,41 @@ const InventoryContent = () => {
         {/* ── Two-column layout (sidebar sits outside results bg so it slides under header) ── */}
         <div className="bg-light-gray lg:-mt-4 min-h-screen px-3 lg:px-14 py-[20px] overflow-visible">
           <div className="flex flex-col lg:flex-row items-start max-w-[1550px] mx-auto gap-5 overflow-visible">
-            {/* ── Filter Sidebar ── */}
             <aside
               className={[
                 "hidden",
-                "lg:block lg:shrink-0 lg:w-[320px]",
+                "lg:flex lg:flex-col lg:shrink-0 lg:w-[320px]",
                 "2xl:w-[360px]",
                 "lg:sticky lg:self-start lg:z-30",
               ].join(" ")}
-              style={{ top: sidebarTop }}
+              style={{ top: sidebarTop, maxHeight: sidebarMaxHeight }}
             >
-              <div
-                className={[
-                  "overflow-y-auto overscroll-contain",
-                  "[&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar-track]:hidden",
-                  "lg:[scrollbar-width:none] lg:[-ms-overflow-style:none]",
-                ].join(" ")}
-                style={{ maxHeight: sidebarMaxHeight }}
-              >
-                <div className="bg-white rounded-[15px] p-[15px] border border-border-standard">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
-                      <CustomHitsCount />
-                    </div>
-                    <ClearRefinements
-                      classNames={{
-                        button: "text-[12px] mb-[15px] cursor-pointer font-bold text-black disabled:cursor-not-allowed",
-                      }}
-                      translations={{ resetButtonText: "Clear Filters" }}
-                    />
-                  </div>
-                  {renderFilterGroups()}
-                </div>
-              </div>
+             <div
+  className="flex flex-col bg-white rounded-[15px] border border-border-standard overflow-hidden w-full"
+  style={{ maxHeight: sidebarMaxHeight }}
+>
+  {/* Everything below (hit count, clear filters, filter groups) now lives
+      inside ONE scrollable container — nothing stays fixed while scrolling. */}
+  <div
+    className={[
+      "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px]",
+      // visible thin scrollbar instead of the hidden one
+      "[&::-webkit-scrollbar]:w-[6px]",
+      "[&::-webkit-scrollbar-track]:bg-transparent",
+      "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
+      "lg:[scrollbar-width:thin]",
+    ].join(" ")}
+  >
+    <div className="flex flex-col items-center gap-4 pb-0">
+      <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
+        <CustomHitsCount />
+      </div>
+      <ClearFiltersButton />
+    </div>
+
+    {renderFilterGroups()}
+  </div>
+</div>
             </aside>
 
             {/* ── Results Column ── */}
@@ -1158,29 +1172,30 @@ const InventoryContent = () => {
             </div>
           </div>
 
-          {/* ── Mobile filter slide-in overlay ── */}
-          <div className={`fixed inset-0 z-50 flex lg:hidden transition-opacity duration-300 ${isMobileFilterOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
-            <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileFilterOpen(false)} />
-            <div className={`relative flex w-full max-w-xs flex-col bg-white h-full shadow-xl ml-auto p-4 overflow-y-auto overscroll-contain transition-transform duration-300 ease-in-out ${isMobileFilterOpen ? "translate-x-0" : "translate-x-full"}`}>
-              <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-4">
-                <h2 className="text-lg font-bold text-black tracking-wider">Filters</h2>
-                <button onClick={() => setIsMobileFilterOpen(false)} className="p-1 rounded-full text-gray-500 hover:bg-gray-100">
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-              <div className="mb-4">
-                <div className="text-white text-center py-2.5 px-4 rounded-xl font-bold text-[13px] w-full shadow-sm mb-3 bg-brand">
-                  <CustomHitsCount />
-                </div>
-                <ClearRefinements
-                  classNames={{
-                    button: "w-full py-2 text-[12px] border border-gray-300 rounded-xl cursor-pointer font-bold text-black disabled:cursor-not-allowed text-center block bg-gray-50",
-                  }}
-                  translations={{ resetButtonText: "Clear Active Filters" }}
-                />
-              </div>
-              <div className="flex-1">{renderFilterGroups()}</div>
+          {/* ── Common footer — spans the full width beneath BOTH the sidebar
+              and the results column, once results have finished loading. ── */}
+          <div className="max-w-[1550px] mx-auto">
+            <PageFooter />
+          </div>
+        </div>
+
+        {/* ── Mobile filter slide-in overlay ── */}
+        <div className={`fixed inset-0 z-50 flex lg:hidden transition-opacity duration-300 ${isMobileFilterOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+          <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileFilterOpen(false)} />
+          <div className={`relative flex w-full max-w-xs flex-col bg-white h-full shadow-xl ml-auto p-4 overflow-y-auto overscroll-contain transition-transform duration-300 ease-in-out ${isMobileFilterOpen ? "translate-x-0" : "translate-x-full"}`}>
+            <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-4">
+              <h2 className="text-lg font-bold text-black tracking-wider">Filters</h2>
+              <button onClick={() => setIsMobileFilterOpen(false)} className="p-1 rounded-full text-gray-500 hover:bg-gray-100">
+                <X className="h-6 w-6" />
+              </button>
             </div>
+           <div className="mb-4">
+  <div className="text-white text-center py-2.5 px-4 rounded-xl font-bold text-[13px] w-full shadow-sm mb-3 bg-brand">
+    <CustomHitsCount />
+  </div>
+  <ClearFiltersButton mobile />
+</div>
+            <div className="flex-1">{renderFilterGroups()}</div>
           </div>
         </div>
       </MainLayoutWrapper>
