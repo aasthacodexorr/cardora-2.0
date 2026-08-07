@@ -21,8 +21,9 @@ import { GetInTouch } from "@/components/common";
 import { getConstants } from "@/constants";
 import { getVehicleById, getVehicleBySlug } from "@/lib/inventoryUrls";
 import { stripHtml, parseImageUrls } from "@/utils/formatters";
-import { getAppConfig } from "@/lib/appConfig";
+import { getAppConfig, getSafeDealershipConfig } from "@/lib/appConfig";
 import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
+import { headers } from "next/headers";
 
 import doller from "@/assets/icons/doller-1.png";
 import protectShield from "@/assets/icons/trade-shield.png";
@@ -93,6 +94,7 @@ export default async function VehicleDetailsPage({
     if (firstDash === -1) return null;
 
     const appConfig = await getAppConfig();
+    const safeD = getSafeDealershipConfig(appConfig.dealership);
     const { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } = getConstants(appConfig);
 
     const id = vehicleParam.substring(0, firstDash);
@@ -113,8 +115,66 @@ export default async function VehicleDetailsPage({
 
     const isSold = vehicle.status?.toLowerCase() !== "instock";
 
+    let host = "www.cardora.ca";
+    try {
+        const headersList = await headers();
+        const headerHost = headersList.get("host");
+        if (headerHost) {
+            host = headerHost;
+        }
+    } catch (e) {}
+
+    const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
+    const baseUrl = `${protocol}://${host}`;
+    const vehicleUrl = `${baseUrl}/inventory/${vehicleParam}`;
+
+    const carSchema = {
+        "@context": "https://schema.org",
+        "@type": appConfig.schema_org?.vdp_entity_type || "Car",
+        "name": titleText,
+        "image": images,
+        "description": vehicle.vehicle_description ? stripHtml(vehicle.vehicle_description) : titleText,
+        "brand": {
+            "@type": "Brand",
+            "name": vehicle.make,
+        },
+        "model": vehicle.model,
+        "vehicleModelDate": vehicle.year,
+        "color": vehicle.exterior_color || undefined,
+        "mileageFromOdometer": vehicle.odometer ? {
+            "@type": "QuantitativeValue",
+            "value": Number(vehicle.odometer),
+            "unitCode": "KMT",
+        } : undefined,
+        "offers": {
+            "@type": "Offer",
+            "price": vehicle.selling_price || vehicle.price || "0",
+            "priceCurrency": appConfig.schema_org?.currencies_accepted || "CAD",
+            "availability": isSold ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/UsedCondition",
+            "url": vehicleUrl,
+            "seller": {
+                "@type": appConfig.schema_org?.entity_type || "AutoDealer",
+                "name": safeD.dealership_name,
+                "telephone": safeD.sales_number_1 || safeD.toll_free_number_1 || "",
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": safeD.full_address_1,
+                    "addressLocality": safeD.city_1,
+                    "addressRegion": safeD.province_1,
+                    "postalCode": safeD.postal_code_1,
+                    "addressCountry": safeD.country_1,
+                },
+            },
+        },
+    };
+
     return (
         <main className="min-h-screen bg-background flex flex-col items-center">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(carSchema) }}
+            />
             {/* Header spanning 100% viewport, inside contents are usually centered natively */}
             <div className="w-full bg-hero-bg">
                 <Header />
