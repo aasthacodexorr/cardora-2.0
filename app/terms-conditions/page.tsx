@@ -9,6 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
     title: appConfig.site.terms_and_conditions_page_title,
     description: appConfig.site.terms_and_conditions_page_description,
+    canonicalPath: "/terms-conditions",
   });
 }
 

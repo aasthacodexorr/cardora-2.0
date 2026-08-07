@@ -5,6 +5,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
     title: "Auto Repair in Brampton | Fast, Honest & Reliable Service",
     description: "Explore our full range of automotive services and expertise.",
+    canonicalPath: "/service",
   });
 }
 

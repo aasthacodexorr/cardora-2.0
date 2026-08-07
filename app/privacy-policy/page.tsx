@@ -9,6 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
     title: appConfig.site.privacy_policy_page_title,
     description: appConfig.site.privacy_policy_page_description,
+    canonicalPath: "/privacy-policy",
   });
 }
 

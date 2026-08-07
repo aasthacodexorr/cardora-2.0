@@ -9,9 +9,37 @@ import { getConstants } from '@/constants';
 import Image from "next/image";
 import DownloadCouponButton from '@/components/service/DownloadCouponButton';
 import { getServicesData } from '@/constants/serviceData';
+import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
+import type { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const appConfig = await getAppConfig();
+  const { id } = await params;
+  
+  const dealershipConfig = {
+    dealership_name: appConfig.dealership.dealership_name,
+    city_1: appConfig.dealership.city_1,
+    province_1: appConfig.dealership.province_1,
+  };
+  
+  const servicesData = getServicesData(dealershipConfig);
+  const currentData = servicesData[id];
+  
+  if (!currentData) {
+    return {
+      title: "Service Not Found",
+    };
+  }
+
+  return generateMetadataHelper({
+    title: currentData.cityTitle,
+    description: currentData.introText1 || `Professional automotive service at ${appConfig.dealership.dealership_name}`,
+    canonicalPath: `/service/${id}`,
+  });
 }
 
 export default async function ServicePage({ params }: PageProps) {
