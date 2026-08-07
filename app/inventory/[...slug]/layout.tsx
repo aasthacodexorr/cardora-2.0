@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getAppConfig, getSafeDealershipConfig } from "@/lib/appConfig";
 import { getVehicleBySlug, isVehicleDetailSlug } from "@/lib/inventoryUrls";
+import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
+import { parseImageUrls } from "@/utils/formatters";
 
 export async function generateMetadata({
   params,
@@ -24,33 +26,23 @@ export async function generateMetadata({
     };
   }
 
-  const title = appConfig.site.vdp_page_title_template
-    .replaceAll("%year", vehicle.year)
-    .replaceAll("%make", vehicle.make)
-    .replaceAll("%model", vehicle.model)
-    .replaceAll("%dealership_name", dealership.dealership_name)
-    .replaceAll("%city_1", dealership.city_1)
-    .replaceAll("%province_1", dealership.province_1);
+  const images = vehicle.image_urls
+    ? parseImageUrls(vehicle.image_urls, appConfig.site.cdn_api)
+    : [dealership.default_placeholder_image];
 
-  const description = appConfig.site.vdp_page_description_template
-    .replaceAll("%year", vehicle.year)
-    .replaceAll("%make", vehicle.make)
-    .replaceAll("%model", vehicle.model)
-    .replaceAll("%trim", vehicle.trim)
-    .replaceAll("%dynamic_price_placeholder", vehicle.price)
-    .replaceAll("%dealership_name", dealership.dealership_name)
-    .replaceAll("%city_1", dealership.city_1)
-    .replaceAll("%province_1", dealership.province_1);
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: [vehicle.primaryImage],
+  return generateMetadataHelper({
+    title: appConfig.site.vdp_page_title_template,
+    description: appConfig.site.vdp_page_description_template,
+    additionalReplacements: {
+      year: String(vehicle.year),
+      make: vehicle.make,
+      model: vehicle.model,
+      trim: vehicle.trim || "",
+      dynamic_price_placeholder: "$" + (vehicle.selling_price ? Number(vehicle.selling_price).toLocaleString("en-CA") : "0"),
     },
-  };
+    canonicalPath: `/inventory/${slug[0]}`,
+    images: images,
+  });
 }
 
 export default function Layout({

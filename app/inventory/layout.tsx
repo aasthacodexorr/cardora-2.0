@@ -7,6 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return generateMetadataHelper({
     title: appConfig.site.inventory_page_default_title,
     description: appConfig.site.inventory_page_default_description,
+    canonicalPath: "/inventory",
   });
 }
 

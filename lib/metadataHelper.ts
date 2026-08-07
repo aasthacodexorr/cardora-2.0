@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { getAppConfig, getSafeDealershipConfig } from "./appConfig";
+import { headers } from "next/headers";
 
 interface MetadataGeneratorOptions {
   title: string;
   description: string;
   additionalReplacements?: Record<string, string>;
+  canonicalPath?: string;
+  images?: string[];
 }
 
 /**
@@ -44,5 +47,44 @@ export async function generateMetadata(
   const title = replacePlaceholders(options.title, safeD, options.additionalReplacements);
   const description = replacePlaceholders(options.description, safeD, options.additionalReplacements);
 
-  return { title, description };
+  let host = "www.cardora.ca";
+  try {
+    const headersList = await headers();
+    const headerHost = headersList.get("host");
+    if (headerHost) {
+      host = headerHost;
+    }
+  } catch (e) {
+    // Fallback for static generation where headers are unavailable
+  }
+
+  const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
+  const baseUrl = `${protocol}://${host}`;
+  const canonicalUrl = `${baseUrl}${options.canonicalPath || ""}`;
+  const resolvedImages = options.images && options.images.length > 0
+    ? options.images
+    : [safeD.dealership_logo];
+
+  return {
+    title,
+    description,
+    metadataBase: new URL(baseUrl),
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: safeD.dealership_name,
+      images: resolvedImages,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: resolvedImages,
+    },
+  };
 }
