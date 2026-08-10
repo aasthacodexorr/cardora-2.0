@@ -107,7 +107,7 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
 
               <p className="text-gray-600 text-base leading-relaxed mb-6">
                 Browse our inventory and tap the{" "}
-                <Heart className="inline-block w-5 h-5 fill-brand-green stroke-none align-middle" />
+                <Heart className="inline-block w-5 h-5 fill-brand-green stroke-none align-middle mr-1" />
                 on any vehicle to add it to your favorites.
               </p>
 
@@ -117,7 +117,7 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
                 onClick={onClose}
                 className="inline-flex items-center justify-center bg-brand-green hover:bg-brand-green-alpha hover:text-white transition-all text-white px-6 py-3 rounded-xl text-base transition-colors mb-6"
               >
-                Search vehicles
+                Browse vehicles
               </Link>
             </div>
           ) : (
