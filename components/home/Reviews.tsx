@@ -149,7 +149,7 @@ const Reviews = () => {
                   <Star key={i} className="h-4 w-4 fill-star text-star" />
                 ))}
               </div>
-              <span className="text-[15px] font-medium text-foreground">5.0 (33)</span>
+              <span className="text-[15px] font-medium text-foreground">5.0 (80)</span>
               <span className="underline font-md">View all</span>
             </div>
           </a>

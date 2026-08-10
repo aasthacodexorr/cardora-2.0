@@ -203,7 +203,7 @@ const ProtectionPlans = () => {
                 <motion.div
                   variants={itemVariants}
                   key={label}
-                  className="flex items-center gap-3 rounded-full px-5 py-4 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.1)] bg-prequalify-blue"
+                  className="flex items-center gap-3 rounded-full px-5 py-4 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.1)] bg-[#e6f4ff]"
                 >
                   <Check className="h-6 w-6 text-emerald-500 shrink-0" strokeWidth={2} />
                   <span className="text-base font-medium text-neutral-800">{label}</span>
@@ -232,7 +232,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/* Section 2: We stand behind our cars */}
-      <section className="w-full border-t border-neutral-100/60 py-14 md:py-20 xl:mt-20 mt-7 bg-prequalify-blue">
+      <section className="w-full border-t border-neutral-100/60 py-14 md:py-20 xl:mt-20 mt-7 bg-[#e6f4ff]">
         <div className="mx-auto xl:max-w-[1240px] px-5 md:px-1 flex flex-col items-center text-center">
 
           <motion.h2
