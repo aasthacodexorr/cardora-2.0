@@ -222,7 +222,7 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
 
   return createPortal(
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left min-h-screen">
-      <div className="bg-white rounded-2xl w-full z-[9999] max-w-[620px] relative shadow-2xl p-6 lg:p-5 flex flex-col max-h-[88vh]">
+      <div className="bg-white rounded-2xl w-full z-[9999] max-w-[620px] relative  p-6 lg:p-5 flex flex-col max-h-[88vh]">
 
         <button
           onClick={onClose}
