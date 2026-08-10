@@ -402,6 +402,8 @@ const MakeRefinementList = () => {
     refine: refineMake,
   } = useRefinementList({
     attribute: "make",
+    limit: 200,
+    sortBy: ["name:asc"],
   });
 
   const {
@@ -409,8 +411,9 @@ const MakeRefinementList = () => {
     refine: refineModel,
   } = useRefinementList({
     attribute: "model",
+    limit: 200,
+    sortBy: ["name:asc"],
   });
-
   const handleToggle = (item: typeof makeItems[number]) => {
     const make = item.value as string;
 
@@ -437,29 +440,41 @@ const MakeRefinementList = () => {
   };
 
   return (
-    <ul className={refinementListClassNames.list}>
-      {makeItems.map((item) => (
-        <li key={item.value}>
-          <label className={refinementListClassNames.label}>
-            <input
-              type="checkbox"
-              checked={item.isRefined}
-              onChange={() => handleToggle(item)}
-              className={refinementListClassNames.checkbox}
-            />
+  <ul
+    className={`
+    ${refinementListClassNames.list}
+    max-h-[300px]
+    overflow-y-auto
+    pr-2
+    [&::-webkit-scrollbar]:w-[5px]
+    [&::-webkit-scrollbar-track]:bg-transparent
+    [&::-webkit-scrollbar-thumb]:bg-gray-300
+    [&::-webkit-scrollbar-thumb]:rounded-full
+    lg:[scrollbar-width:thin]
+  `}
+  >
+    {makeItems.map((item) => (
+      <li key={item.value}>
+        <label className={refinementListClassNames.label}>
+          <input
+            type="checkbox"
+            checked={item.isRefined}
+            onChange={() => handleToggle(item)}
+            className={refinementListClassNames.checkbox}
+          />
 
-            <span className={refinementListClassNames.labelText}>
-              {item.label}
-            </span>
+          <span className={refinementListClassNames.labelText}>
+            {item.label}
+          </span>
 
-            <span className={refinementListClassNames.count}>
-              {item.count}
-            </span>
-          </label>
-        </li>
-      ))}
-    </ul>
-  );
+          <span className={refinementListClassNames.count}>
+            {item.count}
+          </span>
+        </label>
+      </li>
+    ))}
+  </ul>
+);
 };
 
 
