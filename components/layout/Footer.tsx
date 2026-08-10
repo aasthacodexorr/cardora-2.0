@@ -145,15 +145,17 @@ const Footer = () => {
               <MapPin className="h-5 w-5 text-white/85 shrink-0 mt-0.5" />
               
               {/* Entire address element acts as a link now */}
-              <a 
-                href={mapsUrl} 
-                target="_blank" 
+              <a
+                href={mapsUrl}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-white block"
               >
                 <address className="not-italic text-[15px] leading-relaxed cursor-pointer">
-                  {safeD.full_address_1},<br />
-                  {safeD.city_1}, {safeD.province_1}<br />
+                  {safeD.full_address_1.trim()},
+                  <br />
+                  {safeD.city_1}, {safeD.province_1}
+                  <br />
                   {safeD.postal_code_1}
                 </address>
               </a>
