@@ -350,7 +350,7 @@ const ProtectionPlans = () => {
               Gap Coverage
             </h2>
             <div className="mt-2">
-              <span className="inline-block text-base px-8 py-3 rounded-full uppercase tracking-wider bg-prequalify-blue shadow-[0_2px_18px_rgba(0,0,0,0.05)]">
+              <span className="inline-block text-base px-8 py-3 rounded-full uppercase tracking-wider bg-[#e6f4ff] shadow-[0_2px_18px_rgba(0,0,0,0.05)]">
                 Optional
               </span>
             </div>
