@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { Heart, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useWishlist, WishlistItem } from "@/context/WishlistContext";
@@ -102,12 +102,13 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
 
               {/* Title */}
               <h3 className="text-2xl font-bold text-gray-900 leading-tight mb-3">
-                You haven’t favorited any vehicles
+                Your Favorites List Is Empty.
               </h3>
 
-              {/* Description */}
               <p className="text-gray-600 text-base leading-relaxed mb-6">
-                Find a vehicle you love and favorite it using the heart icon.
+                Browse our inventory and tap the{" "}
+                <Heart className="inline-block w-5 h-5 fill-brand-green stroke-none align-middle" />
+                on any vehicle to add it to your favorites.
               </p>
 
               {/* CTA Button */}
