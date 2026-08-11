@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
 import { Check, ChevronDown, ChevronUp, Search, Settings2, X } from "lucide-react";
 
 // Layout
@@ -35,7 +35,7 @@ import { getTypesenseClient } from "@/lib/typesense";
 // Custom router/stateMapping that produces the client-required URL format
 import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, setModelMakeMap } from "@/lib/inventoryRouting";
 import { useAppConfig } from "@/app/providers";
-import { InventoryGridSkeleton } from "@/components/inventory/HitCardSkeleton";
+import { InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "@/components/inventory/HitCardSkeleton";
 import { AD_CARDS } from "@/components/inventory/AdCard";
 import { useDrawer } from "@/context/DrawerContext";
 
@@ -216,7 +216,9 @@ const ScrollToTopOnSearch = () => {
   const prevSignatureRef = useRef<string>("");
 
   useEffect(() => {
-    const { page, ...searchCriteria } = (indexUiState || {}) as PlainIndexUiState;
+    // Ignore pagination-only updates (infinite scroll). Safari is especially
+    // sensitive to scrollTo(0) while the user is mid-feed.
+    const { page: _page, ...searchCriteria } = (indexUiState || {}) as PlainIndexUiState;
     const signature = JSON.stringify(searchCriteria);
 
     if (firstLoad.current) {
@@ -249,64 +251,130 @@ const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const LOAD_MORE_SHIMMER_MIN_MS = 450;
+
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   const { status } = useInstantSearch();
   const { hits, isLastPage, showMore } = useInfiniteHits();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const prevHitsLength = useRef(hits.length);
+  const loadingMoreRef = useRef(false);
+  const preservedScrollYRef = useRef<number | null>(null);
+  const cachedHitsRef = useRef(hits);
+  const hitsLengthBeforeLoadRef = useRef(hits.length);
+  const loadStartedAtRef = useRef(0);
+  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // idle → loading (shimmer) → revealing (soft fade-in cards)
+  const [loadPhase, setLoadPhase] = useState<"idle" | "loading" | "revealing">("idle");
+  const [revealFromIndex, setRevealFromIndex] = useState<number | null>(null);
+
+  if (hits.length > 0) {
+    cachedHitsRef.current = hits;
+  }
+  const stableHits =
+    hits.length > 0
+      ? hits
+      : loadPhase !== "idle"
+        ? cachedHitsRef.current
+        : hits;
 
   const settled = status === "idle";
-  const safeIsLastPage = settled ? isLastPage : true;
-
-  // Show the shimmer grid any time a search is stalled — whether hits
-  // are empty (first load / new filter combo) or still populated from
-  // the previous query. Same card shapes as the real grid, so nothing
-  // visually jumps.
-  const showSkeleton = status === "stalled";
+  const showSkeleton = status === "stalled" && stableHits.length === 0;
+  const hasAppendedPage = hits.length > hitsLengthBeforeLoadRef.current;
+  // Keep shimmer mounted until min duration so Safari can paint the animation.
+  const showLoadMoreShimmer = loadPhase === "loading";
+  const isLoadMoreBusy = loadPhase !== "idle";
 
   useEffect(() => {
-    if (hits.length !== prevHitsLength.current) {
-      setIsLoadingMore(false);
-      prevHitsLength.current = hits.length;
+    return () => {
+      if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (loadPhase !== "loading") return;
+    if (!hasAppendedPage && !settled) return;
+
+    const elapsed = Date.now() - loadStartedAtRef.current;
+    const wait = Math.max(0, LOAD_MORE_SHIMMER_MIN_MS - elapsed);
+
+    if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
+    revealTimerRef.current = setTimeout(() => {
+      // Soft handoff: swap shimmer → cards, then let opacity ease in.
+      setLoadPhase("revealing");
+      loadingMoreRef.current = false;
+      hitsLengthBeforeLoadRef.current = hits.length;
+
+      revealTimerRef.current = setTimeout(() => {
+        setLoadPhase("idle");
+        setRevealFromIndex(null);
+        preservedScrollYRef.current = null;
+      }, 480);
+    }, wait);
+  }, [loadPhase, hasAppendedPage, settled, hits.length]);
+
+  // One-shot Safari guard: only fix a clear jump UP, never fight normal scroll.
+  useLayoutEffect(() => {
+    if (loadPhase !== "loading" && loadPhase !== "revealing") return;
+    const y = preservedScrollYRef.current;
+    if (y == null) return;
+    if (window.scrollY < y - 80) {
+      window.scrollTo(0, y);
     }
-  }, [hits.length]);
+  }, [loadPhase, hasAppendedPage]);
 
   const handleShowMore = () => {
-    if (isLoadingMore || safeIsLastPage) return;
-    setIsLoadingMore(true);
+    if (loadingMoreRef.current || isLastPage || !settled || isLoadMoreBusy) return;
+    loadingMoreRef.current = true;
+    hitsLengthBeforeLoadRef.current = hits.length;
+    loadStartedAtRef.current = Date.now();
+    setRevealFromIndex(hits.length);
+    preservedScrollYRef.current = window.scrollY;
+    setLoadPhase("loading");
     showMore();
   };
 
   useEffect(() => {
-    if (safeIsLastPage || isLoadingMore) return;
+    if (isLastPage || isLoadMoreBusy || !settled) return;
     const observer = new IntersectionObserver(
-      ([entry]) => entry.isIntersecting && handleShowMore(),
-      { root: null, rootMargin: "300px" }
+      ([entry]) => {
+        if (entry.isIntersecting) handleShowMore();
+      },
+      { root: null, rootMargin: "350px" }
     );
     const current = loadMoreRef.current;
     if (current) observer.observe(current);
-    return () => { if (current) observer.unobserve(current); };
+    return () => {
+      if (current) observer.unobserve(current);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [safeIsLastPage, isLoadingMore]);
+  }, [isLastPage, settled, stableHits.length, isLoadMoreBusy]);
 
   if (showSkeleton) {
     return <InventoryGridSkeleton />;
   }
 
-  const displayItems = buildDisplayItems(hits);
+  // Freeze previous page under shimmer; reveal full list only after data arrives.
+  const visibleHits = showLoadMoreShimmer
+    ? stableHits.slice(0, hitsLengthBeforeLoadRef.current || stableHits.length)
+    : stableHits;
+  const displayItems = buildDisplayItems(visibleHits);
+  let hitOrdinal = -1;
 
-  // ── CHANGED: this component now only owns the grid + "show more" control.
-  // The GetInTouch/Footer block used to live here, but that pinned it to the
-  // width of the results column. It now renders once, full-width, via
-  // <PageFooter /> below the two-column layout in InventoryContent.
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
         {displayItems.map((item) => {
           if (item.kind === "hit") {
+            hitOrdinal += 1;
+            const isNew = revealFromIndex != null && hitOrdinal >= revealFromIndex;
             return (
-              <div key={item.hit.objectID} className="flex flex-col h-full p-[9px]">
+              <div
+                key={item.hit.objectID}
+                className={[
+                  "flex flex-col h-full p-[9px]",
+                  isNew && loadPhase === "revealing" ? "animate-inventory-card-in" : "",
+                ].join(" ")}
+              >
                 <HitComponent hit={item.hit} />
               </div>
             );
@@ -319,24 +387,12 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
             </div>
           );
         })}
+
+        {showLoadMoreShimmer && <InventoryLoadMoreSkeleton />}
       </div>
 
-      {!safeIsLastPage && <div ref={loadMoreRef} style={{ height: 1 }} />}
-
-      {!safeIsLastPage && (
-        <div className="mt-8 mb-12 flex justify-start pl-[9px] min-h-[52px] items-center">
-          <button
-            type="button"
-            onClick={handleShowMore}
-            disabled={isLoadingMore}
-            className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl cursor-pointer font-medium text-[13px] uppercase tracking-wider hover:bg-gray-800 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {isLoadingMore && (
-              <span className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-            )}
-            {isLoadingMore ? "Loading..." : "Show More Results"}
-          </button>
-        </div>
+      {!isLastPage && !isLoadMoreBusy && (
+        <div ref={loadMoreRef} aria-hidden style={{ height: 1 }} />
       )}
     </div>
   );
@@ -1088,7 +1144,7 @@ const InventoryContent = () => {
                 "2xl:w-[360px]",
                 "lg:sticky lg:self-start lg:z-30",
               ].join(" ")}
-              style={{ top: sidebarTop, maxHeight: sidebarMaxHeight }}
+              style={{ top: sidebarTop, maxHeight: sidebarMaxHeight, contain: "layout paint" }}
             >
              <div
   className="flex flex-col bg-white rounded-[15px] border border-border-standard overflow-hidden w-full"

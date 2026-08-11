@@ -74,11 +74,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
               alt={title}
               width={600}
               height={400}
-              style={{
-                width: "100%",
-                height: "auto",
-              }}
-              className={`w-full object-cover min-h-[240px] md:max-h-[240px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${
+              className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${
                 isSold ? "grayscale opacity-80" : ""
               }`}
             />
