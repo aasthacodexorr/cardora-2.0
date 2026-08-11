@@ -18,19 +18,7 @@ const NextRide = () => {
         <h2 className="text-[28px] lg:text-[44px] font-bold text-foreground tracking-tight mb-8">
           Let&apos;s find your next ride
         </h2>
-
-        <div className={GRID_CLASS}>
-          {CARDS?.slice(0, 3).map((card) => (
-            <NextRideCard
-              key={card.title}
-              image={card.image}
-              alt={card.alt}
-              title={card.title}
-              subtitle={card.subtitle}
-              to={card.to}
-            />
-          ))}
-        </div>
+            <NextRideCard/>
       </div>
     </section>
   );
