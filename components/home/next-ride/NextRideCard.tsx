@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+
 import t1 from "@/assets/shop-cars/t1.png"
 import t2 from "@/assets/shop-cars/t2.png"
 import b1 from "@/assets/shop-cars/b1.png"
 import b2 from "@/assets/shop-cars/b2.png"
 import m1 from "@/assets/shop-cars/m1.png"
 import m2 from "@/assets/shop-cars/m2.png"
+import m3 from "@/assets/shop-cars/m3.png"
 import offerImg from "@/assets/cars/offer-bg.png";
 import jeepImg from "@/assets/cars/jeep-slide.png";
 import decImg from "@/assets/cars/dec-clean.png";
@@ -16,14 +18,14 @@ import dollar0Img from "@/assets/cars/dollar-glyph-0.png";
 import dollar1Img from "@/assets/cars/dollar-glyph-1.png";
 import dollar2Img from "@/assets/cars/dollar-glyph-2.png";
 
-
 const SHOP_TILES = [
   { src: t1?.src, className: "col-span-6 row-span-1 ml-[10px]" },
   { src: t2?.src, className: "col-span-6 row-span-1 mr-[10px]" },
   { src: m1?.src, className: "col-span-4 row-span-1 rounded-r-[14px] rounded-l-none" },
   { src: m2?.src, className: "col-span-5 row-span-1", imgPosition: "object-[45%_center]" },
-  { src: b1?.src, className: "col-span-3 row-span-1 rounded-l-[14px] rounded-r-none" },
-  { src: b2?.src, className: "col-span-6 row-span-1 ml-[10px]" },
+  { src: m3?.src, className: "col-span-3 row-span-1 rounded-l-[14px] rounded-r-none" },
+  { src: b1?.src, className: "col-span-6 row-span-1 ml-[10px]" },
+  { src: b2?.src, className: "col-span-6 row-span-1 mr-[10px]" },
 ];
 
 const ROWS = [[0, 1], [2, 3, 4], [5, 6]];
@@ -75,7 +77,7 @@ export default function OfferCards() {
   return (
     <div className="w-full flex justify-center items-center font-sans">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 items-stretch w-full max-w-[1256px]">
-
+        
         {/* Card 1: Shop all cars */}
         <Link
           href="#"
@@ -88,8 +90,9 @@ export default function OfferCards() {
               return (
                 <div
                   key={idx}
-                  className={`relative overflow-hidden rounded-[14px] bg-white transition-[filter] duration-450 ease-in-out ${isClear ? "blur-0 z-[2]" : "blur-[2.5px]"
-                    } ${tile.className}`}
+                  className={`relative overflow-hidden rounded-[14px] bg-white transition-[filter] duration-450 ease-in-out ${
+                    isClear ? "blur-0 z-[2]" : "blur-[2.5px]"
+                  } ${tile.className}`}
                 >
                   <Image
                     src={tile.src}
@@ -121,7 +124,7 @@ export default function OfferCards() {
               sizes="(max-width: 768px) 100vw, 33vw"
               className="object-cover object-top"
             />
-
+            
             <Image
               src={jeepImg?.src}
               alt="White Jeep Wrangler Rubicon"
@@ -141,7 +144,7 @@ export default function OfferCards() {
                 style={{ animationDelay: "0s" }}
               />
               <Image
-                src={dollar0Img?.src}
+                src={dollar1Img?.src}
                 alt=""
                 width={40}
                 height={50}
