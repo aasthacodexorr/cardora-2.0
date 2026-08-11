@@ -67,8 +67,6 @@
     }
 
 
-
-/* Card Animations */
 @keyframes jeepDrive {
   0%, 18% {
     transform: translate3d(0, 0, 0);
@@ -85,6 +83,21 @@
   80%, 100% {
     transform: translate3d(0, 0, 0);
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@keyframes dollarDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-48px);
+  }
+  18%, 72% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  88%, 100% {
+    opacity: 0;
+    transform: translateY(0);
   }
 }
 
@@ -109,6 +122,10 @@
 
 .animate-jeep-drive {
   animation: jeepDrive 2s infinite;
+}
+
+.animate-dollar-drop {
+  animation: dollarDrop 2.4s ease-out infinite;
 }
 
 .animate-dollar-count {
