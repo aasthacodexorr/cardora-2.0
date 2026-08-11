@@ -508,9 +508,15 @@ export function createInventoryRouter(_config: AppConfig) {
 
     const state = { ...route, __inventoryPathFilters: filters };
 
+    // Safari often jumps scroll UP on history.replaceState. Only correct
+    // upward jumps so bottom infinite-scroll growth is not fought.
+    const scrollY = window.scrollY;
     isInternalUrlWrite = true;
     window.history.replaceState(state, "", url);
     isInternalUrlWrite = false;
+    if (window.scrollY < scrollY - 1) {
+      window.scrollTo(0, scrollY);
+    }
   };
 
   const resync = () => performWrite(previousRoute, pathFilters);
