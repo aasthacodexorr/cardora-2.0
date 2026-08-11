@@ -13,6 +13,8 @@ import decImg from "@/assets/cars/dec-clean.png";
 import dollar0Img from "@/assets/cars/dollar-glyph-0.png";
 import dollar1Img from "@/assets/cars/dollar-glyph-1.png";
 import dollar2Img from "@/assets/cars/dollar-glyph-2.png";
+import sec1 from "@/assets/cars/sec1.png";
+import Image from 'next/image';
 
 export default function NextRideCard() {
   return (
@@ -26,40 +28,46 @@ export default function NextRideCard() {
           aria-label="Shop all cars — a wide selection, updated daily"
         >
           <div
-            className="visual shop relative flex-1 min-h-[420px] bg-[#d9d9d9] grid grid-cols-12 grid-rows-3 gap-2 py-[10px] px-0 overflow-hidden"
+            className="visual shop relative flex-1 min-h-[420px] bg-[#d9d9d9] overflow-hidden"
             aria-hidden="true"
           >
-            <div className="shop-tile overflow-hidden rounded-[14px] bg-white">
-              <img src={t1?.src} alt="" className="w-full h-full object-cover block" />
-            </div>
-            <div className="shop-tile overflow-hidden rounded-[14px] bg-white">
-              <img src={t2?.src} alt="" className="w-full h-full object-cover block" />
-            </div>
-            <div className="shop-tile overflow-hidden rounded-[14px] bg-white">
-              <img src={m1?.src} alt="" className="w-full h-full object-cover block" />
-            </div>
-            <div className="shop-tile overflow-hidden rounded-[14px] bg-white">
-              <img src={m2?.src} alt="" className="w-full h-full object-cover block" />
-            </div>
-            <div className="shop-tile overflow-hidden rounded-[14px] bg-white">
-              <img src={m3?.src} alt="" className="w-full h-full object-cover block" />
-            </div>
-            <div className="shop-tile overflow-hidden rounded-[14px] bg-white">
-              <img src={b1?.src} alt="" className="w-full h-full object-cover block" />
-            </div>
-            <div className="shop-tile overflow-hidden rounded-[14px] bg-white">
-              <img src={b2?.src} alt="" className="w-full h-full object-cover block" />
-            </div>
+            {sec1 && (
+              <img
+                src={sec1?.src}
+                alt="Shop all cars"
+                
+              />
+            )}
           </div>
 
           <div className="footer flex items-center justify-between gap-4 p-[18px_20px_20px] bg-white shrink-0 min-h-[84px]">
             <div className="footer-copy">
-              <h2 className="text-[1.05rem] font-bold text-[#1a1a1a] leading-[1.25] tracking-[-0.01em]">Shop all cars</h2>
-              <p className="mt-[4px] text-[0.875rem] font-medium text-[#6b7280] leading-[1.35]">A wide selection, updated daily</p>
+              <h2 className="text-[1.05rem] font-bold text-[#1a1a1a] leading-[1.25] tracking-[-0.01em]">
+                Shop all cars
+              </h2>
+
+              <p className="mt-[4px] text-[0.875rem] font-medium text-[#6b7280] leading-[1.35]">
+                A wide selection, updated daily
+              </p>
             </div>
-            <span className="arrow shrink-0 w-[22px] h-[22px] text-[#00ab00] transition-transform duration-200 ease group-hover:translate-x-[4px]" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full block">
-                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+
+            <span
+              className="arrow shrink-0 w-[22px] h-[22px] text-[#00ab00] transition-transform duration-200 ease group-hover:translate-x-[4px]"
+              aria-hidden="true"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-full h-full block"
+              >
+                <path
+                  d="M5 12h14M13 6l6 6-6 6"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </span>
           </div>
@@ -73,7 +81,7 @@ export default function NextRideCard() {
           aria-label="Start with a trade-in — get an offer in under 2 minutes"
         >
           <div className="visual trade relative flex-1  bg-[#e8f6ff] overflow-hidden">
-            
+
             <p className="offer-title absolute left-1/2 top-[12%] -translate-x-1/2 m-0 text-[#00a82d] font-bold text-[clamp(1.75rem,7.8vw,2.45rem)] tracking-[-0.03em] leading-none whitespace-nowrap pointer-events-none z-[2]" aria-hidden="true">
               Your offer
             </p>
