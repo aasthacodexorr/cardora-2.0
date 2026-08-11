@@ -70,26 +70,19 @@ const Header = () => {
                 pathname === item.to || pathname?.startsWith(item.to + "/");
               const isLast = index === NAV_ITEMS.length - 1;
               return (
-                <Link
+                <a
                   key={item.label}
                   href={item.to}
-                  onClick={(e) => {
-                    if (item.to === "/inventory") {
-                      e.preventDefault();
-                      // Force a clean page load with no query parameters
-                      window.location.href = "/inventory";
-                    }
-                  }}
-                  className={` relative text-[16px] font-bold transition-colors whitespace-nowrap capitalize tracking-[0px] mt-2 py-[6px] px-5 leading-normal font-[Lato,sans-serif] ${
-                    !isLast ? `after:content-[''] after:absolute after:right-0 after:top-1/2 after:-translate-y-1/2 after:h-[22px] after:w-[2px] after:bg-[rgba(181,180,180,0.35)]` : ""
-                  } ${
-                    isActive
+                  className={`relative text-[16px] font-bold transition-colors whitespace-nowrap capitalize tracking-[0px] mt-2 py-[6px] px-5 leading-normal font-[Lato,sans-serif] ${!isLast
+                      ? `after:content-[''] after:absolute after:right-0 after:top-1/2 after:-translate-y-1/2 after:h-[22px] after:w-[2px] after:bg-[rgba(181,180,180,0.35)]`
+                      : ""
+                    } ${isActive
                       ? "text-brand-green"
                       : "text-black hover:text-brand-green"
-                  }`}
+                    }`}
                 >
                   {item.label}
-                </Link>
+                </a>
               );
             })}
           </nav>
