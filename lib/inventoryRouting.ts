@@ -485,10 +485,16 @@ export function createInventoryRouter(_config: AppConfig) {
       ? window.history.state?.__inventoryPathFilters || getPathFilters(initialRoute)
       : {};
 
+  // Tracks the last URL we actually wrote via history.replaceState, so we can
+  // skip no-op writes below. See performWrite for why this matters.
+  let lastWrittenUrl: string | null = null;
+
   if (typeof window !== "undefined" && Object.keys(pathFilters).length && window.location.pathname === "/inventory") {
+    const bootstrapUrl = serializePublicUrl(initialRoute, pathFilters);
     isInternalUrlWrite = true;
-    window.history.replaceState({ ...initialRoute, __inventoryPathFilters: pathFilters }, "", serializePublicUrl(initialRoute, pathFilters));
+    window.history.replaceState({ ...initialRoute, __inventoryPathFilters: pathFilters }, "", bootstrapUrl);
     isInternalUrlWrite = false;
+    lastWrittenUrl = bootstrapUrl;
   }
 
   const performWrite = (route: PlainObject, filters: PathFilters) => {
@@ -496,6 +502,10 @@ export function createInventoryRouter(_config: AppConfig) {
     if (!isInventoryListingPath(window.location.pathname)) return;
 
     const url = serializePublicUrl(route, filters);
+
+    if (url === lastWrittenUrl) return;
+    lastWrittenUrl = url;
+
     const state = { ...route, __inventoryPathFilters: filters };
 
     isInternalUrlWrite = true;
