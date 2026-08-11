@@ -45,6 +45,8 @@ const AD_SLOT_TO_INDEX: Record<number, number> = { 6: 0, 13: 1, 0: 2 };
 type DisplayItem =
   | { kind: "hit"; hit: any }
   | { kind: "ad"; adIndex: number; key: string };
+  
+type PlainIndexUiState = Record<string, any>;
 
 function buildDisplayItems(hits: any[]): DisplayItem[] {
   const items: DisplayItem[] = [];
@@ -209,19 +211,24 @@ const CustomHitsCount = () => {
 };
 
 const ScrollToTopOnSearch = () => {
-  // ── CHANGED ──────────────────────────────────────────────────────────────
-  // Previously scrolled window to top. Now we scroll the results column
-  // (identified by id="results-column") so only that pane resets, not the page.
-  const { results } = useInstantSearch();
+  const { indexUiState } = useInstantSearch();
   const firstLoad = useRef(true);
+  const prevSignatureRef = useRef<string>("");
 
   useEffect(() => {
+    const { page, ...searchCriteria } = (indexUiState || {}) as PlainIndexUiState;
+    const signature = JSON.stringify(searchCriteria);
+
     if (firstLoad.current) {
       firstLoad.current = false;
+      prevSignatureRef.current = signature;
       return;
     }
+
+    if (signature === prevSignatureRef.current) return;
+    prevSignatureRef.current = signature;
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [results?.__isArtificial, results?.nbHits]);
+  }, [indexUiState]);
 
   return null;
 };
