@@ -221,12 +221,12 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
   if (!isOpen || !mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999] px-4 text-left min-h-screen">
-      <div className="bg-white rounded-2xl w-full z-[9999] max-w-[620px] relative  p-6 lg:p-5 flex flex-col max-h-[88vh]">
+    <div className="fixed inset-0 bg-black/50 z-[9999] overflow-y-auto p-4 sm:p-6 flex min-h-full items-center justify-center">
+      <div className="bg-white rounded-2xl w-full max-w-[620px] relative p-6 lg:p-8 flex flex-col my-auto shadow-xl">
 
         <button
           onClick={onClose}
-          className="absolute right-5 cursor-pointer top-5 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute right-5 top-5 cursor-pointer text-gray-400 hover:text-gray-600 transition-colors z-10"
           type="button"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -234,11 +234,11 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
           </svg>
         </button>
 
-        <h2 className="text-[24px] font-bold text-gray-900 mb-5 ">Got a question</h2>
-        <div className="h-[600px]">
+        <h2 className="text-[24px] font-bold text-gray-900 mb-5">Got a question</h2>
+        <div className="w-full">
           <iframe
             src={`${SITE_CONFIG?.urls.vehiclePageContactUsBaseUrl}?inventory_id=${inventoryId}`}
-            className="w-full rounded-2xl h-full"
+            className="w-full rounded-2xl h-[600px] border-0"
             title="Contact Us"
             allow="payment"
           />
