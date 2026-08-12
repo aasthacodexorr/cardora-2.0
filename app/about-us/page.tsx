@@ -128,7 +128,7 @@ const About = () => {
                       key={index}
                       variants={slideInLeft}
                       whileHover={{ y: -2, scale: 1.01, transition: { duration: 0.15 } }}
-                      className="flex items-center gap-3 rounded-full px-5 py-5 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.06)] cursor-default bg-prequalify-blue"
+                      className="flex items-center gap-3 rounded-full px-5 py-5 w-full sm:w-80 shadow-[0_2px_18px_rgba(0,0,0,0.06)] cursor-default bg-[#e6f4ff]"
                     >
                       <Check className="h-5 w-5 text-emerald-600 flex-shrink-0" strokeWidth={2.5} />
                       <span className="text-base font-medium text-black">

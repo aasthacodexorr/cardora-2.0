@@ -156,7 +156,7 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 2: Alert Message Intro Container */}
-      <section className="w-full py-8 md:py-5 bg-prequalify-blue">
+      <section className="w-full py-8 md:py-5 bg-[#e6f4ff]">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-0 xl:py-8 text-center text-base md:text-[20px] text-slate-900 tracking-wide flex flex-col gap-1">
           <p>{currentData.introText1}</p>
           <p>{currentData.introText2}</p>
@@ -215,7 +215,7 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* SECTION 4: Dual Box Highlights Grid */}
-      <section className="w-full py-12 bg-prequalify-blue">
+      <section className="w-full py-12 bg-[#e6f4ff]">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
 

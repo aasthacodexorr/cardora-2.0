@@ -21,7 +21,7 @@ export default function FaqAccordion({ faqs }: { faqs: FAQItem[] }) {
         return (
           <div
             key={index}
-            className="border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-prequalify-blue"
+            className="border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-[#e6f4ff]"
           >
             <button
               onClick={() => setOpenIndex(isOpen ? null : index)}
