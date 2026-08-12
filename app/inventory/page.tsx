@@ -170,6 +170,57 @@ const FilterGroup = ({ title, children, isOpen, onToggle }: FilterGroupProps) =>
   );
 };
 
+const useSearchLoadingState = () => {
+  const { status } = useInstantSearch();
+  const { results } = useHits();
+
+  const lastNbHitsRef = useRef(0);
+  if (typeof results?.nbHits === "number" && !results?.__isArtificial) {
+    lastNbHitsRef.current = results.nbHits;
+  }
+  const hasHits = lastNbHitsRef.current > 0;
+
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    if (!isHydrated && status === "idle" && results && !results.__isArtificial) {
+      setIsHydrated(true);
+    }
+  }, [status, results, isHydrated]);
+
+  return (!isHydrated || status === "stalled") && !hasHits;
+};
+
+const MobileControlsBar = ({
+  onOpenFilters,
+  sortItems,
+}: {
+  onOpenFilters: () => void;
+  sortItems: { label: string; value: string }[];
+}) => {
+  const isLoading = useSearchLoadingState();
+
+  return (
+    <div
+      className={`w-full lg:w-auto items-center justify-between sm:justify-end gap-2 mt-1 lg:mt-0 ${
+        isLoading ? "hidden lg:flex" : "flex"
+      }`}
+    >
+      <button
+        type="button"
+        onClick={onOpenFilters}
+        className="flex lg:hidden items-center justify-center gap-2 h-[42px] px-4 rounded-[12px] bg-white text-black text-[14px] font-bold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer shrink-0 border border-border-standard"
+      >
+        <Settings2 className="h-4 w-4" />
+        <span>Filters</span>
+      </button>
+
+      <div className="flex items-start">
+        <CustomSortBy sortItems={sortItems} />
+      </div>
+    </div>
+  );
+};
+
 const SearchResultsWrapper = ({ children }: { children: React.ReactNode }) => {
   const { status } = useInstantSearch();
   const { results } = useHits();
@@ -1216,20 +1267,10 @@ const InventoryContent = () => {
                     <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
                   </div>
 
-                  <div className="w-full lg:w-auto flex items-center justify-between sm:justify-end gap-2 mt-1 lg:mt-0">
-                    <button
-                      type="button"
-                      onClick={() => setIsMobileFilterOpen(true)}
-                      className="flex lg:hidden items-center justify-center gap-2 h-[42px] px-4 rounded-[12px] bg-white text-black text-[14px] font-bold shadow-sm hover:bg-gray-50 transition-colors cursor-pointer shrink-0 border border-border-standard"
-                    >
-                      <Settings2 className="h-4 w-4" />
-                      <span>Filters</span>
-                    </button>
-
-                    <div className="flex items-start">
-                      <CustomSortBy sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)} />
-                    </div>
-                  </div>
+                  <MobileControlsBar
+                    onOpenFilters={() => setIsMobileFilterOpen(true)}
+                    sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)}
+                  />
 
                 </div>
               </div>
