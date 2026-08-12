@@ -217,7 +217,7 @@ export default function SkipTheDealership() {
                             className="grid grid-cols-1 md:grid-cols-2 gap-7"
                         >
                             {/* Traditional Dealership Column */}
-                            <motion.div variants={scaleUp} className="rounded-2xl p-6 md:p-4 bg-prequalify-blue border border-border-light">
+                            <motion.div variants={scaleUp} className="rounded-2xl p-6 md:p-4 bg-[#e6f4ff] border border-border-light">
                                 <h5 className="text-xl font-bold text-gray-900 border-b border-gray-200 py-7">
                                     Traditional Dealership
                                 </h5>
@@ -238,7 +238,7 @@ export default function SkipTheDealership() {
                             </motion.div>
 
                             {/* Cardora Column */}
-                            <motion.div variants={scaleUp} className="rounded-2xl p-6 md:p-4 bg-prequalify-blue border border-border-light">
+                            <motion.div variants={scaleUp} className="rounded-2xl p-6 md:p-4 bg-[#e6f4ff] border border-border-light">
                                 <h5 className="text-xl font-bold text-black border-b border-slate-200 py-7">
                                     {SITE_CONFIG?.dealership.name}
                                 </h5>
