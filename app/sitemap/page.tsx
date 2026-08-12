@@ -219,7 +219,7 @@ export default function SitemapPage() {
                     <a
                       key={idx}
                       href={link.url}
-                      className="text-brand-green hover:text-primary-greenLight hover:underline text-sm"
+                      className="text-brand-green font-lg text-sm hover:text-green-800"
                       title={`Updated: ${new Date(link.lastmod).toLocaleDateString()}`}
                     >
                       {link.label}
