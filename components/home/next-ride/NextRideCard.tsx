@@ -11,7 +11,7 @@ import dollar2Img from "@/assets/cars/dollar-glyph-2.png";
 export default function NextRideCard() {
   return (
     <div className="w-full flex justify-center font-['DM_Sans',system-ui,sans-serif]">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-[40px] w-full max-w-[1250px]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-[40px] w-full max-w-[1250px]">
 
         {/* Card 1: Shop all cars */}
         <Link
