@@ -196,7 +196,7 @@ const Header = () => {
           </div>
 
           {/* Menu toggle */}
-          <div className="flex items-start w-full justify-center">
+          <div className="flex items-start w-full justify-end mr-3">
             <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="flex flex-col items-center justify-center gap-1 mx-[7%] max-[537px]:mx-[6%] max-[397px]:mx-[4%]"
