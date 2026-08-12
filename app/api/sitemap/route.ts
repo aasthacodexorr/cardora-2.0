@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+// This endpoint returns JSON for the HTML sitemap page to parse
 export async function GET() {
   try {
     const response = await fetch(
@@ -28,3 +29,5 @@ export async function GET() {
     );
   }
 }
+
+

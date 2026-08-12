@@ -33,7 +33,7 @@ const HeroLine = ({ text, image, imageAlt, reverse = false, tagline }: HeroLineP
       
       {!reverse && image && (
         <motion.div 
-          initial={{ x: 70, opacity: 0 }}
+          initial={{ x: -70, opacity: 0 }}
           whileInView={{ x: 0, opacity: 1 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={carTransition}

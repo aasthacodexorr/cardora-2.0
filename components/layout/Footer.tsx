@@ -198,7 +198,7 @@ const Footer = () => {
           {" | "}
           <Link href="/terms-conditions" className="hover:text-white">Terms & Conditions</Link>
           {" | "}
-          <Link target="_blank" href={`/sitemap.xml`} className="hover:text-white">Site Map</Link>
+          <Link target="_blank" href={`/sitemap`} className="hover:text-white">Site Map</Link>
         </p>
       </div>
     </footer>

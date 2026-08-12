@@ -45,7 +45,7 @@ const AD_SLOT_TO_INDEX: Record<number, number> = { 6: 0, 13: 1, 0: 2 };
 type DisplayItem =
   | { kind: "hit"; hit: any }
   | { kind: "ad"; adIndex: number; key: string };
-  
+
 type PlainIndexUiState = Record<string, any>;
 
 function buildDisplayItems(hits: any[]): DisplayItem[] {
@@ -397,11 +397,11 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
     </div>
   );
 };
- 
+
 const PageFooter = () => {
   const { status } = useInstantSearch();
   const { hits, isLastPage } = useInfiniteHits();
- 
+
   const shouldShowFooter = status === "idle" && isLastPage && hits.length > 0;
 
   if (!shouldShowFooter) return null;
@@ -503,8 +503,8 @@ const MakeRefinementList = () => {
   };
 
   return (
-  <ul
-    className={`
+    <ul
+      className={`
     ${refinementListClassNames.list}
     max-h-[300px]
     overflow-y-auto
@@ -515,29 +515,29 @@ const MakeRefinementList = () => {
     [&::-webkit-scrollbar-thumb]:rounded-full
     lg:[scrollbar-width:thin]
   `}
-  >
-    {makeItems.map((item) => (
-      <li key={item.value}>
-        <label className={refinementListClassNames.label}>
-          <input
-            type="checkbox"
-            checked={item.isRefined}
-            onChange={() => handleToggle(item)}
-            className={refinementListClassNames.checkbox}
-          />
+    >
+      {makeItems.map((item) => (
+        <li key={item.value}>
+          <label className={refinementListClassNames.label}>
+            <input
+              type="checkbox"
+              checked={item.isRefined}
+              onChange={() => handleToggle(item)}
+              className={refinementListClassNames.checkbox}
+            />
 
-          <span className={refinementListClassNames.labelText}>
-            {item.label}
-          </span>
+            <span className={refinementListClassNames.labelText}>
+              {item.label}
+            </span>
 
-          <span className={refinementListClassNames.count}>
-            {item.count}
-          </span>
-        </label>
-      </li>
-    ))}
-  </ul>
-);
+            <span className={refinementListClassNames.count}>
+              {item.count}
+            </span>
+          </label>
+        </li>
+      ))}
+    </ul>
+  );
 };
 
 
@@ -1119,10 +1119,10 @@ const InventoryContent = () => {
         router,
         stateMapping,
       }}
-       stalledSearchDelay={300}
+      stalledSearchDelay={300}
     >
-      <SyncModelMakeMap/>
-      <SyncOrphanedModels/>
+      <SyncModelMakeMap />
+      <SyncOrphanedModels />
       <ScrollToTopOnSearch />
       <Configure hitsPerPage={21} />
 
@@ -1135,7 +1135,7 @@ const InventoryContent = () => {
         </div>
 
         {/* ── Two-column layout (sidebar sits outside results bg so it slides under header) ── */}
-        <div className="bg-light-gray lg:-mt-4 min-h-screen px-3 lg:px-14 py-[20px] overflow-visible">
+        <div className="bg-light-gray lg:-mt-4 min-h-screen lg:px-14 py-[20px] overflow-visible">
           <div className="flex flex-col lg:flex-row items-start max-w-[1550px] mx-auto gap-5 overflow-visible">
             <aside
               className={[
@@ -1146,32 +1146,30 @@ const InventoryContent = () => {
               ].join(" ")}
               style={{ top: sidebarTop, maxHeight: sidebarMaxHeight, contain: "layout paint" }}
             >
-             <div
-  className="flex flex-col bg-white rounded-[15px] border border-border-standard overflow-hidden w-full"
-  style={{ maxHeight: sidebarMaxHeight }}
->
-  {/* Everything below (hit count, clear filters, filter groups) now lives
-      inside ONE scrollable container — nothing stays fixed while scrolling. */}
-  <div
-    className={[
-      "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px]",
-      // visible thin scrollbar instead of the hidden one
-      "[&::-webkit-scrollbar]:w-[6px]",
-      "[&::-webkit-scrollbar-track]:bg-transparent",
-      "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
-      "lg:[scrollbar-width:thin]",
-    ].join(" ")}
-  >
-    <div className="flex flex-col items-center gap-4 pb-0">
-      <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
-        <CustomHitsCount />
-      </div>
-      <ClearFiltersButton />
-    </div>
+              <div
+                className="flex flex-col bg-white rounded-[15px] border border-border-standard overflow-hidden w-full"
+                style={{ maxHeight: sidebarMaxHeight }}
+              >
+                <div
+                  className={[
+                    "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px]",
+                    // visible thin scrollbar instead of the hidden one
+                    "[&::-webkit-scrollbar]:w-[6px]",
+                    "[&::-webkit-scrollbar-track]:bg-transparent",
+                    "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
+                    "lg:[scrollbar-width:thin]",
+                  ].join(" ")}
+                >
+                  <div className="flex flex-col items-center gap-4 pb-0">
+                    <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
+                      <CustomHitsCount />
+                    </div>
+                    <ClearFiltersButton />
+                  </div>
 
-    {renderFilterGroups()}
-  </div>
-</div>
+                  {renderFilterGroups()}
+                </div>
+              </div>
             </aside>
 
             {/* ── Results Column ── */}
@@ -1267,12 +1265,12 @@ const InventoryContent = () => {
                 <X className="h-6 w-6" />
               </button>
             </div>
-           <div className="mb-4">
-  <div className="text-white text-center py-2.5 px-4 rounded-xl font-bold text-[13px] w-full shadow-sm mb-3 bg-brand">
-    <CustomHitsCount />
-  </div>
-  <ClearFiltersButton mobile />
-</div>
+            <div className="mb-4">
+              <div className="text-white text-center py-2.5 px-4 rounded-xl font-bold text-[13px] w-full shadow-sm mb-3 bg-brand">
+                <CustomHitsCount />
+              </div>
+              <ClearFiltersButton mobile />
+            </div>
             <div className="flex-1">{renderFilterGroups()}</div>
           </div>
         </div>

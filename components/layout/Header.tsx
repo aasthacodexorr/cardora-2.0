@@ -196,16 +196,16 @@ const Header = () => {
           </div>
 
           {/* Menu toggle */}
-          <div className="flex items-start w-full justify-center">
+          <div className="flex items-start w-full justify-end mr-3">
             <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="flex flex-col items-center justify-center gap-1 mx-[7%] max-[537px]:mx-[6%] max-[397px]:mx-[4%]"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? (
-              <X className="h-[24px] w-[24px] text-black fill-black" />
+              <X className="h-[24px] w-[24px] text-black fill-black cursor-pointer" />
             ) : (
-              <Menu className="h-[24px] w-[24px] text-black fill-black" />
+              <Menu className="h-[24px] w-[24px] text-black fill-black cursor-pointer" />
             )}
           </button>
           </div>
