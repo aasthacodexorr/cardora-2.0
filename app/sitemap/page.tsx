@@ -221,6 +221,7 @@ export default function SitemapPage() {
                       href={link.url}
                       className="text-brand-green font-lg text-sm hover:text-green-800"
                       title={`Updated: ${new Date(link.lastmod).toLocaleDateString()}`}
+                      target='_blank'
                     >
                       {link.label}
                     </a>

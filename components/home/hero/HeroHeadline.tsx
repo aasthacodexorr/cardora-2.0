@@ -8,13 +8,15 @@ import orangeTruck from "@/assets/cars/car-orange-truck 1.png";
 interface HeroHeadlineProps {
   fullWidth?: boolean;
 }
+ 
 
-const HeroHeadline = ({ fullWidth = false }: HeroHeadlineProps) => {
+const HeroHeadline = ({ fullWidth = false }: { fullWidth?: boolean }) => {
   return (
     <div className={`w-full flex ${fullWidth ? 'justify-start' : ''}`}>
       <h1 className={`${HERO_HEADLINE_CLASS} ${fullWidth ? 'items-center text-center' : ''}`}>
         <HeroLine
-          text="Buy or sell a"
+          text="Buy or sell"
+          afterText="a"
           image={yellowSuv.src}
           imageAlt="Yellow SUV"
         />
@@ -34,5 +36,6 @@ const HeroHeadline = ({ fullWidth = false }: HeroHeadlineProps) => {
     </div>
   );
 };
+ 
 
 export default HeroHeadline;
