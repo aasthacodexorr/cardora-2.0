@@ -164,8 +164,8 @@ export default function SitemapPage() {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gray-50 mt-18">
-          <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="min-h-screen bg-gray-50 lg:mt-18">
+          <div className="max-w-7xl mx-auto px-4 py-10 md:py-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Site Map</h1>
             <div className="text-center py-12">
               <p className="text-gray-600">Loading sitemap...</p>
@@ -182,8 +182,8 @@ export default function SitemapPage() {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gray-50 mt-18">
-          <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="min-h-screen bg-gray-50 lg:mt-18">
+          <div className="max-w-7xl mx-auto px-4 py-10 md:py-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Site Map</h1>
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
               <p>Error loading sitemap: {error}</p>
@@ -200,7 +200,7 @@ export default function SitemapPage() {
     <>
       <Header />
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 py-12 mt-18">
+        <div className="max-w-7xl mx-auto px-4 py-10 md:py-12 lg:mt-18">
           {/* Page Header */}
           <div className="mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Site Map</h1>
