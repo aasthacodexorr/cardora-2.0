@@ -65,43 +65,40 @@
 .clip-ribbon {
       clip-path: polygon(0 0, 92% 0, 100% 50%, 92% 100%, 0 100%);
     }
+ 
 
+/* Custom Grid Tile Positioning for Shop Visual */
+.shop-tile:nth-child(1) { grid-column: 1 / 7; grid-row: 1; margin-left: 10px; }
+.shop-tile:nth-child(2) { grid-column: 7 / 13; grid-row: 1; margin-right: 10px; }
+.shop-tile:nth-child(3) { grid-column: 1 / 5; grid-row: 2; border-radius: 0 14px 14px 0; }
+.shop-tile:nth-child(4) { grid-column: 5 / 10; grid-row: 2; }
+.shop-tile:nth-child(4) img { object-position: 45% center; }
+.shop-tile:nth-child(5) { grid-column: 10 / 13; grid-row: 2; border-radius: 14px 0 0 14px; }
+.shop-tile:nth-child(6) { grid-column: 1 / 7; grid-row: 3; margin-left: 10px; }
+.shop-tile:nth-child(7) { grid-column: 7 / 13; grid-row: 3; margin-right: 10px; }
 
-@keyframes jeepDrive {
-  0%, 18% {
-    transform: translate3d(0, 0, 0);
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  42% {
-    transform: translate3d(-150%, 0, 0);
-    animation-timing-function: steps(1, jump-none);
-  }
-  42.01%, 55% {
-    transform: translate3d(150%, 0, 0);
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  80%, 100% {
-    transform: translate3d(0, 0, 0);
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-}
-
-@keyframes dollarDrop {
+/* Exact Original Keyframe Animations */
+@keyframes dollar-drop {
   0% {
     opacity: 0;
     transform: translateY(-48px);
   }
-  18%, 72% {
+  18% {
     opacity: 1;
     transform: translateY(0);
   }
-  88%, 100% {
+  72% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  88%,
+  100% {
     opacity: 0;
     transform: translateY(0);
   }
 }
 
-@keyframes dollarCount {
+@keyframes dollar-count {
   0% {
     opacity: 0;
     transform: scale(0.35) translateY(10px);
@@ -110,13 +107,65 @@
     opacity: 1;
     transform: scale(1.1) translateY(0);
   }
-  20%, 78% {
+  20% {
     opacity: 1;
     transform: scale(1) translateY(0);
   }
-  90%, 100% {
+  78% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  90%,
+  100% {
     opacity: 0;
     transform: scale(0.65) translateY(6px);
+  }
+}
+
+/* Precise CSS rules for falling dollar images */
+.dollars img {
+  width: 38px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 3px 6px rgba(0, 168, 45, 0.2));
+  opacity: 0;
+  transform: translateY(-48px);
+  animation: dollar-drop 2.4s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+.dollars img:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.dollars img:nth-child(2) {
+  animation-delay: 0.2s;
+  width: 40px;
+}
+
+.dollars img:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Precise CSS rules for count badge animation */
+.price-badge .count span {
+  display: inline-block;
+  opacity: 0;
+  transform: scale(0.4) translateY(8px);
+  animation: dollar-count 2.4s ease-in-out infinite;
+}
+
+.price-badge .count span:nth-child(1) { animation-delay: 0s; }
+.price-badge .count span:nth-child(2) { animation-delay: 0.45s; }
+.price-badge .count span:nth-child(3) { animation-delay: 0.9s; }
+
+/* Reduced Motion Safety */
+@media (prefers-reduced-motion: reduce) {
+  .dollars img,
+  .price-badge .count span {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
