@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
 import { useAppConfig } from '@/app/providers';
-import { 
-  POPULAR_MAKES, 
-  POPULAR_CAR_TYPES, 
-  getMakeUrl, 
-  getInventoryUrlByRefinement 
+import {
+  POPULAR_MAKES,
+  POPULAR_CAR_TYPES,
+  getMakeUrl,
+  getInventoryUrlByRefinement
 } from '@/lib/inventoryUrls';
 
 interface SitemapUrl {
@@ -135,30 +135,70 @@ export default function SitemapPage() {
 
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-[1300px] mx-auto px-4 lg:px-0 py-10 md:py-14 lg:mt-18">
-          
-          {/* Page Heading */}
-          <div className="mb-14">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900">
+
+          {/* Main H1 Page Heading */}
+          <div className="mb-4">
+            <h1 className="text-[28px] font-bold text-gray-900">
               Sitemap
             </h1>
           </div>
 
-          <div className="space-y-14">
+          <div className="space-y-12">
+
+            {/* Top Inventory Links Section */}
+            <section>
+              <div className="flex flex-col space-y-3">
+                <Link
+                  href="/inventory"
+                  className="w-fit transition-colors hover:text-gray-600"
+                >
+                  <h2 className="text-[20px] font-semibold text-gray-900">Inventory</h2>
+                </Link>
+
+                <Link
+                  href="/trade-in-my-car"
+                  className="w-fit transition-colors hover:text-gray-600"
+                >
+                  <h2 className="text-[20px] font-semibold text-gray-900">Sell / Trade</h2>
+                </Link>
+
+                <Link
+                  href="/financing"
+                  className="w-fit transition-colors hover:text-gray-600"
+                >
+                  <h2 className="text-[20px] font-semibold text-gray-900">Finance</h2>
+                </Link>
+
+                <Link
+                  href="/payment-calculator"
+                  className="w-fit transition-colors hover:text-gray-600"
+                >
+                  <h2 className="text-[20px] font-semibold text-gray-900">Payment Calculator</h2>
+                </Link>
+
+                <Link
+                  href="/skip-the-dealership"
+                  className="w-fit transition-colors hover:text-gray-600"
+                >
+                  <h2 className="text-[20px] font-semibold text-gray-900">Skip the Dealership</h2>
+                </Link>
+              </div>
+            </section>
 
             {/* Shop By Make */}
             <section>
-              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-7">
+              <h2 className="text-[20px] font-semibold text-gray-900 mb-6">
                 Shop by Make
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-5">
+              <div className="flex flex-col space-y-3">
                 {POPULAR_MAKES.map((item) => (
                   <Link
                     key={item.make}
                     href={getMakeUrl(item.make, appConfig)}
-                    className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                    className="text-lg text-brand-green hover:text-green-800 transition-colors w-fit"
                   >
-                    {item.label}
+                    <h3 className="font-normal text-lg">{item.label}</h3>
                   </Link>
                 ))}
               </div>
@@ -166,71 +206,27 @@ export default function SitemapPage() {
 
             {/* Shop By Car Type */}
             <section>
-              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-7">
+              <h2 className=" text-[20px] font-semibold text-gray-900 mb-6">
                 Shop by Car Type
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-5">
+              <div className="flex flex-col space-y-3">
                 {POPULAR_CAR_TYPES.map((item) => (
                   <Link
                     key={item.label}
                     href={getInventoryUrlByRefinement('body_type', item.bodyType, appConfig)}
-                    className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                    className="text-lg text-brand-green hover:text-green-800 transition-colors w-fit"
                   >
-                    {item.label}
+                    <h3 className="font-normal text-lg">{item.label}</h3>
                   </Link>
                 ))}
               </div>
             </section>
 
-            {/* Shop By Inventory */}
+            {/* Shop By Inventory (Formerly Inventory Listings) */}
             <section>
-              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-7">
+              <h2 className="text-[20px] font-semibold text-gray-900 mb-6">
                 Shop by Inventory
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-5">
-                <Link
-                  href="/inventory"
-                  className="text-lg text-brand-green hover:text-green-800 transition-colors"
-                >
-                  Inventory
-                </Link>
-
-                <Link
-                  href="/trade-in-my-car"
-                  className="text-lg text-brand-green hover:text-green-800 transition-colors"
-                >
-                  Sell / Trade
-                </Link>
-
-                <Link
-                  href="/financing"
-                  className="text-lg text-brand-green hover:text-green-800 transition-colors"
-                >
-                  Finance
-                </Link>
-
-                <Link
-                  href="/skip-the-dealership"
-                  className="text-lg text-brand-green hover:text-green-800 transition-colors"
-                >
-                  Skip the Dealership
-                </Link>
-
-                <Link
-                  href="/payment-calculator"
-                  className="text-lg text-brand-green hover:text-green-800 transition-colors"
-                >
-                  Payment Calculator
-                </Link>
-              </div>
-            </section>
-
-            {/* Inventory Listings */}
-            <section>
-              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-7">
-                Inventory Listings
               </h2>
 
               {loading && (
@@ -240,25 +236,25 @@ export default function SitemapPage() {
               )}
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 max-w-xl">
                   <p>{error}</p>
                 </div>
               )}
 
               {!loading && !error && inventoryListings.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-5">
+                <div className="flex flex-col space-y-3">
                   {inventoryListings.map((item, index) => (
                     <Link
                       key={`${item.url}-${index}`}
                       href={item.url}
-                      className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                      className="text-lg text-brand-green hover:text-green-800 transition-colors w-fit"
                       title={
                         item.lastmod
                           ? `Updated: ${new Date(item.lastmod).toLocaleDateString()}`
                           : undefined
                       }
                     >
-                      {item.label}
+                      <h3 className="font-normal text-lg">{item.label}</h3>
                     </Link>
                   ))}
                 </div>
@@ -270,6 +266,7 @@ export default function SitemapPage() {
                 </p>
               )}
             </section>
+
           </div>
         </div>
       </main>
