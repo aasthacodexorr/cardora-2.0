@@ -1,130 +1,98 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { GetInTouch } from '@/components/common';
 import { Footer, Header } from '@/components/layout';
-import { useEffect, useState } from 'react';
+import { useAppConfig } from '@/app/providers';
+import { 
+  POPULAR_MAKES, 
+  POPULAR_CAR_TYPES, 
+  getMakeUrl, 
+  getInventoryUrlByRefinement 
+} from '@/lib/inventoryUrls';
 
 interface SitemapUrl {
   loc: string;
   lastmod: string;
 }
 
-interface SitemapGroup {
-  title: string;
-  links: Array<{
-    label: string;
-    url: string;
-    lastmod: string;
-  }>;
+interface SitemapLink {
+  label: string;
+  url: string;
+  lastmod?: string;
 }
 
-// Helper to extract vehicle title from URL slug
-function extractVehicleTitle(urlPath: string): string {
+function extractVehicleTitle(url: string): string {
   try {
-    // Extract the slug part: e.g., "2024-volkswagen-jetta-comfortline-sport"
-    const match = urlPath.match(/\/inventory\/([^/]+)/);
+    const pathname = new URL(url).pathname;
+    const match = pathname.match(/^\/inventory\/([^/]+)/);
+
     if (!match) return '';
 
     const slug = match[1];
-    // Split by dash and filter out the ID at the end
     const parts = slug.split('-');
 
-    // Find where the ID starts (usually a numeric part at the end)
-    let titleParts: string[] = [];
-    for (let i = 0; i < parts.length; i++) {
-      if (/^\d+$/.test(parts[i]) && i === parts.length - 1) {
-        break; // This is the ID, stop
-      }
-      titleParts.push(parts[i]);
-    }
+    // Remove numeric ID if it exists
+    const titleParts = parts.filter((part) => !/^\d+$/.test(part));
 
-    if (titleParts.length === 0) return '';
+    if (!titleParts.length) return '';
 
-    // Capitalize each word
     return titleParts
-      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .map(
+        (part) =>
+          part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+      )
       .join(' ');
   } catch {
     return '';
   }
 }
 
-// Helper to categorize URLs
-function categorizeSitemapUrls(urls: SitemapUrl[]): SitemapGroup[] {
-  const groups: Record<string, Array<{ label: string; url: string; lastmod: string }>> = {
-    'Inventory Listings': [],
-    'Shop by Style': [],
-    'Shop by Make': [],
-    'Resources': [],
-  };
+function getInventoryListings(urls: SitemapUrl[]): SitemapLink[] {
+  return urls
+    .filter(({ loc }) => {
+      try {
+        const pathname = new URL(loc).pathname;
 
-  urls.forEach(({ loc, lastmod }) => {
-    if (loc.includes('/inventory/') && !loc.includes('?')) {
-      // This is a vehicle detail page
-      const title = extractVehicleTitle(loc);
-      if (title) {
-        groups['Inventory Listings'].push({
-          label: title,
-          url: loc,
-          lastmod,
-        });
+        return (
+          pathname.startsWith('/inventory/') &&
+          pathname !== '/inventory/' &&
+          !loc.includes('?')
+        );
+      } catch {
+        return false;
       }
-    } else if (loc.includes('/about-us') || loc.includes('/privacy-policy') ||
-      loc.includes('/terms-conditions') || loc.includes('/contact-us')) {
-      groups['Resources'].push({
-        label: loc.split('/').filter(Boolean).pop()?.replace(/-/g, ' ').replace(/^\w/, c => c.toUpperCase()) || 'Page',
-        url: loc,
-        lastmod,
-      });
-    } else if (loc.includes('makes=') || loc.includes('body_type=')) {
-      // Shop by make or style
-      const isMake = loc.includes('makes=');
-      const group = isMake ? 'Shop by Make' : 'Shop by Style';
-      const params = new URLSearchParams(loc.split('?')[1]);
-      const value = isMake ? params.get('makes') : params.get('body_type');
-      if (value) {
-        groups[group].push({
-          label: value.split(',')[0].replace(/[-_]/g, ' ').replace(/^\w/, c => c.toUpperCase()),
-          url: loc,
-          lastmod,
-        });
-      }
-    } else if (loc !== 'https://www.cardora.ca/') {
-      // Other pages
-      groups['Resources'].push({
-        label: loc.split('/').filter(Boolean).pop() || 'Home',
-        url: loc,
-        lastmod,
-      });
-    }
-  });
-
-  // Remove empty groups and maintain order
-  return Object.entries(groups)
-    .filter(([_, links]) => links.length > 0)
-    .map(([title, links]) => ({
-      title,
-      links: links.sort((a, b) => a.label.localeCompare(b.label)),
-    }));
+    })
+    .map(({ loc, lastmod }) => ({
+      label: extractVehicleTitle(loc),
+      url: loc,
+      lastmod,
+    }))
+    .filter((item) => item.label)
+    .sort((a, b) => a.label.localeCompare(b.label));
 }
 
 export default function SitemapPage() {
-  const [groups, setGroups] = useState<SitemapGroup[]>([]);
+  const appConfig = useAppConfig();
+  const [inventoryListings, setInventoryListings] = useState<SitemapLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchAndParseSitemap = async () => {
+    const fetchSitemap = async () => {
       try {
-        // Fetch the XML sitemap from our server API
-        const response = await fetch('/api/sitemap', { cache: 'no-store' });
+        const response = await fetch('/api/sitemap', {
+          cache: 'no-store',
+        });
 
-        if (!response.ok) throw new Error('Failed to fetch sitemap');
+        if (!response.ok) {
+          throw new Error('Failed to fetch sitemap');
+        }
 
         const data = await response.json();
         const xmlText = data.xml;
 
-        // Parse XML
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
 
@@ -141,106 +109,171 @@ export default function SitemapPage() {
 
           if (locElement?.textContent) {
             urls.push({
-              loc: locElement.textContent,
-              lastmod: lastmodElement?.textContent || '',
+              loc: locElement.textContent.trim(),
+              lastmod: lastmodElement?.textContent?.trim() || '',
             });
           }
         }
 
-        const categorized = categorizeSitemapUrls(urls);
-        setGroups(categorized);
+        setInventoryListings(getInventoryListings(urls));
       } catch (err) {
         console.error('Sitemap error:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load sitemap');
+        setError(
+          err instanceof Error ? err.message : 'Failed to load sitemap'
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAndParseSitemap();
+    fetchSitemap();
   }, []);
-
-  if (loading) {
-    return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gray-50 lg:mt-18">
-          <div className="max-w-7xl mx-auto px-4 py-10 md:py-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Site Map</h1>
-            <div className="text-center py-12">
-              <p className="text-gray-600">Loading sitemap...</p>
-            </div>
-          </div>
-        </div>
-        <GetInTouch />
-        <Footer />
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gray-50 lg:mt-18">
-          <div className="max-w-7xl mx-auto px-4 py-10 md:py-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Site Map</h1>
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-              <p>Error loading sitemap: {error}</p>
-            </div>
-          </div>
-        </div>
-        <GetInTouch />
-        <Footer />
-      </>
-    );
-  }
 
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 py-10 md:py-12 lg:mt-18">
-          {/* Page Header */}
-          <div className="mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Site Map</h1>
-            <p className="text-gray-600">Browse all pages and listings on Cardora</p>
+
+      <main className="min-h-screen bg-gray-50">
+        <div className="max-w-[1300px] mx-auto px-4 lg:px-0 py-10 md:py-14 lg:mt-18">
+          
+          {/* Page Heading */}
+          <div className="mb-14">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900">
+              Sitemap
+            </h1>
           </div>
 
-          {/* Sitemap Groups */}
-          <div className="space-y-12">
-            {groups.map((group) => (
-              <section key={group.title}>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6">{group.title}</h2>
+          <div className="space-y-14">
 
-                {/* Links Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {group.links.map((link, idx) => (
-                    <a
-                      key={idx}
-                      href={link.url}
-                      className="text-brand-green font-lg text-sm hover:text-green-800"
-                      title={`Updated: ${new Date(link.lastmod).toLocaleDateString()}`}
-                      target='_blank'
+            {/* Shop By Make */}
+            <section>
+              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-7">
+                Shop by Make
+              </h2>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-5">
+                {POPULAR_MAKES.map((item) => (
+                  <Link
+                    key={item.make}
+                    href={getMakeUrl(item.make, appConfig)}
+                    className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </section>
+
+            {/* Shop By Car Type */}
+            <section>
+              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-7">
+                Shop by Car Type
+              </h2>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-5">
+                {POPULAR_CAR_TYPES.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={getInventoryUrlByRefinement('body_type', item.bodyType, appConfig)}
+                    className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </section>
+
+            {/* Shop By Inventory */}
+            <section>
+              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-7">
+                Shop by Inventory
+              </h2>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-5">
+                <Link
+                  href="/inventory"
+                  className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                >
+                  Inventory
+                </Link>
+
+                <Link
+                  href="/trade-in-my-car"
+                  className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                >
+                  Sell / Trade
+                </Link>
+
+                <Link
+                  href="/financing"
+                  className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                >
+                  Finance
+                </Link>
+
+                <Link
+                  href="/skip-the-dealership"
+                  className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                >
+                  Skip the Dealership
+                </Link>
+
+                <Link
+                  href="/payment-calculator"
+                  className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                >
+                  Payment Calculator
+                </Link>
+              </div>
+            </section>
+
+            {/* Inventory Listings */}
+            <section>
+              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-7">
+                Inventory Listings
+              </h2>
+
+              {loading && (
+                <p className="text-lg text-gray-600">
+                  Loading inventory...
+                </p>
+              )}
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+                  <p>{error}</p>
+                </div>
+              )}
+
+              {!loading && !error && inventoryListings.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-5">
+                  {inventoryListings.map((item, index) => (
+                    <Link
+                      key={`${item.url}-${index}`}
+                      href={item.url}
+                      className="text-lg text-brand-green hover:text-green-800 transition-colors"
+                      title={
+                        item.lastmod
+                          ? `Updated: ${new Date(item.lastmod).toLocaleDateString()}`
+                          : undefined
+                      }
                     >
-                      {link.label}
-                    </a>
+                      {item.label}
+                    </Link>
                   ))}
                 </div>
-              </section>
-            ))}
-          </div>
+              )}
 
-          {/* Summary */}
-          <div className="mt-16 pt-8 border-t border-gray-200">
-            <p className="text-sm text-gray-600">
-              Total URLs indexed: <span className="font-semibold text-gray-900">
-                {groups.reduce((sum, group) => sum + group.links.length, 0)}
-              </span>
-            </p>
+              {!loading && !error && inventoryListings.length === 0 && (
+                <p className="text-lg text-gray-600">
+                  No inventory listings found.
+                </p>
+              )}
+            </section>
           </div>
         </div>
-      </div>
+      </main>
+
       <GetInTouch />
       <Footer />
     </>

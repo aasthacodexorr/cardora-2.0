@@ -29,7 +29,8 @@ export const HitCard = ({ hit }: { hit: any }) => {
   const drivetrain = hit.drivetrain || "N/A";
   const stock = hit.stock_no || "N/A";
 
-  const isSold = hit.status && hit.status.toLowerCase() !== "instock"; 
+  const isSold = hit.status && hit.status.toLowerCase() !== "instock";
+  const isDealPending = hit.sub_status === "Deal Pending";
 
   const imageUrls = hit.image_urls ? hit.image_urls.split(";") : [];
   let imageSrc = DEFAULT_PLACEHOLDER_IMAGE || `${SITE_CONFIG?.urls?.assetBaseUrl}/image/default-placeholder.jpg`;
@@ -75,7 +76,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
               width={600}
               height={400}
               className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${
-                isSold ? "grayscale opacity-80" : ""
+                isSold || isDealPending ? "grayscale opacity-80" : ""
               }`}
             />
 
@@ -83,6 +84,13 @@ export const HitCard = ({ hit }: { hit: any }) => {
             {isSold && (
               <div className="absolute top-4 -left-10 rotate-[-45deg] text-white text-[14px] font-bold uppercase tracking-[3px] shadow-lg w-[160px] text-center py-[6px] z-10 bg-sold-overlay">
                 Sold
+              </div>
+            )}
+
+            {/* DEAL PENDING Ribbon */}
+            {isDealPending && (
+              <div className="absolute top-4 left-28 text-white text-[14px] font-bold shadow-lg text-center py-[6px] px-4 rounded-md z-10 bg-brand-green">
+                Deal Pending
               </div>
             )}
 
@@ -154,7 +162,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
         </article>
 
         {/* Action Buttons */}
-        {!isSold && (
+        {!isSold && !isDealPending && (
           <div className="w-full rounded-[12px] mb-3 px-3 mt-auto flex gap-1">
             {/* Call Button */}
             <a
