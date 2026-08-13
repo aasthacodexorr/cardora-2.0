@@ -1068,20 +1068,33 @@ const InventoryContent = () => {
   const sidebarMaxHeight = `calc(100vh - ${headerHeight + 50}px)`;
 
   // ── Scroll Management State ──
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  const lastScrollY = useRef(0);
-  const isVisible = useRef(false);
+  // ── Scroll Management State ──
+const [showScrollTop, setShowScrollTop] = useState(false);
+const lastScrollY = useRef(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const current = window.scrollY;
-      setShowScrollTop(current > 0);
-    };
+useEffect(() => {
+  const handleScroll = () => {
+    const current = window.scrollY;
+    const previous = lastScrollY.current;
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // set correct state on mount too
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    if (current <= 0) {
+      // At the very top, nothing to scroll back to
+      setShowScrollTop(false);
+    } else if (current < previous) {
+      // Scrolling up → show button
+      setShowScrollTop(true);
+    } else if (current > previous) {
+      // Scrolling down → hide button
+      setShowScrollTop(false);
+    }
+
+    lastScrollY.current = current;
+  };
+
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  handleScroll(); // set correct state on mount too
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
 
   const scrollToTop = () => {
     window.scrollTo({
