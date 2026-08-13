@@ -1,0 +1,499 @@
+/* =========================
+   Trade-In Page
+   Allows users to get a vehicle valuation offer.
+   Sections:
+   - Hero with quote form (By Vehicle / VIN toggle)
+   - "How it works" step-by-step with image
+   - FAQ accordion
+   - GetInTouch → Footer
+========================= */
+
+"use client";
+
+import { useState } from "react";
+import { ChevronDown, FileText, Mail, CalendarCheck, CarFrontIcon } from "lucide-react";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import Image from "next/image";
+
+// Layout
+import { Header, Footer } from "@/components/layout";
+
+// Shared components
+import { GetInTouch } from "@/components/common";
+
+// Assets
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
+import sell from "@/assets/pages/sell.jpg";
+
+/* Static Data */
+const steps = [
+  {
+    icon: CarFrontIcon,
+    title: "Find your car",
+    description: "Enter your VIN or vehicle details to find the car you want to sell or trade.",
+  },
+  {
+    icon: FileText,
+    title: "Tell us about your car",
+    description: "Answer some quick questions about your car and its condition, and provide your details so we can contact you.",
+  },
+  {
+    icon: Mail,
+    title: "We'll send you an offer",
+    description: "If no additional information is required, you'll receive our offer for your car in one business day.",
+  },
+  {
+    icon: CalendarCheck,
+    title: "Book an inspection and get paid",
+    description: "If you choose to accept our offer, you can book an inspection to confirm your car's condition and get paid.",
+  },
+];
+
+const faqs = [
+  {
+    q: "How does selling my car to Dealership work?",
+    a: "Dealership makes selling your car fast and easy. Simply enter your vehicle details, get an instant online offer, schedule a quick inspection, and get paid on the spot. No obligations, no pushy salespeople.",
+  },
+  {
+    q: "What documents do I need to sell my car?",
+    a: "You'll need: Valid government ID, Vehicle Ownership, All keys & fobs. If your car has a loan or lease, bring the payoff letter and we'll handle the rest.",
+  },
+  {
+    q: "Do you buy cars that still have a loan or financing on them?",
+    a: "Yes! Dealership will pay off your existing loan or lease directly with the bank. If your car is worth more than the payoff, you keep the difference. If it's worth less, we'll guide you on the best options.",
+  },
+  {
+    q: "How long is my online offer valid for?",
+    a: "Your Dealership offer is valid for 7 days. This gives you enough time to compare options or shop around without feeling rushed.",
+  },
+  {
+    q: "How quickly do I get paid?",
+    a: "You get paid the same day you bring your car in. Payment can be made via EMT, cheque, or direct deposit—whichever is easiest for you.",
+  },
+  {
+    q: "Can I trade in my vehicle instead of selling it?",
+    a: "Yes! You can trade in your current vehicle and use the value toward your next purchase. We handle all paperwork and give you the highest value possible to maximize your savings.",
+  },
+  {
+    q: "Do I need to buy a car from Dealership to sell you mine?",
+    a: "Not at all. We buy cars even if you're not purchasing one from us. Many customers simply want cash or want to get rid of an unused vehicle.",
+  },
+  {
+    q: "How does Dealership determine my vehicle's value?",
+    a: "We use real-time market data, vehicle history, condition reports, and recent sales in your area to give you an accurate and competitive offer. No guesswork—just transparent pricing.",
+  },
+  {
+    q: "What if I owe more on my car than it's worth?",
+    a: "This is very common. We can still buy your car. We'll calculate the shortfall and help you determine the best way to clear the loan. If trading in, you may be able to roll the balance into your next vehicle.",
+  },
+];
+
+/* Animation Variants */
+const heroTextContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 }
+  }
+};
+
+const heroTextItem: Variants = {
+  hidden: { opacity: 0, y: 25 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.6, ease: [0.215, 0.610, 0.355, 1.0] } 
+  }
+};
+
+const heroFormVariants: Variants = {
+  hidden: { opacity: 0, y: 30, scale: 0.98 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.65, delay: 0.3, ease: "easeOut" }
+  }
+};
+
+const graphicVariants: Variants = {
+  hidden: { opacity: 0, scaleY: 0.8 },
+  visible: {
+    opacity: 1,
+    scaleY: 1,
+    transition: { duration: 0.8, delay: 0.4, ease: "easeOut" }
+  }
+};
+
+const slideInLeft: Variants = {
+  hidden: { opacity: 0, x: -30 },
+  visible: { 
+    opacity: 1, 
+    x: 0, 
+    transition: { duration: 0.65, ease: "easeOut" } 
+  }
+};
+
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.5, ease: "easeOut" } 
+  }
+};
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { 
+      staggerChildren: 0.08, 
+      delayChildren: 0.05 
+    }
+  }
+};
+
+/* Page Component */
+const TradeIn = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
+  const [mode, setMode]       = useState<"vehicle" | "vin">("vehicle");
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  const TRADE_FORMS = {
+    vehicle: {
+      url: SITE_CONFIG.urls.tradeFormByVehicle,
+      minHeight: 447,
+    },
+    vin: {
+      url: SITE_CONFIG.urls.tradeFormByVin,
+      minHeight: 327,
+    },
+  };
+
+  return (
+    <div className="min-h-screen bg-background overflow-x-hidden">
+      <Header />
+
+      {/* Hero / Quote form — Animated on Initial Page Entry */}
+      <section className="w-full relative px-4 lg:px-24 lg:mt-18">
+        <div className="mx-auto max-w-[1400px] px-2 md:px-9 pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
+
+          {/* Left: Animated Heading Typography Complex */}
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={heroTextContainer}
+            className="w-full lg:w-auto text-left"
+          >
+            <motion.h1 
+              variants={heroTextItem}
+              className="font-bold text-gray-950 leading-[1.08] tracking-tight text-[38px] md:text-[44px] lg:text-[66px] md:w-xl"
+            >
+              Sell my car the easy way.
+            </motion.h1>
+            <motion.p 
+              variants={heroTextItem}
+              className="mt-4 lg:mt-6 text-[18px] lg:text-[23px] text-black max-w-xl leading-relaxed"
+            >
+              Fast, seamless and secure. It's the way everyone <br className="hidden lg:inline" /> deserves.
+            </motion.p>
+          </motion.div>
+
+          {/* Dynamic Wave, Axis Tracking Graphic and Tag for Mobile View */}
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={graphicVariants}
+            className="block lg:hidden w-full relative pointer-events-none px-4"
+          >
+            <div className="w-full h-[180px] relative overflow-visible flex flex-col items-center justify-center">
+
+              {/* Background Landscape Wave Line Vector */}
+              <div className="absolute inset-x-0 top-14 -translate-y-1/2 w-full flex justify-center z-10">
+                <svg
+                  className=" w-full h-full"
+                  viewBox="0 0 1440 500"
+                  preserveAspectRatio="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M 0,310 C 350,310 400,340 648,313 C 800,295 1000,270 1440,310"
+                    fill="none"
+                    stroke="var(--color-primary-green3)"
+                    strokeWidth="12"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+
+              {/* Center Connected Data Badge Tracker Complex */}
+              <div className="relative flex flex-col items-center">
+
+                {/* Vertical Transparent Connector Bar Structure */}
+                <div className="relative h-28 w-[38px] flex items-center justify-center z-0">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary-green2/15 to-primary-green2/20" />
+                  <div className="absolute inset-y-0 w-full bg-trade-gradient" />
+                  <div className="absolute inset-y-4 w-[2px]">
+                    <div
+                      className="h-full w-full opacity-80"
+                      style={{
+                        backgroundImage:
+                          "repeating-linear-gradient(to bottom, white 0px, white 4px, transparent 4px, transparent 8px)",
+                      }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Anchor Marker Circle Dot */}
+                <div className="absolute top-[37%] z-20 flex items-center justify-center">
+                  <div className="h-6 w-6 rounded-full bg-white border-[3.5px] border-primary-green2 shadow-md" />
+                </div>
+
+                {/* Valuation Floating Popup Tag */}
+                <div className="bg-background-greenCard text-center px-8 py-3 rounded-xl shadow-md border border-background-greenGradientBorder/40 mt-1 z-20">
+                  <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Jan 9, 2026</div>
+                  <div className="text-xl font-black text-gray-900 mt-0.5">$18,400</div>
+                </div>
+
+              </div>
+
+            </div>
+          </motion.div>
+
+          {/* Right: Quote Form Card Container */}
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={heroFormVariants}
+            className="rounded-2xl shadow-xl lg:mr-7 p-5 md:p-8 pb-12 md:pb-24 w-full max-w-[440px] lg:justify-self-end z-10 bg-white border border-border-lightGray/80"
+          >
+            <div className="flex mb-6 cursor-pointer border-b border-border-standard">
+              <button
+                onClick={() => setMode("vehicle")}
+                className={`flex-1 text-center pb-3 text-[16px] md:text-[18px] font-bold transition-all relative cursor-pointer ${
+                  mode === "vehicle" ? "text-gray-900" : "text-gray-500"
+                }`}
+              >
+                By Vehicle
+                {mode === "vehicle" && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-brand2" />
+                )}
+              </button>
+
+              <button
+                onClick={() => setMode("vin")}
+                className={`flex-1 text-center pb-3 text-[16px] md:text-[18px] font-bold transition-all relative cursor-pointer ${
+                  mode === "vin" ? "text-gray-900" : "text-gray-500"
+                }`}
+              >
+                VIN
+                {mode === "vin" && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-primary-green2 rounded-full" />
+                )}
+              </button>
+            </div>
+
+            <iframe
+              key={mode}
+              src={TRADE_FORMS[mode].url}
+              title={mode === "vehicle" ? "Trade Form By Vehicle" : "Trade Form By VIN"}
+              width="100%"
+              className="border-0 cursor-pointer"
+              style={{
+                minHeight: `${TRADE_FORMS[mode].minHeight}px`,
+              }}
+            />
+          </motion.div>
+        </div>
+
+        {/* Desktop Only Background Wave & Axis Graphic Overlays */}
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={graphicVariants}
+          className="hidden lg:block absolute bottom-0 left-0 right-0 w-full pointer-events-none z-0"
+        >
+          <div className="absolute xl:-bottom-14 2xl:-bottom-20 lg:-bottom-5 w-full z-10">
+            <svg
+              className=" w-full h-full z-10 pointer-events-none"
+              viewBox="0 0 1440 500"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M 0,310 C 350,310 400,340 648,313 C 800,295 1000,270 1440,310"
+                fill="none"
+                stroke="var(--color-primary-green3)"
+                strokeWidth="12"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+
+          <div className="absolute bottom-0 left-1/2 -translate-x-16 flex flex-col items-center z-10">
+            {/* Vertical Transparent Connector Bar */}
+            <div className="relative h-96 w-[44px] flex items-end justify-center ">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-b from-transparent via-primary-green2/15 to-primary-green2/20" />
+              <div className="absolute inset-y-0 rounded-full bg-trade-gradient" />
+              <div className="absolute inset-y-6 w-[2px]">
+                <div
+                  className="h-full w-full opacity-80"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(to bottom, white 0px, white 6px, transparent 6px, transparent 12px)",
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Marker */}
+            <div className="absolute bottom-[29%] z-20 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-full bg-white border-[4px] border-primary-green2 shadow-md" />
+            </div>
+
+            <div className="absolute top-full left-1/2 -mt-5 -translate-x-1/2 w-[44px] h-32 bg-gradient-to-b from-background-greenGradientMid/50 to-transparent" />
+
+            {/* Valuation Floating Popup Tag */}
+            <div className="bg-background-greenCard text-center px-9 py-4 rounded-xl shadow-md -translate-y-4 z-20">
+              <div className="text-[10px] text-gray-500 uppercase tracking-wider">Jan 9, 2026</div>
+              <div className="text-2xl font-semibold font-black text-gray-900 mt-0.5">$18,400</div>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* How it works — Image slides from left, right text block remains static */}
+      <section className="w-full lg:px-24 mx-auto -mt-5 lg:-mt-0">
+        <div className="mx-auto lg:max-w-[1400px] px-4 lg:px-0 py-10 lg:py-24">
+          <div className="grid grid-cols-1 items-start gap-6 lg:gap-0 lg:pl-10 lg:grid-cols-[1fr_1.1fr] lg:gap-12 xl:min-h-180">
+            
+            {/* Left Column: Animated Image Block */}
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={slideInLeft}
+              className="w-full h-[500px] md:h-full"
+            >
+              <Image
+                src={sell}
+                alt="Customer trading in their car at Dealership"
+                width={1280}
+                height={1896}
+                loading="lazy"
+                className="h-full w-full rounded-[24px] md:rounded-[32px] object-cover"
+              />
+            </motion.div>
+
+            {/* Right Column: Static Content Block */}
+            <div className="lg:pr-16">
+              <h2 className="text-[28px] md:text-[36px] font-bold tracking-tight text-zinc-900 lg:text-[44px]">
+                How it works
+              </h2>
+
+              <div className="mt-4 space-y-4">
+                {steps.map((step) => {
+                  const Icon = step.icon;
+                  return (
+                    <div
+                      key={step.title}
+                      className="flex items-start justify-between rounded-2xl border border-zinc-100 bg-white px-4 md:px-6 py-4 shadow-lg gap-4"
+                    >
+                      <div>
+                        <h3 className="text-[19px] md:text-[22px] font-bold text-zinc-900">
+                          {step.title}
+                        </h3>
+                        <p className="text-[15px] md:text-[17px] leading-relaxed text-black mt-1">
+                          {step.description}
+                        </p>
+                      </div>
+
+                      <div className="flex h-8 w-8 md:h-9 md:w-9 flex-shrink-0 items-center justify-center text-zinc-500">
+                        <Icon className="h-full w-full stroke-[1.5]" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* FAQs — Header layout remains static, list nodes stagger into viewport view */}
+      <section className="w-full lg:mb-18 mb-2 lg:mt-10 px-3 lg:px-24">
+        <div className="mx-auto max-w-[1400px] px-2 md:px-9 py-8 lg:py-0">
+          <div className="flex items-center gap-3 mb-6 md:mb-10">
+            <h2 className="text-[28px] md:text-[36px] lg:text-[44px] font-semibold text-foreground leading-tight">
+              Popular sell or trade in questions
+            </h2>
+          </div>
+
+          {/* Staggered Row Entry Container */}
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={containerVariants}
+            className="space-y-1"
+          >
+            {faqs.map((faq, i) => (
+              <motion.div 
+                key={faq.q} 
+                variants={fadeInUp}
+                className="border overflow-hidden bg-white border-border-light"
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className={`w-full flex items-center justify-between px-4 md:px-6 text-left cursor-pointer transition-colors duration-200 ${
+                    openFaq !== i ? "bg-background-light" : "bg-white"
+                  }`}
+                >
+                  <span className={`font-bold leading-none transition-colors duration-200 ${
+                    openFaq !== i ? "py-5 md:py-6 text-neutral-darkGray4" : "py-4 md:py-5 text-neutral-darkGray2"
+                  } text-[18px] md:text-[20px] pr-4`}>
+                    {faq.q}
+                  </span>
+                  <motion.div
+                    animate={{ rotate: openFaq === i ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    className="flex-shrink-0 text-foreground/60"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </motion.div>
+                </button>
+
+                {/* Accordion Expansion Drawer */}
+                <AnimatePresence initial={false}>
+                  {openFaq === i && (
+                    <motion.div
+                      key="content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className="overflow-hidden bg-white"
+                    >
+                      <div className="px-4 md:px-6 pb-5 text-[16px] md:text-[16px] leading-normal text-neutral-darkGray3">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      <GetInTouch />
+      <Footer />
+    </div>
+  );
+};
+
+export default TradeIn;
