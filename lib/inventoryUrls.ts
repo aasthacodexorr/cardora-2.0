@@ -1,17 +1,25 @@
 import { AppConfig } from "@/lib/appConfig";
 import { FILTER_KEYS, RANGE_KEYS, queryValue as friendlyValue } from "@/lib/inventoryRouting";
 
-// Links built here start as plain query params (e.g. "/inventory?makes=Toyota").
-// That's intentional, not a shortcut: createInventoryRouter's bootstrap step
-// reads those params on first mount (while their case is still fully
-// reversible) and upgrades the address bar to the pretty, path-based URL
-// (e.g. "/inventory/toyota") itself. Building a fake "/inventory/toyota"
-// link directly here wouldn't work — the router can only recover a path
-// segment's exact-case facet value from history.state or from query params,
-// never by re-parsing lowercase path text.
+// Helper to turn a make/model/body-type label into a URL path segment,
+// e.g. "Mercedes-Benz" → "mercedes-benz", "Sport Utility Vehicle" → "sport-utility-vehicle".
+const slugify = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+// Query-param URL builder used for body-type / vehicle-type links (multi-value),
+// which don't have a clean single-segment path representation.
 const inventoryUrl = (key: string, values: readonly string[]) => `/inventory?${key}=${values.map(friendlyValue).join(",")}`;
 
-export const getInventoryUrlByMake = (make: string, _appConfig: AppConfig) => inventoryUrl(FILTER_KEYS.make, [make]);
+// Make links use the clean path form (/inventory/toyota) so the href already
+// looks like the canonical URL. The router's readPathOnlyFilters parses these
+// on fresh load; the footer's window.location.href redirect triggers a fresh
+// load when already on the inventory page.
+export const getInventoryUrlByMake = (make: string, _appConfig: AppConfig) => `/inventory/${slugify(make)}`;
 export const getInventoryUrlByBodyType = (bodyType: string, _appConfig: AppConfig) => inventoryUrl(FILTER_KEYS.body_type, [bodyType]);
 export const getInventoryUrlByVehicleType = (vehicleType: string, _appConfig: AppConfig) => inventoryUrl(FILTER_KEYS.vehicle_type, [vehicleType]);
 export const getInventoryUrlWithParams = (params: Record<string, string>, _appConfig: AppConfig) => {
