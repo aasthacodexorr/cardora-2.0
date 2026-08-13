@@ -450,10 +450,8 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
 };
 
 const PageFooter = () => {
-  const { status } = useInstantSearch();
-  const { hits, isLastPage } = useInfiniteHits();
-
-  const shouldShowFooter = status === "idle" && isLastPage && hits.length > 0;
+  const { hits } = useInfiniteHits();
+  const shouldShowFooter = hits.length > 0;
 
   if (!shouldShowFooter) return null;
 
