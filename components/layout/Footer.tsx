@@ -119,7 +119,7 @@ const Footer = () => {
                         className="text-[15px] uppercase text-white transition-colors"
                         onClick={(e) => {
                           if (
-                            pathname === "/inventory" &&
+                            pathname.startsWith("/inventory") &&
                             link.href.startsWith("/inventory")
                           ) {
                             e.preventDefault();
