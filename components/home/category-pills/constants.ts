@@ -1,0 +1,52 @@
+import {
+  faBolt,
+  faCar,
+  faVanShuttle,
+  faCarSide,
+  faPiggyBank,
+} from "@fortawesome/free-solid-svg-icons";
+import type { Category } from "./types";
+import { getInventoryUrlByRange, getInventoryUrlByRefinement } from "@/lib/inventoryUrls";
+import { AppConfig } from "@/lib/appConfig";
+
+export const getCategories = (appConfig: AppConfig): Category[] => [
+  {
+    label: "EVs",
+    icon: faBolt,
+    href: getInventoryUrlByRefinement("body_type", ["Commercial EV"], appConfig),
+  },
+  {
+    label: "Sedans",
+    icon: faCar,
+    href: getInventoryUrlByRefinement("body_type", ["Sedan", "Sedan 4 Dr."], appConfig),
+  },
+  {
+    label: "Used",
+    icon: faCar,
+    href: getInventoryUrlByRefinement("vehicle_type", ["Used"], appConfig),
+  },
+  {
+    label: "Vans",
+    icon: faVanShuttle,
+    href: getInventoryUrlByRefinement("body_type", ["Van", "Mini van"], appConfig),
+  },
+  {
+    label: "SUVs",
+    icon: faCarSide,
+    href: getInventoryUrlByRefinement("body_type", ["Suvs", "Sport Utility Vehicle", "SUV-Crossover",], appConfig),
+  },
+  {
+    label: "Hybrids",
+    icon: null,
+    href: getInventoryUrlByRefinement("fuel_type", ["hybrid"], appConfig),
+  },
+  {
+    label: "Below $20k",
+    icon: faPiggyBank,
+    href: getInventoryUrlByRange("selling_price", ":20000", appConfig),
+  }
+];
+
+export const PILL_CLASS = "my-5 flex items-center px-9 gap-[0.5px] rounded-[12px] border border-brand2 bg-white py-4 text-brand2 font-medium text-base justify-center hover:bg-brand-btn-gradient hover:text-white transition-all duration-200 snap-start shrink-0";
+
+export const CONTAINER_CLASS = "mx-[19px] md:mx-auto flex md:items-center md:justify-center overflow-x-auto gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory";
