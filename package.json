@@ -29,7 +29,9 @@
     "tailwind-merge": "^2.2.0",
     "typesense": "^3.0.6",
     "typesense-instantsearch-adapter": "~2.8.0",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "@radix-ui/react-slot": "^1.2.3",
+    "class-variance-authority": "^0.7.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
