@@ -1,0 +1,250 @@
+// components/VehicleInfo.tsx
+"use client"; // <--- This allows us to use useState right here!
+
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import checkout from "@/assets/icons/checkout.png";
+import { Fuel } from "lucide-react";
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
+import { createPortal } from "react-dom";
+
+
+export const PriceAndCTA = ({ vehicle }: any) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [showSticky, setShowSticky] = useState(false);
+
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const inlineContainerRef = useRef<HTMLDivElement>(null);
+
+  // 1. Detect when inline CTAs are scrolled out of view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // When the inline CTA leaves the screen top/bottom, show the sticky bar on mobile
+        setShowSticky(!entry.isIntersecting);
+      },
+      {
+        root: null,
+        threshold: 0, // Triggers as soon as the element is completely out of view
+      }
+    );
+
+    if (inlineContainerRef.current) {
+      observer.observe(inlineContainerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // 2. Tooltip outside click handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        tooltipRef.current &&
+        !tooltipRef.current.contains(event.target as Node)
+      ) {
+        setShowTooltip(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <>
+      {/* Primary Inline Container (Observed) */}
+      <div
+        ref={inlineContainerRef}
+        className="bg-white rounded-2xl px-5 pb-2 text-center tracking-wide"
+      >
+        {vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString() ? null : (
+          <p className="text-[12px] font-extrabold text-black line-through leading-none my-3">
+            ${vehicle?.price?.toLocaleString()}.00
+          </p>
+        )}
+
+        <div className="flex items-center justify-center gap-1 my-3">
+          <p className="text-[32px] font-extrabold leading-none text-price-green">
+            ${Number(vehicle?.selling_price || 0).toLocaleString("en-CA")}.00
+          </p>
+
+          <div
+            ref={tooltipRef}
+            className="relative inline-flex items-center group"
+          >
+            <button
+              type="button"
+              onClick={() => setShowTooltip(!showTooltip)}
+              className="flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="w-4 h-4 text-gray-500 cursor-pointer"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <div
+              className={`absolute bottom-full -right-44 -translate-x-1/2 mb-2 w-[240px] sm:w-max max-w-[280px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip ? "opacity-100 visible" : "opacity-0 invisible"
+                } md:group-hover:opacity-100 md:group-hover:visible`}
+            >
+              Listed price does not include taxes and licensing fees.
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-1">
+          <Image src={checkout} alt="Express Checkout" />
+        </div>
+
+        <div className="mt-1 space-y-3">
+          <a href={`/finance/?inventory_id=${vehicle?.id}`}>
+            <button className="cursor-pointer my-3 font-bold w-full rounded-[10px] sm:rounded-[12px] border text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[20px] hover:opacity-90 shadow-md transition-opacity bg-brand-btn-gradient border-brand-green">
+              Get started
+            </button>
+          </a>
+
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full bg-white cursor-pointer border-2 font-bold py-3 rounded-xl transition-colors text-[16px] sm:text-[20px] border-brand-green-alpha text-price-green hover:bg-brand-green-alpha hover:text-white hover:border-brand-green-alpha"
+          >
+            Send message
+          </button>
+        </div>
+      </div>
+
+      {/* Dynamic Sticky Mobile Action Bar */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-3 shadow-2xl lg:hidden flex gap-3 transition-transform duration-300 ease-in-out ${showSticky ? "translate-y-0" : "translate-y-full"
+          }`}
+      >
+        <a href={`/finance/?inventory_id=${vehicle?.id}`} className="flex-1">
+          <button className="w-full font-bold rounded-xl text-white py-3 text-[15px] bg-brand-btn-gradient border border-brand-green shadow-md">
+            Get started
+          </button>
+        </a>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="flex-1 bg-white border-2 font-bold py-3 rounded-xl text-[15px] border-brand-green-alpha text-price-green"
+        >
+          Send message
+        </button>
+      </div>
+
+      <MessageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        vehicle={vehicle}
+      />
+    </>
+  );
+};
+
+// 2. This sub-component stays completely decoupled and lightweight
+export const VehicleHeader = ({ vehicle }: any) => (
+  <div className="rounded-t-xl px-5 py-6 text-center w-full bg-light-blue tracking-wide">
+    <h1 className="text-[30px] font-bold text-gray-900 leading-tight tracking-wide">
+      {vehicle?.year}{vehicle?.make}{vehicle?.model}
+    </h1>
+
+    {vehicle?.trim && (
+      <p className="text-[16px] text-gray-500 mt-0.5">{vehicle?.trim}</p>
+    )}
+
+    <div className="flex items-center justify-center gap-3 mt-4 text-black flex-wrap">
+      <div className="flex items-center gap-1 text-[16px]">
+        <svg className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 640 640"><path d="M64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320zM384 416C384 389.1 367.5 366.1 344 356.7L344 184C344 170.7 333.3 160 320 160C306.7 160 296 170.7 296 184L296 356.7C272.5 366.2 256 389.2 256 416C256 451.3 284.7 480 320 480C355.3 480 384 451.3 384 416zM208 240C225.7 240 240 225.7 240 208C240 190.3 225.7 176 208 176C190.3 176 176 190.3 176 208C176 225.7 190.3 240 208 240zM192 320C192 302.3 177.7 288 160 288C142.3 288 128 302.3 128 320C128 337.7 142.3 352 160 352C177.7 352 192 337.7 192 320zM480 352C497.7 352 512 337.7 512 320C512 302.3 497.7 288 480 288C462.3 288 448 302.3 448 320C448 337.7 462.3 352 480 352zM464 208C464 190.3 449.7 176 432 176C414.3 176 400 190.3 400 208C400 225.7 414.3 240 432 240C449.7 240 464 225.7 464 208z"/></svg>
+        <span>{Number(vehicle?.odometer).toLocaleString("en-CA")} KM</span>
+      </div>
+
+      {vehicle?.fuel_type && (
+        <div className="flex items-center gap-1 text-[16px]">
+          <Fuel size={15} />
+          <span>{vehicle?.fuel_type}</span>
+        </div>
+      )}
+
+      {vehicle?.transmission && (
+        <div className="flex items-center gap-1 text-[16px]">
+          <svg
+            className="w-4 h-4 text-black"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 640 512"
+            fill="currentColor"
+          >
+            <path d="M415.9 210.5c12.2-3.3 25 2.5 30.5 13.8L465 261.9c10.3 1.4 20.4 4.2 29.9 8.1l35-23.3c10.5-7 24.4-5.6 33.3 3.3l19.2 19.2c8.9 8.9 10.3 22.9 3.3 33.3l-23.3 34.9c1.9 4.7 3.6 9.6 5 14.7 1.4 5.1 2.3 10.1 3 15.2l37.7 18.6c11.3 5.6 17.1 18.4 13.8 30.5l-7 26.2c-3.3 12.1-14.6 20.3-27.2 19.5l-42-2.7c-6.3 8.1-13.6 15.6-21.9 22l2.7 41.9c.8 12.6-7.4 24-19.5 27.2l-26.2 7c-12.2 3.3-24.9-2.5-30.5-13.8l-18.6-37.6c-10.3-1.4-20.4-4.2-29.9-8.1l-35 23.3c-10.5 7-24.4 5.6-33.3-3.3l-19.2-19.2c-8.9-8.9-10.3-22.8-3.3-33.3l23.3-35c-1.9-4.7-3.6-9.6-5-14.7s-2.3-10.2-3-15.2l-37.7-18.6c-11.3-5.6-17-18.4-13.8-30.5l7-26.2c3.3-12.1 14.6-20.3 27.2-19.5l41.9 2.7c6.3-8.1 13.6-15.6-21.9-22l-2.7-41.8c-.8-12.6 7.4-24 19.5-27.2l26.2-7zM448.4 340a44 44 0 1 0 .1 88 44 44 0 1 0-.1-88zM224.9-45.5l26.2 7c12.1 3.3 20.3 14.7 19.5 27.2l-2.7 41.8c8.3 6.4 15.6 13.8 21.9 22l42-2.7c12.5-.8 23.9 7.4 27.2 19.5l7 26.2c3.2 12.1-2.5 24.9-13.8 30.5l-37.7 18.6c-.7 5.1-1.7 10.2-3 15.2s-3.1 10-5 14.7l23.3 35c7 10.5 5.6 24.4-3.3 33.3L307.3 262c-8.9 8.9-22.8 10.3-33.3 3.3L239 242c-9.5 3.9-19.6 6.7-29.9 8.1l-18.6 37.6c-5.6 11.3-18.4 17-30.5 13.8l-26.2-7c-12.2-3.3-20.3-14.7-19.5-27.2l2.7-41.9c-8.3-6.4-15.6-13.8-21.9-22l-42 2.7c-12.5.8-23.9-7.4-27.2-19.5l-7-26.2c-3.2-12.1 2.5-24.9 13.8-30.5l37.7-18.6c.7-5.1 1.7-10.1 3-15.2 1.4-5.1 3-10 5-14.7L55.1 46.5c-7-10.5-5.6-24.4 3.3-33.3L77.6-6c8.9-8.9 22.8-10.3 33.3-3.3l35 23.3c9.5-3.9 19.6-6.7 29.9-8.1l18.6-37.6c5.6-11.3 18.3-17 30.5-13.8zM192.4 84a44 44 0 1 0 0 88 44 44 0 1 0 0-88z" />
+          </svg>
+          <span>{vehicle?.transmission}</span>
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+// 3. MessageModal Overlay
+export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
+  const appConfig = useAppConfig();
+  const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
+  const inventoryId = vehicle?.id || vehicle?.inventory_id;
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    };
+  }, [isOpen]);
+
+  if (!isOpen || !mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 bg-black/50 z-[9999] overflow-y-auto p-4 sm:p-6 flex min-h-full items-center justify-center">
+      <div className="bg-white rounded-2xl w-full max-w-[520px] relative p-6 lg:p-8 flex flex-col my-auto shadow-xl">
+
+        <button
+          onClick={onClose}
+          className="absolute right-5 top-5 cursor-pointer text-gray-400 hover:text-gray-600 transition-colors z-10"
+          type="button"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h2 className="text-[24px] font-bold text-gray-900 mb-5">Got a question</h2>
+        <div className="w-full">
+          <iframe
+            src={`${SITE_CONFIG?.urls.vehiclePageContactUsBaseUrl}?inventory_id=${inventoryId}`}
+            className="w-full rounded-2xl h-[600px] border-0"
+            title="Contact Us"
+            allow="payment"
+          />
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+};

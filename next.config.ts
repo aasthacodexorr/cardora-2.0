@@ -2,14 +2,36 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    ignoreBuildErrors: true,
+    // ignoreBuildErrors: true,
   },
+
+  allowedDevOrigins: ["192.168.1.7"],
+
+  devIndicators: false,
+
+
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "zopsoftware-asset.b-cdn.net",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cardora.ca",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.cardora.ca",
+        pathname: "/**",
+      },
+    ],
+  },
+
   // eslint: {
-  //   // Warning: This allows production builds to successfully complete even if
-  //   // your project has ESLint errors.
   //   ignoreDuringBuilds: true,
   // },
 };
