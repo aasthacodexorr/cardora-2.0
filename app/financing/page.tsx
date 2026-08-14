@@ -1,18 +1,37 @@
+/* =========================
+   Financing Page
+   Embeds the Cardora financing application form
+   via an iframe. Listens for postMessage events
+   from the iframe to dynamically resize the iframe
+   height, preventing scroll bars inside the embed.
+========================= */
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import GetInTouch from "@/components/GetInTouch";
-import { SITE_CONFIG } from "@/lib/config";
 
-const MIN_HEIGHT = 540;
+// Layout
+import { Header, Footer } from "@/components/layout";
+
+// Shared components
+import { GetInTouch } from "@/components/common";
+
+// Config
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
+
+/*  Constants */
+const MIN_HEIGHT      = 540;
 const FALLBACK_HEIGHT = 900;
 
+/*  Page Component */
 const Finance = () => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState<number>(FALLBACK_HEIGHT);
 
+  // Listen for height updates from the embedded financing form
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const data = event.data;
@@ -35,7 +54,7 @@ const Finance = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <section className="py-6 md:py-10 pb-16">
+      <section className="py-6 md:py-10 pb-16 mb-52 lg:mt-28">
         <div className="mx-auto max-w-[1100px] px-4 md:px-6">
           <div className="overflow-hidden">
             <iframe
@@ -45,9 +64,8 @@ const Finance = () => {
               name="iframe_a"
               title="Cardora financing application"
               scrolling="no"
-              className="w-full block transition-[height] duration-300 ease-out"
+              className="w-full block transition-[height] duration-300 ease-out border-0"
               style={{
-                border: "none",
                 minHeight: MIN_HEIGHT,
                 height: `${height}px`,
               }}

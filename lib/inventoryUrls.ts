@@ -1,0 +1,104 @@
+import { AppConfig } from "@/lib/appConfig";
+import { FILTER_KEYS, RANGE_KEYS, queryValue as friendlyValue } from "@/lib/inventoryRouting";
+
+// Helper to turn a make/model/body-type label into a URL path segment,
+// e.g. "Mercedes-Benz" → "mercedes-benz", "Sport Utility Vehicle" → "sport-utility-vehicle".
+const slugify = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+// Query-param URL builder used for body-type / vehicle-type links (multi-value),
+// which don't have a clean single-segment path representation.
+const inventoryUrl = (key: string, values: readonly string[]) => `/inventory?${key}=${values.map(friendlyValue).join(",")}`;
+
+// Make links use the clean path form (/inventory/toyota) so the href already
+// looks like the canonical URL. The router's readPathOnlyFilters parses these
+// on fresh load; the footer's window.location.href redirect triggers a fresh
+// load when already on the inventory page.
+export const getInventoryUrlByMake = (make: string, _appConfig: AppConfig) => `/inventory/${slugify(make)}`;
+export const getInventoryUrlByBodyType = (bodyType: string, _appConfig: AppConfig) => inventoryUrl(FILTER_KEYS.body_type, [bodyType]);
+export const getInventoryUrlByVehicleType = (vehicleType: string, _appConfig: AppConfig) => inventoryUrl(FILTER_KEYS.vehicle_type, [vehicleType]);
+export const getInventoryUrlWithParams = (params: Record<string, string>, _appConfig: AppConfig) => {
+  const query = Object.entries(params).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join("&");
+  return query ? `/inventory?${query}` : "/inventory";
+};
+
+export const POPULAR_MAKES = [
+  { label: "Used Toyota", make: "Toyota" }, { label: "Used Hyundai", make: "Hyundai" },
+  { label: "Used BMW", make: "BMW" }, { label: "Used Honda", make: "Honda" },
+  // { label: "Used Mercedes", make: "Mercedes" }, 
+  { label: "Used Ford", make: "Ford" },
+  { label: "Used Dodge", make: "Dodge" }, { label: "Used Volkswagen", make: "Volkswagen" },
+] as const;
+export const POPULAR_CAR_TYPES = [
+  { label: "Used SUVs", bodyType: ["SUV", "Sport Utility Vehicle", "SUV-Crossover", "Suvs", "Sport Utility 4-Door"] },
+  { label: "Used Vans", bodyType: ["Van", "Minivan-Van", "minivan", "Minivan"] },
+  { label: "Used Hatchbacks", bodyType: ["Hatchback", "Hatchback 2 Dr."] },
+  { label: "Used Sedans", bodyType: ["Sedan", "Sedan 4 Dr."] },
+  { label: "Used Coupes", bodyType: ["Coupe", "Coupes", "Coupe 2-Door"] },
+  { label: "Used Convertibles", bodyType: ["Convertible", "Convertibles"] },
+  { label: "Used Pick-up", bodyType: ["Pickup Truck", "Truck", "Pickup-Truck", "Trucks"] },
+] as const;
+
+export const getMakeUrl = (make: string, appConfig: AppConfig) => getInventoryUrlByMake(make, appConfig);
+export const getBodyTypeUrl = (bodyType: string, appConfig: AppConfig) => getInventoryUrlByBodyType(bodyType, appConfig);
+export const getInventoryUrlByQuery = (query: string, _appConfig: AppConfig) => `/inventory?q=${encodeURIComponent(query)}`;
+export const getInventoryUrlByRefinement = (attribute: string, values: readonly string[], _appConfig: AppConfig) => {
+  const key = FILTER_KEYS[attribute];
+  return key ? inventoryUrl(key, values) : "/inventory";
+};
+export const getInventoryUrlByRange = (attribute: string, range: string, _appConfig: AppConfig) => {
+  const keys = RANGE_KEYS[attribute];
+  if (!keys) return "/inventory";
+  const [low = "", high = ""] = range.split(":", 2);
+  const query = [low && `${keys[0]}=${encodeURIComponent(low)}`, high && `${keys[1]}=${encodeURIComponent(high)}`].filter(Boolean).join("&");
+  return query ? `/inventory?${query}` : "/inventory";
+};
+
+export function isVehicleDetailSlug(slug: string[] | undefined | null): boolean {
+  if (!slug || slug.length !== 1) return false;
+  const leadingToken = slug[0].split("-", 1)[0] || "";
+  const leadingNumber = Number(leadingToken);
+  return /^\d+$/.test(leadingToken) && (leadingNumber < 1900 || leadingNumber > 2100);
+}
+
+export async function getVehicleById(id: string, appConfig: AppConfig): Promise<Record<string, any> | null> {
+  const apiKey = appConfig.site.inventory_search_only_key;
+  const collection = appConfig.site.collection;
+  const host = appConfig.site.typesense_host;
+  if (!apiKey || !collection || !host) throw new Error("Missing Typesense configuration in appConfig.site");
+  const res = await fetch(`https://${host}/collections/${collection}/documents/search?q=*&filter_by=id:=${id}`, {
+    headers: { "X-TYPESENSE-API-KEY": apiKey }, cache: "no-store",
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.hits?.[0]?.document ?? null;
+}
+
+/**
+ * Shared server utility to fetch vehicle by slug for both metadata and page rendering
+ * Slug format: "{id}-{slug}"
+ * 
+ * @param slugArray - The slug array from params (e.g., ["12345-2023-honda-civic"])
+ * @param appConfig - The app configuration object
+ * @returns The vehicle document or null if not found
+ */
+export async function getVehicleBySlug(slugArray: string[], appConfig: AppConfig): Promise<Record<string, any> | null> {
+  if (!slugArray || slugArray.length === 0) return null;
+  
+  const vehicleParam = slugArray[0];
+  const firstDash = vehicleParam.indexOf("-");
+  if (firstDash === -1) return null;
+
+  const id = vehicleParam.substring(0, firstDash);
+  // Vehicle detail slugs always start with a numeric ID (e.g. "12345-2023-honda-civic").
+  // Listing paths can also contain dashes (e.g. "cardora-brampton,cardora-guelph" or
+  // "toyota-corolla"), so without this check they'd be misread as an unknown vehicle id
+  // and the page would incorrectly render "Vehicle Not Found".
+  if (!/^\d+$/.test(id)) return null;
+  return getVehicleById(id, appConfig);
+}
