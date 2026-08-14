@@ -1,30 +1,18 @@
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  try {
-    const response = await fetch(
-      'https://cardora.zopsoftware.com/api/website/sitemap',
-      {
-        cache: 'no-store',
-      }
-    );
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://cardora.zopsoftware.com/api/website/sitemap</loc>
+  </sitemap>
+</sitemapindex>`;
 
-    if (!response.ok) {
-      return new Response('Failed to fetch sitemap', { status: 500 });
-    }
-
-    const xml = await response.text();
-
-    return new Response(xml, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-      },
-    });
-  } catch (error) {
-    console.error('Sitemap XML fetch error:', error);
-
-    return new Response('Failed to generate sitemap', { status: 500 });
-  }
+  return new Response(xml, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+    },
+  });
 }
