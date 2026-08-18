@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { INVENTORY_SITEMAP_API } from './config';
+import { INVENTORY_HOST_REWRITES, INVENTORY_SITEMAP_API } from './config';
 import { getSitemapBaseUrl } from './getBaseUrl';
-import { buildIndexXml, buildUrlsetXml, xmlResponse } from './xml';
+import { buildIndexXml, buildPostsXml, buildUrlsetXml, xmlResponse } from './xml';
 
 export async function GET_SITEMAP_INDEX() {
   const baseUrl = await getSitemapBaseUrl();
@@ -16,11 +16,12 @@ export async function GET_SITEMAP_PAGES() {
 
 export async function GET_SITEMAP_POSTS() {
   const baseUrl = await getSitemapBaseUrl();
-  return xmlResponse(buildUrlsetXml(baseUrl, []));
+  return xmlResponse(buildPostsXml(baseUrl));
 }
 
 export async function GET_WEBSITE_SITEMAP() {
   try {
+    const baseUrl = await getSitemapBaseUrl();
     const response = await fetch(INVENTORY_SITEMAP_API, { cache: 'no-store' });
 
     if (!response.ok) {
@@ -28,7 +29,9 @@ export async function GET_WEBSITE_SITEMAP() {
     }
 
     let xml = await response.text();
-    const baseUrl = await getSitemapBaseUrl();
+    for (const host of INVENTORY_HOST_REWRITES) {
+      xml = xml.replaceAll(host, baseUrl);
+    }
     const xslHeader = `<?xml-stylesheet type="text/xsl" href="${baseUrl}/sitemap.xsl"?>`;
 
     if (!xml.includes('xml-stylesheet')) {
@@ -67,3 +70,4 @@ export async function GET_SITEMAP_XSL() {
     },
   });
 }
+
