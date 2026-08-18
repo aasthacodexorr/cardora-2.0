@@ -1,14 +1,13 @@
+import { INVENTORY_SITEMAP_API } from '@/sitemap/config';
+
 export const dynamic = 'force-dynamic';
 
 // This endpoint returns JSON for the HTML sitemap page to parse
 export async function GET() {
   try {
-    const response = await fetch(
-      'https://cardora.zopsoftware.com/api/website/sitemap',
-      {
-        cache: 'no-store',
-      }
-    );
+    const response = await fetch(INVENTORY_SITEMAP_API, {
+      cache: 'no-store',
+    });
 
     if (!response.ok) {
       return Response.json(
@@ -29,5 +28,6 @@ export async function GET() {
     );
   }
 }
+
 
 
