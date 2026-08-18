@@ -38,7 +38,7 @@ const GetInTouch = () => {
     title: "WhatsApp",
     subtitle: "Chat on WhatsApp",
     icon: whatsappIcon,
-    href: `https://wa.me/${d.sales_number_1?.replace(/\D/g, "")}`,
+    href: `https://wa.me/${d.sales_number_2?.replace(/\D/g, "")}`,
     order: "order-3 md:order-2",
   },
   {
@@ -52,7 +52,7 @@ const GetInTouch = () => {
     title: "Text",
     subtitle: "Text Us Right Now",
     icon: messageIcon,
-    href: `sms:${d.sales_number_1}`,
+    href: `sms:${d.sales_number_2}`,
     order: "order-4",
   },
 ];
