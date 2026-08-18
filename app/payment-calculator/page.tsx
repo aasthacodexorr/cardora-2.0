@@ -299,7 +299,7 @@ export default function PaymentCalculator() {
                 </div>
 
                 {/* Disclosures Section */}
-                <div className="px-6 lg:pt-6 pb-14">
+                <div className="px-6 pt-4 lg:pt-6 pb-14">
                     <p className="font-semibold mb-1 text-gray-700 text-base">Finance disclosures</p>
                     <p className='text-sm leading-relaxed'>
                         The payment estimator is not an advertisement or offer for specific terms of credit and actual terms may vary. Payment amounts presented are for illustrative purposes only and may not be available. Actual vehicle price may vary by Dealer. The Estimated Monthly Payment amount calculated is based on the variables entered, the price of the vehicle you entered, the term you select, the down payment you enter, the Annual Percentage Rate (APR) you select, and any net trade-in amount. The payment estimate displayed does not include taxes, title, license and/or registration fees. Payment amount is for illustrative purposes only. Actual prices may vary by Dealer. Payment amounts may be different due to various factors such as fees, specials, rebates, term, down payment, APR, net trade-in, and applicable tax rate. Actual APR is based on available finance programs and the creditworthiness of the customer. Not all customers will qualify for credit or for the lowest rate. Please contact an authorized dealer for actual rates, program details and actual terms.
