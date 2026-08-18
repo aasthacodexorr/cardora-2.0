@@ -114,51 +114,52 @@ export default function PaymentCalculator() {
                             </div>
                         </div>
 
-                        {/* Essential Package - Class A / Class B toggle + Additional Fees / Gap Protection row */}
-                        <div className="sm:col-span-2">
+                        {/* Essential Package - Class A / Class B toggle */}
+                        <div>
                             <label className="block text-black text-base font-lg mb-2">Essential Package</label>
-                            <div className="flex gap-2 flex-wrap mb-4">
+                            <div className="flex gap-2 flex-wrap">
                                 {(['A', 'B'] as const).map((cls) => (
                                     <button
                                         key={cls}
                                         type="button"
                                         onClick={() => setPackageClass(packageClass === cls ? null : cls)}
-                                        className={`px-4 lg:px-6 py-3 border rounded-xl text-sm font-medium transition-colors cursor-pointer ${packageClass === cls
-                                                ? 'text-white border-none bg-brand-gradient shadow-[0_4px_0_0_var(--color-primary-green)]'
-                                                : 'bg-white text-gray-700 hover:bg-gray-50 border-slate-300 hover:shadow-[0_4px_0_0_var(--color-primary-green)]'
+                                        className={`flex items-center justify-between gap-6 min-w-[160px] px-4 lg:px-6 py-3 border rounded-xl text-sm font-medium transition-colors duration-200 cursor-pointer ${packageClass === cls
+                                                ? 'text-white border-none bg-brand-gradient'
+                                                : 'bg-white text-gray-700 border-slate-300 hover:bg-brand-gradient hover:text-white hover:border-transparent'
                                             }`}
                                     >
-                                        Class {cls} (${ESSENTIAL_PACKAGE_PRICES[cls].toLocaleString()})
+                                        <span>Class {cls}</span>
+                                        <span>$ {ESSENTIAL_PACKAGE_PRICES[cls].toLocaleString()}</span>
                                     </button>
                                 ))}
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-black text-base font-lg mb-1">Additional Fees</label>
-                                    <div className="relative">
-                                        <span className="absolute left-3 top-[12px] text-xl font-light text-input-text">$</span>
-                                        <input
-                                            type="number"
-                                            value={additionalFees || ''}
-                                            placeholder="0.00"
-                                            onChange={(e) => setAdditionalFees(Number(e.target.value))}
-                                            className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-black text-base font-lg mb-1">Gap Protection</label>
-                                    <div className="relative">
-                                        <span className="absolute left-3 top-[12px] text-xl font-light text-input-text">$</span>
-                                        <input
-                                            type="number"
-                                            value={gapFee || ''}
-                                            onChange={(e) => setGapFee(Number(e.target.value))}
-                                            className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                            placeholder="0.00"
-                                        />
-                                    </div>
-                                </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-black text-base font-lg mb-1">Additional Package</label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-[12px] text-xl font-light text-input-text">$</span>
+                                <input
+                                    type="number"
+                                    value={additionalFees || ''}
+                                    placeholder="0.00"
+                                    onChange={(e) => setAdditionalFees(Number(e.target.value))}
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-black text-base font-lg mb-1">Gap Protection</label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-[12px] text-xl font-light text-input-text">$</span>
+                                <input
+                                    type="number"
+                                    value={gapFee || ''}
+                                    onChange={(e) => setGapFee(Number(e.target.value))}
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    placeholder="0.00"
+                                />
                             </div>
                         </div>
 
@@ -184,15 +185,15 @@ export default function PaymentCalculator() {
                                     step="0.01"
                                     value={apr}
                                     onChange={(e) => setApr(Number(e.target.value))}
-                                    className="w-full pr-8 pl-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
-                                <span className="absolute right-3 top-[9px] text-input-text">%</span>
+                                <span className="absolute right-3 top-[12px] text-input-text">%</span>
                             </div>
                         </div>
 
                         {/* Term Radio Toggle Buttons */}
                             <div className="sm:col-span-2">
-                                <label className="block text-black text-base font-medium mb-3 text-slate-700">Term (Months)</label>
+                                <label className="block text-black text-base font-medium mb-3 text-black">Term (Months)</label>
                                 <div className="flex flex-wrap gap-1 p-1">
                                     {[12, 24, 36, 48, 60, 72, 84, 96].map((m) => {
                                         return (
@@ -200,9 +201,9 @@ export default function PaymentCalculator() {
                                                 key={m}
                                                 type="button"
                                                 onClick={() => setTerm(m)}
-                                                className={`px-7 py-3 text-sm font-medium rounded-xl cursor-pointer border transition-all duration-200 ${term === m
-                                                        ? 'text-white border-brand bg-brand-gradient shadow-[0_4px_0_0_var(--color-primary-green)]'
-                                                        : 'border-slate-300 text-gray-700 hover:shadow-[0_4px_0_0_var(--color-primary-green)] shadow-[0_0_10px_rgba(0,0,0,0.1)]'
+                                                className={`px-7 py-3 text-sm font-medium rounded-xl cursor-pointer border transition-colors duration-200 ${term === m
+                                                        ? 'text-white border-brand bg-brand-gradient'
+                                                        : 'border-slate-300 text-gray-700 hover:bg-brand-gradient hover:text-white hover:border-transparent'
                                                     }`}
                                             >
                                                 {m}
