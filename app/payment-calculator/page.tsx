@@ -17,7 +17,7 @@ export default function PaymentCalculator() {
     const [vehiclePrice, setVehiclePrice] = useState<number>(appConfig?.payment_calculator?.vehicle_price);
     const [downPayment, setDownPayment] = useState<number>(appConfig?.payment_calculator?.downpayment);
     const [additionalFees, setAdditionalFees] = useState<number>(appConfig?.payment_calculator?.additional_fees ?? 0);
-    const [packageClass, setPackageClass] = useState<'A' | 'B' | null>(null);
+    const [packageClass, setPackageClass] = useState<'A' | 'B' | null>('A');
     const [gapFee, setGapFee] = useState<number>(0);
     const [warrantyCost, setWarrantyCost] = useState<number>(0);
     const [term, setTerm] = useState<number>(84);
