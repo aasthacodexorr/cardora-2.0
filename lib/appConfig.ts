@@ -32,7 +32,7 @@ export const defaultAppConfig = defineAppConfig({
     toll_free_number_1: "1-888-879-0000",
     toll_free_number_2: "",
     sales_number_1: "416-840-6606",
-    sales_number_2: "",
+    sales_number_2: "+1905-595-1166",
     cell_phone_1: "",
     cell_phone_2: "",
     fax_number_1: "",
