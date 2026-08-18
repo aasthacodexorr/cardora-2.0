@@ -27,12 +27,12 @@ const FinanceContent = () => {
   return (
     <>
     <Header/>
-    <main className="bg-background  my-18 mx-5 xl:mx-36  lg:mt-40">
+    <main className="bg-background  my-18 mx-5 xl:mx-36 lg:mt-36">
       <section className="flex-1 w-full min-h-[200vh] lg:min-h-[100vh]">
         <div className="mx-auto">
           <iframe
             src={`${SITE_CONFIG?.urls.financeBaseUrl}?inventory_id=${inventoryId}`}
-            className="w-full border-0 rounded-2xl min-h-[200vh] lg:min-h-[100vh]"
+            className="w-full border-0   min-h-[200vh] lg:min-h-[100vh]"
             title="Express Checkout - Finance"
             allow="payment"
           />
