@@ -11,3 +11,5 @@ export async function getSitemapBaseUrl() {
   const protocol = forwardedProto || (isLocal ? 'http' : 'https');
   return `${protocol}://${host}`;
 }
+
+

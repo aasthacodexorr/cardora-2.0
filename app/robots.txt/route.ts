@@ -1,10 +1,12 @@
+import { SITE_BASE_URL } from '@/sitemap/config';
+
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const robotsTxt = `User-agent: *
 Allow: /
 
-Sitemap: https://www.cardora.ca/sitemap.xml`;
+Sitemap: ${SITE_BASE_URL}/sitemap.xml`;
 
   return new Response(robotsTxt, {
     status: 200,
@@ -14,3 +16,4 @@ Sitemap: https://www.cardora.ca/sitemap.xml`;
     },
   });
 }
+
