@@ -6,19 +6,23 @@ import { useAppConfig } from '@/app/providers';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
+const ESSENTIAL_PACKAGE_PRICES: Record<'A' | 'B', number> = {
+    A: 1799,
+    B: 2499,
+};
+
 export default function PaymentCalculator() {
     const appConfig = useAppConfig();
     // Input States
     const [vehiclePrice, setVehiclePrice] = useState<number>(appConfig?.payment_calculator?.vehicle_price);
     const [downPayment, setDownPayment] = useState<number>(appConfig?.payment_calculator?.downpayment);
-    const [additionalFees, setAdditionalFees] = useState<number>(appConfig?.payment_calculator?.additional_fees);
-    const [financeFee, setFinanceFee] = useState<number>(999);
-    const [gapFee, setGapFee] = useState<number>(1999);
+    const [additionalFees, setAdditionalFees] = useState<number>(appConfig?.payment_calculator?.additional_fees ?? 0);
+    const [packageClass, setPackageClass] = useState<'A' | 'B' | null>(null);
+    const [gapFee, setGapFee] = useState<number>(0);
     const [warrantyCost, setWarrantyCost] = useState<number>(0);
     const [term, setTerm] = useState<number>(84);
     const [tradeInValue, setTradeInValue] = useState<number>(0);
     const [loanBalance, setLoanBalance] = useState<number>(0);
-    const [creditScore, setCreditScore] = useState<string>('Excellent');
     const [apr, setApr] = useState<number>(7.99);
     const [includeTax, setIncludeTax] = useState<boolean>(false);
 
@@ -28,11 +32,13 @@ export default function PaymentCalculator() {
 
     // Loan Calculation Logic
     useEffect(() => {
-        // Total Principal = Vehicle Price + Fees + Existing Loan Balance - Down Payment - Trade-in
+        // Essential Package = Class A or Class B (if selected) + any manually entered additional fee
+        const essentialPackageCost = (packageClass ? ESSENTIAL_PACKAGE_PRICES[packageClass] : 0) + additionalFees;
+
+        // Total Principal = Vehicle Price + Essential Package + Gap Protection + Extended Warranty + Existing Loan Balance - Down Payment - Trade-in
         const basePrincipal =
             vehiclePrice +
-            additionalFees +
-            financeFee +
+            essentialPackageCost +
             gapFee +
             warrantyCost +
             loanBalance -
@@ -67,7 +73,7 @@ export default function PaymentCalculator() {
         }
 
         setBiWeeklyPayment(payment.toFixed(2));
-    }, [vehiclePrice, downPayment, additionalFees, financeFee, gapFee, warrantyCost, term, tradeInValue, loanBalance, apr, includeTax]);
+    }, [vehiclePrice, downPayment, additionalFees, packageClass, gapFee, warrantyCost, term, tradeInValue, loanBalance, apr, includeTax]);
 
     return (
         <>
@@ -108,49 +114,56 @@ export default function PaymentCalculator() {
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-black text-base font-lg mb-1">Additional Fees</label>
-                            <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-input-text">$</span>
-                                <input
-                                    type="number"
-                                    value={additionalFees || ''}
-                                    placeholder="0.00"
-                                    onChange={(e) => setAdditionalFees(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                />
+                        {/* Essential Package - Class A / Class B toggle + Additional Fees / Gap Protection row */}
+                        <div className="sm:col-span-2">
+                            <label className="block text-black text-base font-lg mb-2">Essential Package</label>
+                            <div className="flex gap-2 flex-wrap mb-4">
+                                {(['A', 'B'] as const).map((cls) => (
+                                    <button
+                                        key={cls}
+                                        type="button"
+                                        onClick={() => setPackageClass(packageClass === cls ? null : cls)}
+                                        className={`px-4 lg:px-6 py-3 border rounded-xl text-sm font-medium transition-colors cursor-pointer ${packageClass === cls
+                                                ? 'text-white border-none bg-brand-gradient shadow-[0_4px_0_0_var(--color-primary-green)]'
+                                                : 'bg-white text-gray-700 hover:bg-gray-50 border-slate-300 hover:shadow-[0_4px_0_0_var(--color-primary-green)]'
+                                            }`}
+                                    >
+                                        Class {cls} (${ESSENTIAL_PACKAGE_PRICES[cls].toLocaleString()})
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-black text-base font-lg mb-1">Additional Fees</label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-[12px] text-xl font-light text-input-text">$</span>
+                                        <input
+                                            type="number"
+                                            value={additionalFees || ''}
+                                            placeholder="0.00"
+                                            onChange={(e) => setAdditionalFees(Number(e.target.value))}
+                                            className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-black text-base font-lg mb-1">Gap Protection</label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-[12px] text-xl font-light text-input-text">$</span>
+                                        <input
+                                            type="number"
+                                            value={gapFee || ''}
+                                            onChange={(e) => setGapFee(Number(e.target.value))}
+                                            className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                            placeholder="0.00"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-black text-base font-lg mb-1">Finance Fee</label>
-                            <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-input-text">$</span>
-                                <input
-                                    type="number"
-                                    value={financeFee || ''}
-                                    placeholder="0.00"
-                                    onChange={(e) => setFinanceFee(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-black text-base font-lg mb-1">Gap Fee</label>
-                            <div className="relative">
-                                <span className="absolute left-3 top-[12px] text-xl font-light text-input-text">$</span>
-                                <input
-                                    type="number"
-                                    value={gapFee || ''}
-                                    onChange={(e) => setGapFee(Number(e.target.value))}
-                                    className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-black text-base font-lg mb-1">Warranty Cost</label>
+                            <label className="block text-black text-base font-lg mb-1">Extended Warranty</label>
                             <div className="relative">
                                 <span className="absolute left-3 top-[12px] text-xl font-light text-input-text">$</span>
                                 <input
@@ -160,6 +173,20 @@ export default function PaymentCalculator() {
                                     className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0.00"
                                 />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-black text-base font-lg mb-1">Estimated APR</label>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    value={apr}
+                                    onChange={(e) => setApr(Number(e.target.value))}
+                                    className="w-full pr-8 pl-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                />
+                                <span className="absolute right-3 top-[9px] text-input-text">%</span>
                             </div>
                         </div>
 
@@ -210,47 +237,6 @@ export default function PaymentCalculator() {
                                     className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0.00"
                                 />
-                            </div>
-                        </div>
-
-                        {/* Credit Score Toggles */}
-                        <div className="sm:col-span-2">
-                            <label className="block text-black text-base font-lg mb-2">Approx. Credit Score</label>
-                            <div className="flex gap-2 w-[50%]">
-                                {['Poor', 'Fair', 'Good', 'Excellent'].map((score) => (
-                                    <button
-                                        key={score}
-                                        type="button"
-                                        onClick={() => {
-                                            setCreditScore(score);
-                                            // Match estimated APR shifts based on credit tir
-                                            if (score === 'Excellent') setApr(4.99);
-                                            if (score === 'Good') setApr(5.99);
-                                            if (score === 'Fair') setApr(9.99);
-                                            if (score === 'Poor') setApr(14.99);
-                                        }}
-                                        className={`px-4 lg:px-6 py-2 border rounded-xl text-sm font-medium transition-colors cursor-pointer ${creditScore === score
-                                                ? 'text-white border-none bg-brand-gradient shadow-[0_4px_0_0_var(--color-primary-green)]'
-                                                : 'bg-white text-gray-700 hover:bg-gray-50 border-slate-300 hover:shadow-[0_4px_0_0_var(--color-primary-green)]'
-                                            }`}
-                                    >
-                                        {score}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-black text-base font-lg mb-1">Estimated APR</label>
-                            <div className="relative">
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    value={apr}
-                                    onChange={(e) => setApr(Number(e.target.value))}
-                                    className="w-full pr-8 pl-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-1  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                />
-                                <span className="absolute right-3 top-[9px] text-input-text">%</span>
                             </div>
                         </div>
 
