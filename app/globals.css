@@ -229,3 +229,41 @@
 .animate-dollar-count {
   animation: dollarCount 2.4s ease-in-out infinite;
 }
+
+.lg-share-whatsapp-item {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.lg-share-whatsapp {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 40px !important;
+  padding: 0 12px !important;
+  gap: 10px !important;
+  color: #333 !important;
+  text-decoration: none !important;
+  font-size: 12px !important;
+  box-sizing: border-box !important;
+}
+
+.lg-share-whatsapp:hover {
+  background-color: #eee !important;
+}
+
+.lg-share-whatsapp-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #25D366;
+}
+
+.lg-share-whatsapp-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
