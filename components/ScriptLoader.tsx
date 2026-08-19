@@ -54,7 +54,7 @@ export function ScriptLoader() {
 
       {/* Form validation script - depends on jQuery, Bootstrap, and SweetAlert2 */}
       <Script
-        src="https://www.cardora.ca/wp-content/themes/zopdealer/js/form_validations.js?ver=1.0.6"
+        src="/js/form_validations.js"
         strategy="beforeInteractive"
         onLoad={() => {
           console.log("✓ Form validation script loaded successfully");
