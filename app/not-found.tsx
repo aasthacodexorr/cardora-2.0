@@ -58,7 +58,7 @@ export default function NotFound() {
 
                 <Link
                     href="/inventory"
-                    className="rounded-full bg-brand-green px-7 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-greenLight"
+                    className="block text-center text-white font-medium text-base w-ful hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-brand-btn-gradient"
                 >
                     Shop cars
                 </Link>
