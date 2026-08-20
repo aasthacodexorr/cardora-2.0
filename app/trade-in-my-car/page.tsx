@@ -165,11 +165,9 @@ const TradeIn = () => {
   const TRADE_FORMS = {
     vehicle: {
       url: SITE_CONFIG.urls.tradeFormByVehicle,
-      minHeight: 447,
     },
     vin: {
       url: SITE_CONFIG.urls.tradeFormByVin,
-      minHeight: 327,
     },
   };
 
@@ -196,7 +194,7 @@ const TradeIn = () => {
     ) as HTMLIFrameElement | null;
 
     if (iframe) {
-      iframe.style.height = `${Math.ceil(data.value) + 24}px`;
+      iframe.style.height = `${Math.ceil(data.value)}px`;
     }
   };
 
@@ -302,7 +300,7 @@ const TradeIn = () => {
             initial="hidden"
             animate="visible"
             variants={heroFormVariants}
-            className="rounded-2xl shadow-xl lg:mr-7 p-5 md:p-8 pb-12 md:pb-0 w-full max-w-[440px] lg:justify-self-end z-10 bg-white border border-border-lightGray/80"
+            className="rounded-2xl shadow-xl lg:mr-7 p-5 md:p-8 pb-0 md:pb-0 w-full max-w-[440px] lg:justify-self-end z-10 bg-white border border-border-lightGray/80"
           >
             <div className="flex mb-6 cursor-pointer border-b border-border-standard">
               <button
@@ -345,9 +343,10 @@ const TradeIn = () => {
               }
               width="100%"
               scrolling="no"
-              className="w-full border-0 transition-[height] duration-300 ease-out"
+              className="w-full border-0 block transition-[height] duration-300 ease-out"
               style={{
-                minHeight: `${TRADE_FORMS[mode].minHeight}px`,
+                height: mode === "vehicle" ? "447px" : "327px",
+                minHeight: mode === "vehicle" ? "447px" : "327px",
               }}
             />
           </motion.div>
@@ -394,7 +393,7 @@ const TradeIn = () => {
             </div>
 
             {/* Marker */}
-            <div className="absolute bottom-[29%] z-20 flex items-center justify-center">
+            <div className="absolute bottom-[32%] z-20 flex items-center justify-center">
               <div className="h-8 w-8 rounded-full bg-white border-[4px] border-primary-green2 shadow-md" />
             </div>
 
