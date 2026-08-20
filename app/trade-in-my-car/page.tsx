@@ -10,7 +10,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, FileText, Mail, CalendarCheck, CarFrontIcon } from "lucide-react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Image from "next/image";
@@ -173,6 +173,40 @@ const TradeIn = () => {
     },
   };
 
+  useEffect(() => {
+  const handleMessage = (event: MessageEvent) => {
+    if (event.origin !== "https://cardora.zopsoftware.com") {
+      return;
+    }
+
+    const data = event.data;
+
+    if (
+      !data ||
+      typeof data !== "object" ||
+      data.type !== "css" ||
+      typeof data.value !== "number" ||
+      typeof data.element_id !== "string"
+    ) {
+      return;
+    }
+
+    const iframe = document.getElementById(
+      data.element_id
+    ) as HTMLIFrameElement | null;
+
+    if (iframe) {
+      iframe.style.height = `${Math.ceil(data.value) + 24}px`;
+    }
+  };
+
+  window.addEventListener("message", handleMessage);
+
+  return () => {
+    window.removeEventListener("message", handleMessage);
+  };
+}, []);
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <Header />
@@ -268,7 +302,7 @@ const TradeIn = () => {
             initial="hidden"
             animate="visible"
             variants={heroFormVariants}
-            className="rounded-2xl shadow-xl lg:mr-7 p-5 md:p-8 pb-12 md:pb-24 w-full max-w-[440px] lg:justify-self-end z-10 bg-white border border-border-lightGray/80"
+            className="rounded-2xl shadow-xl lg:mr-7 p-5 md:p-8 pb-12 md:pb-0 w-full max-w-[440px] lg:justify-self-end z-10 bg-white border border-border-lightGray/80"
           >
             <div className="flex mb-6 cursor-pointer border-b border-border-standard">
               <button
@@ -298,10 +332,20 @@ const TradeIn = () => {
 
             <iframe
               key={mode}
+              id={
+                mode === "vehicle"
+                  ? "trade_form_with_autodropdown"
+                  : "trade_form_with_vin"
+              }
               src={TRADE_FORMS[mode].url}
-              title={mode === "vehicle" ? "Trade Form By Vehicle" : "Trade Form By VIN"}
+              title={
+                mode === "vehicle"
+                  ? "Trade Form By Vehicle"
+                  : "Trade Form By VIN"
+              }
               width="100%"
-              className="border-0 cursor-pointer"
+              scrolling="no"
+              className="w-full border-0 transition-[height] duration-300 ease-out"
               style={{
                 minHeight: `${TRADE_FORMS[mode].minHeight}px`,
               }}

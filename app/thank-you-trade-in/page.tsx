@@ -51,7 +51,7 @@ export default function ThankYouTradeIn() {
 
                     <li className="inline-flex items-center gap-[4px]">
                         <Smartphone size={14} strokeWidth={2} />
-                        <span>One of our Cardora specialists will reach out shortly with the next steps.</span>
+                        <span>One of our Cardora specialists will reach out shortly.</span>
                     </li>
                 </ul>
             </div>
