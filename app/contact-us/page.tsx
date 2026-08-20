@@ -1,21 +1,53 @@
-"use client"
-import { GetInTouch } from '@/components/common';
-import { Footer, Header } from '@/components/layout';
-import Image from 'next/image';
+"use client";
+
+import { useEffect } from "react";
+import { GetInTouch } from "@/components/common";
+import { Footer, Header } from "@/components/layout";
+import Image from "next/image";
 import callIcon from "@/assets/icons/call_icon.svg";
 import envelopIcon from "@/assets/icons/envelop_icon.svg";
-import { getConstants } from '@/constants';
-import { useAppConfig } from '@/app/providers';
-import Link from 'next/link';
-
+import { getConstants } from "@/constants";
+import { useAppConfig } from "@/app/providers";
+import Link from "next/link";
 
 export default function ContactUs() {
     const appConfig = useAppConfig();
     const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
 
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (event.origin !== "https://cardora.zopsoftware.com") {
+                return;
+            }
+
+            const { type, value, element_id } = event.data || {};
+
+            if (
+                type === "css" &&
+                element_id === "contact_us" &&
+                typeof value === "number"
+            ) {
+                const iframe = document.getElementById(
+                    element_id
+                ) as HTMLIFrameElement | null;
+
+                if (iframe) {
+                    iframe.style.height = `${value}px`;
+                }
+            }
+        };
+
+        window.addEventListener("message", handleMessage);
+
+        return () => {
+            window.removeEventListener("message", handleMessage);
+        };
+    }, []);
+
     return (
         <>
             <Header />
+
             <div className="min-h-screen flex items-center justify-center px-3 py-10 lg:px-24 font-sans text-gray-900 lg:mt-24">
                 <div className="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-12 gap-8">
 
@@ -24,7 +56,9 @@ export default function ContactUs() {
                         <h1 className="text-2xl sm:text-[42px] font-bold lg:mt-28 lg:max-w-xl">
                             Got a question? We’re here to help.
                         </h1>
+
                         <div className="space-y-7 lg:space-y-4 lg:w-[480px]">
+
                             {/* Call Card */}
                             <Link
                                 href={`tel:${appConfig.dealership.sales_number_1}`}
@@ -33,8 +67,12 @@ export default function ContactUs() {
                                 <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                                 <div className="relative z-10">
-                                    <h2 className="text-xl font-bold mb-1">Call us</h2>
-                                    <p className="text-gray-600">Call Us Anytime Now</p>
+                                    <h2 className="text-xl font-bold mb-1">
+                                        Call us
+                                    </h2>
+                                    <p className="text-gray-600">
+                                        Call Us Anytime Now
+                                    </p>
                                 </div>
 
                                 <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-brand-green flex items-center justify-center">
@@ -56,8 +94,12 @@ export default function ContactUs() {
                                 <div className="absolute inset-0 bg-[#2f413936] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                                 <div className="relative z-10">
-                                    <h2 className="text-xl font-bold mb-1">Email</h2>
-                                    <p className="text-gray-600">Send Us an Email</p>
+                                    <h2 className="text-xl font-bold mb-1">
+                                        Email
+                                    </h2>
+                                    <p className="text-gray-600">
+                                        Send Us an Email
+                                    </p>
                                 </div>
 
                                 <div className="relative z-10 h-[55px] w-[55px] rounded-full bg-brand-green flex items-center justify-center">
@@ -73,19 +115,22 @@ export default function ContactUs() {
                         </div>
                     </div>
 
-                    {/* Right Side: Form Container */}
-                    <div className=" bg-white px-4 pt-8 pb-18 sm:p-6 rounded-2xl shadow-[0_2px_18px_rgba(0,0,0,0.1)] border border-gray-100">
-                        <h2 className="text-2xl sm:text-3xl font-bold mb-6">Let’s Get You on the Road</h2>
-                        <div className=" h-[850px] lg:h-[600px]">
+                    {/* Right Side */}
+                    <div className="bg-white px-4 pt-8 pb-18 sm:p-6 rounded-2xl shadow-[0_2px_18px_rgba(0,0,0,0.1)] border border-gray-100">
+                        <h2 className="text-2xl sm:text-3xl font-bold mb-6">
+                            Let’s Get You on the Road
+                        </h2>
+
+                        <div className="lg:h-[600px]">
                             <iframe
-                                src={`${SITE_CONFIG?.urls.contactUsBaseUrl}`}
-                                className="w-full rounded-2xl h-full"
+                                id="contact_us"
+                                src={SITE_CONFIG?.urls.contactUsBaseUrl}
+                                className="w-full rounded-2xl"
                                 title="Contact Us"
                                 allow="payment"
                             />
                         </div>
                     </div>
-
                 </div>
             </div>
 
