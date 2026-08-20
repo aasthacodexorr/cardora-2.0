@@ -144,9 +144,21 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
             {/* Price and mileage */}
             <div>
-              <p className="text-[20px] font-bold text-foreground leading-5 mt-2 py-[3px] px-[0.5px]">
-                ${price.toLocaleString()}.00
-              </p>
+              {
+                !isSold ? (
+                  <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1">
+                    <div className="flex justify-between items-center w-full">
+                      <span>Finance Price</span>
+                      <span>${price.toLocaleString()}.00</span>
+                    </div>
+                    <div className="flex justify-between items-center w-full">
+                      <span>Cash Price</span>
+                      <span>${(price + 2000).toLocaleString()}.00</span>
+                    </div>
+
+                  </div>
+                ) : null
+              }
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
                 {km.toLocaleString()} KM
                 {drivetrain && drivetrain !== "N/A" && (
