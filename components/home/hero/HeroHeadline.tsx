@@ -8,7 +8,6 @@ import orangeTruck from "@/assets/cars/car-orange-truck 1.png";
 interface HeroHeadlineProps {
   fullWidth?: boolean;
 }
- 
 
 const HeroHeadline = ({ fullWidth = false }: { fullWidth?: boolean }) => {
   return (
@@ -19,6 +18,7 @@ const HeroHeadline = ({ fullWidth = false }: { fullWidth?: boolean }) => {
           afterText="a"
           image={yellowSuv.src}
           imageAlt="Yellow SUV"
+          imageSizeClass="w-[95px] sm:w-[130px] md:w-[165px] lg:w-[185px]"
         />
         <HeroLine
           image={whiteSuv.src}
@@ -36,6 +36,5 @@ const HeroHeadline = ({ fullWidth = false }: { fullWidth?: boolean }) => {
     </div>
   );
 };
- 
 
 export default HeroHeadline;
