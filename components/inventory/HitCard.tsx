@@ -144,21 +144,43 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
             {/* Price and mileage */}
             <div>
-              {
-                !isSold ? (
+              {!isSold ? (
+                hit?.vehicle_type?.toLowerCase() === "as-is" ? (
+                  // As-Is vehicles: show only the original price
+                  <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px]">
+                    <div className="flex justify-between items-center w-full">
+                      {/* <span>Price</span> */}
+                      <span>
+                        {price > 0
+                          ? `$${price.toLocaleString()}.00`
+                          : "Call for price"}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  // Normal vehicles: Finance + Cash Price
                   <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1">
                     <div className="flex justify-between items-center w-full">
                       <span>Finance Price</span>
-                      <span>${price.toLocaleString()}.00</span>
-                    </div>
-                    <div className="flex justify-between items-center w-full">
-                      <span>Cash Price</span>
-                      <span>${(price + 2000).toLocaleString()}.00</span>
+                      <span>
+                        {price > 0
+                          ? `$${price.toLocaleString()}.00`
+                          : "Call for price"}
+                      </span>
                     </div>
 
+                    <div className="flex justify-between items-center w-full">
+                      <span>Cash Price</span>
+                      <span>
+                        {price > 0
+                          ? `$${(price + 2000).toLocaleString()}.00`
+                          : "Call for price"}
+                      </span>
+                    </div>
                   </div>
-                ) : null
-              }
+                )
+              ) : null}
+
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
                 {km.toLocaleString()} KM
                 {drivetrain && drivetrain !== "N/A" && (
