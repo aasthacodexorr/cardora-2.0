@@ -1,41 +1,64 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Heart } from "lucide-react";
+
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { useWishlist } from "@/context/WishlistContext";
 import { MessageModal } from "./VehicleInfo";
 
-
 /* =========================
    HitCard Component (Inventory)
 ========================= */
+
 export const HitCard = ({ hit }: { hit: any }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const appConfig = useAppConfig();
-  const { SITE_CONFIG, PHONE_NUMBER, DEFAULT_PLACEHOLDER_IMAGE } = getConstants(appConfig);
-  const { isInWishlist, addToWishlist, removeFromWishlist, isHydrated } = useWishlist();
 
-  // Phone number fallback strategy
+  const appConfig = useAppConfig();
+
+  const {
+    SITE_CONFIG,
+    PHONE_NUMBER,
+    DEFAULT_PLACEHOLDER_IMAGE,
+  } = getConstants(appConfig);
+
+  const {
+    isInWishlist,
+    addToWishlist,
+    removeFromWishlist,
+    isHydrated,
+  } = useWishlist();
+
+  /* Phone number fallback strategy */
   const phoneNumber = PHONE_NUMBER || "";
 
-  const title =
-    `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${hit.trim || ""}`.trim();
+  const title = `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${
+    hit.trim || ""
+  }`.trim();
 
   const price = Number(hit.selling_price) || 0;
   const km = Number(hit.odometer) || 0;
   const drivetrain = hit.drivetrain || "N/A";
   const stock = hit.stock_no || "N/A";
 
-  const isSold = hit.status && hit.status.toLowerCase() !== "instock";
+  const isSold =
+    hit.status && hit.status.toLowerCase() !== "instock";
+
   const isDealPending = hit.sub_status === "Deal Pending";
 
-  const imageUrls = hit.image_urls ? hit.image_urls.split(";") : [];
-  let imageSrc = DEFAULT_PLACEHOLDER_IMAGE || `${SITE_CONFIG?.urls?.assetBaseUrl}/image/default-placeholder.jpg`;
+  const imageUrls = hit.image_urls
+    ? hit.image_urls.split(";")
+    : [];
+
+  let imageSrc =
+    DEFAULT_PLACEHOLDER_IMAGE ||
+    `${SITE_CONFIG?.urls?.assetBaseUrl}/image/default-placeholder.jpg`;
+
   if (imageUrls.length > 0) {
     const firstUrl = imageUrls[0].trim();
+
     imageSrc = firstUrl.startsWith("/")
       ? `${SITE_CONFIG?.urls?.assetBaseUrl}${firstUrl}`
       : firstUrl;
@@ -76,7 +99,9 @@ export const HitCard = ({ hit }: { hit: any }) => {
               width={600}
               height={400}
               className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${
-                isSold || isDealPending ? "grayscale opacity-80" : ""
+                isSold || isDealPending
+                  ? "grayscale opacity-80"
+                  : ""
               }`}
             />
 
@@ -89,18 +114,19 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
             {/* DEAL PENDING Ribbon */}
             {isDealPending && (
-              <div className="absolute uppercase top-4 left-36 text-white text-[11px] font-semibold shadow-lg text-center py-[6px] px-3 rounded-md z-10 bg-brand-green">
+              <div className="absolute uppercase ml-1 top-4 left-1/2 -translate-x-1/2 w-fit whitespace-nowrap text-white text-[11px] font-semibold shadow-lg text-center py-[6px] px-3 rounded-md z-10 bg-brand-green">
                 Deal Pending
               </div>
             )}
 
-            {/* Wishlist Button Overlaid Directly on Image */}
+            {/* Wishlist Button */}
             {isHydrated && (
               <button
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+
                   if (isInWishlist(hit.inventory_id)) {
                     removeFromWishlist(hit.inventory_id);
                   } else {
@@ -121,7 +147,11 @@ export const HitCard = ({ hit }: { hit: any }) => {
                   }
                 }}
                 className="absolute top-[12px] right-[12px] p-1 cursor-pointer rounded-full bg-white/90 hover:bg-white transition-colors shadow-md z-20"
-                aria-label={isInWishlist(hit.inventory_id) ? "Remove from wishlist" : "Add to wishlist"}
+                aria-label={
+                  isInWishlist(hit.inventory_id)
+                    ? "Remove from wishlist"
+                    : "Add to wishlist"
+                }
               >
                 <Heart
                   className={`w-5 h-5 ${
@@ -143,33 +173,104 @@ export const HitCard = ({ hit }: { hit: any }) => {
             <hr className="border-gray-200 mt-[4px]" />
 
             {/* Price and mileage */}
-            <div>
-              {
-                !isSold ? (
-                  <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1">
-                    <div className="flex justify-between items-center w-full">
-                      <span>Finance Price</span>
-                      <span>${price.toLocaleString()}.00</span>
-                    </div>
-                    <div className="flex justify-between items-center w-full">
-                      <span>Cash Price</span>
-                      <span>${(price + 2000).toLocaleString()}.00</span>
-                    </div>
+           {/* Price and mileage */}
+<div>
+  {!isSold ? (
+    hit?.vehicle_type?.toLowerCase() === "as-is" ? (
+      /* =========================
+         AS-IS VEHICLE
+         ========================= */
+      <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px]">
+        <div className="flex justify-between items-center w-full">
+          {price > 0 ? (
+            <span>
+              ${price.toLocaleString("en-CA")}.00
+            </span>
+          ) : (
+            /* Single Call for price */
+            <span className="flex items-center gap-1 text-price-green">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                />
+              </svg>
 
-                  </div>
-                ) : null
-              }
-              <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
-                {km.toLocaleString()} KM
-                {drivetrain && drivetrain !== "N/A" && (
-                  <> &bull; {drivetrain}</>
-                )}
-              </p>
-            </div>
+              <span>Call for price</span>
+            </span>
+          )}
+        </div>
+      </div>
+    ) : price > 0 ? (
+      /* =========================
+         NORMAL VEHICLE - HAS PRICE
+         ========================= */
+      <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1">
+        {/* Finance Price */}
+        <div className="flex justify-between items-center w-full">
+          <span>Finance Price</span>
+
+          <span>
+            ${price.toLocaleString("en-CA")}.00
+          </span>
+        </div>
+
+        {/* Cash Price */}
+        <div className="flex justify-between items-center w-full">
+          <span>Cash Price</span>
+
+          <span>
+            ${(price + 2000).toLocaleString("en-CA")}.00
+          </span>
+        </div>
+      </div>
+    ) : (
+      /* =========================
+         NORMAL VEHICLE - NO PRICE
+         ========================= */
+      <div className="text-[17px] w-full font-semibold leading-6 mt-2 py-[3px]">
+        <div className="flex items-center gap-1 text-price-green">
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+            />
+          </svg>
+
+          <span>Call for price</span>
+        </div>
+      </div>
+    )
+  ) : null}
+
+  {/* Mileage + Drivetrain */}
+  <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
+    {km.toLocaleString()} KM
+    {drivetrain && drivetrain !== "N/A" && (
+      <> &bull; {drivetrain}</>
+    )}
+  </p>
+</div>
 
             <hr className="border-gray-200 my-2" />
 
-            <p className="text-[12px] mb-2 font-light">Stock #: {stock}</p>
+            <p className="text-[12px] mb-2 font-light">
+              Stock #: {stock}
+            </p>
           </div>
         </article>
 
@@ -182,9 +283,20 @@ export const HitCard = ({ hit }: { hit: any }) => {
               onClick={(e) => e.stopPropagation()}
               className="cursor-pointer text-center w-26 rounded-[10px] sm:rounded-[12px] text-gray-800 bg-white hover:bg-gray-100 py-[10px] text-[14px] sm:text-[15px] font-medium transition-colors border border-gray-300 flex items-center justify-center gap-2"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a2 2 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                />
               </svg>
+
               Call
             </a>
 

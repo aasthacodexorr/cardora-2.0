@@ -40,10 +40,28 @@ type ImageGalleryProps = {
 export const ImageGallery = ({ images, title, isSold = false, centered }: ImageGalleryProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for left, 1 for right
-  
+  const [stripHeight, setStripHeight] = useState<number | null>(null);
+
   const lightboxRef = useRef<LightGalleryInstance | null>(null);
   const desktopThumbsRef = useRef<HTMLDivElement | null>(null);
   const thumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const mainImageRef = useRef<HTMLDivElement | null>(null);
+
+  // Keep the thumbnail strip height perfectly in sync with the main image's
+  // *rendered* height (which is dynamic because it's aspect-ratio driven),
+  // instead of relying on a fixed/guessed height that leaves a gap.
+  useEffect(() => {
+    const el = mainImageRef.current;
+    if (!el) return;
+
+    const updateHeight = () => setStripHeight(el.offsetHeight);
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(() => updateHeight());
+    resizeObserver.observe(el);
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   // Smooth scroll thumbnail into view, handling loop-to-top scenario
   useEffect(() => {
@@ -168,6 +186,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
       <div className="flex flex-col rounded-2xl overflow-hidden">
         {/* Clickable Main view triggers lightGallery */}
         <div
+          ref={mainImageRef}
           onClick={() => {
             lightboxRef.current?.openGallery(activeIndex);
           }}
@@ -262,9 +281,10 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
 
       {/* Desktop Thumbnail Strip */}
       {images.length > 1 ? (
-        <div 
+        <div
           ref={desktopThumbsRef}
-          className="hidden md:flex flex-col overflow-y-auto w-[165px] h-[500px] 2xl:h-[600px] 2xl:w-[200px] pr-1 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={stripHeight ? { height: stripHeight } : undefined}
+          className="hidden md:flex flex-col overflow-y-auto w-[165px] 2xl:w-[200px] pr-1 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {images.map((img, idx) => (
             <button
@@ -272,16 +292,16 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
               ref={(el) => { thumbRefs.current[idx] = el; }}
               type="button"
               onClick={() => goTo(idx)}
-              className={`w-full flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 mb-1 transition-all duration-200 ${
+              className={`w-full aspect-[4/3] flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 mb-1 transition-all duration-200 ${
                 idx === activeIndex ? "border-transparent" : "border-transparent"
               }`}
             >
-              <Image 
-                src={img} 
-                alt={`Thumbnail ${idx + 1}`} 
-                width={155} 
-                height={125} 
-                className="w-full h-full object-cover rounded-md" 
+              <Image
+                src={img}
+                alt={`Thumbnail ${idx + 1}`}
+                width={155}
+                height={125}
+                className="w-full h-full object-cover rounded-md"
               />
             </button>
           ))}
