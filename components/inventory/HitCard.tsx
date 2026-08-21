@@ -114,7 +114,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
             {/* DEAL PENDING Ribbon */}
             {isDealPending && (
-              <div className="absolute uppercase top-4 left-36 text-white text-[11px] font-semibold shadow-lg text-center py-[6px] px-3 rounded-md z-10 bg-brand-green">
+              <div className="absolute uppercase ml-1 top-4 left-1/2 -translate-x-1/2 w-fit whitespace-nowrap text-white text-[11px] font-semibold shadow-lg text-center py-[6px] px-3 rounded-md z-10 bg-brand-green">
                 Deal Pending
               </div>
             )}
