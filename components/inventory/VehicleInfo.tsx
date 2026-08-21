@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import checkout from "@/assets/icons/checkout.png";
-import { Fuel } from "lucide-react";
+import { Fuel, PhoneCall } from "lucide-react";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { createPortal } from "react-dom";
@@ -19,6 +19,9 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   const inlineContainerRef = useRef<HTMLDivElement>(null);
 
   const sellingPrice = Number(vehicle?.selling_price || 0);
+
+  const isSold =
+    vehicle?.status?.toLowerCase() !== "instock";
 
   const isAsIs =
     vehicle?.vehicle_type?.toLowerCase() === "as-is";
@@ -72,23 +75,29 @@ export const PriceAndCTA = ({ vehicle }: any) => {
         ref={inlineContainerRef}
         className="bg-white rounded-2xl px-5 pb-2 text-center tracking-wide"
       >
-        {vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString() ? null : (
+        {/* {vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString() ? null : (
           <p className="text-[12px] font-extrabold text-black line-through leading-none my-3">
-            ${vehicle?.price?.toLocaleString()}.00 dgdg
+            ${vehicle?.price?.toLocaleString()}.00
           </p>
-        )}
+        )} */}
 
-        {isAsIs ? (
-          <div className="flex items-center justify-center gap-1 my-3">
+        {!isSold && (
+  <>
+    {isAsIs ? (
+      /* =========================
+         AS-IS VEHICLE
+         ========================= */
+      <div className="flex items-center justify-center gap-1 my-3">
+        {hasPrice ? (
+          <>
             <p className="text-[32px] font-extrabold leading-none text-price-green">
-              {hasPrice
-                ? `$${sellingPrice.toLocaleString("en-CA")}.00`
-                : "Call for price"}
+              ${sellingPrice.toLocaleString("en-CA")}.00
             </p>
 
+            {/* Info icon */}
             <div
               ref={tooltipRef}
-              className={`${hasPrice ? "mt-0" : "mt-3"} relative inline-flex items-center group`}
+              className="relative inline-flex items-center group"
             >
               <button
                 type="button"
@@ -103,125 +112,175 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                 >
                   <path
                     fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 000 2zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
                     clipRule="evenodd"
                   />
                 </svg>
               </button>
 
               <div
-                className={`absolute bottom-full -right-44 -translate-x-1/2 mb-2 w-[240px] sm:w-max max-w-[280px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
+                className={`absolute bottom-full right-0 mb-2 w-[240px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${
+                  showTooltip
                     ? "opacity-100 visible"
                     : "opacity-0 invisible"
-                  } md:group-hover:opacity-100 md:group-hover:visible`}
+                } md:group-hover:opacity-100 md:group-hover:visible`}
               >
                 Listed price does not include taxes and licensing fees.
 
-                <div className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
+                <div className="absolute right-2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
               </div>
             </div>
-          </div>
+          </>
         ) : (
-          <div className="my-3">
-            {/* Finance Price */}
-            <div className="flex items-center justify-between">
-              <span className="text-[24px] font-semibold">
-                Finance Price
-              </span>
+          /* =========================
+             AS-IS - NO PRICE
+             ========================= */
+          <div className="flex items-center justify-center gap-1 text-price-green">
+            <svg
+              className="w-7 h-7"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+              />
+            </svg>
 
-              <div className="flex items-center gap-1">
-                <span className="text-[24px] font-bold text-price-green">
-                  {hasPrice
-                    ? `$${financePrice.toLocaleString("en-CA")}.00`
-                    : "Call for price"}
-                </span>
-
-                <div className="relative inline-flex items-center group">
-                  <button
-                    type="button"
-                    onClick={() => setShowTooltip(!showTooltip)}
-                    className="flex items-center"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      className="w-4 h-4 text-gray-500 cursor-pointer"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-
-                  <div
-                    className={`absolute bottom-full right-0 mb-2 w-[240px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
-                      ? "opacity-100 visible"
-                      : "opacity-0 invisible"
-                      } md:group-hover:opacity-100 md:group-hover:visible`}
-                  >
-                    Listed price does not include taxes and licensing fees.
-
-                    <div className="absolute right-2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Cash Price */}
-            <div className="flex items-center justify-between">
-              <span className="text-[24px] font-semibold">
-                Cash Price
-              </span>
-
-              <div className="flex items-center gap-1">
-                <span className="text-[24px] font-bold text-price-green">
-                  {hasPrice
-                    ? `$${cashPrice.toLocaleString("en-CA")}.00`
-                    : "Call for price"}
-                </span>
-
-                <div
-                  ref={tooltipRef}
-                  className="relative inline-flex items-center group"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setShowTooltip(!showTooltip)}
-                    className="flex items-center"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      className="w-4 h-4 text-gray-500 cursor-pointer"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-
-                  <div
-                    className={`absolute bottom-full right-0 mb-2 w-[240px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
-                      ? "opacity-100 visible"
-                      : "opacity-0 invisible"
-                      } md:group-hover:opacity-100 md:group-hover:visible`}
-                  >
-                    Listed price does not include taxes and licensing fees.
-
-                    <div className="absolute right-2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
+            <p className="text-[32px] font-extrabold leading-none">
+              Call for price
+            </p>
           </div>
         )}
+      </div>
+    ) : hasPrice ? (
+      /* =========================
+         NORMAL VEHICLE - HAS PRICE
+         ========================= */
+      <div className="my-3">
+        {/* Finance Price */}
+        <div className="flex items-center justify-between">
+          <span className="text-[24px] font-semibold">
+            Finance Price
+          </span>
+
+          <div className="flex items-center gap-1">
+            <span className="text-[24px] font-bold text-price-green">
+              ${financePrice.toLocaleString("en-CA")}.00
+            </span>
+
+            {/* Info icon */}
+            <div className="relative inline-flex items-center group">
+              <button
+                type="button"
+                onClick={() => setShowTooltip(!showTooltip)}
+                className="flex items-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-4 h-4 text-gray-500 cursor-pointer"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 000 2zm-1-6a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <div
+                className={`absolute bottom-full right-0 mb-2 w-[240px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${
+                  showTooltip
+                    ? "opacity-100 visible"
+                    : "opacity-0 invisible"
+                } md:group-hover:opacity-100 md:group-hover:visible`}
+              >
+                Listed price does not include taxes and licensing fees.
+
+                <div className="absolute right-2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Cash Price */}
+        <div className="flex items-center justify-between">
+          <span className="text-[24px] font-semibold">
+            Cash Price
+          </span>
+
+          <div className="flex items-center gap-1">
+            <span className="text-[24px] font-bold text-price-green">
+              ${cashPrice.toLocaleString("en-CA")}.00
+            </span>
+
+            {/* Info icon */}
+            <div className="relative inline-flex items-center group">
+              <button
+                type="button"
+                onClick={() => setShowTooltip(!showTooltip)}
+                className="flex items-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-4 h-4 text-gray-500 cursor-pointer"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 100-2 1 1 0 000 2zm1 8a1 1 0 10-2 0 1 1 0 000 2zm-1-6a1 1 0 00-1 1v3a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <div
+                className={`absolute bottom-full right-0 mb-2 w-[240px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${
+                  showTooltip
+                    ? "opacity-100 visible"
+                    : "opacity-0 invisible"
+                } md:group-hover:opacity-100 md:group-hover:visible`}
+              >
+                Listed price does not include taxes and licensing fees.
+
+                <div className="absolute right-2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : (
+      /* =========================
+         NORMAL VEHICLE - NO PRICE
+         ========================= */
+      <div className="flex items-center justify-center gap-1 my-3 text-price-green">
+        <svg
+          className="w-7 h-7"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+          />
+        </svg>
+
+        <p className="text-[32px] font-extrabold leading-none">
+          Call for price
+        </p>
+      </div>
+    )}
+  </>
+)}
 
         <div className="mt-1">
           <Image src={checkout} alt="Express Checkout" />
