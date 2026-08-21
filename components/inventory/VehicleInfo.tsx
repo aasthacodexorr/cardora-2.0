@@ -150,7 +150,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
               />
             </svg>
 
-            <p className="text-[32px] font-extrabold leading-none">
+            <p className="text-[30px] font-extrabold leading-none">
               Call for price
             </p>
           </div>
@@ -274,7 +274,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
           />
         </svg>
 
-        <p className="text-[32px] font-extrabold leading-none">
+        <p className="text-[30px] font-extrabold leading-none">
           Call for price
         </p>
       </div>

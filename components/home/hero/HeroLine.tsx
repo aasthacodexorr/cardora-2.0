@@ -5,20 +5,30 @@ import type { HeroLineProps } from "./types";
 
 interface ExtendedHeroLineProps extends HeroLineProps {
   afterText?: string;
+  imageSizeClass?: string;
 }
 
-const HeroLine = ({ text, afterText, image, imageAlt, reverse = false, tagline }: ExtendedHeroLineProps) => {
+const HeroLine = ({
+  text,
+  afterText,
+  image,
+  imageAlt,
+  reverse = false,
+  tagline,
+  imageSizeClass,
+}: ExtendedHeroLineProps) => {
   const carTransition = { type: "spring" as const, stiffness: 90, damping: 15, delay: 0.1 };
+  const defaultSizeClass = "w-[120px] sm:w-[160px] md:w-[200px] lg:w-[220px]";
 
   return (
     <div className={HERO_LINE_CLASS}>
       {reverse && image && (
-        <motion.div 
+        <motion.div
           initial={{ x: -70, opacity: 0 }}
           whileInView={{ x: 0, opacity: 1 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={carTransition}
-          className="w-[120px] sm:w-[160px] md:w-[200px] lg:w-[220px] relative flex-shrink-0"
+          className={`${imageSizeClass ?? defaultSizeClass} relative flex-shrink-0`}
         >
           <Image
             src={image}
@@ -32,16 +42,16 @@ const HeroLine = ({ text, afterText, image, imageAlt, reverse = false, tagline }
           />
         </motion.div>
       )}
-      
+
       {text && <span className="whitespace-nowrap">{text} {afterText}</span>}
-      
+
       {!reverse && image && (
-        <motion.div 
+        <motion.div
           initial={{ x: -70, opacity: 0 }}
           whileInView={{ x: 0, opacity: 1 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={carTransition}
-          className="w-[120px] sm:w-[160px] md:w-[200px] lg:w-[220px] relative flex-shrink-0 -ml-[15px] md:ml-0"
+          className={`${imageSizeClass ?? defaultSizeClass} relative flex-shrink-0 `}
         >
           <Image
             src={image}
@@ -54,9 +64,9 @@ const HeroLine = ({ text, afterText, image, imageAlt, reverse = false, tagline }
           />
         </motion.div>
       )}
-      
+
       {tagline && (
-        <motion.span 
+        <motion.span
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
