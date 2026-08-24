@@ -34,9 +34,8 @@ export const HitCard = ({ hit }: { hit: any }) => {
   /* Phone number fallback strategy */
   const phoneNumber = PHONE_NUMBER || "";
 
-  const title = `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${
-    hit.trim || ""
-  }`.trim();
+  const title = `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${hit.trim || ""
+    }`.trim();
 
   const price = Number(hit.selling_price) || 0;
   const km = Number(hit.odometer) || 0;
@@ -98,11 +97,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
               alt={title}
               width={600}
               height={400}
-              className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${
-                isSold || isDealPending
+              className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${isSold || isDealPending
                   ? "grayscale opacity-80"
                   : ""
-              }`}
+                }`}
             />
 
             {/* SOLD Ribbon */}
@@ -154,11 +152,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
                 }
               >
                 <Heart
-                  className={`w-5 h-5 ${
-                    isInWishlist(hit.inventory_id)
+                  className={`w-5 h-5 ${isInWishlist(hit.inventory_id)
                       ? "fill-brand-green stroke-none"
                       : "stroke-gray-600"
-                  } transition-colors`}
+                    } transition-colors`}
                 />
               </button>
             )}
@@ -173,24 +170,119 @@ export const HitCard = ({ hit }: { hit: any }) => {
             <hr className="border-gray-200 mt-[4px]" />
 
             {/* Price and mileage */}
-           {/* Price and mileage */}
-<div>
-  {!isSold ? (
-    hit?.vehicle_type?.toLowerCase() === "as-is" ? (
-      /* =========================
-         AS-IS VEHICLE
-         ========================= */
-      <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px]">
-        <div className="flex justify-between items-center w-full">
-          {price > 0 ? (
-            <span>
-              ${price.toLocaleString("en-CA")}.00
-            </span>
-          ) : (
-            /* Single Call for price */
-            <span className="flex items-center gap-1 text-price-green">
+            {/* Price and mileage */}
+            <div>
+              {!isSold ? (
+                hit?.vehicle_type?.toLowerCase() === "as-is" ? (
+                  /* =========================
+                     AS-IS VEHICLE
+                     ========================= */
+                  <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px]">
+                    <div className="flex justify-between items-center w-full">
+                      {price > 0 ? (
+                        <span>
+                          ${price.toLocaleString("en-CA")}.00
+                        </span>
+                      ) : (
+                        /* Single Call for price */
+                        <span className="flex items-center gap-1 text-price-green">
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                            />
+                          </svg>
+
+                          <span>Call for price</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ) : price > 0 ? (
+                  /* =========================
+                     NORMAL VEHICLE - HAS PRICE
+                     ========================= */
+                  <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1">
+                    {/* Finance Price */}
+                    <div className="flex justify-between items-center w-full">
+                      <span>Finance Price</span>
+
+                      <span>
+                        ${price.toLocaleString("en-CA")}.00
+                      </span>
+                    </div>
+
+                    {/* Cash Price */}
+                    <div className="flex justify-between items-center w-full">
+                      <span>Cash Price</span>
+
+                      <span>
+                        ${(price + 2000).toLocaleString("en-CA")}.00
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  /* =========================
+                     NORMAL VEHICLE - NO PRICE
+                     ========================= */
+                  <div className="text-[17px] w-full font-semibold leading-6 mt-2 py-[3px]">
+                    <div className="flex items-center gap-1 text-price-green">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                        />
+                      </svg>
+
+                      <span>Call for price</span>
+                    </div>
+                  </div>
+                )
+              ) : null}
+
+              {/* Mileage + Drivetrain */}
+              <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
+                {km.toLocaleString()} KM
+                {drivetrain && drivetrain !== "N/A" && (
+                  <> &bull; {drivetrain}</>
+                )}
+              </p>
+            </div>
+
+            <hr className="border-gray-200 my-2" />
+
+            <p className="text-[12px] mb-2 font-light">
+              Stock #: {stock}
+            </p>
+          </div>
+        </article>
+
+        {/* Action Buttons */}
+        {/* Action Buttons */}
+        {!isSold && !isDealPending && (
+          <div className="w-full rounded-[12px] mb-3 px-3 mt-auto flex gap-2">
+            {/* Call Button */}
+            <a
+              href={phoneNumber ? `tel:${phoneNumber}` : "#"}
+              onClick={(e) => e.stopPropagation()}
+              className="cursor-pointer flex-1 text-center rounded-[10px] sm:rounded-[12px] text-gray-800 bg-white hover:bg-gray-100 py-[10px] text-[14px] sm:text-[15px] font-medium transition-colors border border-gray-300 flex items-center justify-center gap-1"
+            >
               <svg
-                className="w-4 h-4"
+                className="w-4 h-4 shrink-0 overflow-visible"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -202,102 +294,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
                   d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                 />
               </svg>
-
-              <span>Call for price</span>
-            </span>
-          )}
-        </div>
-      </div>
-    ) : price > 0 ? (
-      /* =========================
-         NORMAL VEHICLE - HAS PRICE
-         ========================= */
-      <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1">
-        {/* Finance Price */}
-        <div className="flex justify-between items-center w-full">
-          <span>Finance Price</span>
-
-          <span>
-            ${price.toLocaleString("en-CA")}.00
-          </span>
-        </div>
-
-        {/* Cash Price */}
-        <div className="flex justify-between items-center w-full">
-          <span>Cash Price</span>
-
-          <span>
-            ${(price + 2000).toLocaleString("en-CA")}.00
-          </span>
-        </div>
-      </div>
-    ) : (
-      /* =========================
-         NORMAL VEHICLE - NO PRICE
-         ========================= */
-      <div className="text-[17px] w-full font-semibold leading-6 mt-2 py-[3px]">
-        <div className="flex items-center gap-1 text-price-green">
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-            />
-          </svg>
-
-          <span>Call for price</span>
-        </div>
-      </div>
-    )
-  ) : null}
-
-  {/* Mileage + Drivetrain */}
-  <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
-    {km.toLocaleString()} KM
-    {drivetrain && drivetrain !== "N/A" && (
-      <> &bull; {drivetrain}</>
-    )}
-  </p>
-</div>
-
-            <hr className="border-gray-200 my-2" />
-
-            <p className="text-[12px] mb-2 font-light">
-              Stock #: {stock}
-            </p>
-          </div>
-        </article>
-
-        {/* Action Buttons */}
-        {!isSold && !isDealPending && (
-          <div className="w-full rounded-[12px] mb-3 px-3 mt-auto flex gap-1">
-            {/* Call Button */}
-            <a
-              href={phoneNumber ? `tel:${phoneNumber}` : "#"}
-              onClick={(e) => e.stopPropagation()}
-              className="cursor-pointer text-center w-26 rounded-[10px] sm:rounded-[12px] text-gray-800 bg-white hover:bg-gray-100 py-[10px] text-[14px] sm:text-[15px] font-medium transition-colors border border-gray-300 flex items-center justify-center gap-2"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a2 2 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                />
-              </svg>
-
-              Call
+              <span>Call</span>
             </a>
 
             {/* Check Availability Button */}
@@ -308,7 +305,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
                 e.stopPropagation();
                 setIsModalOpen(true);
               }}
-              className="cursor-pointer w-44 text-center rounded-[10px] sm:rounded-[12px] text-white py-[10px] text-[14px] sm:text-[15px] font-medium hover:opacity-90 transition-opacity bg-brand border border-brand-green2"
+              className="cursor-pointer flex-[2] text-center rounded-[10px] sm:rounded-[12px] text-white py-[10px] text-[14px] sm:text-[15px] font-medium hover:opacity-90 transition-opacity bg-brand border border-brand-green2"
             >
               Check availability
             </button>
