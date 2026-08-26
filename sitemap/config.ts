@@ -24,7 +24,7 @@ export const SITEMAP_INDEX: SitemapIndexItem[] = [
 export const SITE_PAGES = [
   '/service/wheel-service/',
   '/service/tire-service/',
-  '/service/brake-repair/',
+  '/service/brakes/',
   '/service/oil-change/',
   '/used-car-financing/',
   '/skip-the-dealership/',
