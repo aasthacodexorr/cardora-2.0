@@ -155,7 +155,10 @@ export const getConstants = (appConfig: AppConfig) => {
         tradeInMyCarVehicle:`${appConfig.site.saas_api}/api/templates/render/20?`,
         thankYouTradeIn:`${appConfig.site.saas_api}/api/templates/render/25`,
         thankYouFinance:`${appConfig.site.saas_api}/api/templates/render/19`,
-        scheduleAnAppointmentWithExpert:`${appConfig.site.saas_api}/api/templates/render/24`
+        scheduleAnAppointmentWithExpert:`${appConfig.site.saas_api}/api/templates/render/24`,
+        usedCarFinance:`${appConfig.site.saas_api}/api/templates/render/10`,
+        appointment:`${appConfig.site.saas_api}/api/templates/render/14`,
+        info:`${appConfig.site.saas_api}/api/templates/render/13`,
       },
       api: {
         saasApi: appConfig.site.saas_api,

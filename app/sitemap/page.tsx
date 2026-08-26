@@ -149,38 +149,71 @@ export default function SitemapPage() {
             <section>
               <div className="flex flex-col space-y-3">
                 <Link
+                  href="/"
+                  className="w-fit transition-colors hover:text-gray-600"
+                >
+                  <h2 className="text-[20px] font-semibold text-gray-900">Home</h2>
+                </Link>
+
+                <Link
                   href="/inventory"
                   className="w-fit transition-colors hover:text-gray-600"
                 >
-                  <h2 className="text-[20px] font-semibold text-gray-900">Inventory</h2>
+                  <h2 className="text-[20px] font-semibold text-gray-900">
+                    Find Your Car
+                  </h2>
                 </Link>
 
                 <Link
                   href="/trade-in-my-car"
                   className="w-fit transition-colors hover:text-gray-600"
                 >
-                  <h2 className="text-[20px] font-semibold text-gray-900">Sell / Trade</h2>
+                  <h2 className="text-[20px] font-semibold text-gray-900">
+                    Sell or Trade In
+                  </h2>
                 </Link>
 
                 <Link
                   href="/financing"
                   className="w-fit transition-colors hover:text-gray-600"
                 >
-                  <h2 className="text-[20px] font-semibold text-gray-900">Finance</h2>
+                  <h2 className="text-[20px] font-semibold text-gray-900">
+                    Car Finance
+                  </h2>
                 </Link>
 
                 <Link
                   href="/payment-calculator"
                   className="w-fit transition-colors hover:text-gray-600"
                 >
-                  <h2 className="text-[20px] font-semibold text-gray-900">Payment Calculator</h2>
+                  <h2 className="text-[20px] font-semibold text-gray-900">
+                    Payment Calculator
+                  </h2>
                 </Link>
 
                 <Link
                   href="/skip-the-dealership"
                   className="w-fit transition-colors hover:text-gray-600"
                 >
-                  <h2 className="text-[20px] font-semibold text-gray-900">Skip the Dealership</h2>
+                  <h2 className="text-[20px] font-semibold text-gray-900">
+                    Skip the Dealership
+                  </h2>
+                </Link>
+
+                <Link
+                  href="/about-us"
+                  className="w-fit transition-colors hover:text-gray-600"
+                >
+                  <h2 className="text-[20px] font-semibold text-gray-900">About Us</h2>
+                </Link>
+
+                <Link
+                  href="/contact-us"
+                  className="w-fit transition-colors hover:text-gray-600"
+                >
+                  <h2 className="text-[20px] font-semibold text-gray-900">
+                    Contact Us
+                  </h2>
                 </Link>
               </div>
             </section>
