@@ -63,7 +63,7 @@ export default function CarLoanLanding() {
             <iframe
               ref={iframeRef}
               id="financing_form"
-              src={`${SITE_CONFIG?.urls?.appointment ?? ''}${inventoryId ? `?inventory_id=${inventoryId}` : ''}`}
+              src={`${SITE_CONFIG?.urls?.appointment}`}
               name="iframe_a"
               title="Cardora financing application"
               scrolling="no"
