@@ -48,12 +48,13 @@ export default function ContactUs() {
         <>
             <Header />
 
-            <div className="min-h-screen flex items-center justify-center px-3 py-10 lg:px-24 font-sans text-gray-900 lg:mt-24">
-                <div className="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-12 gap-8">
+            <div className="min-h-screen flex items-center justify-center px-4 py-10 lg:px-8 font-sans text-gray-900 lg:mt-24">
+                {/* Max width container constraint added */}
+                <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 lg:gap-12 gap-8 items-start">
 
                     {/* Left Side */}
                     <div className="space-y-8">
-                        <h1 className="text-2xl sm:text-[42px] font-bold lg:mt-28 lg:max-w-xl">
+                        <h1 className="text-2xl sm:text-[42px] font-bold lg:mt-12 lg:max-w-xl">
                             Got a question? We’re here to help.
                         </h1>
 
@@ -116,16 +117,17 @@ export default function ContactUs() {
                     </div>
 
                     {/* Right Side */}
-                    <div className="bg-white px-4 pt-8 pb-18 sm:p-6 rounded-2xl shadow-[0_2px_18px_rgba(0,0,0,0.1)] border border-gray-100">
+                    <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-[0_2px_18px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden">
                         <h2 className="text-2xl sm:text-3xl font-bold mb-6">
                             Let’s Get You on the Road
                         </h2>
 
-                        <div className="lg:h-[600px]">
+                        {/* Iframe wrapper auto-adjusts height cleanly */}
+                        <div className="w-full overflow-hidden">
                             <iframe
                                 id="contact_us"
                                 src={SITE_CONFIG?.urls.contactUsBaseUrl}
-                                className="w-full rounded-2xl"
+                                className="w-full min-h-[550px] rounded-2xl border-0"
                                 title="Contact Us"
                                 allow="payment"
                             />
