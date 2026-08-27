@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense, useCallback } from "react";
+import { useState, useEffect, Suspense, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppConfig } from "@/app/providers";
@@ -15,6 +15,7 @@ const HeroSearchPanelContent = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get("q") || "";
@@ -26,6 +27,7 @@ const HeroSearchPanelContent = () => {
   const fetchSuggestions = useCallback(async (query: string) => {
     if (!query.trim() || query.length < 1) {
       setSuggestions([]);
+      setIsLoading(false);
       return;
     }
 
@@ -37,7 +39,7 @@ const HeroSearchPanelContent = () => {
       const searchKey = appConfig.site.inventory_search_only_key;
       const collection = appConfig.site.collection;
       
-      const searchUrl = `${protocol}://${host}:${port}/collections/${collection}/documents/search?q=${encodeURIComponent(query)}&query_by=make,model,trim&facet_by=make,model&limit=20&per_page=5`;
+      const searchUrl = `${protocol}://${host}:${port}/collections/${collection}/documents/search?q=${encodeURIComponent(query)}&query_by=make,model,year_search,trim,vin,stock_no,exterior_color&facet_by=make,model,year&limit=20&per_page=5&num_typos=0`;
       
       const response = await fetch(searchUrl, {
         headers: {
@@ -51,7 +53,7 @@ const HeroSearchPanelContent = () => {
 
       const results = await response.json();
 
-      // Extract unique makes and models
+      // Extract unique makes, models, and years
       const uniqueSuggestions = new Set<string>();
       
       // From facet distributions
@@ -66,6 +68,11 @@ const HeroSearchPanelContent = () => {
             if (model && model.trim()) uniqueSuggestions.add(model);
           });
         }
+        if (results.facet_distributions.year) {
+          Object.keys(results.facet_distributions.year).forEach(year => {
+            if (year && year.trim()) uniqueSuggestions.add(year);
+          });
+        }
       }
 
       // From direct hits
@@ -74,6 +81,7 @@ const HeroSearchPanelContent = () => {
           if (hit.document) {
             if (hit.document.make) uniqueSuggestions.add(hit.document.make);
             if (hit.document.model) uniqueSuggestions.add(hit.document.model);
+            if (hit.document.year) uniqueSuggestions.add(String(hit.document.year));
           }
         });
       }
@@ -86,6 +94,29 @@ const HeroSearchPanelContent = () => {
       setIsLoading(false);
     }
   }, [appConfig]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setShowSuggestions(true);
+
+    // Debounce the search request to prevent flickering
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      fetchSuggestions(value);
+    }, 300);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleSearch = () => {
     if (!searchQuery.trim()) {
@@ -101,13 +132,6 @@ const HeroSearchPanelContent = () => {
     setSearchQuery(suggestion);
     setShowSuggestions(false);
     router.push(getInventoryUrlByQuery(suggestion.trim(), appConfig));
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    setShowSuggestions(true);
-    fetchSuggestions(value);
   };
 
   return (

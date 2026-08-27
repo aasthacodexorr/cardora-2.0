@@ -31,8 +31,9 @@ export function getTypesenseClient(config: AppConfig) {
   const typesenseAdapter = new TypesenseInstantSearchAdapter({
     server: typesenseServerConfig,
     additionalSearchParameters: {
-      query_by:
-        "make,model,body_type,trim,vehicle_type,exterior_color,transmission,fuel_type",
+      query_by: "make,model,year_search,trim,vin,stock_no,exterior_color,body_type,vehicle_type,transmission,fuel_type",
+      num_typos: "0",
+      facet_by: "year,make,model,exterior_color,body_type,vehicle_type,transmission,fuel_type,location",
     },
   });
 
