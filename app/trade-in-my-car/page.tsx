@@ -210,7 +210,7 @@ const TradeIn = () => {
       <Header />
 
       {/* Hero / Quote form — Animated on Initial Page Entry */}
-      <section className="w-full relative px-4 lg:px-24 lg:mt-18">
+      <section className="w-full relative px-2 lg:px-24 lg:mt-18">
         <div className="mx-auto max-w-[1400px] px-2 md:px-9 pt-10 lg:pt-20 items-center lg:items-start relative z-10 flex flex-col lg:flex-row justify-between gap-6 lg:gap-10 pb-5">
 
           {/* Left: Animated Heading Typography Complex */}
@@ -468,7 +468,7 @@ const TradeIn = () => {
       </section>
 
       {/* FAQs — Header layout remains static, list nodes stagger into viewport view */}
-      <section className="w-full lg:mb-18 mb-2 lg:mt-10 px-3 lg:px-24">
+      <section className="w-full lg:mb-18 mb-6 lg:mt-10 px-3 lg:px-24">
         <div className="mx-auto max-w-[1400px] px-2 md:px-9 py-8 lg:py-0">
           <div className="flex items-center gap-3 mb-6 md:mb-10">
             <h2 className="text-[28px] md:text-[36px] lg:text-[44px] font-semibold text-foreground leading-tight">
