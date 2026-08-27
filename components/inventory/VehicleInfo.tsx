@@ -12,10 +12,9 @@ import { createPortal } from "react-dom";
 
 export const PriceAndCTA = ({ vehicle }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [activeTooltip, setActiveTooltip] = useState<"asIs" | "finance" | "cash" | null>(null);
   const [showSticky, setShowSticky] = useState(false);
 
-  const tooltipRef = useRef<HTMLDivElement>(null);
   const inlineContainerRef = useRef<HTMLDivElement>(null);
 
   const sellingPrice = Number(vehicle?.selling_price || 0);
@@ -40,7 +39,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
       },
       {
         root: null,
-        threshold: 0, // Triggers as soon as the element is completely out of view
+        threshold: 0,
       }
     );
 
@@ -51,30 +50,34 @@ export const PriceAndCTA = ({ vehicle }: any) => {
     return () => observer.disconnect();
   }, []);
 
-  // 2. Tooltip outside click handler
+  // 2. Close tooltip when clicking outside the info icon / tooltip
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        tooltipRef.current &&
-        !tooltipRef.current.contains(event.target as Node)
-      ) {
-        setShowTooltip(false);
+      const target = event.target as HTMLElement;
+
+      if (!target.closest("[data-price-tooltip]")) {
+        setActiveTooltip(null);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
+  // 3. Toggle tooltip
+  const toggleTooltip = (tooltip: "asIs" | "finance" | "cash") => {
+    setActiveTooltip((current) =>
+      current === tooltip ? null : tooltip
+    );
+  };
+
   return (
     <>
       {/* Primary Inline Container (Observed) */}
-      <div
-        ref={inlineContainerRef}
-        className="bg-white rounded-2xl px-5 pb-2 text-center tracking-wide"
-      >
+      <div ref={inlineContainerRef} className="bg-white rounded-2xl px-5 pb-2 text-center tracking-wide">
         {/* {vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString() ? null : (
           <p className="text-[12px] font-extrabold text-black line-through leading-none my-3">
             ${vehicle?.price?.toLocaleString()}.00
@@ -95,19 +98,14 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                     </p>
 
                     {/* Info icon */}
-                    <div className="relative inline-flex items-center group">
+                    <div data-price-tooltip className="relative inline-flex items-center group">
                       <button
                         type="button"
-                        onClick={() => setShowTooltip(!showTooltip)}
+                        onClick={() => toggleTooltip("asIs")}
                         aria-label="Price information"
                         className="flex items-center justify-center"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          className="w-5 h-5 text-gray-500 cursor-pointer"
-                        >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-gray-500 cursor-pointer">
                           <circle cx="10" cy="10" r="8.5" />
 
                           <rect
@@ -123,12 +121,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         </svg>
                       </button>
 
-                      <div
-                        className={`absolute bottom-full right-0 mb-2 w-[240px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
-                            ? "opacity-100 visible"
-                            : "opacity-0 invisible"
-                          } md:group-hover:opacity-100 md:group-hover:visible`}
-                      >
+                      <div className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${activeTooltip === "asIs" ? "opacity-100 visible" : "opacity-0 invisible"} lg:group-hover:opacity-100 lg:group-hover:visible`}>
                         Listed price does not include taxes and licensing fees.
 
                         <div className="absolute right-2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
@@ -140,12 +133,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                      AS-IS - NO PRICE
                      ========================= */
                   <div className="flex items-center justify-center gap-1 text-price-green">
-                    <svg
-                      className="w-7 h-7"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
+                    <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -167,29 +155,30 @@ export const PriceAndCTA = ({ vehicle }: any) => {
               <div className="my-3">
                 {/* Finance Price */}
                 <div className="flex items-center justify-between">
-                  <span className="text-[24px] font-semibold">
+                  <span
+                    className="text-[24px] font-semibold cursor-pointer"
+                    onClick={() => setActiveTooltip(null)}
+                  >
                     Finance Price
                   </span>
 
                   <div className="flex items-center gap-1">
-                    <span className="text-[24px] font-bold text-price-green">
+                    <span
+                      className="text-[24px] font-bold text-price-green cursor-pointer"
+                      onClick={() => setActiveTooltip(null)}
+                    >
                       ${financePrice.toLocaleString("en-CA")}.00
                     </span>
 
                     {/* Info icon */}
-                    <div className="relative inline-flex items-center group">
+                    <div data-price-tooltip className="relative inline-flex items-center group">
                       <button
                         type="button"
-                        onClick={() => setShowTooltip(!showTooltip)}
+                        onClick={() => toggleTooltip("finance")}
                         aria-label="Price information"
                         className="flex items-center justify-center"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          className="w-5 h-5 text-gray-500 cursor-pointer"
-                        >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-gray-500 cursor-pointer">
                           <circle cx="10" cy="10" r="8.5" />
 
                           <rect
@@ -205,12 +194,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         </svg>
                       </button>
 
-                      <div
-                        className={`absolute bottom-full right-0 mb-2 w-[240px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
-                            ? "opacity-100 visible"
-                            : "opacity-0 invisible"
-                          } md:group-hover:opacity-100 md:group-hover:visible`}
-                      >
+                      <div className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${activeTooltip === "finance" ? "opacity-100 visible" : "opacity-0 invisible"} lg:group-hover:opacity-100 lg:group-hover:visible`}>
                         Listed price does not include taxes and licensing fees.
 
                         <div className="absolute right-2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
@@ -221,29 +205,30 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
                 {/* Cash Price */}
                 <div className="flex items-center justify-between">
-                  <span className="text-[24px] font-semibold">
+                  <span
+                    className="text-[24px] font-semibold cursor-pointer"
+                    onClick={() => setActiveTooltip(null)}
+                  >
                     Cash Price
                   </span>
 
                   <div className="flex items-center gap-1">
-                    <span className="text-[24px] font-bold text-price-green">
+                    <span
+                      className="text-[24px] font-bold text-price-green cursor-pointer"
+                      onClick={() => setActiveTooltip(null)}
+                    >
                       ${cashPrice.toLocaleString("en-CA")}.00
                     </span>
 
                     {/* Info icon */}
-                    <div className="relative inline-flex items-center group">
+                    <div data-price-tooltip className="relative inline-flex items-center group">
                       <button
                         type="button"
-                        onClick={() => setShowTooltip(!showTooltip)}
+                        onClick={() => toggleTooltip("cash")}
                         aria-label="Price information"
                         className="flex items-center justify-center"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          className="w-5 h-5 text-gray-500 cursor-pointer"
-                        >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-gray-500 cursor-pointer">
                           <circle cx="10" cy="10" r="8.5" />
 
                           <rect
@@ -259,12 +244,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         </svg>
                       </button>
 
-                      <div
-                        className={`absolute bottom-full right-0 mb-2 w-[240px] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${showTooltip
-                            ? "opacity-100 visible"
-                            : "opacity-0 invisible"
-                          } md:group-hover:opacity-100 md:group-hover:visible`}
-                      >
+                      <div className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${activeTooltip === "cash" ? "opacity-100 visible" : "opacity-0 invisible"} lg:group-hover:opacity-100 lg:group-hover:visible`}>
                         Listed price does not include taxes and licensing fees.
 
                         <div className="absolute right-2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
@@ -277,13 +257,11 @@ export const PriceAndCTA = ({ vehicle }: any) => {
               /* =========================
                  NORMAL VEHICLE - NO PRICE
                  ========================= */
-              <div className="flex items-center justify-center gap-1 my-3 text-price-green">
-                <svg
-                  className="w-7 h-7"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+              <div
+                className="flex items-center justify-center gap-1 my-3 text-price-green"
+                onClick={() => setActiveTooltip(null)}
+              >
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -321,15 +299,13 @@ export const PriceAndCTA = ({ vehicle }: any) => {
       </div>
 
       {/* Dynamic Sticky Mobile Action Bar */}
-      <div
-        className={`fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-3 shadow-2xl lg:hidden flex gap-3 transition-transform duration-300 ease-in-out ${showSticky ? "translate-y-0" : "translate-y-full"
-          }`}
-      >
+      <div className={`fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-3 shadow-2xl lg:hidden flex gap-3 transition-transform duration-300 ease-in-out ${showSticky ? "translate-y-0" : "translate-y-full"}`}>
         <a href={`/finance/?inventory_id=${vehicle?.id}`} className="flex-1">
           <button className="w-full font-bold rounded-xl text-white py-3 text-[15px] bg-brand-btn-gradient border border-brand-green shadow-md">
             Get started
           </button>
         </a>
+
         <button
           onClick={() => setIsModalOpen(true)}
           className="flex-1 bg-white border-2 font-bold py-3 rounded-xl text-[15px] border-brand-green-alpha text-price-green"

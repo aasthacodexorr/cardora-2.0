@@ -190,7 +190,7 @@ export default async function VehicleDetailsPage({
                         <VDPWishlistButton vehicle={vehicle} />
                     </div>
                     {/* SECTION ROW: Controls the boundaries of the sticky sidebar */}
-                    <div className="flex flex-col gap-8 max-w-[1440px] xl:max-w-[1600px] mx-auto lg:flex-row items-stretch px-5 md:px-8 lg:px-10 2xl:px-0 relative w-full">
+                    <div className="flex flex-col gap-8 max-w-[1440px] xl:max-w-[1600px] mx-auto lg:flex-row items-stretch px-4 md:px-8 lg:px-10 2xl:px-0 relative w-full">
 
                         {/* Left column: gallery + specs + description */}
                         <div className={`flex flex-col gap-8 items-start flex-1 w-full ${showSidebar ? "lg:flex-1" : "mx-auto"}`}>
@@ -236,7 +236,7 @@ export default async function VehicleDetailsPage({
                             </div>
 
                             {/* Specs grid & Extended Coverage */}
-                            <div className="w-full max-w-[925px]">
+                            <div className="w-full max-w-[925px] px-2 lg:px-0">
                                 <AboutVehicle vehicle={vehicle} />
                                 <div className="w-full border-t border-gray-200 mt-4">
                                     <div className="flex flex-col sm:flex-row items-center border border-gray-200 rounded-2xl px-6 py-4  mt-4 bg-white w-full mx-auto gap-5 box-border font-sans">
@@ -304,7 +304,7 @@ export default async function VehicleDetailsPage({
             </section>
 
             {/* Disclaimers & Info banner footer base */}
-            <div className="w-full text-left text-xs md:text-[12px] px-2 md:px-10 bg-neutral-mediumDarkGray/10 pt-10 pb-16 italic text-black">
+            <div className="w-full text-left text-xs md:text-[12px] px-3 md:px-10 bg-neutral-mediumDarkGray/10 pt-10 pb-16 italic text-black">
                 <div className="max-w-[1440px] xl:max-w-[1600px] mx-auto">
                     Every reasonable effort is made to ensure the accuracy of the information listed above. Vehicle pricing, incentives, options (including standard equipment), and technical specifications listed for the {vehicle.year} {vehicle.make} {vehicle.model} {vehicle.trim} may not match the exact vehicle displayed. {appConfig.site.inventory_pricing_verbage} Please confirm with a sales representative the accuracy of this information.
                 </div>

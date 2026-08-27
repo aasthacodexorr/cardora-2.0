@@ -177,8 +177,8 @@ const ProtectionPlans = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-9 pb-0 md:pt-20 overflow-hidden bg-white px-0 lg:mt-18">
-        <div className="mx-auto max-w-[1240px] px-6 lg:px-0 flex flex-col lg:flex-row lg:items-center justify-between min-h-[450px]">
+      <section className="relative w-full pt-10 pb-0 md:pt-20 overflow-hidden bg-white px-0 lg:mt-18">
+        <div className="mx-auto max-w-[1240px] px-4 lg:px-0 flex flex-col lg:flex-row lg:items-center justify-between min-h-[450px]">
 
           {/* Left Column: Title and Pills */}
           <div className="flex flex-col justify-center space-y-6 max-w-md pb-12 md:pb-12 z-10">
@@ -233,7 +233,7 @@ const ProtectionPlans = () => {
 
       {/* Section 2: We stand behind our cars */}
       <section className="w-full border-t border-neutral-100/60 py-14 md:py-20 xl:mt-20 mt-7 bg-[#e6f4ff]">
-        <div className="mx-auto xl:max-w-[1240px] px-5 md:px-1 flex flex-col items-center text-center">
+        <div className="mx-auto xl:max-w-[1240px] px-4 md:px-1 flex flex-col items-center text-center">
 
           <motion.h2
             initial={{ opacity: 0, scale: 0.95 }}
@@ -268,7 +268,7 @@ const ProtectionPlans = () => {
 
       {/* How Cardora keeps you covered */}
       <section className="py-16 md:py-20 px-0 bg-review-blue">
-        <div className="mx-auto max-w-[1240px] px-6 md:px-1">
+        <div className="mx-auto max-w-[1240px] px-4 md:px-1">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -307,7 +307,7 @@ const ProtectionPlans = () => {
 
       {/* What's included */}
       <section className="lg:py-1 px-0 bg-review-blue">
-        <div className="mx-auto max-w-[1240px] px-6 md:px-1 pb-10">
+        <div className="mx-auto max-w-[1240px] px-4 md:px-1 pb-10">
           <h2 className="text-start text-3xl md:text-4xl font-semibold tracking-tight text-foreground mb-7">
             What's included?
           </h2>
@@ -339,7 +339,7 @@ const ProtectionPlans = () => {
 
       {/* Gap Coverage */}
       <section className="text-gray-900 pt-18 py-1 lg:px-4 font-sans">
-        <div className="max-w-[1240px] mx-auto px-6 md:px-1 text-center">
+        <div className="max-w-[1240px] mx-auto px-4 md:px-1 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -431,7 +431,7 @@ const ProtectionPlans = () => {
       </section>
 
       {/* The Cardora Difference Section */}
-      <div className="w-full mx-auto lg:mb-5 lg:px-28 lg:-mt-20 -mt-5">
+      <div className="w-full mx-auto lg:mb-5 lg:px-28 lg:-mt-20 -mt-5 -mb-5 lg:-mt-0">
         <DealershipDifference />
       </div>
 

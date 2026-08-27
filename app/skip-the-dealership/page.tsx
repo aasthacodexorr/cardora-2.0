@@ -53,12 +53,12 @@ export default function SkipTheDealership() {
             <div className="w-full font-sans antialiased text-gray-900 selection:bg-yellow-200 lg:mt-20 overflow-hidden">
 
                 {/* 1. Banner Section */}
-                <section className="lg:py-18 py-9 px-4 text-center bg-[var(--color-special-highlight-yellow)]">
+                <section className="lg:py-18 py-12 px-3 text-left lg:text-center bg-[var(--color-special-highlight-yellow)]">
                     <div className="max-w-4xl mx-auto">
                         <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
                             Skip the dealership.
                         </h1>
-                        <p className="text-[20px] text-center md:text-[20.4px] text-gray-800 max-w-2xl mx-auto my-8 font-medium">
+                        <p className="text-[20px] text-left lg:text-center md:text-[20.4px] text-gray-800 max-w-2xl mx-auto my-8 font-medium">
                             Buy your next car 100% online — or visit us on your terms. No pressure. No wasted time. Just a smarter way to buy.
                         </p>
                         
@@ -68,17 +68,17 @@ export default function SkipTheDealership() {
                             whileInView="visible"
                             viewport={{ once: true, amount: 0.2 }}
                             variants={dropDown}
-                            className="flex flex-col sm:flex-row justify-center gap-4 px-18 lg:px-0 mt-14 lg:mt-0"
+                            className="flex flex-col sm:flex-row justify-center gap-4 px-1 lg:px-0 mt-14 lg:mt-0"
                         >
                             <Link
                                 href="/inventory"
-                                className="bg-white px-8 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-brand2 text-brand2 hover:bg-brand-btn-gradient hover:text-white"
+                                className="bg-white px-8 py-3 text-center rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-brand2 text-brand2 hover:bg-brand-btn-gradient hover:text-white"
                             >
                                 Browse Inventory
                             </Link>
                             <Link
                                 href="/financing"
-                                className="bg-white px-8 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-brand2 text-brand2 hover:bg-brand-btn-gradient hover:text-white"
+                                className="bg-white px-8 py-3 text-center rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-brand2 text-brand2 hover:bg-brand-btn-gradient hover:text-white"
                             >
                                 Get Pre-Approved
                             </Link>
@@ -87,7 +87,7 @@ export default function SkipTheDealership() {
                 </section>
 
                 {/* 2. What Does Skip Mean */}
-                <section className="bg-white px-6 py-6 lg:py-16 lg:px-32">
+                <section className="bg-white px-4 py-6 lg:py-16 lg:px-32">
                     <div className="mx-auto xl:max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                         <div>
                             <h2 className="text-2xl md:text-5xl font-bold mb-4 tracking-tight">
@@ -201,9 +201,9 @@ export default function SkipTheDealership() {
                 </section>
 
                 {/* 4. Comparison Section */}
-                <section className="bg-white py-6 md:py-16 px-4">
+                <section className="bg-white py-6 md:py-16 px-4 mb-7 lg:mb-0">
                     <div className="w-full md:max-w-4xl mx-auto">
-                        <div className="text-center mb-12">
+                        <div className="lg:text-center mb-12">
                             <h2 className="text-[30px] md:text-4xl font-bold mb-2">Side-By-Side Comparison</h2>
                             <p className="font-medium text-lg md:text-xl">Old Way vs {SITE_CONFIG?.dealership.name} Way</p>
                         </div>

@@ -65,10 +65,10 @@ const About = () => {
     <div className="min-h-screen bg-background flex flex-col justify-between">
       <Header />
 
-      <div className="flex-1 w-full overflow-hidden px-0 lg:mt-20">
+      <div className="flex-1 w-full overflow-hidden px-0 lg:mt-20 mt-9">
         
         {/* Hero Section: Text static, Image slides in repeatedly */}
-        <section className="bg-white pb-12 mt-4 px-5">
+        <section className="bg-white pb-12 mt-4 px-3">
           <div className="mx-auto lg:max-w-[1240px] md:px-1 flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12">
             
             {/* Left Column: Static Text Content */}
@@ -107,7 +107,7 @@ const About = () => {
         </div>
 
         {/* Cardora Certified Section: Header static, Badges reveal sequentially on scroll, Image static */}
-        <section className="bg-white py-10 md:py-24 px-5">
+        <section className="bg-white py-10 md:py-24 px-3">
           <div className="mx-auto max-w-[1240px] md:px-1">
             <h2 className="text-[27px] md:text-4xl lg:text-5xl font-bold lg:tracking-tight text-neutral-950 text-left leading-none">
               All our cars are {SITE_CONFIG?.dealership.name} Certified
@@ -155,7 +155,7 @@ const About = () => {
 
         {/* 1. After-Sale Service Section: Image static, Text Block Animates up repeatedly */}
         <section className="py-16 md:py-20 px-0 bg-review-blue">
-          <div className="mx-auto max-w-[1240px] px-6 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-12">
+          <div className="mx-auto max-w-[1240px] px-3 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-12">
             
             {/* Left: Static Image Container */}
             <div className="w-full flex justify-center md:justify-start">
@@ -191,7 +191,7 @@ const About = () => {
 
         {/* 2. Reviews Section: Text Block static, Graphic Cloud scales into view repeatedly */}
         <section className="bg-white py-1 lg:my-12 mt-9">
-          <div className="mx-auto max-w-[1240px] px-6 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12">
+          <div className="mx-auto max-w-[1240px] px-3 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12">
             
             {/* Left: Static Text Block */}
             <div className="w-full lg:max-w-2xl">
@@ -225,7 +225,7 @@ const About = () => {
 
         {/* 3. Built in Canada Section: Image static, Text Content Block slides/fades up repeatedly */}
         <section className="bg-white py-1 pb-12 md:pb-20 md:py-0">
-          <div className="mx-auto max-w-[1400px] px-5 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-16">
+          <div className="mx-auto max-w-[1400px] px-3 md:px-1 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-16">
             
             {/* Left: Static Graphic Illustration */}
             <div className="w-full flex justify-center md:justify-start">

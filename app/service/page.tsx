@@ -138,14 +138,14 @@ const Service = () => {
       <Header />
 
       {/* Main Content Wrapper */}
-      <main className="mx-auto w-full max-w-[1350px] px-5 md:px-12 flex-1 lg:mt-14 overflow-hidden">
+      <main className="mx-auto w-full max-w-[1350px] px-4 md:px-12 flex-1 lg:mt-14 overflow-hidden">
         
         {/* Hero */}
         <motion.section 
           initial="hidden"
           animate="visible"
           variants={fadeInDown}
-          className="pt-16 md:pt-20 pb-10"
+          className="pt-10 md:pt-20 pb-10"
         >
           <div className="text-start">
             <p className="text-base md:text-xl font-medium tracking-wide">

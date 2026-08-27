@@ -78,7 +78,7 @@ export default function PaymentCalculator() {
     return (
         <>
             <Header />
-            <div className="lg:mt-20 mx-auto px-5 lg:px-16 py-8 lg:py-12 shadow-sm font-sans text-gray-700 bg-light-gray2">
+            <div className="lg:mt-20 mx-auto px-4 lg:px-16 pt-8 pb-12 lg:pt-0 lg:pb-0 lg:py-12 shadow-sm font-sans text-gray-700 bg-light-gray2">
                 <h1 className="text-3xl md:text-5xl font-bold mb-8 text-black">Payment Calculator</h1>
 
                 <div className=' bg-white'>
@@ -257,7 +257,7 @@ export default function PaymentCalculator() {
                     </div>
 
                     {/* Right Output Sidebar Box */}
-                    <div className="bg-white px-2 lg:px-6 lg:py-9 flex flex-col justify-between h-fit text-center">
+                    <div className="bg-white px-8 lg:px-6 lg:py-9 flex flex-col justify-between h-fit text-center">
                         <div>
                             <p className="text-xl lg:text-sm tracking-wider mb-4">
                                 Based on your input, your estimated payment:
