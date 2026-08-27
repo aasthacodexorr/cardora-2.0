@@ -8,7 +8,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 
 import LightGallery from "lightgallery/react";
 import type { LightGallery as LightGalleryInstance } from "lightgallery/lightgallery";
@@ -46,6 +46,11 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
   const desktopThumbsRef = useRef<HTMLDivElement | null>(null);
   const thumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const mainImageRef = useRef<HTMLDivElement | null>(null);
+
+  // Guards against the click-to-open-lightbox handler firing right after a
+  // swipe/drag gesture on the main image (mobile "scroll to change image").
+  const isDraggingRef = useRef(false);
+  const justDraggedRef = useRef(false);
 
   // Keep the thumbnail strip height perfectly in sync with the main image's
   // *rendered* height (which is dynamic because it's aspect-ratio driven),
@@ -97,6 +102,37 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
     } else {
       setDirection(index > activeIndex ? 1 : -1);
       setActiveIndex(index);
+    }
+  };
+
+  // Handles the mobile "swipe main image to change it" gesture.
+  const handleDragEnd = (
+    _event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
+    isDraggingRef.current = false;
+
+    const SWIPE_DISTANCE_THRESHOLD = 60; // px
+    const SWIPE_VELOCITY_THRESHOLD = 400; // px/s
+
+    const { offset, velocity } = info;
+
+    const isSwipe =
+      Math.abs(offset.x) > SWIPE_DISTANCE_THRESHOLD ||
+      Math.abs(velocity.x) > SWIPE_VELOCITY_THRESHOLD;
+
+    if (isSwipe) {
+      justDraggedRef.current = true;
+      // Clear the flag shortly after so a *future* tap still opens the lightbox.
+      window.setTimeout(() => {
+        justDraggedRef.current = false;
+      }, 150);
+
+      if (offset.x < 0) {
+        goTo(activeIndex + 1);
+      } else {
+        goTo(activeIndex - 1);
+      }
     }
   };
 
@@ -171,13 +207,14 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
       />
 
       <div className="flex flex-col rounded-2xl overflow-hidden">
-        {/* Clickable Main view triggers lightGallery */}
+        {/* Clickable Main view triggers lightGallery (unless the click follows a swipe) */}
         <div
           ref={mainImageRef}
           onClick={() => {
+            if (justDraggedRef.current) return;
             lightboxRef.current?.openGallery(activeIndex);
           }}
-          className="relative rounded-2xl xl:min-w-[775px] xl:max-w-[750px] 2xl:min-w-[850px] overflow-hidden bg-gray-100 shadow-sm cursor-zoom-in aspect-[4/3] w-full"
+          className="relative rounded-2xl xl:min-w-[775px] xl:max-w-[750px] 2xl:min-w-[850px] overflow-hidden bg-gray-100 shadow-sm cursor-zoom-in aspect-[4/3] w-full touch-pan-y"
         >
           {isSold && (
             <div className="absolute top-4 right-4 z-20 bg-red-600 text-white text-sm font-bold px-4 py-2 rounded-md shadow-lg uppercase">
@@ -185,7 +222,7 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
             </div>
           )}
 
-          {/* Animating the main image swap smoothly */}
+          {/* Animating the main image swap smoothly + swipe-to-change on touch devices */}
           <div className="absolute inset-0 w-full h-full overflow-hidden">
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
@@ -200,13 +237,22 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
                   opacity: { duration: 0.25, ease: "easeInOut" }
                 }}
                 className="absolute inset-0 w-full h-full"
+                drag={images.length > 1 ? "x" : false}
+                dragElastic={0.7}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragMomentum={false}
+                onDragStart={() => {
+                  isDraggingRef.current = true;
+                }}
+                onDragEnd={handleDragEnd}
               >
                 <Image
                   src={images[activeIndex]}
                   alt={`${title} - Image ${activeIndex + 1}`}
                   fill
                   priority
-                  className={`object-cover ${isSold ? "grayscale opacity-90" : ""}`}
+                  draggable={false}
+                  className={`object-cover pointer-events-none ${isSold ? "grayscale opacity-90" : ""}`}
                 />
               </motion.div>
             </AnimatePresence>
@@ -219,9 +265,9 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
                 e.stopPropagation();
                 goTo(activeIndex - 1);
               }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl z-10"
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white active:bg-white rounded-full p-1 shadow-xl z-10"
             >
-              <ChevronLeft className="w-9 h-9 text-gray-500/60" strokeWidth={3} />
+              <ChevronLeft className="w-7 h-7 sm:w-9 sm:h-9 text-gray-500/60" strokeWidth={3} />
             </button>
           )}
 
@@ -232,9 +278,9 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
                 e.stopPropagation();
                 goTo(activeIndex + 1);
               }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white rounded-full p-1 shadow-xl z-0"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/60 hover:bg-white active:bg-white rounded-full p-1 shadow-xl z-10"
             >
-              <ChevronRight className="w-9 h-9 text-gray-500/60" strokeWidth={3} />
+              <ChevronRight className="w-7 h-7 sm:w-9 sm:h-9 text-gray-500/60" strokeWidth={3} />
             </button>
           )}
         </div>
