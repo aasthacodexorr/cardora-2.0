@@ -821,8 +821,7 @@ const PriceRangeFilter = () => {
           onChange={(e) => handleInputChange("min", e.target.value)}
           onBlur={handleApply}
           onKeyDown={handleKeyDown}
-          className="w-full h-[40px] px-3 border border-border-lightGray rounded-[6px] text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-        />
+          className="w-full h-[40px] px-3 border border-border-lightGray rounded-[6px] text-[16px] lg:text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
         <span className="text-gray-400 font-medium">—</span>
         <input
           type="number"
@@ -833,8 +832,7 @@ const PriceRangeFilter = () => {
           onChange={(e) => handleInputChange("max", e.target.value)}
           onBlur={handleApply}
           onKeyDown={handleKeyDown}
-          className="w-full h-[40px] px-3 border border-border-lightGray rounded-[6px] text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-        />
+          className="w-full h-[40px] px-3 border border-border-lightGray rounded-[6px] text-[16px] lg:text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
       </div>
 
       {/* Slider Bars Track */}
@@ -934,13 +932,11 @@ const OdometerRangeFilter = () => {
       <div className="flex items-center gap-2">
         <input type="number" min={400} value={min} onChange={(e) => setMin(e.target.value)}
           onKeyDown={handleKeyDown} placeholder="400"
-          className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? 'border-red-500' : 'border-border-lightGray'}`}
-        />
+          className={`w-full h-[36px] px-3 border rounded-[3px] text-[16px] lg:text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? 'border-red-500' : 'border-border-lightGray'}`} />
         <span className="text-[16px] text-gray-700">To</span>
         <input type="number" min={400} value={max} onChange={(e) => setMax(e.target.value)}
           onKeyDown={handleKeyDown} placeholder="Max"
-          className={`w-full h-[36px] px-3 border rounded-[3px] text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? 'border-red-500' : 'border-border-lightGray'}`}
-        />
+          className={`w-full h-[36px] px-3 border rounded-[3px] text-[16px] lg:text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? 'border-red-500' : 'border-border-lightGray'}`} />
         <button type="button" onClick={handleApply}
           className="h-[36px] px-4 text-white rounded-[4px] cursor-pointer bg-brand">
           Go
@@ -1269,7 +1265,7 @@ useEffect(() => {
                       classNames={{
                         root: "w-full",
                         form: "relative flex items-center",
-                        input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[14px] outline-none transition-all focus:border-gray-400",
+                        input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[16px] lg:text-[14px] outline-none transition-all focus:border-gray-400",
                         submitIcon: "hidden",
                         resetIcon: "hidden",
                         loadingIcon: "hidden",

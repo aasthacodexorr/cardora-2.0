@@ -43,7 +43,7 @@ const FinanceContent = () => {
         ) as HTMLIFrameElement | null;
 
         if (iframe) {
-          iframe.style.height = `${value}px`;
+          iframe.style.height = `${value + 80}px`;
         }
       }
     };
@@ -67,9 +67,10 @@ const FinanceContent = () => {
               src={`${SITE_CONFIG?.urls.financeBaseUrl}?inventory_id=${encodeURIComponent(
                 inventoryId
               )}`}
-              className="w-full border-0"
+              className="w-full border-0 min-h-[1039px]"
               title="Express Checkout - Finance"
               allow="payment"
+              suppressHydrationWarning
             />
           </div>
         </section>
