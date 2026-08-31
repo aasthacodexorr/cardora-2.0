@@ -15,7 +15,7 @@ const CardShell = ({
 }) => (
   <div
     onClick={onClick}
-    className={`block h-full min-h-[420px] rounded-[20px] cursor-pointer p-[2px] overflow-hidden flex flex-col border border-border-standard ${className}`}
+    className={`block h-full min-h-[500px] lg:min-h-[420px] rounded-[20px] cursor-pointer p-[2px] overflow-hidden flex flex-col border border-border-standard ${className}`}
   >
     {children}
   </div>
