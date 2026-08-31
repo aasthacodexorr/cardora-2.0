@@ -105,19 +105,17 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         aria-label="Price information"
                         className="flex items-center justify-center"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-gray-500 cursor-pointer">
-                          <circle cx="10" cy="10" r="8.5" />
-
-                          <rect
-                            x="9.25"
-                            y="8"
-                            width="1.5"
-                            height="6"
-                            rx="0.75"
-                            fill="white"
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-4 h-4 text-gray-400 cursor-pointer"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            clipRule="evenodd"
                           />
-
-                          <circle cx="10" cy="5.5" r="1" fill="white" />
                         </svg>
                       </button>
 
@@ -176,22 +174,20 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         type="button"
                         onClick={() => toggleTooltip("finance")}
                         aria-label="Price information"
-                        className="flex items-center justify-center"
+                        className="flex items-center justify-center cursor-pointer"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-gray-500 cursor-pointer">
-                          <circle cx="10" cy="10" r="8.5" />
-
-                          <rect
-                            x="9.25"
-                            y="8"
-                            width="1.5"
-                            height="6"
-                            rx="0.75"
-                            fill="white"
-                          />
-
-                          <circle cx="10" cy="5.5" r="1" fill="white" />
-                        </svg>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-4 h-4 text-gray-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
                       </button>
 
                       <div className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${activeTooltip === "finance" ? "opacity-100 visible" : "opacity-0 invisible"} lg:group-hover:opacity-100 lg:group-hover:visible`}>
@@ -226,22 +222,20 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         type="button"
                         onClick={() => toggleTooltip("cash")}
                         aria-label="Price information"
-                        className="flex items-center justify-center"
+                        className="flex items-center justify-center cursor-pointer"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-gray-500 cursor-pointer">
-                          <circle cx="10" cy="10" r="8.5" />
-
-                          <rect
-                            x="9.25"
-                            y="8"
-                            width="1.5"
-                            height="6"
-                            rx="0.75"
-                            fill="white"
-                          />
-
-                          <circle cx="10" cy="5.5" r="1" fill="white" />
-                        </svg>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-4 h-4 text-gray-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
                       </button>
 
                       <div className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${activeTooltip === "cash" ? "opacity-100 visible" : "opacity-0 invisible"} lg:group-hover:opacity-100 lg:group-hover:visible`}>

@@ -43,7 +43,7 @@ const FinanceContent = () => {
         ) as HTMLIFrameElement | null;
 
         if (iframe) {
-          iframe.style.height = `${value + 80}px`;
+          iframe.style.height = `${value + 380}px`;
         }
       }
     };
