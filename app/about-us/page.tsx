@@ -263,7 +263,6 @@ const About = () => {
 
       {/* Footer Area Wrapper */}
       <div className="w-full">
-        <GetInTouch />
         <Footer />
       </div>
     </div>

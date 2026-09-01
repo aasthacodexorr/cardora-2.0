@@ -435,7 +435,6 @@ const ProtectionPlans = () => {
         <DealershipDifference />
       </div>
 
-      <GetInTouch />
       <Footer />
     </div>
   );
