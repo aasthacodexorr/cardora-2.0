@@ -5,7 +5,6 @@ import Link from "next/link";
 export default function NotFound() {
     return (
         <main className="min-h-screen items-center justify-center bg-white">
-            <Header />
             <div className="flex flex-col items-center text-center px-4 my-52">
                 {/* Car icon */}
                 <div className="mb-5 text-gray-400">
@@ -63,7 +62,7 @@ export default function NotFound() {
                     Shop cars
                 </Link>
             </div>
-            <Footer />
+            {/* <Footer /> */}
         </main>
     );
 }

@@ -52,7 +52,6 @@ const Finance = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
 
       <section className="py-6 md:py-10 pb-16 mb-52 lg:mt-28 mt-8">
         <div className="mx-auto max-w-[1100px] px-4 md:px-6">
@@ -74,7 +73,6 @@ const Finance = () => {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 };

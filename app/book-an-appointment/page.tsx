@@ -39,7 +39,6 @@ const VehicleForm = () => {
 
   return (
     <>
-      <Header />
 
       <div className="bg-white mx-auto w-full px-5 lg:px-64 flex justify-center mt-3 tracking-wider lg:mt-32">
         <iframe
@@ -50,7 +49,6 @@ const VehicleForm = () => {
         />
       </div>
 
-      <Footer />
     </>
   );
 };

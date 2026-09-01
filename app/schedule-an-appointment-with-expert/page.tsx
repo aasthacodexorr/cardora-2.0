@@ -45,7 +45,7 @@ const TradeInVehicle = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      <Header />
+      {/* <Header /> */}
 
       {/* Vehicle Trade-In Content Section */}
       <section className="w-full relative px-4 lg:px-24 mt-10 lg:mt-28">
@@ -62,7 +62,7 @@ const TradeInVehicle = () => {
         </div>
       </section>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

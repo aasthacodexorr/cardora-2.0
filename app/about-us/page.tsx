@@ -63,7 +63,6 @@ const About = () => {
   const { SITE_CONFIG } = getConstants(appConfig);
   return (
     <div className="min-h-screen bg-background flex flex-col justify-between">
-      <Header />
 
       <div className="flex-1 w-full overflow-hidden px-0 lg:mt-20 mt-9">
         
@@ -263,7 +262,7 @@ const About = () => {
 
       {/* Footer Area Wrapper */}
       <div className="w-full">
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </div>
   );

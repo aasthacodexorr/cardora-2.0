@@ -174,7 +174,7 @@ const ProtectionPlans = () => {
   const { SITE_CONFIG } = getConstants(appConfig);
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {/* <Header /> */}
 
       {/* Hero Section */}
       <section className="relative w-full pt-10 pb-0 md:pt-20 overflow-hidden bg-white px-0 lg:mt-18">
@@ -435,7 +435,7 @@ const ProtectionPlans = () => {
         <DealershipDifference />
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

@@ -50,7 +50,7 @@ export default function ThankYouFinance() {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
 
       <div className="lg:mt-20 pt-14 lg:pt-28 lg:pb-14 px-4 pb-10 lg:px-44 w-full flex flex-col justify-center items-center bg-gradient-to-b from-prequalify-blue to-white">
         <h1 className="lg:text-[40px] text-[26px] flex gap-2 text-center font-semibold leading-none text-brand">
@@ -103,7 +103,7 @@ export default function ThankYouFinance() {
         </ul>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

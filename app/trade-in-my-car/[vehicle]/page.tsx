@@ -55,7 +55,7 @@ const TradeInVehicle = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      <Header />
+      {/* <Header /> */}
 
       <section className="w-full relative px-4 lg:px-24 mt-10 lg:mt-28">
         <div className="mx-auto max-w-[900px] px-2 md:px-9 md:py-5 md:pb-14 pb-5">
@@ -73,7 +73,7 @@ const TradeInVehicle = () => {
         </div>
       </section>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
