@@ -131,7 +131,7 @@ export default function SitemapPage() {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
 
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-[1300px] mx-auto px-4 lg:px-0 py-10 md:py-14 lg:mt-18">
@@ -304,7 +304,7 @@ export default function SitemapPage() {
         </div>
       </main>
 
-s      <Footer />
+{/* s      <Footer /> */}
     </>
   );
 }

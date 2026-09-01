@@ -260,11 +260,11 @@ function InfoContent() {
 export default function CarLoanLanding() {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <Suspense fallback={<div className="mt-20 font-sans text-gray-800 bg-white min-h-screen flex items-center justify-center">Loading...</div>}>
         <InfoContent />
       </Suspense>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

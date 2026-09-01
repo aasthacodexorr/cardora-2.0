@@ -6,6 +6,7 @@ import { getAppConfig, getSafeDealershipConfig, getSafeSchemaOrgConfig } from "@
 import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
 import { CSS_VARIABLES } from "@/lib/colors";
 import { headers } from "next/headers";
+import { Footer, Header } from "@/components/layout";
 
 export async function generateMetadata(): Promise<Metadata> {
   const appConfig = await getAppConfig();
@@ -90,7 +91,9 @@ export default async function RootLayout({
         {/* End Meta Pixel Code */}
       </head>
       <body className="min-h-full flex flex-col">
-        <Providers config={appConfig}>{children}</Providers>
+        
+        <Providers config={appConfig}><Header/>{children}<Footer/></Providers>
+        
       </body>
     </html>
   );

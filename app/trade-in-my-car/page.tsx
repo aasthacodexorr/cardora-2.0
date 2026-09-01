@@ -207,7 +207,7 @@ const TradeIn = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      <Header />
+      {/* <Header /> */}
 
       {/* Hero / Quote form — Animated on Initial Page Entry */}
       <section className="w-full relative px-2 lg:px-24 lg:mt-18">
@@ -533,7 +533,7 @@ const TradeIn = () => {
         </div>
       </section>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

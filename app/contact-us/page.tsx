@@ -46,7 +46,6 @@ export default function ContactUs() {
 
     return (
         <>
-            <Header />
 
             <div className="min-h-screen flex items-center justify-center px-4 py-10 lg:px-8 font-sans text-gray-900 lg:mt-24">
                 {/* Max width container constraint added */}
@@ -136,7 +135,6 @@ export default function ContactUs() {
                 </div>
             </div>
 
-            <Footer />
         </>
     );
 }

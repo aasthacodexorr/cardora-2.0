@@ -19,7 +19,7 @@ export default async function TermsOfService() {
   
   return (
     <>
-    <Header/>
+    {/* <Header/> */}
     <div className="bg-white min-h-screen font-sans antialiased text-gray-800 selection:bg-gray-200 lg:mt-20">
       {/* Terms of Service Main Content Wrapper */}
       <main className="w-full flex justify-center mx-auto px-6 sm:px-12 py-12 lg:py-16">
@@ -343,7 +343,7 @@ export default async function TermsOfService() {
       </main>
     </div>
 
-    <Footer/>
+    {/* <Footer/> */}
     </>
   );
 }

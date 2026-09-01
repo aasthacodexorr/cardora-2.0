@@ -115,7 +115,7 @@ const UsedCarFinance = () => {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
+            {/* <Header /> */}
 
             <section className="lg:mt-28">
                 <div className="mx-auto max-w-[1100px] px-4 md:px-6">
@@ -262,7 +262,7 @@ const UsedCarFinance = () => {
                 </div>
             </section>
 
-            <Footer />
+            {/* <Footer /> */}
         </div>
     );
 };
