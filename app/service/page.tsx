@@ -135,7 +135,7 @@ const Service = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col justify-between">
-      <Header />
+      {/* <Header /> */}
 
       {/* Main Content Wrapper */}
       <main className="mx-auto w-full max-w-[1350px] px-4 md:px-12 flex-1 lg:mt-14 overflow-hidden">
@@ -374,7 +374,7 @@ const Service = () => {
       </main>
 
       <div className="w-full">
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </div>
   );
