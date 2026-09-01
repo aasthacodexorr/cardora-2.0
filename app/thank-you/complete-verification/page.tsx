@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function CarLoanLanding() {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <main className="lg:mt-20 font-sans text-gray-800 bg-white ">
         {/* 1. Confirmation Banner Section */}
         <section className="my-44 text-gray-900">
@@ -37,7 +37,7 @@ export default function CarLoanLanding() {
           </div>
         </section>        
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default async function ThankYou() {
     return (
         <>
-            <Header />
+            {/* <Header /> */}
              <div className='lg:mt-20 pt-14 lg:pt-28 lg:pb-20 px-4 pb-10 lg:px-44 w-full flex flex-col justify-center items-center gap-2 bg-gradient-to-b from-prequalify-blue to-white'>
                 <h1 className='lg:text-[40px] text-[26px] text-center font-semibold'>Thank you for submitting your form!</h1>
                 <h3 className='lg:text-[24px] text-[24px] text-center font-medium'>We respond within 2 Business Hours.</h3>
@@ -27,7 +27,7 @@ export default async function ThankYou() {
                     height={500}
                 />
             </div>
-            <Footer />
+            {/* <Footer /> */}
         </>
     );
 }

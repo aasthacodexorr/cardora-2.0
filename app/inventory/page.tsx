@@ -1187,7 +1187,7 @@ useEffect(() => {
       <MainLayoutWrapper>
         {/* ── Header ── */}
         <div className="w-full bg-hero-bg">
-          <Header />
+          {/* <Header /> */}
           <div className="hidden lg:block" style={{ height: headerHeight }} aria-hidden />
         </div>
 
@@ -1300,7 +1300,7 @@ useEffect(() => {
           {/* ── Common footer — spans the full width beneath BOTH the sidebar
               and the results column, once results have finished loading. ── */}
           <div className="max-w-[1550px] mx-auto">
-            <PageFooter />
+            {/* <PageFooter /> */}
           </div>
         </div>
 
