@@ -343,7 +343,6 @@ export default async function TermsOfService() {
       </main>
     </div>
 
-    <GetInTouch/>
     <Footer/>
     </>
   );

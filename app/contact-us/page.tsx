@@ -136,7 +136,6 @@ export default function ContactUs() {
                 </div>
             </div>
 
-            <GetInTouch />
             <Footer />
         </>
     );

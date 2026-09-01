@@ -50,7 +50,6 @@ const VehicleForm = () => {
         />
       </div>
 
-      <GetInTouch />
       <Footer />
     </>
   );

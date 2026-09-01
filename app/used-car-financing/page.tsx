@@ -262,7 +262,6 @@ const UsedCarFinance = () => {
                 </div>
             </section>
 
-            <GetInTouch />
             <Footer />
         </div>
     );

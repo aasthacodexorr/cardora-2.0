@@ -224,7 +224,6 @@ export default async function PrivacyPolicy() {
                     </div>
                 </main>
             </div>
-            <GetInTouch/>
             <Footer />
         </>
 

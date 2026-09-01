@@ -56,7 +56,6 @@ export default function ThankYouTradeIn() {
                 </ul>
             </div>
 
-            <GetInTouch />
             <Footer />
         </>
     );

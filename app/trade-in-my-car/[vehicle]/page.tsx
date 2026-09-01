@@ -73,7 +73,6 @@ const TradeInVehicle = () => {
         </div>
       </section>
 
-      <GetInTouch />
       <Footer />
     </div>
   );

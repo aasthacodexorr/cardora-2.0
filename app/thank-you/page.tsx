@@ -27,7 +27,6 @@ export default async function ThankYou() {
                     height={500}
                 />
             </div>
-            <GetInTouch />
             <Footer />
         </>
     );

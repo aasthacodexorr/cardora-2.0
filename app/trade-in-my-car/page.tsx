@@ -533,7 +533,6 @@ const TradeIn = () => {
         </div>
       </section>
 
-      <GetInTouch />
       <Footer />
     </div>
   );
