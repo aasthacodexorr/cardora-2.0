@@ -374,7 +374,6 @@ const Service = () => {
       </main>
 
       <div className="w-full">
-        <GetInTouch />
         <Footer />
       </div>
     </div>

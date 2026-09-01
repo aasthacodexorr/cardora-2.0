@@ -311,7 +311,6 @@ export default function PaymentCalculator() {
             </div>
 
 
-            <GetInTouch />
             <Footer />
         </>
     );

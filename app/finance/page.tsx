@@ -76,7 +76,6 @@ const FinanceContent = () => {
         </section>
       </main>
 
-      <GetInTouch />
       <Footer />
     </>
   );
