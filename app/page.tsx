@@ -43,7 +43,6 @@ const HomePage = () => {
       <FeaturedVehicles />
       <Reviews />
       <DealershipDifference />
-      <GetInTouch />
       <Footer />
     </main>
   );

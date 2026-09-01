@@ -103,7 +103,6 @@ export default function ThankYouFinance() {
         </ul>
       </div>
 
-      <GetInTouch />
       <Footer />
     </>
   );

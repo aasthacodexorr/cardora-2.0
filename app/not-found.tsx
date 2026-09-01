@@ -63,7 +63,6 @@ export default function NotFound() {
                     Shop cars
                 </Link>
             </div>
-            <GetInTouch/>
             <Footer />
         </main>
     );

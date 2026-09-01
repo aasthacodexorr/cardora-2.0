@@ -264,7 +264,6 @@ export default function CarLoanLanding() {
       <Suspense fallback={<div className="mt-20 font-sans text-gray-800 bg-white min-h-screen flex items-center justify-center">Loading...</div>}>
         <AppointmentContent />
       </Suspense>
-      <GetInTouch />
       <Footer />
     </>
   );
