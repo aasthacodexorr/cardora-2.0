@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
 import { Check, ChevronDown, ChevronUp, Search, Settings2, X } from "lucide-react";
+import { AIChatSidebar, AIResultsPanel, useAISearch } from "@/components/inventory/AISearch/AISearchPanel";
+
 
 // Layout
 import { Header, Footer } from "@/components/layout";
@@ -38,6 +40,7 @@ import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "@/components/inventory/HitCardSkeleton";
 import { AD_CARDS } from "@/components/inventory/AdCard";
 import { useDrawer } from "@/context/DrawerContext";
+import { CircleArrowUp } from "lucide-react";
 
 const AD_BLOCK_CYCLE = 6 + 7 + 8;
 const AD_SLOT_TO_INDEX: Record<number, number> = { 6: 0, 13: 1, 0: 2 };
@@ -449,18 +452,6 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   );
 };
 
-const PageFooter = () => {
-  const { hits } = useInfiniteHits();
-  const shouldShowFooter = hits.length > 0;
-
-  if (!shouldShowFooter) return null;
-
-  return (
-    <div className="mt-12 transition-opacity duration-300 ease-in">
-      <Footer />
-    </div>
-  );
-};
 
 const ClearFiltersButton = ({ mobile = false }: { mobile?: boolean }) => {
   const { items } = useCurrentRefinements();
@@ -1057,12 +1048,24 @@ const InventoryContent = () => {
 
   const [openFilter, setOpenFilter] = useState<string | null>("");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [isAISearchActive, setIsAISearchActive] = useState(false);
   const headerHeight = useHeaderHeight();
+
+  const ai = useAISearch();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [isAISearchActive]);
+
+  useEffect(() => {
+    if (!ai.loading && ai.hasSearched && ai.results.length === 0) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [ai.loading, ai.hasSearched, ai.results.length]);
 
   const sidebarTop = headerHeight + 21;
   const sidebarMaxHeight = `calc(100vh - ${headerHeight + 50}px)`;
 
-  // ── Scroll Management State ──
   // ── Scroll Management State ──
 const [showScrollTop, setShowScrollTop] = useState(false);
 const lastScrollY = useRef(0);
@@ -1187,13 +1190,15 @@ useEffect(() => {
       <MainLayoutWrapper>
         {/* ── Header ── */}
         <div className="w-full bg-hero-bg">
-          {/* <Header /> */}
+          <Header />
           <div className="hidden lg:block" style={{ height: headerHeight }} aria-hidden />
         </div>
 
-        {/* ── Two-column layout (sidebar sits outside results bg so it slides under header) ── */}
-        <div className="bg-light-gray lg:-mt-4 min-h-screen lg:px-14 py-[20px] overflow-visible">
+        {/* ── Two-column layout ── */}
+        <div className="bg-light-gray lg:-mt-4 min-h-screen lg:px-14 px-2 py-[20px] overflow-visible">
           <div className="flex flex-col lg:flex-row items-start max-w-[1550px] mx-auto gap-5 overflow-visible">
+
+            {/* ── Sidebar ── */}
             <aside
               className={[
                 "hidden",
@@ -1205,9 +1210,53 @@ useEffect(() => {
             >
               <div
                 className="flex flex-col bg-white rounded-[15px] border border-border-standard overflow-hidden w-full"
-                style={{ maxHeight: sidebarMaxHeight }}
+                style={{ height: sidebarMaxHeight }}
               >
-                <div
+                {/* ── Search / AI Search Tab Toggle ── */}
+                <div className="flex shrink-0 items-center gap-1 p-[10px] border-b border-gray-100 bg-gray-50/60">
+                  <button
+                    onClick={() => {
+                      setIsAISearchActive(false);
+                    }}
+                    className={[
+                      "cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[9px] text-[13px] font-semibold transition-all",
+                      !isAISearchActive
+                        ? "bg-white shadow-sm text-black border border-gray-200"
+                        : "text-gray-500 hover:bg-white/60",
+                    ].join(" ")}
+                  >
+                    <Search className="w-3.5 h-3.5" />
+                    Search
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsAISearchActive(true);
+                    }}
+                    className={[
+                      "cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[9px] text-[13px] font-semibold transition-all",
+                      isAISearchActive
+                        ? "bg-brand text-white shadow-sm"
+                        : "text-gray-500 hover:bg-white/60",
+                    ].join(" ")}
+                  >
+                    <span className="text-[11px]">✦</span>
+                    AI Search
+                  </button>
+                </div>
+
+                {/* ── Sidebar content: filters OR chat ── */}
+                {isAISearchActive ? (
+                  <AIChatSidebar
+                    messages={ai.messages}
+                    input={ai.input}
+                    loading={ai.loading}
+                    activeMessageId={ai.activeMessageId}
+                    onInputChange={ai.setInput}
+                    onSubmit={ai.handleSubmit}
+                    onViewMessage={ai.viewMessage}
+                  />
+                ) : (
+                  <div
                   className={[
                     "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px]",
                     // visible thin scrollbar instead of the hidden one
@@ -1228,80 +1277,90 @@ useEffect(() => {
 
                   {renderFilterGroups()}
                 </div>
+                )}
               </div>
             </aside>
 
             {/* ── Results Column ── */}
-            <div id="results-column" className="w-full flex-1 mt-3 min-w-0 min-h-screen">
+            <div id="results-column" className="w-full flex-1 mt-36 lg:mt-3 min-w-0 min-h-screen">
 
-              {/* ── Search + Sort bar (sticky below header) ── */}
-              <div className="sticky z-40 px-4 py-2 bg-light-gray">
-                <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
+              {/* Scroll to top */}
+              <button
+                onClick={scrollToTop}
+                className={[
+                  "fixed bottom-6 right-6 z-40 pointer-events-auto cursor-pointer",
+                  "w-12 h-12 rounded-tl-2xl rounded-br-2xl bg-black hover:bg-gray-900",
+                  "flex items-center justify-center text-white shadow-lg active:scale-95",
+                  "transition-all duration-200 border-2 border-black shadow-xl",
+                  showScrollTop
+                    ? "opacity-100 scale-100 visible"
+                    : "opacity-0 scale-95 invisible pointer-events-none",
+                ].join(" ")}
+                title="Scroll to top"
+              >
+                <CircleArrowUp className="h-7 w-7" />
+              </button>
 
-                  <div className="fixed inset-x-0 z-50 pointer-events-none" style={{ top: sidebarTop + 26 }}>
-                    <div className="max-w-[1550px] mx-auto px-3 lg:px-14">
-                      <div className="flex justify-center lg:pl-[340px] 2xl:pl-[380px]">
-                        <button
-                          onClick={scrollToTop}
-                          className={[
-                            "pointer-events-auto cursor-pointer flex items-center gap-2 bg-[#222] hover:bg-black text-white text-[13px] font-bold px-5 py-2.5 rounded-full shadow-lg active:scale-95 transition-all duration-200",
-                            "-translate-y-7 lg:translate-y-0",
-                            showScrollTop
-                              ? "opacity-100 scale-100 visible"
-                              : "opacity-0 scale-95 invisible",
-                          ].join(" ")}
-                        >
-                          <ChevronUp className="h-4 w-4" />
-                          <span>Back to top</span>
-                        </button>
+              {isAISearchActive ? (
+                /* ── AI Search results area ── */
+                <AIResultsPanel
+                  results={ai.results}
+                  filters={ai.filters}
+                  hasSearched={ai.hasSearched}
+                  loading={ai.loading}
+                  hasMore={ai.hasMore}
+                  loadingMore={ai.loadingMore}
+                  onSuggestionClick={ai.handleSuggestion}
+                  onRemoveFilter={ai.removeFilter}
+                  onLoadMore={ai.loadMore}
+                />
+              ) : (
+                /* ── Normal search results ── */
+                <>
+                  {/* Search + Sort bar */}
+                  <div className="sticky z-40 px-5 pt-4 pb-2 lg:pt-2 bg-light-gray">
+                    <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
+                      <div className="relative w-full lg:max-w-[440px]">
+                        <SearchBox
+                          classNames={{
+                            root: "w-full",
+                            form: "relative flex items-center",
+                            input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[14px] outline-none transition-all focus:border-gray-400",
+                            submitIcon: "hidden",
+                            resetIcon: "hidden",
+                            loadingIcon: "hidden",
+                          }}
+                          placeholder="Search for Anything"
+                          autoFocus={false}
+                        />
+                        <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
                       </div>
+                      <MobileControlsBar
+                        onOpenFilters={() => setIsMobileFilterOpen(true)}
+                        sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)}
+                      />
                     </div>
                   </div>
 
-                  {/* Search Input Box */}
-                  <div className="relative w-full lg:max-w-[440px]">
-                    <SearchBox
-                      classNames={{
-                        root: "w-full",
-                        form: "relative flex items-center",
-                        input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[16px] lg:text-[14px] outline-none transition-all focus:border-gray-400",
-                        submitIcon: "hidden",
-                        resetIcon: "hidden",
-                        loadingIcon: "hidden",
-                      }}
-                      placeholder="Search for Anything"
-                      autoFocus={false}
-                    />
-                    <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
+                  <div className="px-4">
+                    <GroupedCurrentRefinements />
                   </div>
 
-                  <MobileControlsBar
-                    onOpenFilters={() => setIsMobileFilterOpen(true)}
-                    sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)}
-                  />
-
-                </div>
-              </div>
-
-              <div className="px-4">
-                <GroupedCurrentRefinements />
-              </div>
-
-              <div className="mb-4  px-2">
-                <SearchResultsWrapper>
-                  <NoResultsHandler>
-                    <CustomInfiniteHits hitComponent={HitCard} />
-                  </NoResultsHandler>
-                </SearchResultsWrapper>
-              </div>
+                  <div className="mb-4 px-2">
+                    <SearchResultsWrapper>
+                      <NoResultsHandler>
+                        <CustomInfiniteHits hitComponent={HitCard} />
+                      </NoResultsHandler>
+                    </SearchResultsWrapper>
+                  </div>
+                </>
+              )}
             </div>
           </div>
+        </div>
 
-          {/* ── Common footer — spans the full width beneath BOTH the sidebar
-              and the results column, once results have finished loading. ── */}
-          <div className="max-w-[1550px] mx-auto">
-            {/* <PageFooter /> */}
-          </div>
+        <div className="max-w-[1550px] mx-auto">
+        
         </div>
 
         {/* ── Mobile filter slide-in overlay ── */}
