@@ -452,19 +452,6 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   );
 };
 
-const PageFooter = () => {
-  const { hits } = useInfiniteHits();
-  const shouldShowFooter = hits.length > 0;
-
-  if (!shouldShowFooter) return null;
-
-  return (
-    <div className="mt-12 transition-opacity duration-300 ease-in">
-      <GetInTouch />
-      <Footer />
-    </div>
-  );
-};
 
 const ClearFiltersButton = ({ mobile = false }: { mobile?: boolean }) => {
   const { items } = useCurrentRefinements();
@@ -1373,7 +1360,7 @@ useEffect(() => {
         </div>
 
         <div className="max-w-[1550px] mx-auto">
-          <PageFooter />
+        
         </div>
 
         {/* ── Mobile filter slide-in overlay ── */}
