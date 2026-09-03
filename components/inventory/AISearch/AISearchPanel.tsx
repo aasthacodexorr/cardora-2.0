@@ -4,6 +4,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { Search, X, MessageCircle, Loader, Check } from "lucide-react";
 import { HitCard } from "@/components/inventory";
 import { InventoryLoadMoreSkeleton } from "@/components/inventory/HitCardSkeleton";
+import logo from "@/assets/brand/logo.jpg";
+import adlogo from "@/assets/icons/ad-card-3.jpg"
 
 // ─────────────────────────────────────────────
 // Types
@@ -229,9 +231,28 @@ export const AIChatSidebar = ({
   }, [messages, loading]);
 
   return (
-    <div className="flex flex-col min-h-0 flex-1 mt-7 sm:mb-0">
-      {/* Message list — chat bubbles AND (on mobile) result cards share this
-          single scroll container, so the whole thread scrolls as one unit. */}
+    <div className="flex flex-col min-h-0 flex-1 mt-0 sm:mb-0">
+      {/* Fixed Clutch Assistant Header */}
+      <div className="shrink-0 bg-white border-b border-gray-200 px-[15px] py-0">
+        <div className="flex items-center gap-">
+          {/* Assistant icon */}
+          <div className="w-20 h-20 flex justify-center items-center">
+            <img src={adlogo?.src} />
+          </div>
+
+          <div className="min-w-0">
+            <h3 className="text-[15px] font-semibold text-gray-900 leading-tight">
+              Cardora Assistant
+            </h3>
+
+            <p className="text-[12px] text-gray-500 leading-[12px] mt-0.5">
+              Describe the car you're looking for
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Scrollable messages */}
       <div
         ref={scrollContainerRef}
         className={[
@@ -247,21 +268,16 @@ export const AIChatSidebar = ({
           return (
             <div key={msg.id} className="space-y-2">
               <div
-                className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                {msg.role === "ai" && (
-                  <div className="w-7 h-7 rounded-full bg-brand/10 flex items-center justify-center shrink-0 mt-0.5">
-                    <MessageCircle className="w-3.5 h-3.5 text-brand" />
-                  </div>
-                )}
                 <div
                   className={`flex flex-col max-w-[88%] ${msg.role === "user" ? "items-end" : "items-start"
                     }`}
                 >
                   <div
-                    className={`px-3 py-2 rounded-2xl text-[13px] leading-snug ${msg.role === "user"
-                        ? "bg-black text-white rounded-tr-sm"
-                        : "bg-gray-100 text-gray-800 rounded-tl-sm"
+                    className={`px-3 py-2 rounded-2xl text-[15px] leading-snug ${msg.role === "user"
+                      ? "bg-black text-white rounded-tr-sm"
+                      : "bg-gray-100 text-gray-800 rounded-tl-sm"
                       }`}
                   >
                     {msg.text}
@@ -313,13 +329,14 @@ export const AIChatSidebar = ({
             mobile flow). Desktop's larger welcome screen still lives in
             AIResultsPanel, and we don't show options in the sidebar on desktop. */}
         {messages.length === 1 && !hasSearched && !loading && (
-          <div className="sm:hidden flex flex-wrap gap-2 pl-9">
+          <div className="sm:hidden flex flex-col gap-2 mt-5">
+            <p className="text-gray-600 font-semibold text-sm">Or start with one of these</p>
             {SUGGESTIONS.map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => onSuggestionClick(s)}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-200 text-[12px] text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium cursor-pointer"
+                className="flex items-center gap-1 px-3 py-1.5 w-fit rounded-full border border-gray-200 text-[12px] text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium cursor-pointer"
               >
                 <span className="text-brand text-[10px]">✦</span>
                 {s}
@@ -330,9 +347,6 @@ export const AIChatSidebar = ({
 
         {loading && (
           <div className="flex gap-2 justify-start">
-            <div className="w-7 h-7 rounded-full bg-brand/10 flex items-center justify-center shrink-0">
-              <MessageCircle className="w-3.5 h-3.5 text-brand" />
-            </div>
             <div className="px-3 py-2.5 bg-gray-100 rounded-2xl rounded-tl-sm flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce [animation-delay:0ms]" />
               <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce [animation-delay:150ms]" />
@@ -357,7 +371,7 @@ export const AIChatSidebar = ({
             }}
             placeholder="Ask anything"
             disabled={loading}
-            className="w-full resize-none text-[13px] pl-3 pr-9 py-2.5 rounded-[10px] border border-gray-200 focus:outline-none focus:border-brand bg-gray-50 placeholder-gray-400 leading-snug"
+            className="w-full resize-none text-[15px] pl-3 pr-9 py-2.5 rounded-[10px] border border-gray-200 focus:outline-none focus:border-brand bg-gray-50 placeholder-gray-400 leading-snug"
           />
           <button
             type="submit"
@@ -426,15 +440,15 @@ export const AIResultsPanel = ({
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6 py-10">
         {/* Icon */}
-        <div className="w-16 h-16 rounded-full bg-brand/10 flex items-center justify-center mb-6">
-          <MessageCircle className="w-8 h-8 text-brand" />
+        <div className="w-40 h-auto bg-red-500">
+          <img src={logo?.src} />
         </div>
 
-        <h2 className="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight">
+        <h2 className="text-5xl font-bold text-gray-900 mb-3 tracking-tight">
           Let me help you find a car.
         </h2>
-        <p className="text-gray-500 text-base max-w-md mb-8">
-          Tell me how you'll use it, your budget, must-haves — anything. Or start with one of these:
+        <p className="text-gray-500 text-md mb-8">
+          Tell me how you'll use it, your budget, must-haves — anything. Or start with <br /> one of these:
         </p>
 
         {/* Suggestion chips */}
@@ -443,9 +457,9 @@ export const AIResultsPanel = ({
             <button
               key={s}
               onClick={() => onSuggestionClick(s)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-gray-300 text-sm text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium shadow-sm"
+              className="flex items-center gap-1.5 px-4.5 py-3 rounded-full border border-gray-300 text-base text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium shadow-sm"
             >
-              <span className="text-brand text-xs">✦</span>
+              <span className="text-brand text-sm">✦</span>
               {s}
             </button>
           ))}
@@ -455,54 +469,54 @@ export const AIResultsPanel = ({
   }
 
   return (
-    <div className="w-full">
-      {/* Loading shimmer for the first page */}
-      {loading && results.length === 0 && (
-        <div className="flex items-center gap-3 px-5 py-8 text-gray-400 text-sm">
-          <Loader className="w-4 h-4 animate-spin" />
-          Searching inventory…
-        </div>
-      )}
-
-      {/* No results */}
-      {!loading && hasSearched && results.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <p className="text-gray-500 font-medium">
-            No vehicles matched your request.
-          </p>
-          <p className="text-gray-400 text-sm mt-1">
-            Try adjusting the budget, year, or vehicle type in the chat.
-          </p>
-        </div>
-      )}
-
-      {/* Total results count — shown at top when results exist */}
-      {results.length > 0 && !loading && (
-        <div className="hidden lg:flex items-center px-5 py-3 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-700">
-          <span>Total Results Found: <span className="font-bold text-gray-900">{total}</span></span>
-        </div>
-      )}
-
-      {/* Results grid — desktop only; mobile shows the inline carousel inside AIChatSidebar */}
-      {results.length > 0 && (
-        <>
-          <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
-            {results.map((vehicle) => (
-              <div
-                key={vehicle.id}
-                className="flex flex-col h-full p-[9px]"
-              >
-                <HitCard hit={vehicle} />
-              </div>
-            ))}
-
-            {/* Load-more shimmer, matching the main inventory grid's skeleton */}
-            {loadingMore && <InventoryLoadMoreSkeleton />}
+    <div className="relative w-full min-h-[60vh]">
+      {/* Loading state */}
+      {loading ? (
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-3">
+            <Loader className="w-8 h-8 text-brand animate-spin" />
           </div>
+        </div>
+      ) : (
+        <>
+          {/* Welcome / empty state */}
 
-          {/* Scroll sentinel — triggers onLoadMore when it enters the viewport */}
-          {hasMore && !loadingMore && (
-            <div ref={loadMoreRef} aria-hidden style={{ height: 1 }} />
+          {/* No results */}
+          {hasSearched && results.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <p className="text-gray-500 font-medium">
+                No vehicles matched your request.
+              </p>
+              <p className="text-gray-400 text-sm mt-1">
+                Try adjusting the budget, year, or vehicle type in the chat.
+              </p>
+            </div>
+          )}
+
+          {/* Results */}
+          {results.length > 0 && (
+            <>
+              <div className="hidden lg:flex items-center px-5 py-3 text-base font-medium text-gray-700">
+                <span>{total} matching vehicles found</span>
+              </div>
+
+              <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
+                {results.map((vehicle) => (
+                  <div
+                    key={vehicle.id}
+                    className="flex flex-col h-full px-[14px] py-[10px]"
+                  >
+                    <HitCard hit={vehicle} />
+                  </div>
+                ))}
+
+                {loadingMore && <InventoryLoadMoreSkeleton />}
+              </div>
+
+              {hasMore && !loadingMore && (
+                <div ref={loadMoreRef} aria-hidden style={{ height: 1 }} />
+              )}
+            </>
           )}
         </>
       )}

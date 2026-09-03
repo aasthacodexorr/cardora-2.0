@@ -1258,38 +1258,36 @@ const InventoryContent = () => {
                 style={{ height: sidebarMaxHeight }}
               >
                 {/* ── Search / AI Search Tab Toggle — hidden on desktop when AI mode is active ── */}
-                {!isAISearchActive && (
-                  <div className="flex shrink-0 items-center gap-1 p-[10px] border-b border-gray-100 bg-gray-50/60">
-                    <button
-                      onClick={() => {
-                        setIsAISearchActive(false);
-                      }}
-                      className={[
-                        "cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[9px] text-[13px] font-semibold transition-all",
-                        !isAISearchActive
-                          ? "bg-white shadow-sm text-black border border-gray-200"
-                          : "text-gray-500 hover:bg-white/60",
-                      ].join(" ")}
-                    >
-                      <Search className="w-3.5 h-3.5" />
-                      Search
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsAISearchActive(true);
-                      }}
-                      className={[
-                        "cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[9px] text-[13px] font-semibold transition-all",
-                        isAISearchActive
-                          ? "bg-brand text-white shadow-sm"
-                          : "text-gray-500 hover:bg-white/60",
-                      ].join(" ")}
-                    >
-                      <span className="text-[11px]">✦</span>
-                      AI Search
-                    </button>
-                  </div>
-                )}
+                <div className="flex shrink-0 items-center gap-1 p-[10px] border-b border-gray-100 bg-gray-50/60">
+                  <button
+                    onClick={() => {
+                      setIsAISearchActive(false);
+                    }}
+                    className={[
+                      "cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[9px] text-[13px] font-semibold transition-all",
+                      !isAISearchActive
+                        ? "bg-white shadow-sm text-black border border-gray-200"
+                        : "text-gray-500 hover:bg-white/60",
+                    ].join(" ")}
+                  >
+                    <Search className="w-3.5 h-3.5" />
+                    Search
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsAISearchActive(true);
+                    }}
+                    className={[
+                      "cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[9px] text-[13px] font-semibold transition-all",
+                      isAISearchActive
+                        ? "bg-brand text-white shadow-sm"
+                        : "text-gray-500 hover:bg-white/60",
+                    ].join(" ")}
+                  >
+                    <span className="text-[11px]">✦</span>
+                    AI Search
+                  </button>
+                </div>
 
                 {/* ── Sidebar content: filters OR chat ── */}
                 {isAISearchActive ? (
@@ -1360,7 +1358,7 @@ const InventoryContent = () => {
                 /* ── AI Search results area ── */
                 <>
                   {/* Mobile: chat + results merged into a single scrollable card — fixed modal overlay */}
-                  <div className="fixed inset-x-0 bottom-0 top-[208px] z-50 flex h-[calc(100dvh-208px)] lg:hidden flex-col overflow-hidden bg-white shadow-sm">
+                  <div className="fixed inset-x-0 bottom-0 top-[208px] z-50 flex h-[calc(100dvh-208px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm">
                     <AIChatSidebar
                       messages={ai.messages}
                       input={ai.input}
