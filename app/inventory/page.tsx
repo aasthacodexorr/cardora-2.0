@@ -1108,14 +1108,6 @@ const InventoryContent = () => {
     });
   };
 
-  useEffect(() => {
-    if (isMobileFilterOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [isMobileFilterOpen]);
 
   // Blur search input when drawer opens
   useEffect(() => {
@@ -1142,15 +1134,20 @@ const InventoryContent = () => {
 
 
   useEffect(() => {
-    const shouldLockScroll = isMobileFilterOpen || isAISearchActive;
+    const mq = window.matchMedia("(max-width: 1023.98px)"); // below Tailwind's `lg`
 
-    if (shouldLockScroll) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    const applyLock = () => {
+      const isMobileViewport = mq.matches;
+      const shouldLockScroll =
+        isMobileViewport && (isMobileFilterOpen || isAISearchActive);
+      document.body.style.overflow = shouldLockScroll ? "hidden" : "";
+    };
+
+    applyLock();
+    mq.addEventListener("change", applyLock);
 
     return () => {
+      mq.removeEventListener("change", applyLock);
       document.body.style.overflow = "";
     };
   }, [isMobileFilterOpen, isAISearchActive]);
