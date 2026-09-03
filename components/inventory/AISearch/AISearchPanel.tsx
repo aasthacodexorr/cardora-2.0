@@ -55,26 +55,164 @@ const SUGGESTIONS = [
 ];
 
 // ─────────────────────────────────────────────
+// Mobile results carousel — one full-width card per swipe, native scroll-snap.
+// Rendered INLINE inside the chat message list (see AIChatSidebar below) so it
+// lives in the exact same scroll container as the conversation, right under
+// the AI message that produced it.
+// ─────────────────────────────────────────────
+const CAROUSEL_VISIBLE_DOTS = 7;
+const CAROUSEL_DOT_SLOT = 12; // px per dot "slot" (dot + gap), tune to taste
+
+interface MobileResultsCarouselProps {
+  results: any[];
+  loadingMore: boolean;
+  hasMore: boolean;
+  onLoadMore: () => void;
+}
+
+const MobileResultsCarousel = ({
+  results,
+  loadingMore,
+  hasMore,
+  onLoadMore,
+}: MobileResultsCarouselProps) => {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const dotsRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Reset to the first card whenever the underlying result set changes
+  // (new AI response, filter change, etc.) so we never point past the end.
+  useEffect(() => {
+    setActiveIndex(0);
+    trackRef.current?.scrollTo({ left: 0 });
+  }, [results]);
+
+  // Figure out which card is centered as the user swipes.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    let raf = 0;
+    const handleScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const { scrollLeft, clientWidth } = track;
+        if (!clientWidth) return;
+        const idx = Math.round(scrollLeft / clientWidth);
+        setActiveIndex((prev) => {
+          const next = Math.max(0, Math.min(idx, results.length - 1));
+          return prev === next ? prev : next;
+        });
+      });
+    };
+    track.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      track.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, [results.length]);
+
+  // Prefetch more results as the user approaches the end of the carousel.
+  useEffect(() => {
+    if (hasMore && !loadingMore && results.length > 0 && activeIndex >= results.length - 2) {
+      onLoadMore();
+    }
+  }, [activeIndex, results.length, hasMore, loadingMore, onLoadMore]);
+
+  // Keep the active dot scrolled into the visible dot window.
+  useEffect(() => {
+    const dot = dotsRef.current?.children[activeIndex] as HTMLElement | undefined;
+    dot?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [activeIndex]);
+
+  const goToIndex = (i: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollTo({ left: i * track.clientWidth, behavior: "smooth" });
+  };
+
+  if (results.length === 0) return null;
+
+  return (
+    <div className="sm:hidden">
+      {/* Card track — one full-width card per swipe, native scroll-snap */}
+      <div
+        ref={trackRef}
+        className={[
+          "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
+          "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+        ].join(" ")}
+      >
+        {results.map((vehicle) => (
+          <div key={vehicle.id} className="shrink-0 w-full snap-center px-[9px]">
+            <HitCard hit={vehicle} />
+          </div>
+        ))}
+
+        {loadingMore && (
+          <div className="shrink-0 w-full snap-center px-[9px]">
+            <InventoryLoadMoreSkeleton />
+          </div>
+        )}
+      </div>
+
+      {/* Windowed dot pagination — only ~7 dots visible, rest reachable by
+          scrolling; the active dot auto-centers itself via scrollIntoView above. */}
+      {results.length > 1 && (
+        <div
+          ref={dotsRef}
+          className={[
+            "flex items-center gap-1.5 overflow-x-auto py-3 mx-auto",
+            "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+          ].join(" ")}
+          style={{ maxWidth: CAROUSEL_VISIBLE_DOTS * CAROUSEL_DOT_SLOT }}
+        >
+          {results.map((vehicle, i) => (
+            <button
+              key={vehicle.id}
+              type="button"
+              aria-label={`Go to result ${i + 1} of ${results.length}`}
+              onClick={() => goToIndex(i)}
+              className={[
+                "shrink-0 rounded-full cursor-pointer transition-all duration-200",
+                i === activeIndex ? "w-2.5 h-2.5 bg-brand" : "w-1.5 h-1.5 bg-gray-300",
+              ].join(" ")}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────
 // Sidebar chat (replaces filters when AI mode is on)
 // ─────────────────────────────────────────────
 interface AIChatSidebarProps {
   messages: Message[];
   input: string;
   loading: boolean;
+  loadingMore: boolean;
+  hasSearched: boolean;
   activeMessageId: string | null;
   onInputChange: (v: string) => void;
   onSubmit: (e?: React.FormEvent) => void;
   onViewMessage: (messageId: string) => void;
+  onSuggestionClick: (text: string) => void;
+  onLoadMore: () => void;
 }
 
 export const AIChatSidebar = ({
   messages,
   input,
   loading,
+  loadingMore,
+  hasSearched,
   activeMessageId,
   onInputChange,
   onSubmit,
   onViewMessage,
+  onSuggestionClick,
+  onLoadMore,
 }: AIChatSidebarProps) => {
   // Scoped ref to the messages container itself. We deliberately do NOT use
   // scrollIntoView() here — it walks up every scrollable ancestor (including
@@ -91,8 +229,9 @@ export const AIChatSidebar = ({
   }, [messages, loading]);
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
-      {/* Message list */}
+    <div className="flex flex-col min-h-0 flex-1 mt-7 sm:mb-0">
+      {/* Message list — chat bubbles AND (on mobile) result cards share this
+          single scroll container, so the whole thread scrolls as one unit. */}
       <div
         ref={scrollContainerRef}
         className={[
@@ -106,53 +245,88 @@ export const AIChatSidebar = ({
         {messages.map((msg) => {
           const isActive = msg.id === activeMessageId;
           return (
-            <div
-              key={msg.id}
-              className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-            >
-              {msg.role === "ai" && (
-                <div className="w-7 h-7 rounded-full bg-brand/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <MessageCircle className="w-3.5 h-3.5 text-brand" />
-                </div>
-              )}
+            <div key={msg.id} className="space-y-2">
               <div
-                className={`flex flex-col max-w-[88%] ${
-                  msg.role === "user" ? "items-end" : "items-start"
-                }`}
+                className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                <div
-                  className={`px-3 py-2 rounded-2xl text-[13px] leading-snug ${
-                    msg.role === "user"
-                      ? "bg-black text-white rounded-tr-sm"
-                      : "bg-gray-100 text-gray-800 rounded-tl-sm"
-                  }`}
-                >
-                  {msg.text}
-                </div>
-
-                {/* View / Showing-now control — only on AI messages that returned results */}
-                {msg.role === "ai" && msg.resultsSnapshot && (
-                  <div className="mt-1 px-1">
-                    {isActive ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand">
-                        <Check className="w-3 h-3" />
-                        Showing now
-                      </span>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => onViewMessage(msg.id)}
-                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-500 hover:text-brand underline underline-offset-2 cursor-pointer transition-colors"
-                      >
-                        View results ({msg.resultsSnapshot.total})
-                      </button>
-                    )}
+                {msg.role === "ai" && (
+                  <div className="w-7 h-7 rounded-full bg-brand/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <MessageCircle className="w-3.5 h-3.5 text-brand" />
                   </div>
                 )}
+                <div
+                  className={`flex flex-col max-w-[88%] ${msg.role === "user" ? "items-end" : "items-start"
+                    }`}
+                >
+                  <div
+                    className={`px-3 py-2 rounded-2xl text-[13px] leading-snug ${msg.role === "user"
+                        ? "bg-black text-white rounded-tr-sm"
+                        : "bg-gray-100 text-gray-800 rounded-tl-sm"
+                      }`}
+                  >
+                    {msg.text}
+                  </div>
+
+                  {/* View / Showing-now control — only on AI messages that returned results */}
+                  {msg.role === "ai" && msg.resultsSnapshot && (
+                    <div className="mt-1 px-1">
+                      {isActive ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand">
+                          <Check className="w-3 h-3" />
+                          Showing now
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => onViewMessage(msg.id)}
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-500 hover:text-brand underline underline-offset-2 cursor-pointer transition-colors"
+                        >
+                          View results ({msg.resultsSnapshot.total})
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* Mobile only: result cards for the active AI message render
+                  right here, inline in the chat thread, one swipe at a time.
+                  The negative margin lets cards run edge-to-edge despite the
+                  list's own padding; hidden entirely at sm+ (desktop uses the
+                  grid in AIResultsPanel instead). */}
+              {msg.role === "ai" && msg.resultsSnapshot && isActive && (
+                <div className="-mx-[15px]">
+                  <MobileResultsCarousel
+                    results={msg.resultsSnapshot.results}
+                    loadingMore={loadingMore}
+                    hasMore={msg.resultsSnapshot.hasMore}
+                    onLoadMore={onLoadMore}
+                  />
+                </div>
+              )}
             </div>
           );
         })}
+
+        {/* Quick-start suggestions — only before the first search, and only
+            on mobile inline in the thread (matches the "Or start with one of these"
+            mobile flow). Desktop's larger welcome screen still lives in
+            AIResultsPanel, and we don't show options in the sidebar on desktop. */}
+        {messages.length === 1 && !hasSearched && !loading && (
+          <div className="sm:hidden flex flex-wrap gap-2 pl-9">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => onSuggestionClick(s)}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-200 text-[12px] text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium cursor-pointer"
+              >
+                <span className="text-brand text-[10px]">✦</span>
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
 
         {loading && (
           <div className="flex gap-2 justify-start">
@@ -168,8 +342,8 @@ export const AIChatSidebar = ({
         )}
       </div>
 
-      {/* Input */}
-      <div className="px-[15px] pb-[15px] pt-[10px] border-t border-gray-100">
+      {/* Input — fixed at bottom within the modal */}
+      <div className="shrink-0 px-[15px] pb-[15px] pt-[10px] border-t border-gray-100 bg-white">
         <form onSubmit={onSubmit} className="relative flex items-center">
           <textarea
             rows={1}
@@ -199,7 +373,8 @@ export const AIChatSidebar = ({
 };
 
 // ─────────────────────────────────────────────
-// Welcome / results panel (right column content)
+// Welcome / results panel (right column content — DESKTOP ONLY now that
+// mobile renders its results inline inside AIChatSidebar above)
 // ─────────────────────────────────────────────
 interface AIResultsPanelProps {
   results: any[];
@@ -208,6 +383,7 @@ interface AIResultsPanelProps {
   loading: boolean;
   hasMore: boolean;
   loadingMore: boolean;
+  total: number;
   onSuggestionClick: (text: string) => void;
   onRemoveFilter: (key: keyof AISearchFilters, value?: any) => void;
   onLoadMore: () => void;
@@ -220,6 +396,7 @@ export const AIResultsPanel = ({
   loading,
   hasMore,
   loadingMore,
+  total,
   onSuggestionClick,
   onRemoveFilter,
   onLoadMore,
@@ -299,10 +476,17 @@ export const AIResultsPanel = ({
         </div>
       )}
 
-      {/* Results grid */}
+      {/* Total results count — shown at top when results exist */}
+      {results.length > 0 && !loading && (
+        <div className="hidden lg:flex items-center px-5 py-3 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-700">
+          <span>Total Results Found: <span className="font-bold text-gray-900">{total}</span></span>
+        </div>
+      )}
+
+      {/* Results grid — desktop only; mobile shows the inline carousel inside AIChatSidebar */}
       {results.length > 0 && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
+          <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
             {results.map((vehicle) => (
               <div
                 key={vehicle.id}
@@ -456,15 +640,15 @@ export function useAISearch() {
         prev.map((m) =>
           m.id === activeMessageId && m.resultsSnapshot
             ? {
-                ...m,
-                resultsSnapshot: {
-                  ...m.resultsSnapshot,
-                  results: [...m.resultsSnapshot.results, ...(data.results || [])],
-                  page: data.page || nextPage,
-                  hasMore: !!data.hasMore,
-                  total: data.total ?? m.resultsSnapshot.total,
-                },
-              }
+              ...m,
+              resultsSnapshot: {
+                ...m.resultsSnapshot,
+                results: [...m.resultsSnapshot.results, ...(data.results || [])],
+                page: data.page || nextPage,
+                hasMore: !!data.hasMore,
+                total: data.total ?? m.resultsSnapshot.total,
+              },
+            }
             : m
         )
       );
