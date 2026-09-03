@@ -72,11 +72,19 @@ function buildDisplayItems(hits: any[]): DisplayItem[] {
 /* Shared class name configs for InstantSearch widgets */
 const refinementListClassNames = {
   list: "space-y-2 pt-2 pb-4 p-0",
+
   label:
     "flex items-center gap-3 cursor-pointer text-[16px] text-gray-900 transition-colors",
+
   checkbox:
-    "appearance-none h-[18px] w-[18px] rounded-[4px] border border-gray-800 bg-white checked:border-transparent checked:bg-transparent checked:bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22%2300AF66%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M12.207%204.793a1%201%200%20010%201.414l-5%205a1%201%200%2001-1.414%200l-2-2a1%201%200%20011.414-1.414L6.5%209.086l4.293-4.293a1%201%200%20011.414%200z%22%2F%3E%3C%2Fsvg%3E')] checked:bg-center checked:bg-no-repeat checked:bg-[length:20px_20px] focus:ring-0 cursor-pointer",
+    "appearance-none h-[18px] w-[18px] shrink-0 rounded-[4px] border border-gray-800 bg-white cursor-pointer " +
+    "checked:border-gray-800 checked:bg-white " +
+    "checked:bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M3%208.5l3%203L13%204.5%22%20fill%3D%22none%22%20stroke%3D%22%2300AF66%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] " +
+    "checked:bg-center checked:bg-no-repeat checked:bg-[length:14px_14px] " +
+    "focus:outline-none focus:ring-0",
+
   labelText: "flex-1",
+
   count:
     "text-gray-900 font-bold px-[8px] py-[2px] rounded-md text-[11px] ml-auto",
 };
@@ -1100,14 +1108,6 @@ const InventoryContent = () => {
     });
   };
 
-  useEffect(() => {
-    if (isMobileFilterOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [isMobileFilterOpen]);
 
   // Blur search input when drawer opens
   useEffect(() => {
@@ -1134,15 +1134,20 @@ const InventoryContent = () => {
 
 
   useEffect(() => {
-    const shouldLockScroll = isMobileFilterOpen || isAISearchActive;
+    const mq = window.matchMedia("(max-width: 1023.98px)"); // below Tailwind's `lg`
 
-    if (shouldLockScroll) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    const applyLock = () => {
+      const isMobileViewport = mq.matches;
+      const shouldLockScroll =
+        isMobileViewport && (isMobileFilterOpen || isAISearchActive);
+      document.body.style.overflow = shouldLockScroll ? "hidden" : "";
+    };
+
+    applyLock();
+    mq.addEventListener("change", applyLock);
 
     return () => {
+      mq.removeEventListener("change", applyLock);
       document.body.style.overflow = "";
     };
   }, [isMobileFilterOpen, isAISearchActive]);
