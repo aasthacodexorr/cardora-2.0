@@ -144,7 +144,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
                     });
                   }
                 }}
-                className="absolute top-[12px] right-[12px] p-1 cursor-pointer rounded-full bg-white/90 hover:bg-white transition-colors shadow-md z-20"
+                className="absolute top-[14px] right-[14px] p-1 cursor-pointer rounded-full bg-white/90 hover:bg-white transition-colors shadow-md z-20"
                 aria-label={
                   isInWishlist(hit.inventory_id)
                     ? "Remove from wishlist"

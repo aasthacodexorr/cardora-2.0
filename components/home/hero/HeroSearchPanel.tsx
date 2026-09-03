@@ -151,7 +151,7 @@ const HeroSearchPanelContent = () => {
               onFocus={() => searchQuery && setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="w-full px-3 py-4 outline-none text-sm"
+              className="w-full px-3 py-4 outline-none text-base lg:text-sm"
             />
             
             {/* Dropdown suggestions */}
