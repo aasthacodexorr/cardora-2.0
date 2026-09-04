@@ -593,6 +593,8 @@ const ModelRefinementList = () => {
     refine: refineMake,
   } = useRefinementList({
     attribute: "make",
+    limit: 200,
+    sortBy: ["name:asc"],
   });
 
   const {
@@ -600,6 +602,8 @@ const ModelRefinementList = () => {
     refine: refineModel,
   } = useRefinementList({
     attribute: "model",
+    limit: 200,
+    sortBy: ["name:asc"],
   });
 
   const selectedMakes = useMemo(
@@ -612,12 +616,41 @@ const ModelRefinementList = () => {
     [makeItems]
   );
 
+  const modelMakeMap = useMemo(() => {
+    return getModelMakeMap();
+  }, [modelItems]);
+
+  /**
+   * Only show models belonging to the currently selected makes.
+   *
+   * If no make is selected, show all models.
+   */
+  const visibleModelItems = useMemo(() => {
+    if (selectedMakes.size === 0) {
+      return modelItems;
+    }
+
+    return modelItems.filter((item) => {
+      const modelMake = modelMakeMap.get(item.value as string);
+
+      return modelMake
+        ? selectedMakes.has(modelMake)
+        : false;
+    });
+  }, [modelItems, selectedMakes, modelMakeMap]);
+
   const handleToggle = (item: typeof modelItems[number]) => {
     const model = item.value as string;
-    const make = getModelMakeMap().get(model);
+    const make = modelMakeMap.get(model);
 
-    // Selecting a model
+    // Selecting model
     if (!item.isRefined) {
+      /**
+       * IMPORTANT:
+       * Add the model's make.
+       *
+       * Do NOT remove any existing make.
+       */
       if (make && !selectedMakes.has(make)) {
         refineMake(make);
       }
@@ -626,13 +659,35 @@ const ModelRefinementList = () => {
       return;
     }
 
-    // Deselecting a model
+    // Deselect model
     refineModel(model);
   };
 
   return (
-    <ul className={refinementListClassNames.list}>
-      {modelItems.map((item) => (
+    <ul
+      className={[
+        refinementListClassNames.list,
+
+        // Same height behavior as Make
+        "max-h-[300px]",
+
+        // Scroll when models exceed the limit
+        "overflow-y-auto",
+
+        // Space for scrollbar
+        "pr-2",
+
+        // Custom scrollbar
+        "[&::-webkit-scrollbar]:w-[5px]",
+        "[&::-webkit-scrollbar-track]:bg-transparent",
+        "[&::-webkit-scrollbar-thumb]:bg-gray-300",
+        "[&::-webkit-scrollbar-thumb]:rounded-full",
+
+        // Firefox
+        "lg:[scrollbar-width:thin]",
+      ].join(" ")}
+    >
+      {visibleModelItems.map((item) => (
         <li key={item.value}>
           <label className={refinementListClassNames.label}>
             <input
@@ -1012,10 +1067,12 @@ const SyncModelMakeMap = () => {
 const SyncOrphanedModels = () => {
   const { items: makeItems } = useRefinementList({
     attribute: "make",
+    limit: 200,
   });
 
   const { items: modelItems, refine: refineModel } = useRefinementList({
     attribute: "model",
+    limit: 200,
   });
 
   useEffect(() => {
@@ -1027,12 +1084,14 @@ const SyncOrphanedModels = () => {
 
     const modelMakeMap = getModelMakeMap();
 
-    // Check each refined model to see if its make is still selected
+    // Only remove a model when its make is KNOWN
+    // and that make was explicitly removed by the user.
     const modelsToRemove = modelItems.filter((model) => {
       if (!model.isRefined) return false;
+
       const make = modelMakeMap.get(model.value as string);
-      // Remove if make is known but not in selectedMakes
-      return make && !selectedMakes.has(make);
+
+      return Boolean(make && !selectedMakes.has(make));
     });
 
     if (modelsToRemove.length > 0) {
@@ -1294,8 +1353,29 @@ const InventoryContent = () => {
                   </button>
                 </div>
 
-                {/* ── Sidebar content: filters OR chat ── */}
-                {isAISearchActive ? (
+                {/* ── Sidebar content: filters AND chat stay mounted ── */}
+                <div
+                  className={[
+                    "flex-1 flex-col min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px]",
+                    isAISearchActive ? "hidden" : "flex",
+                    "[&::-webkit-scrollbar]:w-[6px]",
+                    "[&::-webkit-scrollbar-track]:bg-transparent",
+                    "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
+                    "lg:[scrollbar-width:thin]",
+                  ].join(" ")}
+                >
+                  <div className="flex flex-col items-center gap-4 pb-0">
+                    <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
+                      <CustomHitsCount />
+                    </div>
+                    <div className="w-full border-b border-border text-center">
+                      <ClearFiltersButton />
+                    </div>
+                  </div>
+                  {renderFilterGroups()}
+                </div>
+
+                <div className={isAISearchActive ? "flex flex-col min-h-0 flex-1" : "hidden"}>
                   <AIChatSidebar
                     messages={ai.messages}
                     input={ai.input}
@@ -1309,29 +1389,7 @@ const InventoryContent = () => {
                     onSuggestionClick={ai.handleSuggestion}
                     onLoadMore={ai.loadMore}
                   />
-                ) : (
-                  <div
-                    className={[
-                      "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px]",
-                      // visible thin scrollbar instead of the hidden one
-                      "[&::-webkit-scrollbar]:w-[6px]",
-                      "[&::-webkit-scrollbar-track]:bg-transparent",
-                      "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
-                      "lg:[scrollbar-width:thin]",
-                    ].join(" ")}
-                  >
-                    <div className="flex flex-col items-center gap-4 pb-0">
-                      <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
-                        <CustomHitsCount />
-                      </div>
-                      <div className="w-full border-b border-border text-center">
-                        <ClearFiltersButton />
-                      </div>
-                    </div>
-
-                    {renderFilterGroups()}
-                  </div>
-                )}
+                </div>
               </div>
             </aside>
 
@@ -1359,83 +1417,80 @@ const InventoryContent = () => {
                 </div>
               </div>
 
-              {isAISearchActive ? (
-                /* ── AI Search results area ── */
-                <>
-                  {/* Mobile: chat + results merged into a single scrollable card — fixed modal overlay */}
-                  <div className="fixed inset-x-0 bottom-0 top-[215px] z-50 flex h-[calc(100dvh-238px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
-                    <AIChatSidebar
-                      messages={ai.messages}
-                      input={ai.input}
-                      loading={ai.loading}
-                      loadingMore={ai.loadingMore}
-                      hasSearched={ai.hasSearched}
-                      activeMessageId={ai.activeMessageId}
-                      onInputChange={ai.setInput}
-                      onSubmit={ai.handleSubmit}
-                      onViewMessage={ai.viewMessage}
-                      onSuggestionClick={ai.handleSuggestion}
-                      onLoadMore={ai.loadMore}
-                    />
-                  </div>
+              {/* ── AI Search results area — always mounted ── */}
+              <div className={isAISearchActive ? "" : "hidden"}>
+                {/* Mobile: chat + results merged into a single scrollable card */}
+                <div className="fixed inset-x-0 bottom-0 top-[215px] flex h-[calc(100dvh-228px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
+                  <AIChatSidebar
+                    messages={ai.messages}
+                    input={ai.input}
+                    loading={ai.loading}
+                    loadingMore={ai.loadingMore}
+                    hasSearched={ai.hasSearched}
+                    activeMessageId={ai.activeMessageId}
+                    onInputChange={ai.setInput}
+                    onSubmit={ai.handleSubmit}
+                    onViewMessage={ai.viewMessage}
+                    onSuggestionClick={ai.handleSuggestion}
+                    onLoadMore={ai.loadMore}
+                  />
+                </div>
 
-                  {/* Desktop: results grid to the right of the sidebar chat */}
-                  <div className="hidden lg:block">
-                    <AIResultsPanel
-                      results={ai.results}
-                      filters={ai.filters}
-                      hasSearched={ai.hasSearched}
-                      loading={ai.loading}
-                      hasMore={ai.hasMore}
-                      loadingMore={ai.loadingMore}
-                      total={ai.total}
-                      onSuggestionClick={ai.handleSuggestion}
-                      onRemoveFilter={ai.removeFilter}
-                      onLoadMore={ai.loadMore}
-                    />
-                  </div>
-                </>
-              ) : (
-                /* ── Normal search results ── */
-                <>
-                  {/* Search + Sort bar */}
-                  <div className="sticky z-40 lg:px-3 pt-4 pb-2 lg:pt-2 bg-light-gray">
-                    <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
-                      <div className="relative w-full lg:max-w-[440px]">
-                        <SearchBox
-                          classNames={{
-                            root: "w-full",
-                            form: "relative flex items-center",
-                            input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[14px] outline-none transition-all focus:border-gray-400",
-                            submitIcon: "hidden",
-                            resetIcon: "hidden",
-                            loadingIcon: "hidden",
-                          }}
-                          placeholder="Search for Anything"
-                          autoFocus={false}
-                        />
-                        <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
-                      </div>
-                      <MobileControlsBar
-                        onOpenFilters={() => setIsMobileFilterOpen(true)}
-                        sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)}
+                {/* Desktop: AI results */}
+                <div className="hidden lg:block">
+                  <AIResultsPanel
+                    results={ai.results}
+                    filters={ai.filters}
+                    hasSearched={ai.hasSearched}
+                    loading={ai.loading}
+                    hasMore={ai.hasMore}
+                    loadingMore={ai.loadingMore}
+                    total={ai.total}
+                    onSuggestionClick={ai.handleSuggestion}
+                    onRemoveFilter={ai.removeFilter}
+                    onLoadMore={ai.loadMore}
+                  />
+                </div>
+              </div>
+
+              {/* ── Normal search results — always mounted ── */}
+              <div className={isAISearchActive ? "hidden" : ""}>
+                <div className="sticky z-40 lg:px-3 lg:pt-4 pb-2 lg:pt-2 bg-light-gray">
+                  <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
+                    <div className="relative w-full lg:max-w-[440px]">
+                      <SearchBox
+                        classNames={{
+                          root: "w-full",
+                          form: "relative flex items-center",
+                          input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[14px] outline-none transition-all focus:border-gray-400",
+                          submitIcon: "hidden",
+                          resetIcon: "hidden",
+                          loadingIcon: "hidden",
+                        }}
+                        placeholder="Search for Anything"
+                        autoFocus={false}
                       />
+                      <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
                     </div>
+                    <MobileControlsBar
+                      onOpenFilters={() => setIsMobileFilterOpen(true)}
+                      sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)}
+                    />
                   </div>
+                </div>
 
-                  <div className="px-3">
-                    <GroupedCurrentRefinements />
-                  </div>
+                <div className="px-3">
+                  <GroupedCurrentRefinements />
+                </div>
 
-                  <div className="mb-4">
-                    <SearchResultsWrapper>
-                      <NoResultsHandler>
-                        <CustomInfiniteHits hitComponent={HitCard} />
-                      </NoResultsHandler>
-                    </SearchResultsWrapper>
-                  </div>
-                </>
-              )}
+                <div className="mb-4">
+                  <SearchResultsWrapper>
+                    <NoResultsHandler>
+                      <CustomInfiniteHits hitComponent={HitCard} />
+                    </NoResultsHandler>
+                  </SearchResultsWrapper>
+                </div>
+              </div>
             </div>
           </div>
         </div>
