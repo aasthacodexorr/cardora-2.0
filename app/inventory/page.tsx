@@ -478,10 +478,27 @@ const ClearFiltersButton = ({ mobile = false }: { mobile?: boolean }) => {
 
 const GroupedCurrentRefinements = () => {
   const { items, refine } = useCurrentRefinements();
+
   if (items.length === 0) return null;
+
+  // Keep refinement chips in a predictable order.
+  // This is especially important when a user selects a MODEL first:
+  // the automatically selected MAKE should still appear before MODEL.
+  const refinementPriority: Record<string, number> = {
+    make: 0,
+    model: 1,
+  };
+
+  const orderedItems = [...items].sort((a, b) => {
+    const priorityA = refinementPriority[a.attribute] ?? 2;
+    const priorityB = refinementPriority[b.attribute] ?? 2;
+
+    return priorityA - priorityB;
+  });
+
   return (
     <div className="w-full flex flex-wrap gap-y-2 gap-x-2">
-      {items.map((category) => (
+      {orderedItems.map((category) => (
         <div key={category.attribute} className="flex flex-wrap items-center gap-[0.5px] bg-transparent">
           {category.refinements.map((refinement) => (
             <div
@@ -504,7 +521,7 @@ const GroupedCurrentRefinements = () => {
 };
 
 const MakeRefinementList = () => {
-  const { items: currentRefinements, refine } = useCurrentRefinements();
+  const { items: currentRefinements } = useCurrentRefinements();
 
   const {
     items: makeItems,
@@ -523,46 +540,106 @@ const MakeRefinementList = () => {
     limit: 200,
     sortBy: ["name:asc"],
   });
-  const handleToggle = (item: typeof makeItems[number]) => {
-    const make = item.value as string;
 
-    if (item.isRefined) {
-      // When removing a make, also remove all associated models
-      const modelMakeMap = getModelMakeMap();
+  const [allMakes, setAllMakes] = useState<typeof makeItems>([]);
 
-      // Get all models that are currently refined and belong to this make
-      const modelsToRemove = modelItems.filter(
-        (m) => m.isRefined && modelMakeMap.get(m.value as string) === make
+  useEffect(() => {
+    if (!makeItems.length) return;
+
+    setAllMakes((previous) => {
+      const merged = new Map<string, typeof makeItems[number]>();
+
+      previous.forEach((item) => merged.set(String(item.value), item));
+      makeItems.forEach((item) => merged.set(String(item.value), item));
+
+      const next = Array.from(merged.values()).sort((a, b) =>
+        String(a.label).localeCompare(String(b.label))
       );
 
-      // Remove associated models first
+      // Avoid a state update when InstantSearch gives us an equivalent array
+      // reference on another render.
+      if (
+        previous.length === next.length &&
+        previous.every((item, index) => {
+          const nextItem = next[index];
+          return (
+            String(item.value) === String(nextItem.value) &&
+            String(item.label) === String(nextItem.label) &&
+            item.count === nextItem.count
+          );
+        })
+      ) {
+        return previous;
+      }
+
+      return next;
+    });
+  }, [makeItems]);
+
+  const refinedMakeValues = useMemo(() => {
+    const makeCategory = currentRefinements.find(
+      (category) => category.attribute === "make"
+    );
+
+    return new Set(
+      makeCategory?.refinements.map((refinement) => String(refinement.value)) ?? []
+    );
+  }, [currentRefinements]);
+
+  const visibleMakeItems = useMemo(() => {
+    const merged = new Map<string, typeof makeItems[number]>();
+
+    allMakes.forEach((item) => merged.set(String(item.value), item));
+    makeItems.forEach((item) => merged.set(String(item.value), item));
+
+    return Array.from(merged.values())
+      .map((item) => ({
+        ...item,
+        isRefined: refinedMakeValues.has(String(item.value)),
+      }))
+      .sort((a, b) => String(a.label).localeCompare(String(b.label)));
+  }, [allMakes, makeItems, refinedMakeValues]);
+
+  const handleToggle = (item: typeof makeItems[number]) => {
+    const make = item.value as string;
+    const isCurrentlyRefined = refinedMakeValues.has(make);
+
+    if (isCurrentlyRefined) {
+      const modelMakeMap = getModelMakeMap();
+
+      const modelsToRemove = modelItems.filter(
+        (model) =>
+          model.isRefined &&
+          modelMakeMap.get(model.value as string) === make
+      );
+
       modelsToRemove.forEach((model) => {
         refineModel(model.value as string);
       });
 
-      // Then remove the make
       refineMake(make);
       return;
     }
 
+    // Add this make without clearing any previously selected makes.
     refineMake(make);
   };
 
   return (
     <ul
-      className={`
-    ${refinementListClassNames.list}
-    max-h-[300px]
-    overflow-y-auto
-    pr-2
-    [&::-webkit-scrollbar]:w-[5px]
-    [&::-webkit-scrollbar-track]:bg-transparent
-    [&::-webkit-scrollbar-thumb]:bg-gray-300
-    [&::-webkit-scrollbar-thumb]:rounded-full
-    lg:[scrollbar-width:thin]
-  `}
+      className={[
+        refinementListClassNames.list,
+        "max-h-[300px]",
+        "overflow-y-auto",
+        "pr-2",
+        "[&::-webkit-scrollbar]:w-[5px]",
+        "[&::-webkit-scrollbar-track]:bg-transparent",
+        "[&::-webkit-scrollbar-thumb]:bg-gray-300",
+        "[&::-webkit-scrollbar-thumb]:rounded-full",
+        "lg:[scrollbar-width:thin]",
+      ].join(" ")}
     >
-      {makeItems.map((item) => (
+      {visibleMakeItems.map((item) => (
         <li key={item.value}>
           <label className={refinementListClassNames.label}>
             <input
@@ -586,16 +663,8 @@ const MakeRefinementList = () => {
   );
 };
 
-
 const ModelRefinementList = () => {
-  const {
-    items: makeItems,
-    refine: refineMake,
-  } = useRefinementList({
-    attribute: "make",
-    limit: 200,
-    sortBy: ["name:asc"],
-  });
+  const { items: currentRefinements } = useCurrentRefinements();
 
   const {
     items: modelItems,
@@ -606,52 +675,77 @@ const ModelRefinementList = () => {
     sortBy: ["name:asc"],
   });
 
-  const selectedMakes = useMemo(
-    () =>
-      new Set(
-        makeItems
-          .filter((item) => item.isRefined)
-          .map((item) => item.value as string)
-      ),
-    [makeItems]
-  );
+  const {
+    refine: refineMake,
+  } = useRefinementList({
+    attribute: "make",
+    limit: 200,
+    sortBy: ["name:asc"],
+  });
 
+  const { hits } = useHits();
+
+  const selectedMakeValues = useMemo(() => {
+    const makeCategory = currentRefinements.find(
+      (category) => category.attribute === "make"
+    );
+
+    return new Set(
+      makeCategory?.refinements.map((refinement) => String(refinement.value)) ?? []
+    );
+  }, [currentRefinements]);
+
+  const selectedModelValues = useMemo(() => {
+    const modelCategory = currentRefinements.find(
+      (category) => category.attribute === "model"
+    );
+
+    return new Set(
+      modelCategory?.refinements.map((refinement) => String(refinement.value)) ?? []
+    );
+  }, [currentRefinements]);
+
+  // Always merge the latest hits into the existing model -> make cache.
+  // This makes the relationship update immediately after a make refinement.
   const modelMakeMap = useMemo(() => {
-    return getModelMakeMap();
-  }, [modelItems]);
+    const merged = new Map(getModelMakeMap());
 
-  /**
-   * Only show models belonging to the currently selected makes.
-   *
-   * If no make is selected, show all models.
-   */
+    hits.forEach((hit: any) => {
+      if (hit?.model && hit?.make) {
+        merged.set(String(hit.model), String(hit.make));
+      }
+    });
+
+    return merged;
+  }, [hits]);
+
   const visibleModelItems = useMemo(() => {
-    if (selectedMakes.size === 0) {
+    // No make selected: show all available models.
+    if (selectedMakeValues.size === 0) {
       return modelItems;
     }
 
+    // One or more makes selected: only show models belonging to those makes.
+    // Keep selected models visible during the InstantSearch update.
     return modelItems.filter((item) => {
-      const modelMake = modelMakeMap.get(item.value as string);
+      const model = String(item.value);
+      const make = modelMakeMap.get(model);
 
-      return modelMake
-        ? selectedMakes.has(modelMake)
-        : false;
+      return (
+        selectedModelValues.has(model) ||
+        (make ? selectedMakeValues.has(make) : false)
+      );
     });
-  }, [modelItems, selectedMakes, modelMakeMap]);
+  }, [modelItems, selectedMakeValues, selectedModelValues, modelMakeMap]);
 
   const handleToggle = (item: typeof modelItems[number]) => {
     const model = item.value as string;
     const make = modelMakeMap.get(model);
 
-    // Selecting model
     if (!item.isRefined) {
-      /**
-       * IMPORTANT:
-       * Add the model's make.
-       *
-       * Do NOT remove any existing make.
-       */
-      if (make && !selectedMakes.has(make)) {
+      // Selecting a model automatically selects its make.
+      // Existing makes stay selected.
+      if (make && !selectedMakeValues.has(make)) {
         refineMake(make);
       }
 
@@ -659,7 +753,7 @@ const ModelRefinementList = () => {
       return;
     }
 
-    // Deselect model
+    // Deselecting a model does not remove its make.
     refineModel(model);
   };
 
@@ -667,23 +761,13 @@ const ModelRefinementList = () => {
     <ul
       className={[
         refinementListClassNames.list,
-
-        // Same height behavior as Make
         "max-h-[300px]",
-
-        // Scroll when models exceed the limit
         "overflow-y-auto",
-
-        // Space for scrollbar
         "pr-2",
-
-        // Custom scrollbar
         "[&::-webkit-scrollbar]:w-[5px]",
         "[&::-webkit-scrollbar-track]:bg-transparent",
         "[&::-webkit-scrollbar-thumb]:bg-gray-300",
         "[&::-webkit-scrollbar-thumb]:rounded-full",
-
-        // Firefox
         "lg:[scrollbar-width:thin]",
       ].join(" ")}
     >
@@ -1065,10 +1149,7 @@ const SyncModelMakeMap = () => {
 
 // Sync component to remove orphaned models when makes change
 const SyncOrphanedModels = () => {
-  const { items: makeItems } = useRefinementList({
-    attribute: "make",
-    limit: 200,
-  });
+  const { items: currentRefinements } = useCurrentRefinements();
 
   const { items: modelItems, refine: refineModel } = useRefinementList({
     attribute: "model",
@@ -1076,16 +1157,16 @@ const SyncOrphanedModels = () => {
   });
 
   useEffect(() => {
+    const makeCategory = currentRefinements.find(
+      (category) => category.attribute === "make"
+    );
+
     const selectedMakes = new Set(
-      makeItems
-        .filter((item) => item.isRefined)
-        .map((item) => item.value as string)
+      makeCategory?.refinements.map((refinement) => String(refinement.value)) ?? []
     );
 
     const modelMakeMap = getModelMakeMap();
 
-    // Only remove a model when its make is KNOWN
-    // and that make was explicitly removed by the user.
     const modelsToRemove = modelItems.filter((model) => {
       if (!model.isRefined) return false;
 
@@ -1099,12 +1180,11 @@ const SyncOrphanedModels = () => {
         refineModel(model.value as string);
       });
     }
-  }, [makeItems, modelItems, refineModel]);
+  }, [currentRefinements, modelItems, refineModel]);
 
   return null;
 };
 
-// 2. Your cleaned up, error-free InventoryContent Component
 const InventoryContent = () => {
   const config = useAppConfig();
   const { isWishlistDrawerOpen } = useDrawer();
@@ -1353,29 +1433,8 @@ const InventoryContent = () => {
                   </button>
                 </div>
 
-                {/* ── Sidebar content: filters AND chat stay mounted ── */}
-                <div
-                  className={[
-                    "flex-1 flex-col min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px]",
-                    isAISearchActive ? "hidden" : "flex",
-                    "[&::-webkit-scrollbar]:w-[6px]",
-                    "[&::-webkit-scrollbar-track]:bg-transparent",
-                    "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
-                    "lg:[scrollbar-width:thin]",
-                  ].join(" ")}
-                >
-                  <div className="flex flex-col items-center gap-4 pb-0">
-                    <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
-                      <CustomHitsCount />
-                    </div>
-                    <div className="w-full border-b border-border text-center">
-                      <ClearFiltersButton />
-                    </div>
-                  </div>
-                  {renderFilterGroups()}
-                </div>
-
-                <div className={isAISearchActive ? "flex flex-col min-h-0 flex-1" : "hidden"}>
+                {/* ── Sidebar content: filters OR chat ── */}
+                {isAISearchActive ? (
                   <AIChatSidebar
                     messages={ai.messages}
                     input={ai.input}
@@ -1389,7 +1448,29 @@ const InventoryContent = () => {
                     onSuggestionClick={ai.handleSuggestion}
                     onLoadMore={ai.loadMore}
                   />
-                </div>
+                ) : (
+                  <div
+                    className={[
+                      "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px]",
+                      // visible thin scrollbar instead of the hidden one
+                      "[&::-webkit-scrollbar]:w-[6px]",
+                      "[&::-webkit-scrollbar-track]:bg-transparent",
+                      "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
+                      "lg:[scrollbar-width:thin]",
+                    ].join(" ")}
+                  >
+                    <div className="flex flex-col items-center gap-4 pb-0">
+                      <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
+                        <CustomHitsCount />
+                      </div>
+                      <div className="w-full border-b border-border text-center">
+                        <ClearFiltersButton />
+                      </div>
+                    </div>
+
+                    {renderFilterGroups()}
+                  </div>
+                )}
               </div>
             </aside>
 
@@ -1417,80 +1498,83 @@ const InventoryContent = () => {
                 </div>
               </div>
 
-              {/* ── AI Search results area — always mounted ── */}
-              <div className={isAISearchActive ? "" : "hidden"}>
-                {/* Mobile: chat + results merged into a single scrollable card */}
-                <div className="fixed inset-x-0 bottom-0 top-[215px] flex h-[calc(100dvh-228px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
-                  <AIChatSidebar
-                    messages={ai.messages}
-                    input={ai.input}
-                    loading={ai.loading}
-                    loadingMore={ai.loadingMore}
-                    hasSearched={ai.hasSearched}
-                    activeMessageId={ai.activeMessageId}
-                    onInputChange={ai.setInput}
-                    onSubmit={ai.handleSubmit}
-                    onViewMessage={ai.viewMessage}
-                    onSuggestionClick={ai.handleSuggestion}
-                    onLoadMore={ai.loadMore}
-                  />
-                </div>
-
-                {/* Desktop: AI results */}
-                <div className="hidden lg:block">
-                  <AIResultsPanel
-                    results={ai.results}
-                    filters={ai.filters}
-                    hasSearched={ai.hasSearched}
-                    loading={ai.loading}
-                    hasMore={ai.hasMore}
-                    loadingMore={ai.loadingMore}
-                    total={ai.total}
-                    onSuggestionClick={ai.handleSuggestion}
-                    onRemoveFilter={ai.removeFilter}
-                    onLoadMore={ai.loadMore}
-                  />
-                </div>
-              </div>
-
-              {/* ── Normal search results — always mounted ── */}
-              <div className={isAISearchActive ? "hidden" : ""}>
-                <div className="sticky z-40 lg:px-3 lg:pt-4 pb-2 lg:pt-2 bg-light-gray">
-                  <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
-                    <div className="relative w-full lg:max-w-[440px]">
-                      <SearchBox
-                        classNames={{
-                          root: "w-full",
-                          form: "relative flex items-center",
-                          input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[14px] outline-none transition-all focus:border-gray-400",
-                          submitIcon: "hidden",
-                          resetIcon: "hidden",
-                          loadingIcon: "hidden",
-                        }}
-                        placeholder="Search for Anything"
-                        autoFocus={false}
-                      />
-                      <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
-                    </div>
-                    <MobileControlsBar
-                      onOpenFilters={() => setIsMobileFilterOpen(true)}
-                      sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)}
+              {isAISearchActive ? (
+                /* ── AI Search results area ── */
+                <>
+                  {/* Mobile: chat + results merged into a single scrollable card — fixed modal overlay */}
+                  <div className="fixed inset-x-0 bottom-0 top-[215px] z-50 flex h-[calc(100dvh-238px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
+                    <AIChatSidebar
+                      messages={ai.messages}
+                      input={ai.input}
+                      loading={ai.loading}
+                      loadingMore={ai.loadingMore}
+                      hasSearched={ai.hasSearched}
+                      activeMessageId={ai.activeMessageId}
+                      onInputChange={ai.setInput}
+                      onSubmit={ai.handleSubmit}
+                      onViewMessage={ai.viewMessage}
+                      onSuggestionClick={ai.handleSuggestion}
+                      onLoadMore={ai.loadMore}
                     />
                   </div>
-                </div>
 
-                <div className="px-3">
-                  <GroupedCurrentRefinements />
-                </div>
+                  {/* Desktop: results grid to the right of the sidebar chat */}
+                  <div className="hidden lg:block">
+                    <AIResultsPanel
+                      results={ai.results}
+                      filters={ai.filters}
+                      hasSearched={ai.hasSearched}
+                      loading={ai.loading}
+                      hasMore={ai.hasMore}
+                      loadingMore={ai.loadingMore}
+                      total={ai.total}
+                      onSuggestionClick={ai.handleSuggestion}
+                      onRemoveFilter={ai.removeFilter}
+                      onLoadMore={ai.loadMore}
+                    />
+                  </div>
+                </>
+              ) : (
+                /* ── Normal search results ── */
+                <>
+                  {/* Search + Sort bar */}
+                  <div className="sticky z-40 lg:px-3 pt-4 pb-2 lg:pt-2 bg-light-gray">
+                    <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
+                      <div className="relative w-full lg:max-w-[440px]">
+                        <SearchBox
+                          classNames={{
+                            root: "w-full",
+                            form: "relative flex items-center",
+                            input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[14px] outline-none transition-all focus:border-gray-400",
+                            submitIcon: "hidden",
+                            resetIcon: "hidden",
+                            loadingIcon: "hidden",
+                          }}
+                          placeholder="Search for Anything"
+                          autoFocus={false}
+                        />
+                        <Search className="h-[20px] w-[18px] absolute left-2 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
+                      </div>
+                      <MobileControlsBar
+                        onOpenFilters={() => setIsMobileFilterOpen(true)}
+                        sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)}
+                      />
+                    </div>
+                  </div>
 
-                <div className="mb-4">
-                  <SearchResultsWrapper>
-                    <NoResultsHandler>
-                      <CustomInfiniteHits hitComponent={HitCard} />
-                    </NoResultsHandler>
-                  </SearchResultsWrapper>
-                </div>
-              </div>
+                  <div className="px-3">
+                    <GroupedCurrentRefinements />
+                  </div>
+
+                  <div className="mb-4">
+                    <SearchResultsWrapper>
+                      <NoResultsHandler>
+                        <CustomInfiniteHits hitComponent={HitCard} />
+                      </NoResultsHandler>
+                    </SearchResultsWrapper>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
