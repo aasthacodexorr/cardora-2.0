@@ -206,7 +206,8 @@ export async function POST(req: Request) {
       conversation,
       loadMore,
       page: requestedPage,
-      previousResultCount, // total hits from the last search turn, if any
+      previousResultCount,  
+      directFilters, 
     } = body;
 
     const config = await getAppConfig();
@@ -225,13 +226,31 @@ export async function POST(req: Request) {
     let parsedFilters: AIResponse;
 
     if (loadMore) {
-      // Pagination request: reuse the filters already agreed on, skip the LLM call entirely.
-      // Always "search" intent since we only ever loadMore on top of an existing result set.
-      parsedFilters = { ...(filters || {}), intent: "search" } as AIResponse;
-    } else {
-      if (!message) {
-        return NextResponse.json({ error: "Message is required" }, { status: 400 });
-      }
+  parsedFilters = { ...(filters || {}), intent: "search" } as AIResponse;
+} else if (directFilters) {
+  // Suggestion-chip search: apply exactly these filters, no LLM guessing.
+  // Normalize casing against real facet values so "Sedan" vs "sedan"
+  // can't silently zero out the result set.
+  const facetValues = await getFacetValues(typesense, config.site.collection);
+  const matchFacet = (values: string[] | undefined, list: string[]) =>
+    values?.length
+      ? values.map((v) => list.find((fv) => fv.toLowerCase() === v.toLowerCase()) ?? v)
+      : values;
+
+  parsedFilters = {
+    ...directFilters,
+    body_type: matchFacet(directFilters.body_type, facetValues.body_type ?? []),
+    vehicle_type: matchFacet(directFilters.vehicle_type, facetValues.vehicle_type ?? []),
+    transmission: matchFacet(directFilters.transmission, facetValues.transmission ?? []),
+    fuel_type: matchFacet(directFilters.fuel_type, facetValues.fuel_type ?? []),
+    exterior_color: matchFacet(directFilters.exterior_color, facetValues.exterior_color ?? []),
+    location: matchFacet(directFilters.location, facetValues.location ?? []),
+    intent: "search",
+  } as AIResponse;
+} else {
+  if (!message) {
+    return NextResponse.json({ error: "Message is required" }, { status: 400 });
+  }
 
       const apiKey = process.env.OPENAI_API_KEY;
       if (!apiKey) {
