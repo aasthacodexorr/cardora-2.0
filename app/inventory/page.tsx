@@ -432,7 +432,7 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
               <div
                 key={item.hit.objectID}
                 className={[
-                  "flex flex-col h-full p-[9px]",
+                  "flex flex-col h-full px-0 lg:px-[9px] py-[9px]",
                   isNew && loadPhase === "revealing" ? "animate-inventory-card-in" : "",
                 ].join(" ")}
               >
@@ -1214,10 +1214,10 @@ const InventoryContent = () => {
         </div>
 
         {/* ── Two-column layout ── */}
-        <div className="bg-light-gray lg:-mt-4 min-h-screen lg:px-14 px-2 py-[20px] overflow-visible">
+        <div className="bg-light-gray lg:-mt-4 min-h-screen lg:px-14 px-3 py-[20px] overflow-visible">
 
           {/* Mobile-only Search / AI Search toggle — desktop keeps its own copy inside the sidebar */}
-          <div className="flex lg:hidden items-center gap-1 max-w-[1550px] mx-auto mb-3 p-[6px] rounded-[12px] bg-white border border-border-standard shadow-sm">
+          <div className="flex lg:hidden items-center gap-1 max-w-[1550px] mx-auto mb-3  p-[6px] rounded-[12px] bg-white border border-border-standard shadow-sm">
             <button
               type="button"
               onClick={() => setIsAISearchActive(false)}
@@ -1229,7 +1229,7 @@ const InventoryContent = () => {
               ].join(" ")}
             >
               <Search className="w-3.5 h-3.5" />
-              Search
+              Search 
             </button>
             <button
               type="button"
@@ -1241,7 +1241,7 @@ const InventoryContent = () => {
                   : "text-gray-500",
               ].join(" ")}
             >
-              <span className="text-[11px]">✦</span>
+              <span className="text-[11px]">✦</span> 
               AI Search
             </button>
           </div>
@@ -1399,7 +1399,7 @@ const InventoryContent = () => {
                 /* ── Normal search results ── */
                 <>
                   {/* Search + Sort bar */}
-                  <div className="sticky z-40 px-5 pt-4 pb-2 lg:pt-2 bg-light-gray">
+                  <div className="sticky z-40 lg:px-3 pt-4 pb-2 lg:pt-2 bg-light-gray">
                     <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
                       <div className="relative w-full lg:max-w-[440px]">
                         <SearchBox
@@ -1423,11 +1423,11 @@ const InventoryContent = () => {
                     </div>
                   </div>
 
-                  <div className="px-4">
+                  <div className="px-3">
                     <GroupedCurrentRefinements />
                   </div>
 
-                  <div className="mb-4 px-2">
+                  <div className="mb-4">
                     <SearchResultsWrapper>
                       <NoResultsHandler>
                         <CustomInfiniteHits hitComponent={HitCard} />
