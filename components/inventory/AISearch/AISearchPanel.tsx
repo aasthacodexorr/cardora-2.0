@@ -45,13 +45,18 @@ type Message = {
 // ─────────────────────────────────────────────
 // Quick-start suggestion chips
 // ─────────────────────────────────────────────
-const SUGGESTIONS = [
-  "Family SUV under $30,000",
-  "Fuel-efficient hybrid, low mileage",
-  "All-wheel drive for winter",
-  "A truck that can tow a trailer",
-  "First car for a new driver",
-  "Luxury sedan with leather seats",
+type SuggestionChip = {
+  label: string;
+  filters?: AISearchFilters; // when present, applied directly — no LLM interpretation
+};
+
+const SUGGESTIONS: SuggestionChip[] = [
+  { label: "Family SUV under $30,000", filters: { body_type: ["suv"], maxPrice:30000} },
+  { label: "Fuel-efficient hybrid, low mileage" },
+  { label: "Cars with automatic drive", filters: { transmission: ["Automatic"] } },
+  { label: "A truck that can tow a trailer", filters: { body_type: ["truck"] } },
+  { label: "First car for a new driver" },
+  { label: "Luxury sedan with leather seats", filters: { body_type: ["Sedan"] } },
 ];
  
 const CAROUSEL_VISIBLE_DOTS = 7;
@@ -187,7 +192,7 @@ interface AIChatSidebarProps {
   onInputChange: (v: string) => void;
   onSubmit: (e?: React.FormEvent) => void;
   onViewMessage: (messageId: string) => void;
-  onSuggestionClick: (text: string) => void;
+  onSuggestionClick: (chip: SuggestionChip) => void;
   onLoadMore: () => void;
 }
 
@@ -312,13 +317,13 @@ export const AIChatSidebar = ({
             <p className="text-gray-600 font-semibold text-sm">Or start with one of these</p>
             {SUGGESTIONS.map((s) => (
               <button
-                key={s}
+                key={s.label}
                 type="button"
                 onClick={() => onSuggestionClick(s)}
                 className="flex items-center cursor-pointer gap-1 px-3 py-1.5 w-fit rounded-full border border-gray-200 text-[12px] text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium cursor-pointer"
               >
                 <span className="text-brand text-[10px]">✦</span>
-                {s}
+                {s.label}
               </button>
             ))}
           </div>
@@ -377,7 +382,7 @@ interface AIResultsPanelProps {
   hasMore: boolean;
   loadingMore: boolean;
   total: number;
-  onSuggestionClick: (text: string) => void;
+  onSuggestionClick: (chip: SuggestionChip) => void;
   onRemoveFilter: (key: keyof AISearchFilters, value?: any) => void;
   onLoadMore: () => void;
 }
@@ -434,12 +439,12 @@ export const AIResultsPanel = ({
         <div className="flex flex-wrap justify-center gap-3 max-w-xl">
           {SUGGESTIONS.map((s) => (
             <button
-              key={s}
+              key={s?.label}
               onClick={() => onSuggestionClick(s)}
               className="flex items-center cursor-pointer gap-1.5 px-4.5 py-3 rounded-full border border-gray-300 text-base text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium shadow-sm"
             >
               <span className="text-brand text-sm">✦</span>
-              {s}
+              {s.label}
             </button>
           ))}
         </div>
@@ -530,6 +535,45 @@ export function useAISearch() {
   const filters = activeSnapshot?.filters ?? {};
   const hasMore = activeSnapshot?.hasMore ?? false;
   const total = activeSnapshot?.total ?? 0;
+
+  const doDirectSearch = async (label: string, presetFilters: AISearchFilters) => {
+  const userMessage: Message = { id: Date.now().toString(), role: "user", text: label };
+  const nextMessages = [...messages, userMessage];
+  setMessages(nextMessages);
+  setInput("");
+  setLoading(true);
+
+  try {
+    const res = await fetch("/api/ai-search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ directFilters: presetFilters }),
+    });
+    if (!res.ok) throw new Error("API error");
+
+    const data = await res.json();
+    const aiMessageId = `${Date.now()}-ai`;
+    const aiMessage: Message = {
+      id: aiMessageId,
+      role: "ai",
+      text: data.message,
+      resultsSnapshot: {
+        results: data.results || [],
+        filters: data.filters || {},
+        total: data.total || 0,
+        page: data.page || 1,
+        hasMore: !!data.hasMore,
+      },
+    };
+    setMessages([...nextMessages, aiMessage]);
+    setHasSearched(true);
+    setActiveMessageId(aiMessageId);
+  } catch {
+    setMessages([...nextMessages, { id: Date.now().toString(), role: "ai", text: "Sorry, something went wrong. Please try again." }]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const doSearch = async (
     userText: string,
@@ -667,9 +711,13 @@ export function useAISearch() {
     doSearch(input.trim(), filters, messages, activeSnapshot?.total);
   };
 
-  const handleSuggestion = (text: string) => {
+  const handleSuggestion = (chip: SuggestionChip) => {
     if (loading) return;
-    doSearch(text, filters, messages, activeSnapshot?.total);
+    if (chip.filters) {
+      doDirectSearch(chip.label, chip.filters);
+    } else {
+      doSearch(chip.label, filters, messages, activeSnapshot?.total);
+    }
   };
 
   const removeFilter = (key: keyof AISearchFilters, value?: any) => {
