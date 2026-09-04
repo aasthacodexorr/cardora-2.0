@@ -25,9 +25,7 @@ type AISearchFilters = {
   fuel_type?: string[];
 };
 
-// Snapshot of the results a given AI response returned, frozen at that point in time.
-// Each AI message owns its own snapshot so switching between prompts never
-// mutates another message's results.
+ 
 type ResultsSnapshot = {
   results: any[];
   filters: AISearchFilters;
@@ -55,13 +53,7 @@ const SUGGESTIONS = [
   "First car for a new driver",
   "Luxury sedan with leather seats",
 ];
-
-// ─────────────────────────────────────────────
-// Mobile results carousel — one full-width card per swipe, native scroll-snap.
-// Rendered INLINE inside the chat message list (see AIChatSidebar below) so it
-// lives in the exact same scroll container as the conversation, right under
-// the AI message that produced it.
-// ─────────────────────────────────────────────
+ 
 const CAROUSEL_VISIBLE_DOTS = 7;
 const CAROUSEL_DOT_SLOT = 12; // px per dot "slot" (dot + gap), tune to taste
 
@@ -81,9 +73,7 @@ const MobileResultsCarousel = ({
   const trackRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-
-  // Reset to the first card whenever the underlying result set changes
-  // (new AI response, filter change, etc.) so we never point past the end.
+ 
   useEffect(() => {
     setActiveIndex(0);
     trackRef.current?.scrollTo({ left: 0 });
@@ -156,9 +146,7 @@ const MobileResultsCarousel = ({
           </div>
         )}
       </div>
-
-      {/* Windowed dot pagination — only ~7 dots visible, rest reachable by
-          scrolling; the active dot auto-centers itself via scrollIntoView above. */}
+ 
       {results.length > 1 && (
         <div
           ref={dotsRef}
@@ -233,7 +221,7 @@ export const AIChatSidebar = ({
   return (
     <div className="flex flex-col min-h-0 flex-1 mt-0 sm:mb-0">
       {/* Fixed Clutch Assistant Header */}
-      <div className="shrink-0 bg-white border-b border-gray-200 px-[15px] py-0">
+      <div className="shrink-0 bg-white border-b border-gray-200 px-0 py-0">
         <div className="flex items-center gap-">
           {/* Assistant icon */}
           <div className="w-20 h-20 flex justify-center items-center">
@@ -256,7 +244,7 @@ export const AIChatSidebar = ({
       <div
         ref={scrollContainerRef}
         className={[
-          "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[12px] pb-[10px] space-y-3",
+          "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px] space-y-3",
           "[&::-webkit-scrollbar]:w-[5px]",
           "[&::-webkit-scrollbar-track]:bg-transparent",
           "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
@@ -304,12 +292,7 @@ export const AIChatSidebar = ({
                   )}
                 </div>
               </div>
-
-              {/* Mobile only: result cards for the active AI message render
-                  right here, inline in the chat thread, one swipe at a time.
-                  The negative margin lets cards run edge-to-edge despite the
-                  list's own padding; hidden entirely at sm+ (desktop uses the
-                  grid in AIResultsPanel instead). */}
+ 
               {msg.role === "ai" && msg.resultsSnapshot && isActive && (
                 <div className="-mx-[15px]">
                   <MobileResultsCarousel
@@ -323,11 +306,7 @@ export const AIChatSidebar = ({
             </div>
           );
         })}
-
-        {/* Quick-start suggestions — only before the first search, and only
-            on mobile inline in the thread (matches the "Or start with one of these"
-            mobile flow). Desktop's larger welcome screen still lives in
-            AIResultsPanel, and we don't show options in the sidebar on desktop. */}
+ 
         {messages.length === 1 && !hasSearched && !loading && (
           <div className="sm:hidden flex flex-col gap-2 mt-5">
             <p className="text-gray-600 font-semibold text-sm">Or start with one of these</p>
@@ -357,7 +336,7 @@ export const AIChatSidebar = ({
       </div>
 
       {/* Input — fixed at bottom within the modal */}
-      <div className="shrink-0 px-[15px] pb-[15px] pt-[10px] border-t border-gray-100 bg-white">
+      <div className="shrink-0 px-[15px] pt-[15px] pb-[max(15px,env(safe-area-inset-bottom))] border-t border-gray-200 bg-white">
         <form onSubmit={onSubmit} className="relative flex items-center">
           <textarea
             rows={1}
@@ -584,11 +563,7 @@ export function useAISearch() {
 
       const data = await res.json();
       const aiMessageId = `${Date.now()}-ai`;
-
-      // Chat-only replies (greetings, small talk — anything with no real
-      // search intent) don't carry results. Leave the results panel exactly
-      // as it was — don't flip on the empty state, don't attach a snapshot,
-      // don't make this message "active".
+ 
       if (data.isChat) {
         const aiMessage: Message = {
           id: aiMessageId,
@@ -612,8 +587,6 @@ export function useAISearch() {
 
         setMessages([...nextMessages, aiMessage]);
         setHasSearched(true);
-        // New response becomes the one shown, same as before — but now it's
-        // just a pointer, so older snapshots stay intact and viewable.
         setActiveMessageId(aiMessageId);
       }
     } catch {
