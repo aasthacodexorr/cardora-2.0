@@ -1363,7 +1363,7 @@ const InventoryContent = () => {
                 /* ── AI Search results area ── */
                 <>
                   {/* Mobile: chat + results merged into a single scrollable card — fixed modal overlay */}
-                  <div className="fixed inset-x-0 bottom-0 top-[208px] z-50 flex h-[calc(100dvh-208px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm">
+                  <div className="fixed inset-x-0 bottom-0 top-[215px] z-50 flex h-[calc(100dvh-238px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
                     <AIChatSidebar
                       messages={ai.messages}
                       input={ai.input}
