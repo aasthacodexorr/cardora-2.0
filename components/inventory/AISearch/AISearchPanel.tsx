@@ -315,7 +315,7 @@ export const AIChatSidebar = ({
                 key={s}
                 type="button"
                 onClick={() => onSuggestionClick(s)}
-                className="flex items-center gap-1 px-3 py-1.5 w-fit rounded-full border border-gray-200 text-[12px] text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium cursor-pointer"
+                className="flex items-center cursor-pointer gap-1 px-3 py-1.5 w-fit rounded-full border border-gray-200 text-[12px] text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium cursor-pointer"
               >
                 <span className="text-brand text-[10px]">✦</span>
                 {s}
@@ -436,7 +436,7 @@ export const AIResultsPanel = ({
             <button
               key={s}
               onClick={() => onSuggestionClick(s)}
-              className="flex items-center gap-1.5 px-4.5 py-3 rounded-full border border-gray-300 text-base text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium shadow-sm"
+              className="flex items-center cursor-pointer gap-1.5 px-4.5 py-3 rounded-full border border-gray-300 text-base text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium shadow-sm"
             >
               <span className="text-brand text-sm">✦</span>
               {s}
