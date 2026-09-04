@@ -1147,7 +1147,17 @@ const SyncModelMakeMap = () => {
   return null;
 };
 
-// Sync component to remove orphaned models when makes change
+// Sync component to remove orphaned models when a make is deselected,
+// and to fill in a model's make once the model -> make mapping becomes known.
+//
+// IMPORTANT: "this model's make isn't currently selected" is NOT the same as
+// "this model's make was just removed". A model selected before its make is
+// known (e.g. a model that hasn't appeared in loaded hits yet) will briefly
+// have no matching selected make — that's expected, not an orphan. We only
+// treat a model as orphaned when a make it belonged to transitions from
+// selected -> not selected (i.e. was actually removed, e.g. via the "X" on
+// a make chip). Conflating the two caused models to unselect themselves
+// right after being selected, requiring a second click to "stick".
 const SyncOrphanedModels = () => {
   const { items: currentRefinements } = useCurrentRefinements();
 
@@ -1155,6 +1165,13 @@ const SyncOrphanedModels = () => {
     attribute: "model",
     limit: 200,
   });
+
+  const { refine: refineMake } = useRefinementList({
+    attribute: "make",
+    limit: 200,
+  });
+
+  const previousSelectedMakesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const makeCategory = currentRefinements.find(
@@ -1165,22 +1182,44 @@ const SyncOrphanedModels = () => {
       makeCategory?.refinements.map((refinement) => String(refinement.value)) ?? []
     );
 
+    const previousSelectedMakes = previousSelectedMakesRef.current;
     const modelMakeMap = getModelMakeMap();
 
-    const modelsToRemove = modelItems.filter((model) => {
-      if (!model.isRefined) return false;
+    // A make counts as "removed" only if it was selected on the previous
+    // run and is no longer selected now.
+    const removedMakes = new Set(
+      Array.from(previousSelectedMakes).filter((make) => !selectedMakes.has(make))
+    );
 
-      const make = modelMakeMap.get(model.value as string);
+    if (removedMakes.size > 0) {
+      const modelsToRemove = modelItems.filter((model) => {
+        if (!model.isRefined) return false;
 
-      return Boolean(make && !selectedMakes.has(make));
-    });
+        const make = modelMakeMap.get(model.value as string);
 
-    if (modelsToRemove.length > 0) {
+        return Boolean(make && removedMakes.has(make));
+      });
+
       modelsToRemove.forEach((model) => {
         refineModel(model.value as string);
       });
     }
-  }, [currentRefinements, modelItems, refineModel]);
+
+    // Once a selected model's make becomes known (it may not have been at
+    // selection time), make sure the make is selected too — matching the
+    // "selecting a model selects its make" behavior everywhere else.
+    modelItems.forEach((model) => {
+      if (!model.isRefined) return;
+
+      const make = modelMakeMap.get(model.value as string);
+
+      if (make && !selectedMakes.has(make) && !removedMakes.has(make)) {
+        refineMake(make);
+      }
+    });
+
+    previousSelectedMakesRef.current = selectedMakes;
+  }, [currentRefinements, modelItems, refineModel, refineMake]);
 
   return null;
 };
