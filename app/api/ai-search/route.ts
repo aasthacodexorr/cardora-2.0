@@ -64,8 +64,11 @@ const SUGGESTION_FIELDS: { field: FilterField; label: string }[] = [
   { field: "transmission", label: "a transmission (automatic/manual)" },
 ];
 
+ 
+const SOLD_EXCLUSION_FILTER = "status:!=Sold";
+
 function buildFilterByStr(f: AIResponse): string {
-  const parts: string[] = [];
+  const parts: string[] = [SOLD_EXCLUSION_FILTER];
   if (f.make?.length) parts.push(`make:=[${f.make.join(",")}]`);
   if (f.model?.length) parts.push(`model:=[${f.model.join(",")}]`);
   if (f.year?.length) parts.push(`year:=[${f.year.join(",")}]`);
@@ -223,6 +226,9 @@ export async function POST(req: Request) {
       connectionTimeoutSeconds: 5,
     });
 
+ 
+    const isDirectOrLoadMore = Boolean(loadMore || directFilters);
+
     let parsedFilters: AIResponse;
 
     if (loadMore) {
@@ -289,7 +295,7 @@ export async function POST(req: Request) {
 
   - If intent is "search":
     - When the message includes a VAGUE/RELATIVE qualifier that needs interpretation to become a concrete filter (e.g. "latest model", "newest", "affordable", "low mileage" with no number, "reliable"), make a reasonable concrete assumption rather than leaving it unfiltered (e.g. "latest" -> year filter for the current year and one prior, "affordable" -> a sensible maxPrice for the vehicle class). Set "note" to ONE short sentence plainly stating the assumption you made, e.g. "I interpreted 'latest' as 2023 or newer." Omit "note" when the request was already concrete (e.g. "under $30k" needs no note).
-    - ALWAYS set "followUp": one short, SPECIFIC next question inviting further narrowing, tailored to what's genuinely still open given the fields NOT yet set (pick 1-2 concrete, relevant fields — e.g. body style + budget, or "tell me the oldest year you'll accept and whether you prefer SUV or sedan"). Do not repeat a generic list of every field every time; vary it and keep it relevant to what's missing.
+    - ALWAYS set "followUp": one short, SPECIFIC next question inviting further narrowing, tailored to what's genuinely still open given the fields NOT yet set. Prioritize whichever of these will most meaningfully cut down the result set and isn't already set: transmission (automatic/manual), an odometer/mileage ceiling (e.g. "under 30,000 km?"), body style, or budget. Pick 1 (at most 2) concrete, relevant fields — do not repeat a generic list of every field every time, and never ask about a field that is already set in "Current Active Filters".
     - Decide for EACH filter field whether the new message is a REFINEMENT (merge onto the existing value) or should be dropped/reset, instead of always merging everything forward:
     1. REFINEMENT (merge/keep): the new message adds a constraint that is compatible with what's already set, explicitly says to add/also/include something, narrows a range, or the conversation as a whole shows the user is still pursuing the same combination of criteria (e.g. "under $30k" added to an existing SUV search, "add AWD", "make it 2022 or newer", or a follow-up that clearly still wants everything discussed so far).
     2. RESET/DROP: the new message reads as a short, standalone criterion (often just a make, model, or type — e.g. "honda", "jetta", "something cheaper") that does NOT reference or build on the previously active filters. Treat this as the user pivoting to a narrower or different idea, not appending to everything said so far. When this happens, keep only what the new message itself specifies, plus any earlier filter the user explicitly and deliberately typed themselves (not one you inferred/normalized on their behalf) that is still compatible with the new message. Drop everything else, especially filters that were only ever your own inference from a vaguer earlier message (e.g. mapping "fuel-efficient, low mileage" to fuel_type/maxOdometer) — those don't outlive a pivot to a completely different, more specific criterion.
@@ -503,13 +509,15 @@ export async function POST(req: Request) {
             relaxationSteps
           )} — showing ${totalHits} result${totalHits > 1 ? "s" : ""} instead.`;
 
-          const suggestions = SUGGESTION_FIELDS.filter(
-            (s) => activeFilters[s.field] === undefined
-          )
-            .slice(0, 2)
-            .map((s) => s.label);
-          aiMessage += ` Want to bring back what I removed, or set ${suggestions.length > 0 ? joinNatural(suggestions) : "a different budget or year range"
-            }?`;
+          if (!isDirectOrLoadMore) {
+            const suggestions = SUGGESTION_FIELDS.filter(
+              (s) => activeFilters[s.field] === undefined
+            )
+              .slice(0, 2)
+              .map((s) => s.label);
+            aiMessage += ` Want to bring back what I removed, or set ${suggestions.length > 0 ? joinNatural(suggestions) : "a different budget or year range"
+              }?`;
+          }
         } else {
           aiMessage =
             "I still couldn't find any vehicles even after broadening the search. Try a different make or model.";
@@ -525,7 +533,11 @@ export async function POST(req: Request) {
         }
         if (parsedFilters.followUp) {
           aiMessage += ` ${parsedFilters.followUp}`;
-        } else {
+        } else if (!isDirectOrLoadMore) {
+          // Only fall back to the generic canned suggestion list for
+          // conversational (LLM-driven) searches. Direct-filter (default
+          // option) searches get their own single, targeted follow-up
+          // question attached client-side instead — see AISearchPanel.tsx.
           const suggestions = SUGGESTION_FIELDS.filter(
             (s) => activeFilters[s.field] === undefined
           )
