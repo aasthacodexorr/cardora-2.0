@@ -520,6 +520,119 @@ const GroupedCurrentRefinements = () => {
   );
 };
 
+// A RefinementList that keeps all previously-seen options visible even when
+// other filters (e.g. price range) narrow the hit set and Typesense stops
+// returning some facet values. Options that drop to 0 are shown greyed out
+// so the user can still interact with them.
+type RefinementItem = {
+  label: string;
+  value: string;
+  count: number;
+  isRefined: boolean;
+};
+
+const StableRefinementList = ({
+  attribute,
+  sortBy,
+  limit = 200,
+}: {
+  attribute: string;
+  sortBy?: readonly string[];
+  limit?: number;
+}) => {
+  const { items, refine } = useRefinementList({
+    attribute,
+    limit,
+    sortBy: sortBy as any,
+  });
+
+  // Cache every item we've ever seen so they don't vanish when a price
+  // filter narrows the result set.
+  // Key is the EXACT value from Typesense (case-sensitive) so refine() works correctly.
+  const seenItemsRef = useRef<Map<string, RefinementItem>>(new Map());
+
+  // Merge latest items into the cache.
+  // Never overwrite a previously non-zero count with 0 — that happens when a
+  // price/range filter narrows results and Typesense drops facet values entirely.
+  items.forEach((item) => {
+    const key = String(item.value);
+    const existing = seenItemsRef.current.get(key);
+    seenItemsRef.current.set(key, {
+      label: item.label,
+      value: key,
+      count: item.count > 0 ? item.count : (existing?.count ?? 0),
+      isRefined: item.isRefined,
+    });
+  });
+
+  const liveValues = new Map(items.map((i) => [String(i.value), i]));
+
+  // Deduplicate by normalised label so variants like "Black"/"BLACK" or
+  // "Pickup Truck"/"Pickup-Truck" collapse into one row.
+  // Normalise: lowercase + strip all non-alphanumeric characters.
+  const normalizedMap = new Map<string, RefinementItem>();
+  Array.from(seenItemsRef.current.values()).forEach((cached) => {
+    const live = liveValues.get(cached.value);
+    const resolved: RefinementItem = live
+      ? {
+          label: live.label,
+          value: String(live.value),
+          count: live.count > 0 ? live.count : cached.count,
+          isRefined: live.isRefined,
+        }
+      : { ...cached, isRefined: false };
+
+    // Strip case + all non-alphanumeric chars so "Pickup Truck", "Pickup-Truck",
+    // "PICKUP TRUCK" all collapse to the same key "pickuptruck".
+    const normKey = resolved.label.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+    const existing = normalizedMap.get(normKey);
+    if (!existing) {
+      normalizedMap.set(normKey, resolved);
+    } else {
+      // Merge: sum counts, mark refined if either is.
+      // Prefer the label that is NOT all-uppercase; if both are mixed case, keep the longer one.
+      const existingIsAllCaps = existing.label === existing.label.toUpperCase();
+      const resolvedIsAllCaps = resolved.label === resolved.label.toUpperCase();
+      let preferredLabel = existing.label;
+      if (existingIsAllCaps && !resolvedIsAllCaps) preferredLabel = resolved.label;
+      else if (!existingIsAllCaps && resolvedIsAllCaps) preferredLabel = existing.label;
+      else if (resolved.label.length > existing.label.length) preferredLabel = resolved.label;
+
+      normalizedMap.set(normKey, {
+        label: preferredLabel,
+        // Keep the value of whichever variant has the higher count so refine() hits the dominant entry.
+        value: resolved.count >= existing.count ? resolved.value : existing.value,
+        count: existing.count + resolved.count,
+        isRefined: existing.isRefined || resolved.isRefined,
+      });
+    }
+  });
+
+  const visibleItems = Array.from(normalizedMap.values()).sort((a, b) => {
+    if (sortBy?.includes("name:desc")) return b.label.localeCompare(a.label);
+    return a.label.localeCompare(b.label);
+  });
+
+  return (
+    <ul className={refinementListClassNames.list}>
+      {visibleItems.map((item) => (
+        <li key={item.value}>
+          <label className={refinementListClassNames.label}>
+            <input
+              type="checkbox"
+              checked={item.isRefined}
+              onChange={() => refine(item.value)}
+              className={refinementListClassNames.checkbox}
+            />
+            <span className={refinementListClassNames.labelText}>{item.label}</span>
+            <span className={refinementListClassNames.count}>{item.count}</span>
+          </label>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
 const MakeRefinementList = () => {
   const { items: currentRefinements } = useCurrentRefinements();
 
@@ -885,28 +998,37 @@ const PriceRangeFilter = () => {
   const [selectedMin, setSelectedMin] = useState(dynamicMin);
   const [selectedMax, setSelectedMax] = useState(dynamicMax);
 
-  // ── NEW: Track if the user is actively dragging a slider track ──
+  // ── Track if the user is actively dragging a slider track ──
   const isDragging = useRef(false);
+  // ── Track the previous committed start values to detect real changes ──
+  const prevStartRef = useRef<readonly [number | undefined, number | undefined]>([undefined, undefined]);
 
-  // Sync server changes to local state ONLY if the user isn't touching the slider
+  // Sync server-side committed range (start) to local state.
+  // We deliberately do NOT include dynamicMin/dynamicMax in the deps so that
+  // adding a second filter (which narrows the hit set and shifts range.min/max)
+  // does NOT overwrite a price the user already applied.
   useEffect(() => {
     if (isDragging.current) return;
 
-    const min =
-      typeof start?.[0] === "number" && Number.isFinite(start[0])
-        ? start[0]
-        : dynamicMin;
+    const prevStart = prevStartRef.current;
+    const startMin = typeof start?.[0] === "number" && Number.isFinite(start[0]) ? start[0] : undefined;
+    const startMax = typeof start?.[1] === "number" && Number.isFinite(start[1]) ? start[1] : undefined;
 
-    const max =
-      typeof start?.[1] === "number" && Number.isFinite(start[1])
-        ? start[1]
-        : dynamicMax;
+    // Only update local state when the committed range actually changed
+    // (e.g. user cleared the price filter via the chip, or on initial load).
+    if (startMin === prevStart[0] && startMax === prevStart[1]) return;
+
+    prevStartRef.current = [startMin, startMax];
+
+    const min = startMin ?? dynamicMin;
+    const max = startMax ?? dynamicMax;
 
     setSelectedMin(min);
     setSelectedMax(max);
     setMinInput(String(min));
     setMaxInput(String(max));
-  }, [dynamicMin, dynamicMax, start]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [start]);
 
   const handleApply = () => {
     const minValue = minInput !== "" ? Math.max(Number(minInput), dynamicMin) : dynamicMin;
@@ -1333,16 +1455,16 @@ const InventoryContent = () => {
   const renderFilterGroups = () => (
     <div className="space-y-[18px]">
       <FilterGroup title="LOCATION" isOpen={openFilter === "LOCATION"} onToggle={() => setOpenFilter(openFilter === "LOCATION" ? null : "LOCATION")}>
-        <RefinementList attribute="location" classNames={refinementListClassNames} />
+        <StableRefinementList attribute="location" />
       </FilterGroup>
       <FilterGroup title="VEHICLE TYPE" isOpen={openFilter === "VEHICLE TYPE"} onToggle={() => setOpenFilter(openFilter === "VEHICLE TYPE" ? null : "VEHICLE TYPE")}>
-        <RefinementList attribute="vehicle_type" classNames={refinementListClassNames} />
+        <StableRefinementList attribute="vehicle_type" />
       </FilterGroup>
       <FilterGroup title="PRICE" isOpen={openFilter === "PRICE"} onToggle={() => setOpenFilter(openFilter === "PRICE" ? null : "PRICE")}>
         <PriceRangeFilter />
       </FilterGroup>
       <FilterGroup title="YEAR" isOpen={openFilter === "YEAR"} onToggle={() => setOpenFilter(openFilter === "YEAR" ? null : "YEAR")}>
-        <RefinementList attribute="year" sortBy={["name:desc"]} classNames={refinementListClassNames} />
+        <StableRefinementList attribute="year" sortBy={["name:desc"]} />
       </FilterGroup>
       <FilterGroup title="MAKE" isOpen={openFilter === "MAKE"} onToggle={() => setOpenFilter(openFilter === "MAKE" ? null : "MAKE")}>
         <MakeRefinementList />
@@ -1354,16 +1476,16 @@ const InventoryContent = () => {
         <OdometerRangeFilter />
       </FilterGroup>
       <FilterGroup title="EXTERIOR COLOR" isOpen={openFilter === "EXTERIOR COLOR"} onToggle={() => setOpenFilter(openFilter === "EXTERIOR COLOR" ? null : "EXTERIOR COLOR")}>
-        <RefinementList attribute="exterior_color" classNames={refinementListClassNames} />
+        <StableRefinementList attribute="exterior_color" />
       </FilterGroup>
       <FilterGroup title="BODY TYPE" isOpen={openFilter === "BODY TYPE"} onToggle={() => setOpenFilter(openFilter === "BODY TYPE" ? null : "BODY TYPE")}>
-        <RefinementList attribute="body_type" classNames={refinementListClassNames} />
+        <StableRefinementList attribute="body_type" />
       </FilterGroup>
       <FilterGroup title="TRANSMISSION" isOpen={openFilter === "TRANSMISSION"} onToggle={() => setOpenFilter(openFilter === "TRANSMISSION" ? null : "TRANSMISSION")}>
-        <RefinementList attribute="transmission" classNames={refinementListClassNames} />
+        <StableRefinementList attribute="transmission" />
       </FilterGroup>
       <FilterGroup title="FUEL TYPE" isOpen={openFilter === "FUEL TYPE"} onToggle={() => setOpenFilter(openFilter === "FUEL TYPE" ? null : "FUEL TYPE")}>
-        <RefinementList attribute="fuel_type" classNames={refinementListClassNames} />
+        <StableRefinementList attribute="fuel_type" />
       </FilterGroup>
     </div>
   );
