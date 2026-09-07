@@ -69,6 +69,11 @@ export async function generateMetadata(
     title,
     description,
     metadataBase: new URL(baseUrl),
+    icons: {
+      icon: "/favicon.jpg",
+      shortcut: "/favicon.jpg",
+      apple: "/favicon.jpg",
+    },
     alternates: {
       canonical: canonicalUrl,
     },
