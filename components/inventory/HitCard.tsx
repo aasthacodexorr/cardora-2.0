@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 
@@ -15,6 +15,11 @@ import { MessageModal } from "./VehicleInfo";
 
 export const HitCard = ({ hit }: { hit: any }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTooltip, setActiveTooltip] = useState<
+    "finance" | "cash" | null
+  >(null);
+
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
   const appConfig = useAppConfig();
 
@@ -31,11 +36,33 @@ export const HitCard = ({ hit }: { hit: any }) => {
     isHydrated,
   } = useWishlist();
 
+  /* =========================
+     Close tooltip on outside click
+  ========================= */
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        tooltipRef.current &&
+        !tooltipRef.current.contains(event.target as Node)
+      ) {
+        setActiveTooltip(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   /* Phone number fallback strategy */
   const phoneNumber = PHONE_NUMBER || "";
 
-  const title = `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${hit.trim || ""
-    }`.trim();
+  const title = `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${
+    hit.trim || ""
+  }`.trim();
 
   const price = Number(hit.selling_price) || 0;
   const km = Number(hit.odometer) || 0;
@@ -84,7 +111,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
   return (
     <>
-      <div className="block h-full rounded-[20px] cursor-pointer bg-white overflow-hidden flex flex-col gap-2 hover:shadow-none transition-none relative border border-border-standard">
+      <div className="block h-full rounded-[20px] cursor-pointer bg-white overflow-visible flex flex-col gap-2 hover:shadow-none transition-none relative border border-border-standard">
         <article
           onClick={() => {
             window.location.href = vehicleUrl;
@@ -97,10 +124,11 @@ export const HitCard = ({ hit }: { hit: any }) => {
               alt={title}
               width={600}
               height={400}
-              className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${isSold || isDealPending
+              className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${
+                isSold || isDealPending
                   ? "grayscale opacity-80"
                   : ""
-                }`}
+              }`}
             />
 
             {/* SOLD Ribbon */}
@@ -152,10 +180,11 @@ export const HitCard = ({ hit }: { hit: any }) => {
                 }
               >
                 <Heart
-                  className={`w-5 h-5 ${isInWishlist(hit.inventory_id)
+                  className={`w-5 h-5 ${
+                    isInWishlist(hit.inventory_id)
                       ? "fill-brand-green stroke-none"
                       : "stroke-gray-600"
-                    } transition-colors`}
+                  } transition-colors`}
                 />
               </button>
             )}
@@ -169,7 +198,6 @@ export const HitCard = ({ hit }: { hit: any }) => {
 
             <hr className="border-gray-200 mt-[4px]" />
 
-            {/* Price and mileage */}
             {/* Price and mileage */}
             <div>
               {!isSold ? (
@@ -196,7 +224,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth={2}
-                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 01.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                             />
                           </svg>
 
@@ -209,23 +237,117 @@ export const HitCard = ({ hit }: { hit: any }) => {
                   /* =========================
                      NORMAL VEHICLE - HAS PRICE
                      ========================= */
-                  <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1">
+                  <div
+                    ref={tooltipRef}
+                    className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1"
+                  >
                     {/* Finance Price */}
                     <div className="flex justify-between items-center w-full">
                       <span>Finance Price</span>
 
-                      <span>
-                        ${price.toLocaleString("en-CA")}.00
-                      </span>
+                      <div className="relative inline-flex items-center gap-1">
+                        <span>
+                          ${price.toLocaleString("en-CA")}.00
+                        </span>
+
+                        {/* Finance Info */}
+                        <div className="relative group shrink-0">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+
+                              setActiveTooltip((prev) =>
+                                prev === "finance"
+                                  ? null
+                                  : "finance"
+                              );
+                            }}
+                            aria-label="Finance price information"
+                            className="flex items-center justify-center p-0.5"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="w-4 h-4 text-gray-400 cursor-pointer"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </button>
+
+                          <div
+                            className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${
+                              activeTooltip === "finance"
+                                ? "opacity-100 visible"
+                                : "opacity-0 invisible"
+                            } group-hover:opacity-100 group-hover:visible`}
+                          >
+                            Finance price does not include taxes and licensing fees.
+
+                            <div className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Cash Price */}
                     <div className="flex justify-between items-center w-full">
                       <span>Cash Price</span>
 
-                      <span>
-                        ${(price + 2000).toLocaleString("en-CA")}.00
-                      </span>
+                      <div className="relative inline-flex items-center gap-1">
+                        <span>
+                          ${(price + 2000).toLocaleString("en-CA")}.00
+                        </span>
+
+                        {/* Cash Info */}
+                        <div className="relative group shrink-0">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+
+                              setActiveTooltip((prev) =>
+                                prev === "cash" ? null : "cash"
+                              );
+                            }}
+                            aria-label="Cash price information"
+                            className="flex items-center justify-center p-0.5"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="w-4 h-4 text-gray-400 cursor-pointer"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </button>
+
+                          <div
+                            className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${
+                              activeTooltip === "cash"
+                                ? "opacity-100 visible"
+                                : "opacity-0 invisible"
+                            } group-hover:opacity-100 group-hover:visible`}
+                          >
+                            Cash price does not include taxes and licensing
+                            fees.
+
+                            <div className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -244,7 +366,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                         />
                       </svg>
 
@@ -272,7 +394,6 @@ export const HitCard = ({ hit }: { hit: any }) => {
         </article>
 
         {/* Action Buttons */}
-        {/* Action Buttons */}
         {!isSold && !isDealPending && (
           <div className="w-full rounded-[12px] mb-3 px-3 mt-auto flex gap-2">
             {/* Call Button */}
@@ -291,9 +412,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                 />
               </svg>
+
               <span>Call</span>
             </a>
 
