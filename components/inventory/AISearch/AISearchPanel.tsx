@@ -300,7 +300,7 @@ export const AIChatSidebar = ({
                     }`}
                 >
                   <div
-                    className={`px-3 py-2 rounded-2xl text-[12px] leading-snug ${msg.role === "user"
+                    className={`px-3 py-2 rounded-2xl text-[12px] lg:text-[15px] leading-snug ${msg.role === "user"
                       ? "bg-black text-white rounded-tr-sm"
                       : "bg-gray-100 text-gray-800 rounded-tl-sm"
                       }`}
