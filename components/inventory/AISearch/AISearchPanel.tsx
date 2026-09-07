@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import { Search, X, MessageCircle, Loader, Check } from "lucide-react";
@@ -544,20 +544,80 @@ export const AIResultsPanel = ({
 // The main hook that drives all AI search state
 // (exported so inventory page can wire it up)
 // ─────────────────────────────────────────────
+const WELCOME_MESSAGE: Message = {
+  id: "init",
+  role: "ai",
+  text: "Hi! I’m Dora, the AI assistant of Cardora. I’m here to help you find the perfect car.",
+};
+
 export function useAISearch() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "init",
-      role: "ai",
-      text: "Hi! I’m Dora, the AI assistant of Cardora. I’m here to help you find the perfect car.",
-    },
-  ]);
+  // Start with [] — WELCOME_MESSAGE is set inside the load effect once IndexedDB is checked.
+  // This prevents the save effect from wiping persisted data before the load completes.
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  // Which AI message's snapshot is currently displayed in the results panel.
+  // Which AI message’s snapshot is currently displayed in the results panel.
   const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
+  // Tracks whether the initial IndexedDB load has completed (prevents saving before load).
+  const storageReadyRef = useRef(false);
+
+  // Load persisted messages on mount (client-side only).
+  useEffect(() => {
+    let cancelled = false;
+    import("@/lib/aiChatStorage").then(({ loadMessages }) => {
+      loadMessages().then((persisted) => {
+        if (cancelled) return;
+        if (persisted.length > 0) {
+          // Restore id/role/text + resultsSnapshot (if present).
+          const restored: Message[] = persisted.map((m) => ({
+            id: m.id,
+            role: m.role,
+            text: m.text,
+            ...(m.resultsSnapshot ? { resultsSnapshot: m.resultsSnapshot } : {}),
+          }));
+          // Always prepend the welcome message so it shows exactly once at the top.
+          setMessages([WELCOME_MESSAGE, ...restored]);
+
+          // Re-activate the last AI message that has a snapshot so the
+          // results panel (and "Showing now" / "View results" buttons) are
+          // visible immediately after a reload.
+          const lastWithResults = [...restored]
+            .reverse()
+            .find((m) => m.role === "ai" && m.resultsSnapshot);
+          if (lastWithResults) {
+            setActiveMessageId(lastWithResults.id);
+            setHasSearched(true);
+          }
+        } else {
+          // Nothing stored yet — show the welcome message for the first time.
+          setMessages([WELCOME_MESSAGE]);
+        }
+        storageReadyRef.current = true;
+      });
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Persist messages whenever they change (skips the first render before load completes).
+  useEffect(() => {
+    if (!storageReadyRef.current) return;
+    import("@/lib/aiChatStorage").then(({ saveMessages }) => {
+      // Save id/role/text + resultsSnapshot so results are restored on reload.
+      // Never persist the welcome message — it's always prepended fresh on load.
+      saveMessages(
+        messages
+          .filter((m) => m.id !== 'init')
+          .map((m) => ({
+            id: m.id,
+            role: m.role,
+            text: m.text,
+            ...(m.resultsSnapshot ? { resultsSnapshot: m.resultsSnapshot } : {}),
+          }))
+      );
+    });
+  }, [messages]);
 
   const activeMessage = messages.find((m) => m.id === activeMessageId);
   const activeSnapshot = activeMessage?.resultsSnapshot;
@@ -574,6 +634,7 @@ export function useAISearch() {
   setMessages(nextMessages);
   setInput("");
   setLoading(true);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
   try {
     const res = await fetch("/api/ai-search", {
@@ -628,6 +689,7 @@ export function useAISearch() {
     setMessages(nextMessages);
     setInput("");
     setLoading(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
     try {
       const res = await fetch("/api/ai-search", {
@@ -775,16 +837,12 @@ export function useAISearch() {
   };
 
   const reset = () => {
-    setMessages([
-      {
-        id: "init",
-        role: "ai",
-        text: "Hi! I’m Dora, the AI assistant of Cardora. I’m here to help you find the perfect car.",
-      },
-    ]);
+    setMessages([WELCOME_MESSAGE]);
     setInput("");
     setActiveMessageId(null);
     setHasSearched(false);
+    storageReadyRef.current = true; // keep saving enabled after reset
+    import("@/lib/aiChatStorage").then(({ clearMessages }) => { clearMessages(); });
   };
 
   return {
