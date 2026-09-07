@@ -1472,44 +1472,42 @@ const InventoryContent = () => {
                   </button>
                 </div>
 
-                {/* ── Sidebar content: filters OR chat ── */}
-                {isAISearchActive ? (
-                  <AIChatSidebar
-                    messages={ai.messages}
-                    input={ai.input}
-                    loading={ai.loading}
-                    loadingMore={ai.loadingMore}
-                    hasSearched={ai.hasSearched}
-                    activeMessageId={ai.activeMessageId}
-                    onInputChange={ai.setInput}
-                    onSubmit={ai.handleSubmit}
-                    onViewMessage={ai.viewMessage}
-                    onSuggestionClick={ai.handleSuggestion}
-                    onLoadMore={ai.loadMore}
-                  />
-                ) : (
-                  <div
-                    className={[
-                      "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px]",
-                      // visible thin scrollbar instead of the hidden one
-                      "[&::-webkit-scrollbar]:w-[6px]",
-                      "[&::-webkit-scrollbar-track]:bg-transparent",
-                      "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
-                      "lg:[scrollbar-width:thin]",
-                    ].join(" ")}
-                  >
-                    <div className="flex flex-col items-center gap-4 pb-0">
-                      <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
-                        <CustomHitsCount />
-                      </div>
-                      <div className="w-full border-b border-border text-center">
-                        <ClearFiltersButton />
-                      </div>
+                <AIChatSidebar
+                  messages={ai.messages}
+                  input={ai.input}
+                  loading={ai.loading}
+                  loadingMore={ai.loadingMore}
+                  hasSearched={ai.hasSearched}
+                  activeMessageId={ai.activeMessageId}
+                  onInputChange={ai.setInput}
+                  onSubmit={ai.handleSubmit}
+                  onViewMessage={ai.viewMessage}
+                  onSuggestionClick={ai.handleSuggestion}
+                  onLoadMore={ai.loadMore}
+                  className={isAISearchActive ? "flex" : "hidden"}
+                />
+                <div
+                  className={[
+                    isAISearchActive ? "hidden" : "flex-1 min-h-0 overflow-y-auto overscroll-contain",
+                    "px-[15px] pt-[15px] pb-[15px]",
+                    // visible thin scrollbar instead of the hidden one
+                    "[&::-webkit-scrollbar]:w-[6px]",
+                    "[&::-webkit-scrollbar-track]:bg-transparent",
+                    "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
+                    "lg:[scrollbar-width:thin]",
+                  ].join(" ")}
+                >
+                  <div className="flex flex-col items-center gap-4 pb-0">
+                    <div className="text-white text-center py-3 px-4 rounded-xl font-bold text-[14px] w-full shadow-sm bg-brand">
+                      <CustomHitsCount />
                     </div>
-
-                    {renderFilterGroups()}
+                    <div className="w-full border-b border-border text-center">
+                      <ClearFiltersButton />
+                    </div>
                   </div>
-                )}
+
+                  {renderFilterGroups()}
+                </div>
               </div>
             </aside>
 
@@ -1584,7 +1582,7 @@ const InventoryContent = () => {
                           classNames={{
                             root: "w-full",
                             form: "relative flex items-center",
-                            input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[14px] outline-none transition-all focus:border-gray-400",
+                            input: "w-full pl-[36px] tracking-wide pr-4 py-[10px] rounded-[12px] shadow-none bg-white text-[16px] lg:text-[14px] outline-none transition-all focus:border-gray-400",
                             submitIcon: "hidden",
                             resetIcon: "hidden",
                             loadingIcon: "hidden",
