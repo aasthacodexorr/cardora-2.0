@@ -1381,7 +1381,7 @@ const InventoryContent = () => {
       <SyncModelMakeMap />
       <SyncOrphanedModels />
       <ScrollToTopOnSearch />
-      <Configure hitsPerPage={21} />
+      <Configure hitsPerPage={21} filters="status:!=Sold" />
 
       {/* Put the layout wrapper here, safe inside InstantSearch context! */}
       <MainLayoutWrapper>
@@ -1539,7 +1539,7 @@ const InventoryContent = () => {
                 /* ── AI Search results area ── */
                 <>
                   {/* Mobile: chat + results merged into a single scrollable card — fixed modal overlay */}
-                  <div className="fixed inset-x-0 bottom-0 top-[215px] flex h-[calc(100dvh-238px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
+                  <div className="fixed inset-x-0 bottom-0 top-[210px] flex h-[calc(100dvh-218px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
                     <AIChatSidebar
                       messages={ai.messages}
                       input={ai.input}
