@@ -59,12 +59,12 @@ type SuggestionChip = {
 const SUGGESTIONS: SuggestionChip[] = [
   {
     label: "SUV under $35000",
-    filters: { body_type: ["suv"], maxPrice: 35000 },
-    followUp: "Do you have a transmission preference — automatic or manual?",
+    filters: { body_type: ["suv","sport-utility-vehicle"], maxPrice: 35000 },
+    followUp: "Any preferences for lower mileage?",
   },
   {
     label: "Fuel-Efficient Hybrid",
-    filters: { fuel_type: ["Hybrid"] },
+    filters: { fuel_type: ["Hybrid","hev","hybrid-gas-electric","electric-battery"] },
     followUp: "Would you like me to also filter for a lower mileage — say, under 30,000 km?",
   },
   {
@@ -74,13 +74,13 @@ const SUGGESTIONS: SuggestionChip[] = [
   },
   {
     label: "A truck that can tow a trailer",
-    filters: { body_type: ["truck"] },
-    followUp: "Do you have a budget in mind, or a transmission preference — automatic or manual?",
+    filters: { body_type: ["truck","pickup-truck"] },
+    followUp: "Do you have a budget in mind, or any preference for year and mileage?",
   },
   {
     label: "Sports car",
     filters: { body_type: ["coupe", "convertible"] },
-    followUp: "Would you like to set a budget, or a preferred transmission — automatic or manual?",
+    followUp: "Would you like to set a budget, or a preferred mileage or any color?",
   },
   {
     label: "Sedan under $25000",
@@ -300,7 +300,7 @@ export const AIChatSidebar = ({
                     }`}
                 >
                   <div
-                    className={`px-3 py-2 rounded-2xl text-[15px] leading-snug ${msg.role === "user"
+                    className={`px-3 py-2 rounded-2xl text-[12px] leading-snug ${msg.role === "user"
                       ? "bg-black text-white rounded-tr-sm"
                       : "bg-gray-100 text-gray-800 rounded-tl-sm"
                       }`}
@@ -346,7 +346,7 @@ export const AIChatSidebar = ({
  
         {messages.length === 1 && !hasSearched && !loading && (
           <div className="sm:hidden flex flex-col gap-2 mt-5">
-            <p className="text-gray-600 font-semibold text-sm">Or start with one of these</p>
+            <p className="text-gray-600 font-semibold text-sm">Or search with one of these</p>
             {SUGGESTIONS.map((s) => (
               <button
                 key={s.label}
@@ -549,7 +549,7 @@ export function useAISearch() {
     {
       id: "init",
       role: "ai",
-      text: "Hi! I’m Dora, the AI assistant of Cardora. I’m here to help you find the perfect car. Let me know what you’re looking for whether it’s a specific make or model, your budget, or any features you have in mind, and I’ll be happy to help!",
+      text: "Hi! I’m Dora, the AI assistant of Cardora. I’m here to help you find the perfect car.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -779,7 +779,7 @@ export function useAISearch() {
       {
         id: "init",
         role: "ai",
-        text: "Hi! I’m Dora, the AI assistant of Cardora. I’m here to help you find the perfect car. Let me know what you’re looking for whether it’s a specific make or model, your budget, or any features you have in mind, and I’ll be happy to help!",
+        text: "Hi! I’m Dora, the AI assistant of Cardora. I’m here to help you find the perfect car.",
       },
     ]);
     setInput("");
