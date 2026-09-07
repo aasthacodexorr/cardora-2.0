@@ -48,15 +48,45 @@ type Message = {
 type SuggestionChip = {
   label: string;
   filters?: AISearchFilters; // when present, applied directly — no LLM interpretation
+  // A single, targeted follow-up question shown right after this chip's
+  // results come back. Chosen to be relevant to what's NOT already covered
+  // by this chip's filters (so we don't ask about something already set),
+  // and to a field that meaningfully narrows results (transmission, mileage,
+  // budget) — rather than a generic "want to narrow by X, Y, Z?" list.
+  followUp?: string;
 };
 
 const SUGGESTIONS: SuggestionChip[] = [
-  { label: "Family SUV under $30,000", filters: { body_type: ["suv"], maxPrice:30000} },
-  { label: "Fuel-efficient hybrid, low mileage" },
-  { label: "Cars with automatic drive", filters: { transmission: ["Automatic"] } },
-  { label: "A truck that can tow a trailer", filters: { body_type: ["truck"] } },
-  { label: "First car for a new driver" },
-  { label: "Luxury sedan with leather seats", filters: { body_type: ["Sedan"] } },
+  {
+    label: "SUV under $35000",
+    filters: { body_type: ["suv"], maxPrice: 35000 },
+    followUp: "Do you have a transmission preference — automatic or manual?",
+  },
+  {
+    label: "Fuel-Efficient Hybrid",
+    filters: { fuel_type: ["Hybrid"] },
+    followUp: "Would you like me to also filter for a lower mileage — say, under 30,000 km?",
+  },
+  {
+    label: "Cars with low mileage",
+    filters: { maxOdometer: 30000 },
+    followUp: "Would you like to narrow this down by budget or a specific vehicle type?",
+  },
+  {
+    label: "A truck that can tow a trailer",
+    filters: { body_type: ["truck"] },
+    followUp: "Do you have a budget in mind, or a transmission preference — automatic or manual?",
+  },
+  {
+    label: "Sports car",
+    filters: { body_type: ["coupe", "convertible"] },
+    followUp: "Would you like to set a budget, or a preferred transmission — automatic or manual?",
+  },
+  {
+    label: "Sedan under $25000",
+    filters: { body_type: ["Sedan"], maxPrice: 25000 },
+    followUp: "Would you like a mileage limit, such as under 30,000 km?",
+  },
 ];
  
 const CAROUSEL_VISIBLE_DOTS = 7;
@@ -194,6 +224,7 @@ interface AIChatSidebarProps {
   onViewMessage: (messageId: string) => void;
   onSuggestionClick: (chip: SuggestionChip) => void;
   onLoadMore: () => void;
+  className?: string;
 }
 
 export const AIChatSidebar = ({
@@ -208,6 +239,7 @@ export const AIChatSidebar = ({
   onViewMessage,
   onSuggestionClick,
   onLoadMore,
+  className,
 }: AIChatSidebarProps) => {
   // Scoped ref to the messages container itself. We deliberately do NOT use
   // scrollIntoView() here — it walks up every scrollable ancestor (including
@@ -224,7 +256,7 @@ export const AIChatSidebar = ({
   }, [messages, loading]);
 
   return (
-    <div className="flex flex-col min-h-0 flex-1 mt-0 sm:mb-0">
+    <div className={["flex-col min-h-0 flex-1 mt-0 sm:mb-0", className ?? "flex"].join(" ")}>
       {/* Fixed Clutch Assistant Header */}
       <div className="shrink-0 bg-white border-b border-gray-200 px-0 py-0">
         <div className="flex items-center gap-">
@@ -235,7 +267,7 @@ export const AIChatSidebar = ({
 
           <div className="min-w-0">
             <h3 className="text-[15px] font-semibold text-gray-900 leading-tight">
-              Cardora Assistant
+              Dora Assistant
             </h3>
 
             <p className="text-[12px] text-gray-500 leading-[12px] mt-0.5">
@@ -355,7 +387,7 @@ export const AIChatSidebar = ({
             }}
             placeholder="Ask anything"
             disabled={loading}
-            className="w-full resize-none text-[15px] pl-3 pr-9 py-2.5 rounded-[10px] border border-gray-200 focus:outline-none focus:border-brand bg-gray-50 placeholder-gray-400 leading-snug"
+            className="w-full resize-none text-[16px] lg:text-[15px] pl-3 pr-9 py-2.5 rounded-[10px] border border-gray-200 focus:outline-none focus:border-brand bg-gray-50 placeholder-gray-400 leading-snug"
           />
           <button
             type="submit"
@@ -517,7 +549,7 @@ export function useAISearch() {
     {
       id: "init",
       role: "ai",
-      text: "Hi! I'm here to help you find the right car. What are you looking for?",
+      text: "Hi! I’m Dora, the AI assistant of Cardora. I’m here to help you find the perfect car. Let me know what you’re looking for whether it’s a specific make or model, your budget, or any features you have in mind, and I’ll be happy to help!",
     },
   ]);
   const [input, setInput] = useState("");
@@ -536,7 +568,7 @@ export function useAISearch() {
   const hasMore = activeSnapshot?.hasMore ?? false;
   const total = activeSnapshot?.total ?? 0;
 
-  const doDirectSearch = async (label: string, presetFilters: AISearchFilters) => {
+  const doDirectSearch = async (label: string, presetFilters: AISearchFilters, followUp?: string) => {
   const userMessage: Message = { id: Date.now().toString(), role: "user", text: label };
   const nextMessages = [...messages, userMessage];
   setMessages(nextMessages);
@@ -553,14 +585,20 @@ export function useAISearch() {
 
     const data = await res.json();
     const aiMessageId = `${Date.now()}-ai`;
+    const total = data.total || 0;
+    // The backend never appends a generic "want to narrow by X, Y, Z?" tail
+    // for direct-filter (default option) searches — see the ai-search route.
+    // Instead we add exactly one relevant, chip-specific follow-up here, and
+    // only when there's something to refine.
+    const text = total > 0 && followUp ? `${data.message} ${followUp}` : data.message;
     const aiMessage: Message = {
       id: aiMessageId,
       role: "ai",
-      text: data.message,
+      text,
       resultsSnapshot: {
         results: data.results || [],
         filters: data.filters || {},
-        total: data.total || 0,
+        total,
         page: data.page || 1,
         hasMore: !!data.hasMore,
       },
@@ -714,7 +752,7 @@ export function useAISearch() {
   const handleSuggestion = (chip: SuggestionChip) => {
     if (loading) return;
     if (chip.filters) {
-      doDirectSearch(chip.label, chip.filters);
+      doDirectSearch(chip.label, chip.filters, chip.followUp);
     } else {
       doSearch(chip.label, filters, messages, activeSnapshot?.total);
     }
@@ -741,7 +779,7 @@ export function useAISearch() {
       {
         id: "init",
         role: "ai",
-        text: "Hi! I'm here to help you find the right car. What are you looking for?",
+        text: "Hi! I’m Dora, the AI assistant of Cardora. I’m here to help you find the perfect car. Let me know what you’re looking for whether it’s a specific make or model, your budget, or any features you have in mind, and I’ll be happy to help!",
       },
     ]);
     setInput("");
