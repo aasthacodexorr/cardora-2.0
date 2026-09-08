@@ -1379,10 +1379,16 @@ const InventoryContent = () => {
   const [openFilter, setOpenFilter] = useState<string | null>("");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isAISearchActive, setIsAISearchActive] = useState(false);
+  const mobileToggleBarRef = useRef<HTMLDivElement>(null);
+  const [mobilePanelTop, setMobilePanelTop] = useState(212);
   const headerHeight = useHeaderHeight();
 
   const handleSearchModeChange = (isAI: boolean) => {
     setIsAISearchActive(isAI);
+    if (isAI && mobileToggleBarRef.current) {
+      const rect = mobileToggleBarRef.current.getBoundingClientRect();
+      setMobilePanelTop(Math.round(rect.bottom) + 8); // 8px gap below the toggle bar
+    }
   };
 
   const ai = useAISearch();
@@ -1475,12 +1481,33 @@ const InventoryContent = () => {
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 1023.98px)"); // below Tailwind's `lg`
+    const body = document.body;
 
     const applyLock = () => {
       const isMobileViewport = mq.matches;
-      const shouldLockScroll =
-        isMobileViewport && (isMobileFilterOpen || isAISearchActive);
-      document.body.style.overflow = shouldLockScroll ? "hidden" : "";
+      const shouldLock = isMobileViewport && (isMobileFilterOpen || isAISearchActive);
+
+      if (shouldLock) {
+        // iOS Safari ignores `overflow: hidden` on body — use position:fixed instead.
+        // Store current scroll position so we can restore it on unlock.
+        const scrollY = window.scrollY;
+        body.style.position = "fixed";
+        body.style.top = `-${scrollY}px`;
+        body.style.left = "0";
+        body.style.right = "0";
+        body.style.overflow = "hidden";
+      } else {
+        // Restore scroll position before unfixing.
+        const storedTop = body.style.top;
+        body.style.position = "";
+        body.style.top = "";
+        body.style.left = "";
+        body.style.right = "";
+        body.style.overflow = "";
+        if (storedTop) {
+          window.scrollTo(0, -parseInt(storedTop, 10));
+        }
+      }
     };
 
     applyLock();
@@ -1488,7 +1515,16 @@ const InventoryContent = () => {
 
     return () => {
       mq.removeEventListener("change", applyLock);
-      document.body.style.overflow = "";
+      // Always clean up — restore body on unmount.
+      const storedTop = body.style.top;
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.overflow = "";
+      if (storedTop) {
+        window.scrollTo(0, -parseInt(storedTop, 10));
+      }
     };
   }, [isMobileFilterOpen, isAISearchActive]);
 
@@ -1557,7 +1593,7 @@ const InventoryContent = () => {
         <div className="bg-light-gray lg:-mt-4 min-h-screen lg:px-14 px-3 py-[20px] overflow-visible">
 
           {/* Mobile-only Search / AI Search toggle — desktop keeps its own copy inside the sidebar */}
-          <div className="flex lg:hidden items-center gap-1 max-w-[1550px] mx-auto mb-3  p-[6px] rounded-[12px] bg-white border border-border-standard shadow-sm">
+          <div ref={mobileToggleBarRef} className="flex lg:hidden items-center gap-1 max-w-[1550px] mx-auto mb-3  p-[6px] rounded-[12px] bg-white border border-border-standard shadow-sm">
             <button
               type="button"
               onClick={() => handleSearchModeChange(false)}
@@ -1697,7 +1733,10 @@ const InventoryContent = () => {
                 /* ── AI Search results area ── */
                 <>
                   {/* Mobile: chat + results merged into a single scrollable card — fixed modal overlay */}
-                  <div className="fixed inset-x-0 bottom-0 top-[212px] flex h-[calc(100dvh-218px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
+                  <div
+                    className="fixed inset-x-0 bottom-0 lg:hidden flex flex-col overflow-hidden bg-white mx-3 rounded-xl shadow-sm pb-[env(safe-area-inset-bottom)]"
+                    style={{ top: mobilePanelTop, height: `calc(100dvh - ${mobilePanelTop + 6}px)` }}
+                  >
                     <AIChatSidebar
                       messages={ai.messages}
                       input={ai.input}

@@ -210,16 +210,19 @@ const MobileResultsCarousel = ({
 
   return (
     <div className="sm:hidden">
-      {/* Card track — one full-width card per swipe, native scroll-snap */}
+      {/* Card track — one full-width card per swipe, native scroll-snap.
+          touch-action:pan-x is set via inline style so it targets only this
+          element and doesn't fight the parent container's pan-y declaration. */}
       <div
         ref={trackRef}
         className={[
           "flex w-full overflow-x-auto overflow-y-hidden",
           "snap-x snap-mandatory",
-          "touch-pan-x overscroll-x-contain",
+          "overscroll-x-contain",
           "[&::-webkit-scrollbar]:hidden",
           "[-ms-overflow-style:none] [scrollbar-width:none]",
         ].join(" ")}
+        style={{ touchAction: "pan-x" }}
       >
         {results.map((vehicle) => (
           <div key={vehicle.id} className="shrink-0 w-full snap-start px-[9px]">
@@ -296,35 +299,29 @@ export const AIChatSidebar = ({
   onLoadMore,
   className,
 }: AIChatSidebarProps) => {
-  // Scoped ref to the messages container itself. We deliberately do NOT use
-  // scrollIntoView() here — it walks up every scrollable ancestor (including
-  // window) to bring the target into view, which was causing the whole page
-  // to jump down whenever this sidebar mounted (e.g. switching to the AI tab).
-  // Setting scrollTop directly only ever affects this div.
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  // Scroll to the bottom whenever new messages arrive or loading state changes.
+  // We set scrollTop directly (not scrollIntoView) so only this container moves,
+  // never the page.
   useEffect(() => {
     const el = scrollContainerRef.current;
-    if (el) {
-      el.scrollTop = el.scrollHeight;
-    }
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages, loading]);
 
   return (
     <div className={["flex flex-col min-h-0 flex-1 mt-0 sm:mb-0", className ?? ""].join(" ").trim()}>
-      {/* Fixed Clutch Assistant Header */}
+
+      {/* ── Header ── */}
       <div className="shrink-0 bg-white border-b border-gray-200 px-0 py-0">
         <div className="flex items-center gap-">
-          {/* Assistant icon */}
           <div className="w-20 h-20 flex justify-center items-center">
             <img src={adlogo?.src} />
           </div>
-
           <div className="min-w-0">
             <h3 className="text-[15px] font-semibold text-gray-900 leading-tight">
               Dora Assistant
             </h3>
-
             <p className="text-[12px] text-gray-500 leading-[12px] mt-0.5">
               Describe the car you're looking for
             </p>
@@ -332,38 +329,46 @@ export const AIChatSidebar = ({
         </div>
       </div>
 
-      {/* Scrollable messages */}
+      {/* ── Single unified scroll container ──
+          Everything lives here: chat bubbles, inline carousels, suggestions,
+          loading indicator. One scroll zone means no split scroll contexts and
+          no touch-event fighting on real devices.
+
+          `touch-action: pan-y` on this element tells iOS Safari that vertical
+          panning belongs to THIS container. Even when the user starts a swipe
+          on the touch-pan-x carousel child, if the gesture resolves as
+          vertical the browser honours pan-y on the nearest ancestor that
+          declares it — so vertical scrolling always works. */}
       <div
         ref={scrollContainerRef}
         className={[
-          "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px] space-y-3",
+          "flex-1 min-h-0 overflow-y-auto overscroll-contain",
+          "px-[15px] pt-[15px] pb-[15px] space-y-3",
           "[&::-webkit-scrollbar]:w-[5px]",
           "[&::-webkit-scrollbar-track]:bg-transparent",
           "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
           "lg:[scrollbar-width:thin]",
         ].join(" ")}
+        style={{ touchAction: "pan-y" }}
       >
         {messages.map((msg) => {
           const isActive = msg.id === activeMessageId;
           return (
             <div key={msg.id} className="space-y-2">
-              <div
-                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={`flex flex-col max-w-[88%] ${msg.role === "user" ? "items-end" : "items-start"
-                    }`}
-                >
+              {/* Chat bubble */}
+              <div className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                <div className={`flex flex-col max-w-[88%] ${msg.role === "user" ? "items-end" : "items-start"}`}>
                   <div
-                    className={`px-3 py-2 rounded-2xl text-[12px] lg:text-[15px] leading-snug ${msg.role === "user"
-                      ? "bg-black text-white rounded-tr-sm"
-                      : "bg-gray-100 text-gray-800 rounded-tl-sm"
-                      }`}
+                    className={`px-3 py-2 rounded-2xl text-[12px] lg:text-[15px] leading-snug ${
+                      msg.role === "user"
+                        ? "bg-black text-white rounded-tr-sm"
+                        : "bg-gray-100 text-gray-800 rounded-tl-sm"
+                    }`}
                   >
                     {msg.text}
                   </div>
 
-                  {/* View / Showing-now control — only on AI messages that returned results */}
+                  {/* View / Showing-now badge */}
                   {msg.role === "ai" && msg.resultsSnapshot && (
                     <div className="mt-1 px-1">
                       {isActive ? (
@@ -385,6 +390,7 @@ export const AIChatSidebar = ({
                 </div>
               </div>
 
+              {/* Inline carousel — only for the active AI message, mobile only */}
               {msg.role === "ai" && msg.resultsSnapshot && isActive && (
                 <div className="-mx-[15px]">
                   <MobileResultsCarousel
@@ -399,6 +405,7 @@ export const AIChatSidebar = ({
           );
         })}
 
+        {/* Quick-start suggestion chips */}
         {messages.length === 1 && !hasSearched && !loading && (
           <div className="sm:hidden flex flex-col gap-2">
             <p className="text-gray-600 font-semibold text-sm">Or search with one of these</p>
@@ -407,7 +414,7 @@ export const AIChatSidebar = ({
                 key={s.label}
                 type="button"
                 onClick={() => onSuggestionClick(s)}
-                className="flex items-center cursor-pointer gap-1 px-3 py-1.5 w-fit rounded-full border border-gray-200 text-[12px] text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium cursor-pointer"
+                className="flex items-center cursor-pointer gap-1 px-3 py-1.5 w-fit rounded-full border border-gray-200 text-[12px] text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium"
               >
                 <span className="text-brand text-[10px]">✦</span>
                 {s.label}
@@ -416,6 +423,7 @@ export const AIChatSidebar = ({
           </div>
         )}
 
+        {/* Typing indicator */}
         {loading && (
           <div className="flex gap-2 justify-start">
             <div className="px-3 py-2.5 bg-gray-100 rounded-2xl rounded-tl-sm flex items-center gap-1.5">
@@ -427,7 +435,7 @@ export const AIChatSidebar = ({
         )}
       </div>
 
-      {/* Input — fixed at bottom within the modal */}
+      {/* ── Input bar — always anchored at the bottom ── */}
       <div className="shrink-0 px-[15px] pt-[15px] pb-[max(15px,env(safe-area-inset-bottom))] border-t border-gray-200 bg-white">
         <form onSubmit={onSubmit} className="relative flex items-center">
           <textarea
