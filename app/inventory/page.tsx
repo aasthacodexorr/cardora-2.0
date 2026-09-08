@@ -1635,7 +1635,7 @@ const InventoryContent = () => {
               style={{ top: sidebarTop, maxHeight: sidebarMaxHeight, contain: "layout paint" }}
             >
               <div
-                className="flex flex-col bg-white rounded-[15px] border border-border-standard overflow-hidden w-full"
+                className="flex flex-col bg-white rounded-[15px] border border-border-standard overflow-clip w-full"
                 style={{ height: sidebarMaxHeight }}
               >
                 {/* ── Search / AI Search Tab Toggle — hidden on desktop when AI mode is active ── */}
@@ -1678,7 +1678,7 @@ const InventoryContent = () => {
                   onViewMessage={ai.viewMessage}
                   onSuggestionClick={ai.handleSuggestion}
                   onLoadMore={ai.loadMore}
-                  className={isAISearchActive ? "flex" : "hidden"}
+                  className={isAISearchActive ? "flex flex-col flex-1 min-h-0" : "hidden"}
                 />
                 <div
                   className={[
@@ -1734,7 +1734,7 @@ const InventoryContent = () => {
                 <>
                   {/* Mobile: chat + results merged into a single scrollable card — fixed modal overlay */}
                   <div
-                    className="fixed inset-x-0 bottom-0 lg:hidden flex flex-col overflow-hidden bg-white mx-3 rounded-xl shadow-sm pb-[env(safe-area-inset-bottom)]"
+                    className="fixed inset-x-0 bottom-0 lg:hidden flex flex-col min-h-0 bg-white mx-3 rounded-xl shadow-sm pb-[env(safe-area-inset-bottom)]"
                     style={{ top: mobilePanelTop, height: `calc(100dvh - ${mobilePanelTop + 6}px)` }}
                   >
                     <AIChatSidebar

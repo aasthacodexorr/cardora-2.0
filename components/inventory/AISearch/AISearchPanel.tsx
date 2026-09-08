@@ -300,13 +300,24 @@ export const AIChatSidebar = ({
   className,
 }: AIChatSidebarProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const prevMsgCountRef = useRef(messages.length);
+  const prevLoadingRef = useRef(loading);
 
-  // Scroll to the bottom whenever new messages arrive or loading state changes.
-  // We set scrollTop directly (not scrollIntoView) so only this container moves,
-  // never the page.
+  // Only scroll to bottom when a NEW message arrives or loading starts —
+  // never on the initial render or tab-switch, so the panel opens at the top.
   useEffect(() => {
     const el = scrollContainerRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    if (!el) return;
+
+    const msgCountGrew = messages.length > prevMsgCountRef.current;
+    const loadingStarted = loading && !prevLoadingRef.current;
+
+    prevMsgCountRef.current = messages.length;
+    prevLoadingRef.current = loading;
+
+    if (msgCountGrew || loadingStarted) {
+      el.scrollTop = el.scrollHeight;
+    }
   }, [messages, loading]);
 
   return (
