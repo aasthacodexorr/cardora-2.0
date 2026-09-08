@@ -64,7 +64,7 @@ const SUGGESTIONS: SuggestionChip[] = [
   },
   {
     label: "Fuel-Efficient Hybrid",
-    filters: { fuel_type: ["Hybrid","hev","hybrid-gas-electric","electric-battery"] },
+    filters: { fuel_type: ["Hybrid","hev", "phev", "hybrid-gas-electric"] },
     followUp: "Would you like me to also filter for a lower mileage — say, under 30,000 km?",
   },
   {
