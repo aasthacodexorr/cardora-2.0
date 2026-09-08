@@ -1,4 +1,4 @@
-﻿"use client";
+﻿﻿"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import { Search, X, MessageCircle, Loader, Check } from "lucide-react";
@@ -89,10 +89,8 @@ const SUGGESTIONS: SuggestionChip[] = [
   },
 ];
 
-// How many dots are visible in the window at once.
-const DOTS_VISIBLE = 7;
-// Each dot occupies this many px (dot width + gap). Keep in sync with gap-1.5 (6px) + max dot size (10px).
-const DOT_SLOT_PX = 16;
+const CAROUSEL_VISIBLE_DOTS = 7;
+const CAROUSEL_DOT_SLOT = 12; // px per dot "slot" (dot + gap), tune to taste
 
 interface MobileResultsCarouselProps {
   results: any[];
@@ -108,85 +106,50 @@ const MobileResultsCarousel = ({
   onLoadMore,
 }: MobileResultsCarouselProps) => {
   const trackRef = useRef<HTMLDivElement>(null);
-  // activeIndex stored both as state (for re-render) and ref (for scroll handler closure).
+  const dotsRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeIndexRef = useRef(0);
-
-  const setActive = (idx: number) => {
-    if (activeIndexRef.current === idx) return;
-    activeIndexRef.current = idx;
-    setActiveIndex(idx);
-  };
-
-  // Reset to card 0 only when the first item's id changes (genuine new search).
-  // loadMore appends items and keeps the same first item — don't reset in that case.
-  const firstItemId = results[0]?.id ?? null;
-  const prevFirstItemIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (firstItemId === prevFirstItemIdRef.current) return;
-    prevFirstItemIdRef.current = firstItemId;
-    activeIndexRef.current = 0;
     setActiveIndex(0);
-    trackRef.current?.scrollTo({ left: 0, top: 0, behavior: "auto" });
-  }, [firstItemId]);
+    trackRef.current?.scrollTo({ left: 0 });
+  }, [results]);
 
-  // Read the settled scroll position ONLY after scrolling has fully stopped.
-  // Using "scrollend" (supported in Chrome 114+, Firefox 109+, Safari 17.4+)
-  // with a debounced "scroll" fallback for older browsers. This prevents the
-  // dots from flickering to a mid-swipe intermediate index.
-  const resultsLengthRef = useRef(results.length);
-  resultsLengthRef.current = results.length;
-
+  // Figure out which card is centered as the user swipes.
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-
-    let debounceTimer = 0;
-
-    const commit = () => {
-      const { scrollLeft, clientWidth } = track;
-      if (!clientWidth) return;
-      const idx = Math.round(scrollLeft / clientWidth);
-      setActive(Math.max(0, Math.min(idx, resultsLengthRef.current - 1)));
+    let raf = 0;
+    const handleScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const { scrollLeft, clientWidth } = track;
+        if (!clientWidth) return;
+        const idx = Math.round(scrollLeft / clientWidth);
+        setActiveIndex((prev) => {
+          const next = Math.max(0, Math.min(idx, results.length - 1));
+          return prev === next ? prev : next;
+        });
+      });
     };
-
-    // scrollend fires once scroll (including momentum / snap animation) is fully settled.
-    const onScrollEnd = () => {
-      clearTimeout(debounceTimer);
-      commit();
-    };
-
-    // Fallback debounce for browsers that don't support scrollend yet.
-    const onScroll = () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = window.setTimeout(commit, 120);
-    };
-
-    const supportsScrollEnd = "onscrollend" in window;
-    if (supportsScrollEnd) {
-      track.addEventListener("scrollend", onScrollEnd, { passive: true });
-    } else {
-      track.addEventListener("scroll", onScroll, { passive: true });
-    }
-
+    track.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
-      clearTimeout(debounceTimer);
-      if (supportsScrollEnd) {
-        track.removeEventListener("scrollend", onScrollEnd);
-      } else {
-        track.removeEventListener("scroll", onScroll);
-      }
+      track.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(raf);
     };
-    // Re-attach only if the track element itself changes (never in practice).
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [results.length]);
 
-  // Prefetch more results as the user approaches the end.
+  // Prefetch more results as the user approaches the end of the carousel.
   useEffect(() => {
     if (hasMore && !loadingMore && results.length > 0 && activeIndex >= results.length - 2) {
       onLoadMore();
     }
   }, [activeIndex, results.length, hasMore, loadingMore, onLoadMore]);
+
+  // Keep the active dot scrolled into the visible dot window.
+  useEffect(() => {
+    const dot = dotsRef.current?.children[activeIndex] as HTMLElement | undefined;
+    dot?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [activeIndex]);
 
   const goToIndex = (i: number) => {
     const track = trackRef.current;
@@ -196,36 +159,18 @@ const MobileResultsCarousel = ({
 
   if (results.length === 0) return null;
 
-  // Dots: we render a fixed-size viewport window (DOTS_VISIBLE slots wide) and
-  // translate the inner strip so the active dot is always centred. No overflow
-  // scrolling — pure CSS transform, so the dots never "scroll" on their own.
-  const dotStripOffset = Math.max(
-    0,
-    Math.min(
-      activeIndex - Math.floor(DOTS_VISIBLE / 2),
-      results.length - DOTS_VISIBLE,
-    ),
-  ) * DOT_SLOT_PX;
-  const viewportWidth = DOTS_VISIBLE * DOT_SLOT_PX;
-
   return (
     <div className="sm:hidden">
-      {/* Card track — one full-width card per swipe, native scroll-snap.
-          touch-action:pan-x is set via inline style so it targets only this
-          element and doesn't fight the parent container's pan-y declaration. */}
+      {/* Card track — one full-width card per swipe, native scroll-snap */}
       <div
         ref={trackRef}
         className={[
-          "flex w-full overflow-x-auto overflow-y-hidden",
-          "snap-x snap-mandatory",
-          "overscroll-x-contain",
-          "[&::-webkit-scrollbar]:hidden",
-          "[-ms-overflow-style:none] [scrollbar-width:none]",
+          "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
+          "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
         ].join(" ")}
-        style={{ touchAction: "pan-x" }}
       >
         {results.map((vehicle) => (
-          <div key={vehicle.id} className="shrink-0 w-full snap-start px-[9px]">
+          <div key={vehicle.id} className="shrink-0 w-full snap-center px-[9px]">
             <HitCard hit={vehicle} />
           </div>
         ))}
@@ -238,29 +183,26 @@ const MobileResultsCarousel = ({
       </div>
 
       {results.length > 1 && (
-        // Fixed-width viewport — clips the dot strip; no scrollbar, no scroll events.
         <div
-          className="overflow-hidden mx-auto py-3"
-          style={{ width: viewportWidth }}
+          ref={dotsRef}
+          className={[
+            "flex items-center gap-1.5 overflow-x-auto py-3 mx-auto",
+            "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+          ].join(" ")}
+          style={{ maxWidth: CAROUSEL_VISIBLE_DOTS * CAROUSEL_DOT_SLOT }}
         >
-          {/* Inner strip slides via transform to keep active dot centred */}
-          <div
-            className="flex items-center gap-1.5 transition-transform duration-300 ease-out"
-            style={{ transform: `translateX(-${dotStripOffset}px)` }}
-          >
-            {results.map((vehicle, i) => (
-              <button
-                key={vehicle.id}
-                type="button"
-                aria-label={`Go to result ${i + 1} of ${results.length}`}
-                onClick={() => goToIndex(i)}
-                className={[
-                  "shrink-0 rounded-full cursor-pointer transition-all duration-200",
-                  i === activeIndex ? "w-2.5 h-2.5 bg-brand" : "w-1.5 h-1.5 bg-gray-300",
-                ].join(" ")}
-              />
-            ))}
-          </div>
+          {results.map((vehicle, i) => (
+            <button
+              key={vehicle.id}
+              type="button"
+              aria-label={`Go to result ${i + 1} of ${results.length}`}
+              onClick={() => goToIndex(i)}
+              className={[
+                "shrink-0 rounded-full cursor-pointer transition-all duration-200",
+                i === activeIndex ? "w-2.5 h-2.5 bg-brand" : "w-1.5 h-1.5 bg-gray-300",
+              ].join(" ")}
+            />
+          ))}
         </div>
       )}
     </div>
@@ -299,40 +241,35 @@ export const AIChatSidebar = ({
   onLoadMore,
   className,
 }: AIChatSidebarProps) => {
+  // Scoped ref to the messages container itself. We deliberately do NOT use
+  // scrollIntoView() here — it walks up every scrollable ancestor (including
+  // window) to bring the target into view, which was causing the whole page
+  // to jump down whenever this sidebar mounted (e.g. switching to the AI tab).
+  // Setting scrollTop directly only ever affects this div.
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const prevMsgCountRef = useRef(messages.length);
-  const prevLoadingRef = useRef(loading);
 
-  // Only scroll to bottom when a NEW message arrives or loading starts —
-  // never on the initial render or tab-switch, so the panel opens at the top.
   useEffect(() => {
     const el = scrollContainerRef.current;
-    if (!el) return;
-
-    const msgCountGrew = messages.length > prevMsgCountRef.current;
-    const loadingStarted = loading && !prevLoadingRef.current;
-
-    prevMsgCountRef.current = messages.length;
-    prevLoadingRef.current = loading;
-
-    if (msgCountGrew || loadingStarted) {
+    if (el) {
       el.scrollTop = el.scrollHeight;
     }
   }, [messages, loading]);
 
   return (
-    <div className={["flex flex-col min-h-0 flex-1 mt-0 sm:mb-0", className ?? ""].join(" ").trim()}>
-
-      {/* ── Header ── */}
+    <div className={["flex-col min-h-0 flex-1 mt-0 sm:mb-0", className ?? "flex"].join(" ")}>
+      {/* Fixed Clutch Assistant Header */}
       <div className="shrink-0 bg-white border-b border-gray-200 px-0 py-0">
         <div className="flex items-center gap-">
+          {/* Assistant icon */}
           <div className="w-20 h-20 flex justify-center items-center">
             <img src={adlogo?.src} />
           </div>
+
           <div className="min-w-0">
             <h3 className="text-[15px] font-semibold text-gray-900 leading-tight">
               Dora Assistant
             </h3>
+
             <p className="text-[12px] text-gray-500 leading-[12px] mt-0.5">
               Describe the car you're looking for
             </p>
@@ -340,46 +277,38 @@ export const AIChatSidebar = ({
         </div>
       </div>
 
-      {/* ── Single unified scroll container ──
-          Everything lives here: chat bubbles, inline carousels, suggestions,
-          loading indicator. One scroll zone means no split scroll contexts and
-          no touch-event fighting on real devices.
-
-          `touch-action: pan-y` on this element tells iOS Safari that vertical
-          panning belongs to THIS container. Even when the user starts a swipe
-          on the touch-pan-x carousel child, if the gesture resolves as
-          vertical the browser honours pan-y on the nearest ancestor that
-          declares it — so vertical scrolling always works. */}
+      {/* Scrollable messages */}
       <div
         ref={scrollContainerRef}
         className={[
-          "flex-1 min-h-0 overflow-y-auto overscroll-contain",
-          "px-[15px] pt-[15px] pb-[15px] space-y-3",
+          "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px] space-y-3",
           "[&::-webkit-scrollbar]:w-[5px]",
           "[&::-webkit-scrollbar-track]:bg-transparent",
           "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
           "lg:[scrollbar-width:thin]",
         ].join(" ")}
-        style={{ touchAction: "pan-y" }}
       >
         {messages.map((msg) => {
           const isActive = msg.id === activeMessageId;
           return (
             <div key={msg.id} className="space-y-2">
-              {/* Chat bubble */}
-              <div className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`flex flex-col max-w-[88%] ${msg.role === "user" ? "items-end" : "items-start"}`}>
-                  <div
-                    className={`px-3 py-2 rounded-2xl text-[12px] lg:text-[15px] leading-snug ${
-                      msg.role === "user"
-                        ? "bg-black text-white rounded-tr-sm"
-                        : "bg-gray-100 text-gray-800 rounded-tl-sm"
+              <div
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`flex flex-col max-w-[88%] ${msg.role === "user" ? "items-end" : "items-start"
                     }`}
+                >
+                  <div
+                    className={`px-3 py-2 rounded-2xl text-[12px] lg:text-[15px] leading-snug ${msg.role === "user"
+                      ? "bg-black text-white rounded-tr-sm"
+                      : "bg-gray-100 text-gray-800 rounded-tl-sm"
+                      }`}
                   >
                     {msg.text}
                   </div>
 
-                  {/* View / Showing-now badge */}
+                  {/* View / Showing-now control — only on AI messages that returned results */}
                   {msg.role === "ai" && msg.resultsSnapshot && (
                     <div className="mt-1 px-1">
                       {isActive ? (
@@ -401,7 +330,6 @@ export const AIChatSidebar = ({
                 </div>
               </div>
 
-              {/* Inline carousel — only for the active AI message, mobile only */}
               {msg.role === "ai" && msg.resultsSnapshot && isActive && (
                 <div className="-mx-[15px]">
                   <MobileResultsCarousel
@@ -416,7 +344,6 @@ export const AIChatSidebar = ({
           );
         })}
 
-        {/* Quick-start suggestion chips */}
         {messages.length === 1 && !hasSearched && !loading && (
           <div className="sm:hidden flex flex-col gap-2">
             <p className="text-gray-600 font-semibold text-sm">Or search with one of these</p>
@@ -425,7 +352,7 @@ export const AIChatSidebar = ({
                 key={s.label}
                 type="button"
                 onClick={() => onSuggestionClick(s)}
-                className="flex items-center cursor-pointer gap-1 px-3 py-1.5 w-fit rounded-full border border-gray-200 text-[12px] text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium"
+                className="flex items-center cursor-pointer gap-1 px-3 py-1.5 w-fit rounded-full border border-gray-200 text-[12px] text-gray-700 bg-white hover:border-brand hover:text-brand transition-colors font-medium cursor-pointer"
               >
                 <span className="text-brand text-[10px]">✦</span>
                 {s.label}
@@ -434,7 +361,6 @@ export const AIChatSidebar = ({
           </div>
         )}
 
-        {/* Typing indicator */}
         {loading && (
           <div className="flex gap-2 justify-start">
             <div className="px-3 py-2.5 bg-gray-100 rounded-2xl rounded-tl-sm flex items-center gap-1.5">
@@ -446,7 +372,7 @@ export const AIChatSidebar = ({
         )}
       </div>
 
-      {/* ── Input bar — always anchored at the bottom ── */}
+      {/* Input — fixed at bottom within the modal */}
       <div className="shrink-0 px-[15px] pt-[15px] pb-[max(15px,env(safe-area-inset-bottom))] border-t border-gray-200 bg-white">
         <form onSubmit={onSubmit} className="relative flex items-center">
           <textarea

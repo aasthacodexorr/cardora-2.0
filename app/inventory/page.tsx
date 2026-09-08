@@ -1379,16 +1379,10 @@ const InventoryContent = () => {
   const [openFilter, setOpenFilter] = useState<string | null>("");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isAISearchActive, setIsAISearchActive] = useState(false);
-  const mobileToggleBarRef = useRef<HTMLDivElement>(null);
-  const [mobilePanelTop, setMobilePanelTop] = useState(212);
   const headerHeight = useHeaderHeight();
 
   const handleSearchModeChange = (isAI: boolean) => {
     setIsAISearchActive(isAI);
-    if (isAI && mobileToggleBarRef.current) {
-      const rect = mobileToggleBarRef.current.getBoundingClientRect();
-      setMobilePanelTop(Math.round(rect.bottom) + 8); // 8px gap below the toggle bar
-    }
   };
 
   const ai = useAISearch();
@@ -1481,33 +1475,12 @@ const InventoryContent = () => {
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 1023.98px)"); // below Tailwind's `lg`
-    const body = document.body;
 
     const applyLock = () => {
       const isMobileViewport = mq.matches;
-      const shouldLock = isMobileViewport && (isMobileFilterOpen || isAISearchActive);
-
-      if (shouldLock) {
-        // iOS Safari ignores `overflow: hidden` on body — use position:fixed instead.
-        // Store current scroll position so we can restore it on unlock.
-        const scrollY = window.scrollY;
-        body.style.position = "fixed";
-        body.style.top = `-${scrollY}px`;
-        body.style.left = "0";
-        body.style.right = "0";
-        body.style.overflow = "hidden";
-      } else {
-        // Restore scroll position before unfixing.
-        const storedTop = body.style.top;
-        body.style.position = "";
-        body.style.top = "";
-        body.style.left = "";
-        body.style.right = "";
-        body.style.overflow = "";
-        if (storedTop) {
-          window.scrollTo(0, -parseInt(storedTop, 10));
-        }
-      }
+      const shouldLockScroll =
+        isMobileViewport && (isMobileFilterOpen || isAISearchActive);
+      document.body.style.overflow = shouldLockScroll ? "hidden" : "";
     };
 
     applyLock();
@@ -1515,16 +1488,7 @@ const InventoryContent = () => {
 
     return () => {
       mq.removeEventListener("change", applyLock);
-      // Always clean up — restore body on unmount.
-      const storedTop = body.style.top;
-      body.style.position = "";
-      body.style.top = "";
-      body.style.left = "";
-      body.style.right = "";
-      body.style.overflow = "";
-      if (storedTop) {
-        window.scrollTo(0, -parseInt(storedTop, 10));
-      }
+      document.body.style.overflow = "";
     };
   }, [isMobileFilterOpen, isAISearchActive]);
 
@@ -1593,7 +1557,7 @@ const InventoryContent = () => {
         <div className="bg-light-gray lg:-mt-4 min-h-screen lg:px-14 px-3 py-[20px] overflow-visible">
 
           {/* Mobile-only Search / AI Search toggle — desktop keeps its own copy inside the sidebar */}
-          <div ref={mobileToggleBarRef} className="flex lg:hidden items-center gap-1 max-w-[1550px] mx-auto mb-3  p-[6px] rounded-[12px] bg-white border border-border-standard shadow-sm">
+          <div className="flex lg:hidden items-center gap-1 max-w-[1550px] mx-auto mb-3  p-[6px] rounded-[12px] bg-white border border-border-standard shadow-sm">
             <button
               type="button"
               onClick={() => handleSearchModeChange(false)}
@@ -1635,7 +1599,7 @@ const InventoryContent = () => {
               style={{ top: sidebarTop, maxHeight: sidebarMaxHeight, contain: "layout paint" }}
             >
               <div
-                className="flex flex-col bg-white rounded-[15px] border border-border-standard overflow-clip w-full"
+                className="flex flex-col bg-white rounded-[15px] border border-border-standard overflow-hidden w-full"
                 style={{ height: sidebarMaxHeight }}
               >
                 {/* ── Search / AI Search Tab Toggle — hidden on desktop when AI mode is active ── */}
@@ -1678,7 +1642,7 @@ const InventoryContent = () => {
                   onViewMessage={ai.viewMessage}
                   onSuggestionClick={ai.handleSuggestion}
                   onLoadMore={ai.loadMore}
-                  className={isAISearchActive ? "flex flex-col flex-1 min-h-0" : "hidden"}
+                  className={isAISearchActive ? "flex" : "hidden"}
                 />
                 <div
                   className={[
@@ -1733,10 +1697,7 @@ const InventoryContent = () => {
                 /* ── AI Search results area ── */
                 <>
                   {/* Mobile: chat + results merged into a single scrollable card — fixed modal overlay */}
-                  <div
-                    className="fixed inset-x-0 bottom-0 lg:hidden flex flex-col min-h-0 bg-white mx-3 rounded-xl shadow-sm pb-[env(safe-area-inset-bottom)]"
-                    style={{ top: mobilePanelTop, height: `calc(100dvh - ${mobilePanelTop + 6}px)` }}
-                  >
+                  <div className="fixed inset-x-0 bottom-0 top-[215px] flex h-[calc(100dvh-218px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
                     <AIChatSidebar
                       messages={ai.messages}
                       input={ai.input}
@@ -1772,8 +1733,8 @@ const InventoryContent = () => {
                 /* ── Normal search results ── */
                 <>
                   {/* Search + Sort bar */}
-                  <div className="sticky z-40 lg:px-3 pb-0 lg:pt-2 bg-light-gray">
-                    <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-1.5">
+                  <div className="sticky z-40 lg:px-3 lg:pt-2 bg-light-gray">
+                    <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-2">
                       <div className="relative w-full lg:max-w-[440px]">
                         <SearchBox
                           classNames={{
