@@ -89,8 +89,10 @@ const SUGGESTIONS: SuggestionChip[] = [
   },
 ];
 
-const CAROUSEL_VISIBLE_DOTS = 7;
-const CAROUSEL_DOT_SLOT = 12; // px per dot "slot" (dot + gap), tune to taste
+// How many dots are visible in the window at once.
+const DOTS_VISIBLE = 7;
+// Each dot occupies this many px (dot width + gap). Keep in sync with gap-1.5 (6px) + max dot size (10px).
+const DOT_SLOT_PX = 16;
 
 interface MobileResultsCarouselProps {
   results: any[];
@@ -106,62 +108,85 @@ const MobileResultsCarousel = ({
   onLoadMore,
 }: MobileResultsCarouselProps) => {
   const trackRef = useRef<HTMLDivElement>(null);
-  const dotsRef = useRef<HTMLDivElement>(null);
+  // activeIndex stored both as state (for re-render) and ref (for scroll handler closure).
   const [activeIndex, setActiveIndex] = useState(0);
+  const activeIndexRef = useRef(0);
+
+  const setActive = (idx: number) => {
+    if (activeIndexRef.current === idx) return;
+    activeIndexRef.current = idx;
+    setActiveIndex(idx);
+  };
+
+  // Reset to card 0 only when the first item's id changes (genuine new search).
+  // loadMore appends items and keeps the same first item — don't reset in that case.
+  const firstItemId = results[0]?.id ?? null;
+  const prevFirstItemIdRef = useRef<string | null>(null);
 
   useEffect(() => {
+    if (firstItemId === prevFirstItemIdRef.current) return;
+    prevFirstItemIdRef.current = firstItemId;
+    activeIndexRef.current = 0;
     setActiveIndex(0);
-    trackRef.current?.scrollTo({ left: 0,top:0,behavior:"auto" });
-  }, [results]);
+    trackRef.current?.scrollTo({ left: 0, top: 0, behavior: "auto" });
+  }, [firstItemId]);
 
-  // Figure out which card is centered as the user swipes.
+  // Read the settled scroll position ONLY after scrolling has fully stopped.
+  // Using "scrollend" (supported in Chrome 114+, Firefox 109+, Safari 17.4+)
+  // with a debounced "scroll" fallback for older browsers. This prevents the
+  // dots from flickering to a mid-swipe intermediate index.
+  const resultsLengthRef = useRef(results.length);
+  resultsLengthRef.current = results.length;
+
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    let raf = 0;
-    const handleScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const { scrollLeft, clientWidth } = track;
-        if (!clientWidth) return;
-        const idx = Math.round(scrollLeft / clientWidth);
-        setActiveIndex((prev) => {
-          const next = Math.max(0, Math.min(idx, results.length - 1));
-          return prev === next ? prev : next;
-        });
-      });
-    };
-    track.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      track.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, [results.length]);
 
-  // Prefetch more results as the user approaches the end of the carousel.
+    let debounceTimer = 0;
+
+    const commit = () => {
+      const { scrollLeft, clientWidth } = track;
+      if (!clientWidth) return;
+      const idx = Math.round(scrollLeft / clientWidth);
+      setActive(Math.max(0, Math.min(idx, resultsLengthRef.current - 1)));
+    };
+
+    // scrollend fires once scroll (including momentum / snap animation) is fully settled.
+    const onScrollEnd = () => {
+      clearTimeout(debounceTimer);
+      commit();
+    };
+
+    // Fallback debounce for browsers that don't support scrollend yet.
+    const onScroll = () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(commit, 120);
+    };
+
+    const supportsScrollEnd = "onscrollend" in window;
+    if (supportsScrollEnd) {
+      track.addEventListener("scrollend", onScrollEnd, { passive: true });
+    } else {
+      track.addEventListener("scroll", onScroll, { passive: true });
+    }
+
+    return () => {
+      clearTimeout(debounceTimer);
+      if (supportsScrollEnd) {
+        track.removeEventListener("scrollend", onScrollEnd);
+      } else {
+        track.removeEventListener("scroll", onScroll);
+      }
+    };
+    // Re-attach only if the track element itself changes (never in practice).
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Prefetch more results as the user approaches the end.
   useEffect(() => {
     if (hasMore && !loadingMore && results.length > 0 && activeIndex >= results.length - 2) {
       onLoadMore();
     }
   }, [activeIndex, results.length, hasMore, loadingMore, onLoadMore]);
-
-  // Keep the active dot scrolled into the visible dot window.
-  useEffect(() => {
-  const container = dotsRef.current;
-  const dot = container?.children[activeIndex] as HTMLElement | undefined;
-
-  if (!container || !dot) return;
-
-  // Scroll ONLY the dots container horizontally.
-  // Do not use scrollIntoView(), because it can scroll the page vertically.
-  const targetLeft =
-    dot.offsetLeft - container.clientWidth / 2 + dot.offsetWidth / 2;
-
-  container.scrollTo({
-    left: Math.max(0, targetLeft),
-    behavior: "smooth",
-  });
-}, [activeIndex]);
 
   const goToIndex = (i: number) => {
     const track = trackRef.current;
@@ -171,18 +196,30 @@ const MobileResultsCarousel = ({
 
   if (results.length === 0) return null;
 
+  // Dots: we render a fixed-size viewport window (DOTS_VISIBLE slots wide) and
+  // translate the inner strip so the active dot is always centred. No overflow
+  // scrolling — pure CSS transform, so the dots never "scroll" on their own.
+  const dotStripOffset = Math.max(
+    0,
+    Math.min(
+      activeIndex - Math.floor(DOTS_VISIBLE / 2),
+      results.length - DOTS_VISIBLE,
+    ),
+  ) * DOT_SLOT_PX;
+  const viewportWidth = DOTS_VISIBLE * DOT_SLOT_PX;
+
   return (
     <div className="sm:hidden">
       {/* Card track — one full-width card per swipe, native scroll-snap */}
       <div
         ref={trackRef}
         className={[
-  "flex w-full overflow-x-auto overflow-y-hidden",
-  "snap-x snap-mandatory scroll-smooth",
-  "touch-pan-x overscroll-x-contain",
-  "[&::-webkit-scrollbar]:hidden",
-  "[-ms-overflow-style:none] [scrollbar-width:none]",
-].join(" ")}
+          "flex w-full overflow-x-auto overflow-y-hidden",
+          "snap-x snap-mandatory",
+          "touch-pan-x overscroll-x-contain",
+          "[&::-webkit-scrollbar]:hidden",
+          "[-ms-overflow-style:none] [scrollbar-width:none]",
+        ].join(" ")}
       >
         {results.map((vehicle) => (
           <div key={vehicle.id} className="shrink-0 w-full snap-start px-[9px]">
@@ -198,26 +235,29 @@ const MobileResultsCarousel = ({
       </div>
 
       {results.length > 1 && (
+        // Fixed-width viewport — clips the dot strip; no scrollbar, no scroll events.
         <div
-          ref={dotsRef}
-          className={[
-            "flex items-center gap-1.5 overflow-x-auto py-3 mx-auto",
-            "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
-          ].join(" ")}
-          style={{ maxWidth: CAROUSEL_VISIBLE_DOTS * CAROUSEL_DOT_SLOT }}
+          className="overflow-hidden mx-auto py-3"
+          style={{ width: viewportWidth }}
         >
-          {results.map((vehicle, i) => (
-            <button
-              key={vehicle.id}
-              type="button"
-              aria-label={`Go to result ${i + 1} of ${results.length}`}
-              onClick={() => goToIndex(i)}
-              className={[
-                "shrink-0 rounded-full cursor-pointer transition-all duration-200",
-                i === activeIndex ? "w-2.5 h-2.5 bg-brand" : "w-1.5 h-1.5 bg-gray-300",
-              ].join(" ")}
-            />
-          ))}
+          {/* Inner strip slides via transform to keep active dot centred */}
+          <div
+            className="flex items-center gap-1.5 transition-transform duration-300 ease-out"
+            style={{ transform: `translateX(-${dotStripOffset}px)` }}
+          >
+            {results.map((vehicle, i) => (
+              <button
+                key={vehicle.id}
+                type="button"
+                aria-label={`Go to result ${i + 1} of ${results.length}`}
+                onClick={() => goToIndex(i)}
+                className={[
+                  "shrink-0 rounded-full cursor-pointer transition-all duration-200",
+                  i === activeIndex ? "w-2.5 h-2.5 bg-brand" : "w-1.5 h-1.5 bg-gray-300",
+                ].join(" ")}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -271,7 +311,7 @@ export const AIChatSidebar = ({
   }, [messages, loading]);
 
   return (
-    <div className={["flex-col min-h-0 flex-1 mt-0 sm:mb-0", className ?? "flex"].join(" ")}>
+    <div className={["flex flex-col min-h-0 flex-1 mt-0 sm:mb-0", className ?? ""].join(" ").trim()}>
       {/* Fixed Clutch Assistant Header */}
       <div className="shrink-0 bg-white border-b border-gray-200 px-0 py-0">
         <div className="flex items-center gap-">
