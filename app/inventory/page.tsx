@@ -1697,7 +1697,7 @@ const InventoryContent = () => {
                 /* ── AI Search results area ── */
                 <>
                   {/* Mobile: chat + results merged into a single scrollable card — fixed modal overlay */}
-                  <div className="fixed inset-x-0 bottom-0 top-[215px] flex h-[calc(100dvh-218px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
+                  <div className="fixed inset-x-0 bottom-0 top-[212px] flex h-[calc(100dvh-218px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
                     <AIChatSidebar
                       messages={ai.messages}
                       input={ai.input}
@@ -1733,8 +1733,8 @@ const InventoryContent = () => {
                 /* ── Normal search results ── */
                 <>
                   {/* Search + Sort bar */}
-                  <div className="sticky z-40 lg:px-3 pt-1 pb-2 lg:pt-2 bg-light-gray">
-                    <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-2">
+                  <div className="sticky z-40 lg:px-3 pb-0 lg:pt-2 bg-light-gray">
+                    <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-1.5">
                       <div className="relative w-full lg:max-w-[440px]">
                         <SearchBox
                           classNames={{
