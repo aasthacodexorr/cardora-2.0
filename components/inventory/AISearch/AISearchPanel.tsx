@@ -25,7 +25,7 @@ type AISearchFilters = {
   fuel_type?: string[];
 };
 
- 
+
 type ResultsSnapshot = {
   results: any[];
   filters: AISearchFilters;
@@ -59,12 +59,12 @@ type SuggestionChip = {
 const SUGGESTIONS: SuggestionChip[] = [
   {
     label: "SUV under $35000",
-    filters: { body_type: ["suv","sport-utility-vehicle"], maxPrice: 35000 },
+    filters: { body_type: ["suv", "sport-utility-vehicle"], maxPrice: 35000 },
     followUp: "Any preferences for lower mileage?",
   },
   {
     label: "Fuel-Efficient Hybrid",
-    filters: { fuel_type: ["Hybrid","hev","hybrid-gas-electric","electric-battery"] },
+    filters: { fuel_type: ["Hybrid", "hev", "phev", "hybrid-gas-electric"] },
     followUp: "Would you like me to also filter for a lower mileage — say, under 30,000 km?",
   },
   {
@@ -74,7 +74,7 @@ const SUGGESTIONS: SuggestionChip[] = [
   },
   {
     label: "A truck that can tow a trailer",
-    filters: { body_type: ["truck","pickup-truck"] },
+    filters: { body_type: ["truck", "pickup-truck"] },
     followUp: "Do you have a budget in mind, or any preference for year and mileage?",
   },
   {
@@ -88,7 +88,7 @@ const SUGGESTIONS: SuggestionChip[] = [
     followUp: "Would you like a mileage limit, such as under 30,000 km?",
   },
 ];
- 
+
 const CAROUSEL_VISIBLE_DOTS = 7;
 const CAROUSEL_DOT_SLOT = 12; // px per dot "slot" (dot + gap), tune to taste
 
@@ -108,10 +108,10 @@ const MobileResultsCarousel = ({
   const trackRef = useRef<HTMLDivElement>(null);
   const dotsRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
- 
+
   useEffect(() => {
     setActiveIndex(0);
-    trackRef.current?.scrollTo({ left: 0 });
+    trackRef.current?.scrollTo({ left: 0,top:0,behavior:"auto" });
   }, [results]);
 
   // Figure out which card is centered as the user swipes.
@@ -147,9 +147,21 @@ const MobileResultsCarousel = ({
 
   // Keep the active dot scrolled into the visible dot window.
   useEffect(() => {
-    const dot = dotsRef.current?.children[activeIndex] as HTMLElement | undefined;
-    dot?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  }, [activeIndex]);
+  const container = dotsRef.current;
+  const dot = container?.children[activeIndex] as HTMLElement | undefined;
+
+  if (!container || !dot) return;
+
+  // Scroll ONLY the dots container horizontally.
+  // Do not use scrollIntoView(), because it can scroll the page vertically.
+  const targetLeft =
+    dot.offsetLeft - container.clientWidth / 2 + dot.offsetWidth / 2;
+
+  container.scrollTo({
+    left: Math.max(0, targetLeft),
+    behavior: "smooth",
+  });
+}, [activeIndex]);
 
   const goToIndex = (i: number) => {
     const track = trackRef.current;
@@ -165,12 +177,15 @@ const MobileResultsCarousel = ({
       <div
         ref={trackRef}
         className={[
-          "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
-          "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
-        ].join(" ")}
+  "flex w-full overflow-x-auto overflow-y-hidden",
+  "snap-x snap-mandatory scroll-smooth",
+  "touch-pan-x overscroll-x-contain",
+  "[&::-webkit-scrollbar]:hidden",
+  "[-ms-overflow-style:none] [scrollbar-width:none]",
+].join(" ")}
       >
         {results.map((vehicle) => (
-          <div key={vehicle.id} className="shrink-0 w-full snap-center px-[9px]">
+          <div key={vehicle.id} className="shrink-0 w-full snap-start px-[9px]">
             <HitCard hit={vehicle} />
           </div>
         ))}
@@ -181,7 +196,7 @@ const MobileResultsCarousel = ({
           </div>
         )}
       </div>
- 
+
       {results.length > 1 && (
         <div
           ref={dotsRef}
@@ -329,7 +344,7 @@ export const AIChatSidebar = ({
                   )}
                 </div>
               </div>
- 
+
               {msg.role === "ai" && msg.resultsSnapshot && isActive && (
                 <div className="-mx-[15px]">
                   <MobileResultsCarousel
@@ -343,9 +358,9 @@ export const AIChatSidebar = ({
             </div>
           );
         })}
- 
+
         {messages.length === 1 && !hasSearched && !loading && (
-          <div className="sm:hidden flex flex-col gap-2 mt-5">
+          <div className="sm:hidden flex flex-col gap-2">
             <p className="text-gray-600 font-semibold text-sm">Or search with one of these</p>
             {SUGGESTIONS.map((s) => (
               <button
@@ -512,8 +527,10 @@ export const AIResultsPanel = ({
           {/* Results */}
           {results.length > 0 && (
             <>
-              <div className="hidden lg:flex items-center px-5 py-3 text-base font-medium text-gray-700">
-                <span>{total} matching vehicles found</span>
+              <div className="hidden lg:flex items-center px-5 pt-5 pb-3 text-base font-medium text-gray-700">
+                <span>
+                  {total} matching vehicle{total === 1 ? "" : "s"} found
+                </span>
               </div>
 
               <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
@@ -629,50 +646,50 @@ export function useAISearch() {
   const total = activeSnapshot?.total ?? 0;
 
   const doDirectSearch = async (label: string, presetFilters: AISearchFilters, followUp?: string) => {
-  const userMessage: Message = { id: Date.now().toString(), role: "user", text: label };
-  const nextMessages = [...messages, userMessage];
-  setMessages(nextMessages);
-  setInput("");
-  setLoading(true);
-  window.scrollTo({ top: 0, behavior: "smooth" });
+    const userMessage: Message = { id: Date.now().toString(), role: "user", text: label };
+    const nextMessages = [...messages, userMessage];
+    setMessages(nextMessages);
+    setInput("");
+    setLoading(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
-  try {
-    const res = await fetch("/api/ai-search", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ directFilters: presetFilters }),
-    });
-    if (!res.ok) throw new Error("API error");
+    try {
+      const res = await fetch("/api/ai-search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ directFilters: presetFilters }),
+      });
+      if (!res.ok) throw new Error("API error");
 
-    const data = await res.json();
-    const aiMessageId = `${Date.now()}-ai`;
-    const total = data.total || 0;
-    // The backend never appends a generic "want to narrow by X, Y, Z?" tail
-    // for direct-filter (default option) searches — see the ai-search route.
-    // Instead we add exactly one relevant, chip-specific follow-up here, and
-    // only when there's something to refine.
-    const text = total > 0 && followUp ? `${data.message} ${followUp}` : data.message;
-    const aiMessage: Message = {
-      id: aiMessageId,
-      role: "ai",
-      text,
-      resultsSnapshot: {
-        results: data.results || [],
-        filters: data.filters || {},
-        total,
-        page: data.page || 1,
-        hasMore: !!data.hasMore,
-      },
-    };
-    setMessages([...nextMessages, aiMessage]);
-    setHasSearched(true);
-    setActiveMessageId(aiMessageId);
-  } catch {
-    setMessages([...nextMessages, { id: Date.now().toString(), role: "ai", text: "Sorry, something went wrong. Please try again." }]);
-  } finally {
-    setLoading(false);
-  }
-};
+      const data = await res.json();
+      const aiMessageId = `${Date.now()}-ai`;
+      const total = data.total || 0;
+      // The backend never appends a generic "want to narrow by X, Y, Z?" tail
+      // for direct-filter (default option) searches — see the ai-search route.
+      // Instead we add exactly one relevant, chip-specific follow-up here, and
+      // only when there's something to refine.
+      const text = total > 0 && followUp ? `${data.message} ${followUp}` : data.message;
+      const aiMessage: Message = {
+        id: aiMessageId,
+        role: "ai",
+        text,
+        resultsSnapshot: {
+          results: data.results || [],
+          filters: data.filters || {},
+          total,
+          page: data.page || 1,
+          hasMore: !!data.hasMore,
+        },
+      };
+      setMessages([...nextMessages, aiMessage]);
+      setHasSearched(true);
+      setActiveMessageId(aiMessageId);
+    } catch {
+      setMessages([...nextMessages, { id: Date.now().toString(), role: "ai", text: "Sorry, something went wrong. Please try again." }]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const doSearch = async (
     userText: string,
@@ -707,7 +724,7 @@ export function useAISearch() {
 
       const data = await res.json();
       const aiMessageId = `${Date.now()}-ai`;
- 
+
       if (data.isChat) {
         const aiMessage: Message = {
           id: aiMessageId,

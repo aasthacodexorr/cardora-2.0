@@ -1381,10 +1381,27 @@ const InventoryContent = () => {
   const [isAISearchActive, setIsAISearchActive] = useState(false);
   const headerHeight = useHeaderHeight();
 
+  const handleSearchModeChange = (isAI: boolean) => {
+    setIsAISearchActive(isAI);
+  };
+
   const ai = useAISearch();
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  useLayoutEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "auto",
+    });
+
+    // Run again after the Search/AI DOM has finished updating.
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto",
+      });
+    });
   }, [isAISearchActive]);
 
   useEffect(() => {
@@ -1543,7 +1560,7 @@ const InventoryContent = () => {
           <div className="flex lg:hidden items-center gap-1 max-w-[1550px] mx-auto mb-3  p-[6px] rounded-[12px] bg-white border border-border-standard shadow-sm">
             <button
               type="button"
-              onClick={() => setIsAISearchActive(false)}
+              onClick={() => handleSearchModeChange(false)}
               className={[
                 "cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-[8px] px-3 rounded-[9px] text-[13px] font-semibold transition-all",
                 !isAISearchActive
@@ -1556,7 +1573,7 @@ const InventoryContent = () => {
             </button>
             <button
               type="button"
-              onClick={() => setIsAISearchActive(true)}
+              onClick={() => handleSearchModeChange(true)}
               className={[
                 "cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-[8px] px-3 rounded-[9px] text-[13px] font-semibold transition-all",
                 isAISearchActive
@@ -1588,9 +1605,7 @@ const InventoryContent = () => {
                 {/* ── Search / AI Search Tab Toggle — hidden on desktop when AI mode is active ── */}
                 <div className="flex shrink-0 items-center gap-1 p-[10px] border-b border-gray-100 bg-gray-50/60">
                   <button
-                    onClick={() => {
-                      setIsAISearchActive(false);
-                    }}
+                    onClick={() => handleSearchModeChange(false)}
                     className={[
                       "cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[9px] text-[13px] font-semibold transition-all",
                       !isAISearchActive
@@ -1602,9 +1617,7 @@ const InventoryContent = () => {
                     Search
                   </button>
                   <button
-                    onClick={() => {
-                      setIsAISearchActive(true);
-                    }}
+                    onClick={() => handleSearchModeChange(true)}
                     className={[
                       "cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[9px] text-[13px] font-semibold transition-all",
                       isAISearchActive
@@ -1684,7 +1697,7 @@ const InventoryContent = () => {
                 /* ── AI Search results area ── */
                 <>
                   {/* Mobile: chat + results merged into a single scrollable card — fixed modal overlay */}
-                  <div className="fixed inset-x-0 bottom-0 top-[210px] flex h-[calc(100dvh-218px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
+                  <div className="fixed inset-x-0 bottom-0 top-[215px] flex h-[calc(100dvh-218px)] lg:hidden flex-col overflow-hidden bg-white mx-3 rounded-xl lg:mx-0 shadow-sm pb-[env(safe-area-inset-bottom)]">
                     <AIChatSidebar
                       messages={ai.messages}
                       input={ai.input}
@@ -1720,8 +1733,8 @@ const InventoryContent = () => {
                 /* ── Normal search results ── */
                 <>
                   {/* Search + Sort bar */}
-                  <div className="sticky z-40 lg:px-3 pt-4 pb-2 lg:pt-2 bg-light-gray">
-                    <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-4">
+                  <div className="sticky z-40 lg:px-3 pt-1 pb-2 lg:pt-2 bg-light-gray">
+                    <div className="flex flex-col lg:flex-row lg:items-center items-end justify-between gap-2">
                       <div className="relative w-full lg:max-w-[440px]">
                         <SearchBox
                           classNames={{
@@ -1744,7 +1757,7 @@ const InventoryContent = () => {
                     </div>
                   </div>
 
-                  <div className="px-3">
+                  <div className="lg:px-3">
                     <GroupedCurrentRefinements />
                   </div>
 
