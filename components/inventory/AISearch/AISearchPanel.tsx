@@ -111,7 +111,7 @@ const MobileResultsCarousel = ({
 
   useEffect(() => {
     setActiveIndex(0);
-    trackRef.current?.scrollTo({ left: 0 });
+    trackRef.current?.scrollTo({ left: 0,top:0,behavior:"auto" });
   }, [results]);
 
   // Figure out which card is centered as the user swipes.
@@ -147,9 +147,21 @@ const MobileResultsCarousel = ({
 
   // Keep the active dot scrolled into the visible dot window.
   useEffect(() => {
-    const dot = dotsRef.current?.children[activeIndex] as HTMLElement | undefined;
-    dot?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  }, [activeIndex]);
+  const container = dotsRef.current;
+  const dot = container?.children[activeIndex] as HTMLElement | undefined;
+
+  if (!container || !dot) return;
+
+  // Scroll ONLY the dots container horizontally.
+  // Do not use scrollIntoView(), because it can scroll the page vertically.
+  const targetLeft =
+    dot.offsetLeft - container.clientWidth / 2 + dot.offsetWidth / 2;
+
+  container.scrollTo({
+    left: Math.max(0, targetLeft),
+    behavior: "smooth",
+  });
+}, [activeIndex]);
 
   const goToIndex = (i: number) => {
     const track = trackRef.current;
@@ -165,12 +177,15 @@ const MobileResultsCarousel = ({
       <div
         ref={trackRef}
         className={[
-          "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
-          "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
-        ].join(" ")}
+  "flex w-full overflow-x-auto overflow-y-hidden",
+  "snap-x snap-mandatory scroll-smooth",
+  "touch-pan-x overscroll-x-contain",
+  "[&::-webkit-scrollbar]:hidden",
+  "[-ms-overflow-style:none] [scrollbar-width:none]",
+].join(" ")}
       >
         {results.map((vehicle) => (
-          <div key={vehicle.id} className="shrink-0 w-full snap-center px-[9px]">
+          <div key={vehicle.id} className="shrink-0 w-full snap-start px-[9px]">
             <HitCard hit={vehicle} />
           </div>
         ))}
