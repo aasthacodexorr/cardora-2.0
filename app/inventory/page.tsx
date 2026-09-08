@@ -575,11 +575,11 @@ const StableRefinementList = ({
     const live = liveValues.get(cached.value);
     const resolved: RefinementItem = live
       ? {
-          label: live.label,
-          value: String(live.value),
-          count: live.count > 0 ? live.count : cached.count,
-          isRefined: live.isRefined,
-        }
+        label: live.label,
+        value: String(live.value),
+        count: live.count > 0 ? live.count : cached.count,
+        isRefined: live.isRefined,
+      }
       : { ...cached, isRefined: false };
 
     // Strip case + all non-alphanumeric chars so "Pickup Truck", "Pickup-Truck",
@@ -1027,7 +1027,7 @@ const PriceRangeFilter = () => {
     setSelectedMax(max);
     setMinInput(String(min));
     setMaxInput(String(max));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [start]);
 
   const handleApply = () => {
@@ -1152,32 +1152,56 @@ const PriceRangeFilter = () => {
 
 
 const OdometerRangeFilter = () => {
-  const { start, refine } = useRange({ attribute: "odometer" });
+  const { start, range, refine } = useRange({ attribute: "odometer" });
   const [error, setError] = useState("");
   const [min, setMin] = useState("");
   const [max, setMax] = useState("");
-  const lastAppliedRange = useRef<readonly [number | undefined, number | undefined]>([undefined, undefined]);
+  const prevStartRef = useRef<readonly [number | undefined, number | undefined]>([undefined, undefined]);
 
+  const toFiniteNumber = (value: unknown, fallback: number): number =>
+    typeof value === "number" && Number.isFinite(value) ? value : fallback;
+
+  const dynamicMin = toFiniteNumber(range.min, 0);
+  const dynamicMax = toFiniteNumber(range.max, Infinity);
+
+  // Sync local fields to a real, committed InstantSearch refinement.
   useEffect(() => {
-    const nextMin = start[0] ?? lastAppliedRange.current[0];
-    const nextMax = start[1] ?? lastAppliedRange.current[1];
-    setMin(nextMin === undefined ? "" : String(nextMin));
-    setMax(nextMax === undefined ? "" : String(nextMax));
+    const startMin = typeof start?.[0] === "number" && Number.isFinite(start[0]) ? start[0] : undefined;
+    const startMax = typeof start?.[1] === "number" && Number.isFinite(start[1]) ? start[1] : undefined;
+
+    const prevStart = prevStartRef.current;
+    if (startMin === prevStart[0] && startMax === prevStart[1]) return;
+    prevStartRef.current = [startMin, startMax];
+
+    setMin(startMin === undefined ? "" : String(startMin));
+    setMax(startMax === undefined ? "" : String(startMax));
   }, [start]);
 
+  // One-time autofill: show the real min/max from Typesense as the default
+  // display value when nothing is committed yet and the user hasn't typed.
+  useEffect(() => {
+    const hasCommittedFilter = prevStartRef.current[0] !== undefined || prevStartRef.current[1] !== undefined;
+    if (hasCommittedFilter) return;
+    if (!Number.isFinite(range.min) || !Number.isFinite(range.max)) return;
+    if (min !== "" || max !== "") return;
+
+    setMin(String(range.min));
+    setMax(String(range.max));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [range.min, range.max]);
+
   const handleApply = () => {
-    const minValue = min ? Number(min) : undefined;
-    const maxValue = max ? Number(max) : undefined;
     setError("");
-    if ((minValue !== undefined && minValue < 400) || (maxValue !== undefined && maxValue < 400)) {
-      setError("Odometer values must be at least 400");
-      return;
-    }
+
+    const minValue = min !== "" ? Math.max(Number(min), dynamicMin) : undefined;
+    const maxValue = max !== "" ? Math.min(Number(max), dynamicMax) : undefined;
+
     if (minValue !== undefined && maxValue !== undefined && minValue > maxValue) {
       setError("Minimum odometer cannot be greater than maximum odometer");
       return;
     }
-    lastAppliedRange.current = [minValue, maxValue];
+
+    prevStartRef.current = [minValue, maxValue];
     refine([minValue, maxValue]);
   };
 
@@ -1188,12 +1212,12 @@ const OdometerRangeFilter = () => {
   return (
     <div className="pt-2 pb-4 relative">
       <div className="flex items-center gap-2">
-        <input type="number" min={400} value={min} onChange={(e) => setMin(e.target.value)}
-          onKeyDown={handleKeyDown} placeholder="400"
+        <input type="number" min={dynamicMin} value={min} onChange={(e) => setMin(e.target.value)}
+          onKeyDown={handleKeyDown} placeholder={String(dynamicMin)}
           className={`w-full h-[36px] px-3 border rounded-[3px] text-[16px] lg:text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? 'border-red-500' : 'border-border-lightGray'}`} />
         <span className="text-[16px] text-gray-700">To</span>
-        <input type="number" min={400} value={max} onChange={(e) => setMax(e.target.value)}
-          onKeyDown={handleKeyDown} placeholder="Max"
+        <input type="number" min={dynamicMin} value={max} onChange={(e) => setMax(e.target.value)}
+          onKeyDown={handleKeyDown} placeholder={Number.isFinite(dynamicMax) ? String(dynamicMax) : "Max"}
           className={`w-full h-[36px] px-3 border rounded-[3px] text-[16px] lg:text-[14px] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${error ? 'border-red-500' : 'border-border-lightGray'}`} />
         <button type="button" onClick={handleApply}
           className="h-[36px] px-4 text-white rounded-[4px] cursor-pointer bg-brand">
@@ -1206,7 +1230,6 @@ const OdometerRangeFilter = () => {
     </div>
   );
 };
-
 // ── CHANGED: measure the Header height dynamically so the two-column layout
 // fills exactly the remaining viewport without hardcoding a pixel offset.
 function useHeaderHeight() {
@@ -1529,7 +1552,7 @@ const InventoryContent = () => {
               ].join(" ")}
             >
               <Search className="w-3.5 h-3.5" />
-              Search 
+              Search
             </button>
             <button
               type="button"
@@ -1541,7 +1564,7 @@ const InventoryContent = () => {
                   : "text-gray-500",
               ].join(" ")}
             >
-              <span className="text-[11px]">✦</span> 
+              <span className="text-[11px]">✦</span>
               AI Search
             </button>
           </div>
