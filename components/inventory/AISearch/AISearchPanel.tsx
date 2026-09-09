@@ -193,7 +193,7 @@ const MobileResultsCarousel = ({
    */
   const maxVisibleDots = 7;
   const totalResults = results.length;
-
+  
   let startDotIndex = Math.max(0, activeIndex - Math.floor(maxVisibleDots / 2));
   let endDotIndex = startDotIndex + maxVisibleDots;
 
@@ -218,12 +218,10 @@ const MobileResultsCarousel = ({
           w-full
           overflow-x-auto
           overflow-y-hidden
-          snap-x
-          snap-mandatory
           overscroll-x-contain
           scrollbar-hide
           [-webkit-overflow-scrolling:touch]
-          [touch-action:pan-x]
+          [touch-action:pan-x_pan-y]
         "
       >
         {results.map((result, index) => (
