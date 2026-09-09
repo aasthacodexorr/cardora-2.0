@@ -231,7 +231,7 @@ const MobileResultsCarousel = ({
         onTouchCancel={releaseParentScroll}
         className={[
           "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
-          "touch-pan-x overscroll-x-contain",
+          "overscroll-x-contain",
           "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
         ].join(" ")}
       >
