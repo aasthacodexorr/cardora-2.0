@@ -1543,7 +1543,7 @@ const InventoryContent = () => {
       <SyncModelMakeMap />
       <SyncOrphanedModels />
       <ScrollToTopOnSearch />
-      <Configure hitsPerPage={21} filters="status:!=Sold" />
+      <Configure hitsPerPage={21} />
 
       {/* Put the layout wrapper here, safe inside InstantSearch context! */}
       <MainLayoutWrapper>
