@@ -109,6 +109,15 @@ const MobileResultsCarousel = ({
   const dotsRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const lockParentScroll = () => {
+    const parent = trackRef.current?.closest(".overflow-y-auto") as HTMLElement | null;
+    if (parent) parent.style.overflowY = "hidden";
+  };
+  const unlockParentScroll = () => {
+    const parent = trackRef.current?.closest(".overflow-y-auto") as HTMLElement | null;
+    if (parent) parent.style.overflowY = "auto";
+  };
+
   useEffect(() => {
     setActiveIndex(0);
     trackRef.current?.scrollTo({ left: 0 });
@@ -147,8 +156,19 @@ const MobileResultsCarousel = ({
 
   // Keep the active dot scrolled into the visible dot window.
   useEffect(() => {
-    const dot = dotsRef.current?.children[activeIndex] as HTMLElement | undefined;
-    dot?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    const container = dotsRef.current;
+    const dot = container?.children[activeIndex] as HTMLElement | undefined;
+    if (!container || !dot) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const dotRect = dot.getBoundingClientRect();
+
+    // Position of the dot relative to the container's own scroll content,
+    // independent of any offsetParent ambiguity.
+    const dotOffsetWithinContainer = dotRect.left - containerRect.left + container.scrollLeft;
+    const target = dotOffsetWithinContainer - container.clientWidth / 2 + dotRect.width / 2;
+
+    container.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
   }, [activeIndex]);
 
   const goToIndex = (i: number) => {
@@ -159,13 +179,19 @@ const MobileResultsCarousel = ({
 
   if (results.length === 0) return null;
 
+
+
   return (
     <div className="sm:hidden">
       {/* Card track — one full-width card per swipe, native scroll-snap */}
       <div
         ref={trackRef}
+        onTouchStart={lockParentScroll}
+        onTouchEnd={unlockParentScroll}
+        onTouchCancel={unlockParentScroll}
         className={[
           "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
+          "touch-pan-x overscroll-x-contain",
           "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
         ].join(" ")}
       >
@@ -248,9 +274,14 @@ export const AIChatSidebar = ({
   // Setting scrollTop directly only ever affects this div.
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  const prevMessagesLengthRef = useRef(messages.length);
+
   useEffect(() => {
     const el = scrollContainerRef.current;
-    if (el) {
+    const isNewMessage = messages.length !== prevMessagesLengthRef.current;
+    prevMessagesLengthRef.current = messages.length;
+
+    if (el && isNewMessage) {
       el.scrollTop = el.scrollHeight;
     }
   }, [messages, loading]);
