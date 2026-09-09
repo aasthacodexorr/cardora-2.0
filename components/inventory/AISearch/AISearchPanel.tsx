@@ -109,13 +109,55 @@ const MobileResultsCarousel = ({
   const dotsRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const lockParentScroll = () => {
-    const parent = trackRef.current?.closest(".overflow-y-auto") as HTMLElement | null;
-    if (parent) parent.style.overflowY = "hidden";
+  // ── Axis-locking touch handling ──────────────────────────────────────
+  // We only want to block the outer (vertical) chat scroll while the user
+  // is genuinely swiping this carousel horizontally. Locking on every
+  // touchstart (regardless of direction) broke normal vertical scrolling
+  // of the chat/HitCard list, so instead we wait for a real ~6px movement
+  // and decide the axis from whichever delta dominates:
+  //   - horizontal-dominant drag  -> lock the parent's vertical scroll
+  //     for the rest of this gesture only (prevents the swipe from
+  //     bleeding into / shifting the outer chat scroll position).
+  //   - vertical-dominant drag    -> leave the parent free to scroll,
+  //     exactly like normal.
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const axisLockedRef = useRef<"x" | "y" | null>(null);
+
+  const getScrollParent = () =>
+    trackRef.current?.closest(".overflow-y-auto") as HTMLElement | null;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStartRef.current = { x: t.clientX, y: t.clientY };
+    axisLockedRef.current = null;
   };
-  const unlockParentScroll = () => {
-    const parent = trackRef.current?.closest(".overflow-y-auto") as HTMLElement | null;
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStartRef.current || axisLockedRef.current) return;
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartRef.current.x;
+    const dy = t.clientY - touchStartRef.current.y;
+
+    // Ignore tiny jitter — wait for a deliberate movement before deciding.
+    if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      // Clearly a horizontal swipe — lock the parent's vertical scroll
+      // for the rest of this gesture only, so it can't bleed/shift.
+      axisLockedRef.current = "x";
+      const parent = getScrollParent();
+      if (parent) parent.style.overflowY = "hidden";
+    } else {
+      // Clearly a vertical drag — leave the parent free to scroll normally.
+      axisLockedRef.current = "y";
+    }
+  };
+
+  const releaseParentScroll = () => {
+    const parent = getScrollParent();
     if (parent) parent.style.overflowY = "auto";
+    touchStartRef.current = null;
+    axisLockedRef.current = null;
   };
 
   useEffect(() => {
@@ -153,8 +195,7 @@ const MobileResultsCarousel = ({
       onLoadMore();
     }
   }, [activeIndex, results.length, hasMore, loadingMore, onLoadMore]);
-
-  // Keep the active dot scrolled into the visible dot window.
+ 
   useEffect(() => {
     const container = dotsRef.current;
     const dot = container?.children[activeIndex] as HTMLElement | undefined;
@@ -179,16 +220,15 @@ const MobileResultsCarousel = ({
 
   if (results.length === 0) return null;
 
-
-
   return (
     <div className="sm:hidden">
       {/* Card track — one full-width card per swipe, native scroll-snap */}
       <div
         ref={trackRef}
-        onTouchStart={lockParentScroll}
-        onTouchEnd={unlockParentScroll}
-        onTouchCancel={unlockParentScroll}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={releaseParentScroll}
+        onTouchCancel={releaseParentScroll}
         className={[
           "flex overflow-x-auto snap-x snap-mandatory scroll-smooth",
           "touch-pan-x overscroll-x-contain",
@@ -267,13 +307,9 @@ export const AIChatSidebar = ({
   onLoadMore,
   className,
 }: AIChatSidebarProps) => {
-  // Scoped ref to the messages container itself. We deliberately do NOT use
-  // scrollIntoView() here — it walks up every scrollable ancestor (including
-  // window) to bring the target into view, which was causing the whole page
-  // to jump down whenever this sidebar mounted (e.g. switching to the AI tab).
-  // Setting scrollTop directly only ever affects this div.
+ 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
+ 
   const prevMessagesLengthRef = useRef(messages.length);
 
   useEffect(() => {
@@ -313,6 +349,7 @@ export const AIChatSidebar = ({
         ref={scrollContainerRef}
         className={[
           "flex-1 min-h-0 overflow-y-auto overscroll-contain px-[15px] pt-[15px] pb-[15px] space-y-3",
+          "[scrollbar-gutter:stable]",
           "[&::-webkit-scrollbar]:w-[5px]",
           "[&::-webkit-scrollbar-track]:bg-transparent",
           "[&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full",
