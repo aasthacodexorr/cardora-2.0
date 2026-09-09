@@ -93,6 +93,7 @@ const CAROUSEL_VISIBLE_DOTS = 7;
 const CAROUSEL_DOT_SLOT = 12; // px per dot "slot" (dot + gap), tune to taste
 
 
+
 interface MobileResultsCarouselProps {
   results: any[];
   loadingMore: boolean;
@@ -105,42 +106,14 @@ const MobileResultsCarousel = ({
   hasMore,
   loadingMore,
   onLoadMore,
-}: {
-  results: any[];
-  hasMore: boolean;
-  loadingMore: boolean;
-  onLoadMore: () => void;
-}) => {
+}: MobileResultsCarouselProps) => {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const dotsRef = useRef<HTMLDivElement | null>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const touchRef = useRef<{
-    startX: number;
-    startY: number;
-    startScrollLeft: number;
-    axis: "x" | "y" | null;
-  } | null>(null);
-
   /*
-   * Reset carousel whenever results change.
-   */
-  useEffect(() => {
-    const track = trackRef.current;
-
-    if (!track) return;
-
-    track.scrollTo({
-      left: 0,
-      behavior: "auto",
-    });
-
-    setActiveIndex(0);
-  }, [results]);
-
-  /*
-   * Update active dot when carousel is scrolled.
+   * Update active dot while the carousel is scrolling.
    */
   useEffect(() => {
     const track = trackRef.current;
@@ -152,10 +125,17 @@ const MobileResultsCarousel = ({
 
       if (!cardWidth) return;
 
-      const index = Math.round(track.scrollLeft / cardWidth);
+      const index = Math.round(
+        track.scrollLeft / cardWidth
+      );
 
-      setActiveIndex(
-        Math.max(0, Math.min(index, Math.max(results.length - 1, 0)))
+      const nextIndex = Math.max(
+        0,
+        Math.min(index, results.length - 1)
+      );
+
+      setActiveIndex((prev) =>
+        prev === nextIndex ? prev : nextIndex
       );
     };
 
@@ -169,39 +149,22 @@ const MobileResultsCarousel = ({
   }, [results.length]);
 
   /*
-   * Automatically load more results when user gets
-   * close to the end of the carousel.
+   * Load more when reaching the last couple of cards.
    */
   useEffect(() => {
-    const track = trackRef.current;
+    if (
+      !hasMore ||
+      loadingMore ||
+      results.length === 0
+    ) {
+      return;
+    }
 
-    if (!track || !hasMore || loadingMore) return;
-
-    const handleScroll = () => {
-      const cardWidth = track.clientWidth;
-
-      if (!cardWidth) return;
-
-      const currentIndex = Math.round(
-        track.scrollLeft / cardWidth
-      );
-
-      const remainingCards =
-        results.length - currentIndex - 1;
-
-      if (remainingCards <= 2) {
-        onLoadMore();
-      }
-    };
-
-    track.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
-
-    return () => {
-      track.removeEventListener("scroll", handleScroll);
-    };
+    if (activeIndex >= results.length - 2) {
+      onLoadMore();
+    }
   }, [
+    activeIndex,
     results.length,
     hasMore,
     loadingMore,
@@ -209,132 +172,26 @@ const MobileResultsCarousel = ({
   ]);
 
   /*
-   * Start touch gesture.
+   * Reset carousel when a new result set arrives.
    */
-  const handleTouchStart = (
-    e: React.TouchEvent<HTMLDivElement>
-  ) => {
-    const touch = e.touches[0];
-
-    if (!touch) return;
-
+  useEffect(() => {
     const track = trackRef.current;
 
-    touchRef.current = {
-      startX: touch.clientX,
-      startY: touch.clientY,
-      startScrollLeft: track?.scrollLeft ?? 0,
-      axis: null,
-    };
-  };
+    if (!track) return;
+
+    track.scrollTo({
+      left: 0,
+      behavior: "auto",
+    });
+
+    setActiveIndex(0);
+  }, [
+    results[0]?.objectID,
+    results[0]?.inventory_id,
+  ]);
 
   /*
-   * Handle horizontal/vertical gesture.
-   *
-   * Important:
-   * - We NEVER preventDefault().
-   * - Vertical gestures are left completely alone so the
-   *   parent AI chat container can continue scrolling.
-   * - Horizontal gestures manually update scrollLeft.
-   */
-  const handleTouchMove = (
-    e: React.TouchEvent<HTMLDivElement>
-  ) => {
-    const state = touchRef.current;
-    const track = trackRef.current;
-
-    if (!state || !track) return;
-
-    const touch = e.touches[0];
-
-    if (!touch) return;
-
-    const dx = touch.clientX - state.startX;
-    const dy = touch.clientY - state.startY;
-
-    /*
-     * Wait until the finger has moved enough to determine
-     * the direction.
-     */
-    if (!state.axis) {
-      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) {
-        return;
-      }
-
-      state.axis =
-        Math.abs(dx) > Math.abs(dy)
-          ? "x"
-          : "y";
-    }
-
-    /*
-     * Vertical gesture.
-     *
-     * Do absolutely nothing here.
-     * This allows iOS/Android to scroll the parent
-     * chat container naturally.
-     */
-    if (state.axis === "y") {
-      return;
-    }
-
-    /*
-     * Horizontal gesture.
-     *
-     * Manually move the carousel.
-     */
-    track.scrollLeft =
-      state.startScrollLeft - dx;
-  };
-
-  /*
-   * Finish touch gesture and snap to nearest card.
-   */
-  const handleTouchEnd = () => {
-    const state = touchRef.current;
-    const track = trackRef.current;
-
-    if (!state || !track) {
-      touchRef.current = null;
-      return;
-    }
-
-    if (state.axis === "x") {
-      const cardWidth = track.clientWidth;
-
-      if (cardWidth > 0) {
-        const index = Math.round(
-          track.scrollLeft / cardWidth
-        );
-
-        const maxIndex = Math.max(
-          results.length - 1,
-          0
-        );
-
-        const targetIndex = Math.max(
-          0,
-          Math.min(index, maxIndex)
-        );
-
-        track.scrollTo({
-          left: targetIndex * cardWidth,
-          behavior: "smooth",
-        });
-
-        setActiveIndex(targetIndex);
-      }
-    }
-
-    touchRef.current = null;
-  };
-
-  const handleTouchCancel = () => {
-    touchRef.current = null;
-  };
-
-  /*
-   * Go directly to a card from the dot navigation.
+   * Navigate using dots.
    */
   const goToIndex = (index: number) => {
     const track = trackRef.current;
@@ -366,8 +223,9 @@ const MobileResultsCarousel = ({
 
     if (!dots) return;
 
-    const activeDot =
-      dots.children[activeIndex] as HTMLElement | undefined;
+    const activeDot = dots.children[
+      activeIndex
+    ] as HTMLElement | undefined;
 
     if (!activeDot) return;
 
@@ -384,23 +242,21 @@ const MobileResultsCarousel = ({
 
   return (
     <div className="w-full">
-      {/* Results carousel */}
+      {/* Native horizontal carousel */}
       <div
         ref={trackRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchCancel}
         className="
           flex
           w-full
           overflow-x-auto
+          overflow-y-hidden
           snap-x
           snap-mandatory
           overscroll-x-contain
-          scroll-smooth
-          [-webkit-overflow-scrolling:touch]
           scrollbar-hide
+          [-webkit-overflow-scrolling:touch]
+          touch-pan-x
+          touch-pan-y
         "
       >
         {results.map((result, index) => (
@@ -408,6 +264,7 @@ const MobileResultsCarousel = ({
             key={
               result.objectID ??
               result.inventory_id ??
+              result.id ??
               index
             }
             className="
@@ -422,54 +279,38 @@ const MobileResultsCarousel = ({
         ))}
       </div>
 
-      {/* Dot navigation */}
+      {/* DOTS — KEEP EXACTLY AS BEFORE */}
       {results.length > 1 && (
-
         <div
-
           ref={dotsRef}
-
           className={[
-
             "flex items-center gap-1.5 overflow-x-auto py-3 mx-auto",
-
             "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
-
           ].join(" ")}
-
-          style={{ maxWidth: CAROUSEL_VISIBLE_DOTS * CAROUSEL_DOT_SLOT }}
-
+          style={{
+            maxWidth:
+              CAROUSEL_VISIBLE_DOTS *
+              CAROUSEL_DOT_SLOT,
+          }}
         >
-
           {results.map((vehicle, i) => (
-
             <button
-
               key={vehicle.id}
-
               type="button"
-
-              aria-label={`Go to result ${i + 1} of ${results.length}`}
-
+              aria-label={`Go to result ${i + 1
+                } of ${results.length}`}
               onClick={() => goToIndex(i)}
-
               className={[
-
                 "shrink-0 rounded-full cursor-pointer transition-all duration-200",
-
-                i === activeIndex ? "w-2.5 h-2.5 bg-brand" : "w-1.5 h-1.5 bg-gray-300",
-
+                i === activeIndex
+                  ? "w-2.5 h-2.5 bg-brand"
+                  : "w-1.5 h-1.5 bg-gray-300",
               ].join(" ")}
-
             />
-
           ))}
-
         </div>
-
       )}
 
-      {/* Loading more indicator */}
       {loadingMore && (
         <div className="flex justify-center py-3">
           <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black" />
@@ -478,6 +319,7 @@ const MobileResultsCarousel = ({
     </div>
   );
 };
+
 
 
 
