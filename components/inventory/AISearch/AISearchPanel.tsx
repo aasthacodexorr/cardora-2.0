@@ -102,30 +102,19 @@ interface MobileResultsCarouselProps {
 
 const MobileResultsCarousel = ({
   results,
-  loadingMore,
   hasMore,
+  loadingMore,
   onLoadMore,
-}: MobileResultsCarouselProps) => {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const dotsRef = useRef<HTMLDivElement>(null);
+}: {
+  results: any[];
+  hasMore: boolean;
+  loadingMore: boolean;
+  onLoadMore: () => void;
+}) => {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const dotsRef = useRef<HTMLDivElement | null>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
-
-  // --------------------------------------------------
-  // Touch handling
-  // --------------------------------------------------
-  // IMPORTANT:
-  // - touch-action: pan-y allows the parent vertical scroll
-  //   to remain completely native.
-  // - Horizontal movement is handled manually using scrollLeft.
-  // - We never modify the parent's overflow during a gesture.
-  // - We never call preventDefault().
-  //
-  // This works consistently on:
-  // Android Chrome
-  // iOS Safari
-  // iOS Chrome (WebKit)
-  // --------------------------------------------------
 
   const touchRef = useRef<{
     startX: number;
@@ -134,77 +123,206 @@ const MobileResultsCarousel = ({
     axis: "x" | "y" | null;
   } | null>(null);
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    const touch = e.touches[0];
+  /*
+   * Reset carousel whenever results change.
+   */
+  useEffect(() => {
     const track = trackRef.current;
 
     if (!track) return;
 
+    track.scrollTo({
+      left: 0,
+      behavior: "auto",
+    });
+
+    setActiveIndex(0);
+  }, [results]);
+
+  /*
+   * Update active dot when carousel is scrolled.
+   */
+  useEffect(() => {
+    const track = trackRef.current;
+
+    if (!track) return;
+
+    const handleScroll = () => {
+      const cardWidth = track.clientWidth;
+
+      if (!cardWidth) return;
+
+      const index = Math.round(track.scrollLeft / cardWidth);
+
+      setActiveIndex(
+        Math.max(0, Math.min(index, Math.max(results.length - 1, 0)))
+      );
+    };
+
+    track.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      track.removeEventListener("scroll", handleScroll);
+    };
+  }, [results.length]);
+
+  /*
+   * Automatically load more results when user gets
+   * close to the end of the carousel.
+   */
+  useEffect(() => {
+    const track = trackRef.current;
+
+    if (!track || !hasMore || loadingMore) return;
+
+    const handleScroll = () => {
+      const cardWidth = track.clientWidth;
+
+      if (!cardWidth) return;
+
+      const currentIndex = Math.round(
+        track.scrollLeft / cardWidth
+      );
+
+      const remainingCards =
+        results.length - currentIndex - 1;
+
+      if (remainingCards <= 2) {
+        onLoadMore();
+      }
+    };
+
+    track.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      track.removeEventListener("scroll", handleScroll);
+    };
+  }, [
+    results.length,
+    hasMore,
+    loadingMore,
+    onLoadMore,
+  ]);
+
+  /*
+   * Start touch gesture.
+   */
+  const handleTouchStart = (
+    e: React.TouchEvent<HTMLDivElement>
+  ) => {
+    const touch = e.touches[0];
+
+    if (!touch) return;
+
+    const track = trackRef.current;
+
     touchRef.current = {
       startX: touch.clientX,
       startY: touch.clientY,
-      startScrollLeft: track.scrollLeft,
+      startScrollLeft: track?.scrollLeft ?? 0,
       axis: null,
     };
   };
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    const touchState = touchRef.current;
+  /*
+   * Handle horizontal/vertical gesture.
+   *
+   * Important:
+   * - We NEVER preventDefault().
+   * - Vertical gestures are left completely alone so the
+   *   parent AI chat container can continue scrolling.
+   * - Horizontal gestures manually update scrollLeft.
+   */
+  const handleTouchMove = (
+    e: React.TouchEvent<HTMLDivElement>
+  ) => {
+    const state = touchRef.current;
     const track = trackRef.current;
 
-    if (!touchState || !track) return;
+    if (!state || !track) return;
 
     const touch = e.touches[0];
 
-    const dx = touch.clientX - touchState.startX;
-    const dy = touch.clientY - touchState.startY;
+    if (!touch) return;
 
-    // Ignore tiny movement / finger jitter.
-    if (Math.abs(dx) < 6 && Math.abs(dy) < 6) {
+    const dx = touch.clientX - state.startX;
+    const dy = touch.clientY - state.startY;
+
+    /*
+     * Wait until the finger has moved enough to determine
+     * the direction.
+     */
+    if (!state.axis) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) {
+        return;
+      }
+
+      state.axis =
+        Math.abs(dx) > Math.abs(dy)
+          ? "x"
+          : "y";
+    }
+
+    /*
+     * Vertical gesture.
+     *
+     * Do absolutely nothing here.
+     * This allows iOS/Android to scroll the parent
+     * chat container naturally.
+     */
+    if (state.axis === "y") {
       return;
     }
 
-    // Decide the gesture axis only once.
-    if (!touchState.axis) {
-      touchState.axis =
-        Math.abs(dx) > Math.abs(dy) ? "x" : "y";
-    }
-
-    // Vertical gesture:
-    // Do absolutely nothing.
-    // The browser is responsible for vertical scrolling.
-    if (touchState.axis === "y") {
-      return;
-    }
-
-    // Horizontal gesture:
-    // Manually move the carousel.
-    if (touchState.axis === "x") {
-      track.scrollLeft = touchState.startScrollLeft - dx;
-    }
+    /*
+     * Horizontal gesture.
+     *
+     * Manually move the carousel.
+     */
+    track.scrollLeft =
+      state.startScrollLeft - dx;
   };
 
+  /*
+   * Finish touch gesture and snap to nearest card.
+   */
   const handleTouchEnd = () => {
+    const state = touchRef.current;
     const track = trackRef.current;
 
-    if (!track || !touchRef.current) {
+    if (!state || !track) {
       touchRef.current = null;
       return;
     }
 
-    const { axis } = touchRef.current;
+    if (state.axis === "x") {
+      const cardWidth = track.clientWidth;
 
-    // For horizontal gestures, snap to the closest card.
-    if (axis === "x") {
-      const width = track.clientWidth;
+      if (cardWidth > 0) {
+        const index = Math.round(
+          track.scrollLeft / cardWidth
+        );
 
-      if (width > 0) {
-        const index = Math.round(track.scrollLeft / width);
+        const maxIndex = Math.max(
+          results.length - 1,
+          0
+        );
+
+        const targetIndex = Math.max(
+          0,
+          Math.min(index, maxIndex)
+        );
 
         track.scrollTo({
-          left: index * width,
+          left: targetIndex * cardWidth,
           behavior: "smooth",
         });
+
+        setActiveIndex(targetIndex);
       }
     }
 
@@ -215,215 +333,146 @@ const MobileResultsCarousel = ({
     touchRef.current = null;
   };
 
-  // Reset carousel when results change.
-  useEffect(() => {
-    setActiveIndex(0);
-
-    const track = trackRef.current;
-
-    if (track) {
-      track.scrollTo({
-        left: 0,
-        behavior: "auto",
-      });
-    }
-  }, [results]);
-
-  // --------------------------------------------------
-  // Track active card
-  // --------------------------------------------------
-
-  useEffect(() => {
-    const track = trackRef.current;
-
-    if (!track) return;
-
-    let raf = 0;
-
-    const handleScroll = () => {
-      cancelAnimationFrame(raf);
-
-      raf = requestAnimationFrame(() => {
-        const { scrollLeft, clientWidth } = track;
-
-        if (!clientWidth) return;
-
-        const index = Math.round(scrollLeft / clientWidth);
-
-        setActiveIndex((prev) => {
-          const next = Math.max(
-            0,
-            Math.min(index, results.length - 1)
-          );
-
-          return prev === next ? prev : next;
-        });
-      });
-    };
-
-    track.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
-
-    return () => {
-      track.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, [results.length]);
-
-  // --------------------------------------------------
-  // Load more when approaching the end
-  // --------------------------------------------------
-
-  useEffect(() => {
-    if (
-      hasMore &&
-      !loadingMore &&
-      results.length > 0 &&
-      activeIndex >= results.length - 2
-    ) {
-      onLoadMore();
-    }
-  }, [
-    activeIndex,
-    results.length,
-    hasMore,
-    loadingMore,
-    onLoadMore,
-  ]);
-
-  // --------------------------------------------------
-  // Keep active dot visible
-  // --------------------------------------------------
-
-  useEffect(() => {
-    const container = dotsRef.current;
-    const dot = container?.children[
-      activeIndex
-    ] as HTMLElement | undefined;
-
-    if (!container || !dot) return;
-
-    const containerRect = container.getBoundingClientRect();
-    const dotRect = dot.getBoundingClientRect();
-
-    const dotOffsetWithinContainer =
-      dotRect.left -
-      containerRect.left +
-      container.scrollLeft;
-
-    const target =
-      dotOffsetWithinContainer -
-      container.clientWidth / 2 +
-      dotRect.width / 2;
-
-    container.scrollTo({
-      left: Math.max(0, target),
-      behavior: "smooth",
-    });
-  }, [activeIndex]);
-
-  // --------------------------------------------------
-  // Dot navigation
-  // --------------------------------------------------
-
+  /*
+   * Go directly to a card from the dot navigation.
+   */
   const goToIndex = (index: number) => {
     const track = trackRef.current;
 
     if (!track) return;
 
+    const cardWidth = track.clientWidth;
+
+    if (!cardWidth) return;
+
+    const targetIndex = Math.max(
+      0,
+      Math.min(index, results.length - 1)
+    );
+
     track.scrollTo({
-      left: index * track.clientWidth,
+      left: targetIndex * cardWidth,
       behavior: "smooth",
     });
+
+    setActiveIndex(targetIndex);
   };
 
-  if (results.length === 0) return null;
+  /*
+   * Keep active dot visible.
+   */
+  useEffect(() => {
+    const dots = dotsRef.current;
+
+    if (!dots) return;
+
+    const activeDot =
+      dots.children[activeIndex] as HTMLElement | undefined;
+
+    if (!activeDot) return;
+
+    activeDot.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }, [activeIndex]);
+
+  if (!results.length) {
+    return null;
+  }
 
   return (
-    <div className="sm:hidden">
-      {/* 
-        IMPORTANT iOS FIX:
-
-        touch-action-pan-y:
-        - Vertical swipe -> browser handles vertical scrolling.
-        - Horizontal swipe -> our JS handles scrollLeft.
-
-        -webkit-overflow-scrolling-touch:
-        - Enables native momentum scrolling on older iOS versions.
-      */}
+    <div className="w-full">
+      {/* Results carousel */}
       <div
         ref={trackRef}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onTouchCancel={handleTouchCancel}
-        className={[
-          "flex",
-          "overflow-x-auto",
-          "snap-x snap-mandatory",
-          "overscroll-x-contain",
-          "scroll-smooth",
-          "touch-pan-y",
-          "[-webkit-overflow-scrolling:touch]",
-          "[&::-webkit-scrollbar]:hidden",
-          "[-ms-overflow-style:none]",
-          "[scrollbar-width:none]",
-        ].join(" ")}
+        className="
+          flex
+          w-full
+          overflow-x-auto
+          snap-x
+          snap-mandatory
+          overscroll-x-contain
+          scroll-smooth
+          [-webkit-overflow-scrolling:touch]
+          scrollbar-hide
+        "
       >
-        {results.map((vehicle) => (
+        {results.map((result, index) => (
           <div
-            key={vehicle.id}
-            className="shrink-0 w-full snap-center px-[9px]"
+            key={
+              result.objectID ??
+              result.inventory_id ??
+              index
+            }
+            className="
+              w-full
+              min-w-full
+              shrink-0
+              snap-center
+            "
           >
-            <HitCard hit={vehicle} />
+            <HitCard hit={result} />
           </div>
         ))}
-
-        {loadingMore && (
-          <div className="shrink-0 w-full snap-center px-[9px]">
-            <InventoryLoadMoreSkeleton />
-          </div>
-        )}
       </div>
 
+      {/* Dot navigation */}
       {results.length > 1 && (
+
         <div
+
           ref={dotsRef}
+
           className={[
-            "flex items-center gap-1.5",
-            "overflow-x-auto",
-            "py-3 mx-auto",
-            "overscroll-x-contain",
-            "[-webkit-overflow-scrolling:touch]",
-            "[&::-webkit-scrollbar]:hidden",
-            "[-ms-overflow-style:none]",
-            "[scrollbar-width:none]",
+
+            "flex items-center gap-1.5 overflow-x-auto py-3 mx-auto",
+
+            "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+
           ].join(" ")}
-          style={{
-            maxWidth:
-              CAROUSEL_VISIBLE_DOTS *
-              CAROUSEL_DOT_SLOT,
-          }}
+
+          style={{ maxWidth: CAROUSEL_VISIBLE_DOTS * CAROUSEL_DOT_SLOT }}
+
         >
-          {results.map((vehicle, index) => (
+
+          {results.map((vehicle, i) => (
+
             <button
+
               key={vehicle.id}
+
               type="button"
-              aria-label={`Go to result ${
-                index + 1
-              } of ${results.length}`}
-              onClick={() => goToIndex(index)}
+
+              aria-label={`Go to result ${i + 1} of ${results.length}`}
+
+              onClick={() => goToIndex(i)}
+
               className={[
-                "shrink-0 rounded-full",
-                "cursor-pointer",
-                "transition-all duration-200",
-                index === activeIndex
-                  ? "w-2.5 h-2.5 bg-brand"
-                  : "w-1.5 h-1.5 bg-gray-300",
+
+                "shrink-0 rounded-full cursor-pointer transition-all duration-200",
+
+                i === activeIndex ? "w-2.5 h-2.5 bg-brand" : "w-1.5 h-1.5 bg-gray-300",
+
               ].join(" ")}
+
             />
+
           ))}
+
+        </div>
+
+      )}
+
+      {/* Loading more indicator */}
+      {loadingMore && (
+        <div className="flex justify-center py-3">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black" />
         </div>
       )}
     </div>
@@ -464,9 +513,9 @@ export const AIChatSidebar = ({
   onLoadMore,
   className,
 }: AIChatSidebarProps) => {
- 
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
- 
+
   const prevMessagesLengthRef = useRef(messages.length);
 
   useEffect(() => {
