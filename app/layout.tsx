@@ -67,6 +67,9 @@ export default async function RootLayout({
       style={CSS_VARIABLES as React.CSSProperties}
     >
       <head>
+        {/* Explicit favicon — prevents client-side libraries from overriding it */}
+        <link rel="icon" href="/favicon.jpg" type="image/jpeg" />
+        <link rel="shortcut icon" href="/favicon.jpg" type="image/jpeg" />
         {/* Load form validation script before any interactive content */}
         <ScriptLoader />
         <script
