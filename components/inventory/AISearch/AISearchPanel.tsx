@@ -92,8 +92,6 @@ const SUGGESTIONS: SuggestionChip[] = [
 const CAROUSEL_VISIBLE_DOTS = 7;
 const CAROUSEL_DOT_SLOT = 12; // px per dot "slot" (dot + gap), tune to taste
 
-
-
 interface MobileResultsCarouselProps {
   results: any[];
   loadingMore: boolean;
@@ -108,41 +106,36 @@ const MobileResultsCarousel = ({
   onLoadMore,
 }: MobileResultsCarouselProps) => {
   const trackRef = useRef<HTMLDivElement | null>(null);
-  const dotsRef = useRef<HTMLDivElement | null>(null);
-
   const [activeIndex, setActiveIndex] = useState(0);
 
   /*
-   * Update active dot while the carousel is scrolling.
+   * Accurately track active card using card bounding rect intersections.
    */
   useEffect(() => {
     const track = trackRef.current;
-
     if (!track) return;
 
     const handleScroll = () => {
-      const cardWidth = track.clientWidth;
+      const children = Array.from(track.children) as HTMLElement[];
+      if (children.length === 0) return;
 
-      if (!cardWidth) return;
+      const trackRect = track.getBoundingClientRect();
+      let closestIndex = 0;
+      let minDistance = Infinity;
 
-      const index = Math.round(
-        track.scrollLeft / cardWidth
-      );
+      children.forEach((child, index) => {
+        const childRect = child.getBoundingClientRect();
+        const distance = Math.abs(childRect.left - trackRect.left);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestIndex = index;
+        }
+      });
 
-      const nextIndex = Math.max(
-        0,
-        Math.min(index, results.length - 1)
-      );
-
-      setActiveIndex((prev) =>
-        prev === nextIndex ? prev : nextIndex
-      );
+      setActiveIndex((prev) => (prev === closestIndex ? prev : closestIndex));
     };
 
-    track.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
-
+    track.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       track.removeEventListener("scroll", handleScroll);
     };
@@ -152,31 +145,20 @@ const MobileResultsCarousel = ({
    * Load more when reaching the last couple of cards.
    */
   useEffect(() => {
-    if (
-      !hasMore ||
-      loadingMore ||
-      results.length === 0
-    ) {
+    if (!hasMore || loadingMore || results.length === 0) {
       return;
     }
 
     if (activeIndex >= results.length - 2) {
       onLoadMore();
     }
-  }, [
-    activeIndex,
-    results.length,
-    hasMore,
-    loadingMore,
-    onLoadMore,
-  ]);
+  }, [activeIndex, results.length, hasMore, loadingMore, onLoadMore]);
 
   /*
    * Reset carousel when a new result set arrives.
    */
   useEffect(() => {
     const track = trackRef.current;
-
     if (!track) return;
 
     track.scrollTo({
@@ -185,63 +167,49 @@ const MobileResultsCarousel = ({
     });
 
     setActiveIndex(0);
-  }, [
-    results[0]?.objectID,
-    results[0]?.inventory_id,
-  ]);
+  }, [results[0]?.objectID, results[0]?.inventory_id]);
 
   /*
    * Navigate using dots.
    */
   const goToIndex = (index: number) => {
     const track = trackRef.current;
-
     if (!track) return;
 
-    const cardWidth = track.clientWidth;
-
-    if (!cardWidth) return;
-
-    const targetIndex = Math.max(
-      0,
-      Math.min(index, results.length - 1)
-    );
+    const children = Array.from(track.children) as HTMLElement[];
+    const targetChild = children[index];
+    if (!targetChild) return;
 
     track.scrollTo({
-      left: targetIndex * cardWidth,
+      left: targetChild.offsetLeft,
       behavior: "smooth",
     });
 
-    setActiveIndex(targetIndex);
+    setActiveIndex(index);
   };
 
   /*
-   * Keep active dot visible.
+   * Calculate a sliding window of max 7 dots to display.
    */
-  useEffect(() => {
-    const dots = dotsRef.current;
+  const maxVisibleDots = 7;
+  const totalResults = results.length;
 
-    if (!dots) return;
+  let startDotIndex = Math.max(0, activeIndex - Math.floor(maxVisibleDots / 2));
+  let endDotIndex = startDotIndex + maxVisibleDots;
 
-    const activeDot = dots.children[
-      activeIndex
-    ] as HTMLElement | undefined;
+  if (endDotIndex > totalResults) {
+    endDotIndex = totalResults;
+    startDotIndex = Math.max(0, endDotIndex - maxVisibleDots);
+  }
 
-    if (!activeDot) return;
-
-    activeDot.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "center",
-    });
-  }, [activeIndex]);
+  const visibleDots = results.slice(startDotIndex, endDotIndex);
 
   if (!results.length) {
     return null;
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-hidden">
       {/* Native horizontal carousel */}
       <div
         ref={trackRef}
@@ -255,23 +223,20 @@ const MobileResultsCarousel = ({
           overscroll-x-contain
           scrollbar-hide
           [-webkit-overflow-scrolling:touch]
-          touch-pan-x
-          touch-pan-y
+          [touch-action:pan-x]
         "
       >
         {results.map((result, index) => (
           <div
-            key={
-              result.objectID ??
-              result.inventory_id ??
-              result.id ??
-              index
-            }
+            key={result.objectID ?? result.inventory_id ?? result.id ?? index}
             className="
               w-full
-              min-w-full
-              shrink-0
-              snap-center
+              min-w-[100%]
+              max-w-[100%]
+              flex-shrink-0
+              snap-start
+              pl-4
+              pr-2
             "
           >
             <HitCard hit={result} />
@@ -279,35 +244,28 @@ const MobileResultsCarousel = ({
         ))}
       </div>
 
-      {/* DOTS — KEEP EXACTLY AS BEFORE */}
-      {results.length > 1 && (
-        <div
-          ref={dotsRef}
-          className={[
-            "flex items-center gap-1.5 overflow-x-auto py-3 mx-auto",
-            "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
-          ].join(" ")}
-          style={{
-            maxWidth:
-              CAROUSEL_VISIBLE_DOTS *
-              CAROUSEL_DOT_SLOT,
-          }}
-        >
-          {results.map((vehicle, i) => (
-            <button
-              key={vehicle.id}
-              type="button"
-              aria-label={`Go to result ${i + 1
-                } of ${results.length}`}
-              onClick={() => goToIndex(i)}
-              className={[
-                "shrink-0 rounded-full cursor-pointer transition-all duration-200",
-                i === activeIndex
-                  ? "w-2.5 h-2.5 bg-brand"
-                  : "w-1.5 h-1.5 bg-gray-300",
-              ].join(" ")}
-            />
-          ))}
+      {/* WINDOWED DOTS (Max 7 shown at a time) */}
+      {totalResults > 1 && (
+        <div className="flex items-center justify-center gap-1.5 py-3 mx-auto">
+          {visibleDots.map((vehicle, localIdx) => {
+            const actualIdx = startDotIndex + localIdx;
+            const isActive = actualIdx === activeIndex;
+
+            return (
+              <button
+                key={vehicle.id ?? actualIdx}
+                type="button"
+                aria-label={`Go to result ${actualIdx + 1} of ${totalResults}`}
+                onClick={() => goToIndex(actualIdx)}
+                className={[
+                  "shrink-0 rounded-full cursor-pointer transition-all duration-200",
+                  isActive
+                    ? "w-2.5 h-2.5 bg-emerald-500"
+                    : "w-1.5 h-1.5 bg-gray-300",
+                ].join(" ")}
+              />
+            );
+          })}
         </div>
       )}
 
@@ -319,8 +277,6 @@ const MobileResultsCarousel = ({
     </div>
   );
 };
-
-
 
 
 // ─────────────────────────────────────────────
@@ -447,7 +403,7 @@ export const AIChatSidebar = ({
               </div>
 
               {msg.role === "ai" && msg.resultsSnapshot && isActive && (
-                <div className="-mx-[15px]">
+                <div className="-mx-[15px] block lg:hidden">
                   <MobileResultsCarousel
                     results={msg.resultsSnapshot.results}
                     loadingMore={loadingMore}
