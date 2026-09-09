@@ -1757,7 +1757,7 @@ const InventoryContent = () => {
                     </div>
                   </div>
 
-                  <div className="lg:px-3">
+                  <div className="lg:px-3 pt-2">
                     <GroupedCurrentRefinements />
                   </div>
 
