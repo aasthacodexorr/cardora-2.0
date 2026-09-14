@@ -399,16 +399,8 @@ export const AIChatSidebar = ({
                       )}
                     </div>
                   )}
-
-
-
-                  
-
                 </div>
-                
               </div>
-
-              
 
               {msg.role === "ai" && msg.resultsSnapshot && isActive && (
                 <div className="-mx-[15px] block lg:hidden">
