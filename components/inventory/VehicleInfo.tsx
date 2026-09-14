@@ -321,7 +321,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 export const VehicleHeader = ({ vehicle }: any) => (
   <div className="rounded-t-xl px-5 py-6 text-center w-full bg-light-blue tracking-wide">
     <h1 className="text-[30px] font-bold text-gray-900 leading-tight tracking-wide">
-      {vehicle?.year}{vehicle?.make}{vehicle?.model}
+      {vehicle?.year} {vehicle?.make} {vehicle?.model}
     </h1>
 
     {vehicle?.trim && (
