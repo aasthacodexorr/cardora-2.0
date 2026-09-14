@@ -1643,6 +1643,7 @@ const InventoryContent = () => {
                   onSuggestionClick={ai.handleSuggestion}
                   onLoadMore={ai.loadMore}
                   className={isAISearchActive ? "flex" : "hidden"}
+                  onReset={ai.reset}
                 />
                 <div
                   className={[
@@ -1710,6 +1711,7 @@ const InventoryContent = () => {
                       onViewMessage={ai.viewMessage}
                       onSuggestionClick={ai.handleSuggestion}
                       onLoadMore={ai.loadMore}
+                      onReset={ai.reset}
                     />
                   </div>
 
