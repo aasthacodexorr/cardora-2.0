@@ -1618,8 +1618,8 @@ const InventoryContent = () => {
               AI Search
             </button>
 
-            {/* Mobile Clear Button: Appends next to toggle buttons only when a search is active */}
-            {ai.hasSearched && (
+            {/* Mobile Clear Button: Only shows when on AI Search tab AND a search has been made */}
+            {isAISearchActive && ai.hasSearched && (
               <button
                 type="button"
                 onClick={ai.reset}
