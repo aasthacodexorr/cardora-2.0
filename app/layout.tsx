@@ -94,9 +94,13 @@ export default async function RootLayout({
         {/* End Meta Pixel Code */}
       </head>
       <body className="min-h-full flex flex-col">
-        
-        <Providers config={appConfig}><Header/>{children}<Footer/></Providers>
-        
+        <Providers config={appConfig}>
+          <Header />
+          <div className="flex-1 flex flex-col min-h-screen">
+            {children}
+          </div>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
