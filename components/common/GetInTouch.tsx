@@ -75,7 +75,7 @@ const GetInTouch = () => {
                   <button
                     key={t}
                     onClick={() => setTab(t)}
-                    className={`px-[30px] py-[5px] rounded-[10px] text-[15px] font-semibold transition-colors border-none cursor-pointer relative z-[11] leading-[1.7em] max-w-full bg-border-darkCharcoal hover:text-white ${
+                    className={`px-[30px] py-[5px] rounded-[10px] text-[15px] font-semibold transition-colors border-none cursor-pointer relativ leading-[1.7em] max-w-full bg-border-darkCharcoal hover:text-white ${
                       tab === t ? "text-primary-greenAlt" : "text-white"
                     }`}
                   >
