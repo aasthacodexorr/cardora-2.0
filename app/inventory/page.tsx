@@ -1473,14 +1473,44 @@ const InventoryContent = () => {
   }, []);
 
 
+  // ── Scroll Lock (iOS-safe) ──
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 1023.98px)"); // below Tailwind's `lg`
+    const mq = window.matchMedia("(max-width: 1023.98px)");
+    let lockedScrollY = 0;
+
+    const lock = () => {
+      lockedScrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${lockedScrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+    };
+
+    const unlock = () => {
+      const top = document.body.style.top;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+      if (top) {
+        window.scrollTo(0, parseInt(top || "0", 10) * -1);
+      }
+    };
 
     const applyLock = () => {
       const isMobileViewport = mq.matches;
-      const shouldLockScroll =
-        isMobileViewport && (isMobileFilterOpen || isAISearchActive);
-      document.body.style.overflow = shouldLockScroll ? "hidden" : "";
+      const shouldLockScroll = isMobileViewport && (isMobileFilterOpen || isAISearchActive);
+      const isLocked = document.body.style.position === "fixed";
+
+      if (shouldLockScroll && !isLocked) {
+        lock();
+      } else if (!shouldLockScroll && isLocked) {
+        unlock();
+      }
     };
 
     applyLock();
@@ -1488,7 +1518,9 @@ const InventoryContent = () => {
 
     return () => {
       mq.removeEventListener("change", applyLock);
-      document.body.style.overflow = "";
+      if (document.body.style.position === "fixed") {
+        unlock();
+      }
     };
   }, [isMobileFilterOpen, isAISearchActive]);
 

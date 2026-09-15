@@ -445,16 +445,16 @@ export const AIChatSidebar = ({
       </div>
 
       {messages.length > 1 && !loading && (
-  <div className="shrink-0 px-[15px] pt-2 pb-2 bg-white">
-    <button
-      type="button"
-      onClick={onReset}
-      className="w-full cursor-pointer rounded-[10px] border border-gray-300 bg-white py-2 text-[13px] font-semibold text-gray-700 transition-colors hover:border-brand hover:text-brand"
-    >
-      Clear Search
-    </button>
-  </div>
-)}
+        <div className="shrink-0 px-[15px] pt-2 pb-2 bg-white">
+          <button
+            type="button"
+            onClick={onReset}
+            className="w-full cursor-pointer rounded-[10px] border border-gray-300 bg-white py-2 text-[13px] font-semibold text-gray-700 transition-colors hover:border-brand hover:text-brand"
+          >
+            Clear Search
+          </button>
+        </div>
+      )}
 
       {/* Input — fixed at bottom within the modal */}
       <div className="shrink-0 px-[15px] pt-[15px] pb-[max(15px,env(safe-area-inset-bottom))] border-t border-gray-200 bg-white">
