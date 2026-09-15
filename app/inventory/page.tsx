@@ -1589,8 +1589,9 @@ const InventoryContent = () => {
         <div className="bg-light-gray lg:-mt-4 min-h-screen lg:px-14 px-3 py-[20px] overflow-visible">
 
           {/* Mobile-only Search / AI Search toggle & conditional Clear button */}
-          <div className="flex lg:hidden items-center gap-1.5 max-w-[1550px] mx-auto mb-3 p-[6px] rounded-[12px] bg-white border border-border-standard shadow-sm">
-            <button
+          <div className="flex lg:hidden items-center gap-1.5 max-w-[1550px] mx-auto mb-3 p-[6px]">
+            <div className="flex w-full rounded-[12px] bg-white border border-border-standard shadow-sm">
+              <button
               type="button"
               onClick={() => handleSearchModeChange(false)}
               className={[
@@ -1617,6 +1618,7 @@ const InventoryContent = () => {
               <span className="text-[11px]">✦</span>
               AI Search
             </button>
+            </div>
 
             {/* Mobile Clear Button: Only shows when on AI Search tab AND a search has been made */}
             {isAISearchActive && ai.hasSearched && (
