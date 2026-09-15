@@ -1588,8 +1588,8 @@ const InventoryContent = () => {
         {/* ── Two-column layout ── */}
         <div className="bg-light-gray lg:-mt-4 min-h-screen lg:px-14 px-3 py-[20px] overflow-visible">
 
-          {/* Mobile-only Search / AI Search toggle — desktop keeps its own copy inside the sidebar */}
-          <div className="flex lg:hidden items-center gap-1 max-w-[1550px] mx-auto mb-3  p-[6px] rounded-[12px] bg-white border border-border-standard shadow-sm">
+          {/* Mobile-only Search / AI Search toggle & conditional Clear button */}
+          <div className="flex lg:hidden items-center gap-1.5 max-w-[1550px] mx-auto mb-3 p-[6px] rounded-[12px] bg-white border border-border-standard shadow-sm">
             <button
               type="button"
               onClick={() => handleSearchModeChange(false)}
@@ -1603,6 +1603,7 @@ const InventoryContent = () => {
               <Search className="w-3.5 h-3.5" />
               Search
             </button>
+
             <button
               type="button"
               onClick={() => handleSearchModeChange(true)}
@@ -1616,6 +1617,18 @@ const InventoryContent = () => {
               <span className="text-[11px]">✦</span>
               AI Search
             </button>
+
+            {/* Mobile Clear Button: Appends next to toggle buttons only when a search is active */}
+            {ai.hasSearched && (
+              <button
+                type="button"
+                onClick={ai.reset}
+                className="cursor-pointer inline-flex items-center gap-1 py-[8px] px-3 rounded-[9px] border border-gray-300 bg-white text-[13px] font-semibold text-gray-700 hover:border-brand hover:text-brand transition-all shrink-0"
+              >
+                <X className="w-3.5 h-3.5" />
+                Clear
+              </button>
+            )}
           </div>
 
           <div className="flex flex-col lg:flex-row items-start max-w-[1550px] mx-auto gap-5 overflow-visible">
