@@ -445,7 +445,7 @@ export const AIChatSidebar = ({
       </div>
 
       {messages.length > 1 && !loading && (
-        <div className="shrink-0 px-[15px] pt-2 pb-2 bg-white">
+        <div className="shrink-0 px-[15px] pt-2 pb-2 bg-white hidden lg:block">
           <button
             type="button"
             onClick={onReset}
@@ -455,6 +455,7 @@ export const AIChatSidebar = ({
           </button>
         </div>
       )}
+
 
       {/* Input — fixed at bottom within the modal */}
       <div className="shrink-0 px-[15px] pt-[15px] pb-[max(15px,env(safe-area-inset-bottom))] border-t border-gray-200 bg-white">
