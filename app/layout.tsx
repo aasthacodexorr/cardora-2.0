@@ -96,7 +96,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <Providers config={appConfig}>
           <Header />
-          <div className="flex-1 flex flex-col min-h-screen mt-10">
+          <div className="flex-1 flex flex-col min-h-screen mt-10 lg:mt-0">
             {children}
           </div>
           <Footer />
