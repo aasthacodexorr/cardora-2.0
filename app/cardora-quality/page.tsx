@@ -22,7 +22,7 @@ const INTRO_DURATION = 1.0; // seconds of scroll for the popup-0 intro card
 const PAUSE_DURATION = 2.0; // how long the video freezes for each feature popup
 
 const FEATURE_WAYPOINTS: { popup: PopupIndex; videoTime: number; label: string }[] = [
-  { popup: 1, videoTime: 10, label: "Certified Inspection" },
+  { popup: 1, videoTime: 7, label: "Certified Inspection" },
   { popup: 2, videoTime: 20, label: "Active Spoiler" },
   { popup: 3, videoTime: 30, label: "Digital Cockpit" },
   { popup: 4, videoTime: 40, label: "Torque Vectoring" },
