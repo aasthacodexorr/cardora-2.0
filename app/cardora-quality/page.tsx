@@ -1,102 +1,123 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Footer } from "@/components/layout";
 import img1 from "@/assets/cars/car-featured-2.jpg";
 
+// ─── Scene manifest ─────────────────────────────────────────────────────────
 const SCENES = [
-  { id: 1, name: "SCENE 01 // HIGHWAY LAUNCH", src: "/scene_1.mp4", frames: 100 },
-  { id: 2, name: "SCENE 02 // AERODYNAMIC CHASSIS", src: "/scene_2.mp4", frames: 100 },
-  { id: 3, name: "SCENE 03 // COCKPIT TELEMETRY", src: "/scene_3.mp4", frames: 100 },
-  { id: 4, name: "SCENE 04 // MAXIMUM Cardora", src: "/scene_4.mp4", frames: 100 },
-  { id: 5, name: "SCENE 05 // EXHAUST SOUND & ACCELERATION", src: "/scene_5.mp4", frames: 100 },
+  { id: 1, name: "SCENE 01 // HIGHWAY LAUNCH - PT 1", src: "/cut_1.mp4" },
+  { id: 2, name: "SCENE 02 // HIGHWAY LAUNCH - PT 2", src: "/cut_2.mp4" },
+  { id: 3, name: "SCENE 03 // AERODYNAMIC CHASSIS", src: "/scene_2.mp4" },
+  { id: 4, name: "SCENE 04 // COCKPIT TELEMETRY", src: "/scene_3.mp4" },
+  { id: 5, name: "SCENE 05 // MAXIMUM VELOCITY", src: "/scene_4.mp4" },
+  { id: 6, name: "SCENE 06 // EXHAUST SOUND & ACCELERATION", src: "/scene_5.mp4" },
 ];
 
-const TOTAL_VIDEO_SECONDS = 50.0;
-const TOTAL_SCROLL_TIMELINE_SECONDS = 58.0;
+const TOTAL_VIDEO_SECONDS = 60.0;
+ 
+type PopupIndex = 1 | 2 | 3 | 4 | 5;
 
-function computeTimelineState(scrollTime: number) {
-  let videoTime = 0;
-  let activePopup: 0 | 1 | 2 | 3 | 4 | 5 | null = null;
-  let isVideoPaused = false;
+const INTRO_DURATION = 1.0; // seconds of scroll for the popup-0 intro card
+const PAUSE_DURATION = 2.0; // how long the video freezes for each feature popup
 
-  if (scrollTime <= 1.0) {
-    videoTime = scrollTime;
-    activePopup = 0;
-  } else if (scrollTime > 1.0 && scrollTime < 3.3) {
-    videoTime = scrollTime;
-    activePopup = null;
-  } else if (scrollTime >= 3.3 && scrollTime < 10.3) {
-    videoTime = 3.3;
-    activePopup = 1;
-    isVideoPaused = true;
-  } else if (scrollTime >= 10.3 && scrollTime < 11.3) {
-    videoTime = scrollTime;
-    activePopup = null;
-  } else if (scrollTime >= 11.3 && scrollTime < 13.3) {
-    videoTime = 11.3;
-    activePopup = 2;
-    isVideoPaused = true;
-  } else if (scrollTime >= 13.3 && scrollTime < 22.0) {
-    videoTime = scrollTime - 2.0;
-    activePopup = null;
-  } else if (scrollTime >= 22.0 && scrollTime < 24.0) {
-    videoTime = 20.0;
-    activePopup = 3;
-    isVideoPaused = true;
-  } else if (scrollTime >= 24.0 && scrollTime < 32.5) {
-    videoTime = scrollTime - 4.0;
-    activePopup = null;
-  } else if (scrollTime >= 32.5 && scrollTime < 34.5) {
-    videoTime = 28.5;
-    activePopup = 4;
-    isVideoPaused = true;
-  } else if (scrollTime >= 34.5 && scrollTime < 56.0) {
-    videoTime = scrollTime - 6.0;
-    activePopup = null;
-  } else if (scrollTime >= 56.0 && scrollTime <= 58.0) {
-    videoTime = 50.0;
-    activePopup = 5;
-    isVideoPaused = true;
-  } else {
-    videoTime = 50.0;
-    activePopup = null;
+const FEATURE_WAYPOINTS: { popup: PopupIndex; videoTime: number; label: string }[] = [
+  { popup: 1, videoTime: 10, label: "Certified Inspection" },
+  { popup: 2, videoTime: 20, label: "Active Spoiler" },
+  { popup: 3, videoTime: 30, label: "Digital Cockpit" },
+  { popup: 4, videoTime: 40, label: "Torque Vectoring" },
+  { popup: 5, videoTime: 50, label: "Titanium Exhaust" },
+];
+
+// Total scroll = full video length + one pause-worth of "dead scroll" per waypoint
+const TOTAL_SCROLL_TIMELINE_SECONDS =
+  TOTAL_VIDEO_SECONDS + FEATURE_WAYPOINTS.length * PAUSE_DURATION;
+
+function computeTimelineState(scrollTime: number): {
+  videoTime: number;
+  activePopup: 0 | PopupIndex | null;
+  isVideoPaused: boolean;
+} {
+  // Intro title card
+  if (scrollTime <= INTRO_DURATION) {
+    return { videoTime: scrollTime, activePopup: 0, isVideoPaused: false };
   }
 
-  return { videoTime, activePopup, isVideoPaused };
+  let cumulativePauseOffset = 0;
+
+  for (const wp of FEATURE_WAYPOINTS) {
+    const pauseStart = wp.videoTime + cumulativePauseOffset;
+    const pauseEnd = pauseStart + PAUSE_DURATION;
+
+    if (scrollTime < pauseStart) {
+      // Still playing footage on the way to this waypoint
+      return {
+        videoTime: scrollTime - cumulativePauseOffset,
+        activePopup: null,
+        isVideoPaused: false,
+      };
+    }
+
+    if (scrollTime < pauseEnd) {
+      // Frozen on this waypoint's frame — show its popup
+      return { videoTime: wp.videoTime, activePopup: wp.popup, isVideoPaused: true };
+    }
+
+    // This waypoint's pause has fully passed — its dead-scroll counts going forward
+    cumulativePauseOffset += PAUSE_DURATION;
+  }
+
+  // Past the last waypoint — play out the remainder of the video
+  const videoTime = Math.min(TOTAL_VIDEO_SECONDS, scrollTime - cumulativePauseOffset);
+  return { videoTime, activePopup: null, isVideoPaused: false };
 }
 
-const CONTENT_BREAKPOINTS = [
-  { id: 1, label: "Inspection",       time: 3.3,  matchPopup: 1 },
-  { id: 2, label: "Active Spoiler",   time: 11.3, matchPopup: 2 },
-  { id: 3, label: "Digital Cockpit",  time: 22.0, matchPopup: 3 },
-  { id: 4, label: "Torque Vectoring", time: 32.5, matchPopup: 4 },
-  { id: 5, label: "Titanium Exhaust", time: 56.0, matchPopup: 5 },
-].map((bp) => ({ ...bp, pct: (bp.time / TOTAL_SCROLL_TIMELINE_SECONDS) * 100 }));
+// Scroll-bar dots — generated from the exact same waypoints/offsets used above,
+// so a dot's vertical position always matches when its popup actually fires,
+// and the 5 dots land evenly spaced (equal 10s video gaps + equal 2s pauses).
+const CONTENT_BREAKPOINTS = FEATURE_WAYPOINTS.map((wp, i) => {
+  const pauseStart = wp.videoTime + i * PAUSE_DURATION;
+  return {
+    id: wp.popup,
+    label: wp.label,
+    matchPopup: wp.popup,
+    time: pauseStart,
+    pct: (pauseStart / TOTAL_SCROLL_TIMELINE_SECONDS) * 100,
+  };
+});
 
+// ─── Per-scene video element wrapper ────────────────────────────────────────
+// Each scene covers an equal slice of TOTAL_VIDEO_SECONDS
+const PER_SCENE_SECONDS = TOTAL_VIDEO_SECONDS / SCENES.length; // 10 s each
+
+function getSceneAndLocalTime(globalTime: number): { sceneIdx: number; localTime: number } {
+  const idx = Math.min(SCENES.length - 1, Math.floor(globalTime / PER_SCENE_SECONDS));
+  const localTime = globalTime - idx * PER_SCENE_SECONDS;
+  return { sceneIdx: idx, localTime };
+}
+
+// ─── Component ──────────────────────────────────────────────────────────────
 export default function CarmaQualityPage() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const sceneHudRef = useRef<HTMLSpanElement | null>(null);
-  const percentHudRef = useRef<HTMLSpanElement | null>(null);
-  const scrollBarRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef      = useRef<HTMLCanvasElement | null>(null);
+  const containerRef   = useRef<HTMLDivElement | null>(null);
+  const sceneHudRef    = useRef<HTMLSpanElement | null>(null);
+  const percentHudRef  = useRef<HTMLSpanElement | null>(null);
+  const scrollBarRef   = useRef<HTMLDivElement | null>(null);
 
-  // Loading state — shown until all frames are extracted
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadProgress, setLoadProgress] = useState(0);
-  const [loadingStatus, setLoadingStatus] = useState("Fetching 5 scenes...");
+  // Hidden video elements – one per scene, preloaded in background
+  const videosRef = useRef<HTMLVideoElement[]>([]);
+  // Track which videos have enough data to draw
+  const videoReadyRef = useRef<boolean[]>(SCENES.map(() => false));
+  // Pending seek promise per video (to avoid overlapping seeks)
+  const seekingRef = useRef<boolean[]>(SCENES.map(() => false));
+  const lastSeekTimeRef = useRef<number[]>(SCENES.map(() => -1));
 
-  const [activePopup, setActivePopup] = useState<0 | 1 | 2 | 3 | 4 | 5 | null>(0);
+  const [activePopup, setActivePopup]       = useState<0 | 1 | 2 | 3 | 4 | 5 | null>(0);
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
-  const [isPastVideo, setIsPastVideo] = useState(false);
+  const [isPastVideo, setIsPastVideo]       = useState(false);
   const isPastVideoRef = useRef(false);
 
-  const masterFramesRef = useRef<ImageBitmap[]>([]);
-  const topColorsRef = useRef<string[]>([]);
-  const isFrameCachedRef = useRef(false);
-
-  // Reset scroll to top on mount
+  // ── Reset scroll on mount ─────────────────────────────────────────────────
   useEffect(() => {
     if (typeof window !== "undefined") {
       if ("scrollRestoration" in window.history) {
@@ -106,127 +127,11 @@ export default function CarmaQualityPage() {
     }
   }, []);
 
-  // Lock body scroll while loading frames
-  useEffect(() => {
-    document.body.style.overflow = isLoading ? "hidden" : "auto";
-    return () => { document.body.style.overflow = "auto"; };
-  }, [isLoading]);
-
-  // Helper: wait for video metadata — guards against already-loaded race
-  function waitForMetadata(video: HTMLVideoElement): Promise<void> {
-    return new Promise<void>((resolve) => {
-      if (video.readyState >= 1) { resolve(); return; }
-      const handler = () => { video.removeEventListener("loadedmetadata", handler); resolve(); };
-      video.addEventListener("loadedmetadata", handler);
-    });
-  }
-
-  // Helper: seek to time — guards against stuck seeked event with 500ms fallback
-  function seekTo(video: HTMLVideoElement, time: number): Promise<void> {
-    return new Promise<void>((resolve) => {
-      let settled = false;
-      const done = () => { if (!settled) { settled = true; resolve(); } };
-      const onSeeked = () => { video.removeEventListener("seeked", onSeeked); done(); };
-      video.addEventListener("seeked", onSeeked);
-      video.currentTime = time;
-      setTimeout(done, 500);
-    });
-  }
-
-  // Frame extraction — runs on mount, blocks UI via loader until done
-  useEffect(() => {
-    let isMounted = true;
-    const objectUrls: string[] = [];
-
-    async function loadAllScenesParallel() {
-      try {
-        setLoadingStatus("Fetching all 5 scenes in parallel...");
-
-        const fetchPromises = SCENES.map(async (scene) => {
-          const res = await fetch(scene.src);
-          if (!res.ok) throw new Error(`Failed to fetch ${scene.src}`);
-          const blob = await res.blob();
-          const url = URL.createObjectURL(blob);
-          objectUrls.push(url);
-          return { ...scene, objectUrl: url };
-        });
-
-        const loadedSceneData = await Promise.all(fetchPromises);
-        if (!isMounted) return;
-
-        setLoadProgress(20);
-        setLoadingStatus("Extracting 500 GPU frames...");
-
-        const allMasterFrames: ImageBitmap[] = [];
-        const allTopColors: string[] = [];
-        const totalFrames = SCENES.reduce((a, s) => a + s.frames, 0);
-        let extracted = 0;
-
-        for (let sIdx = 0; sIdx < loadedSceneData.length; sIdx++) {
-          if (!isMounted) break;
-          const sceneData = loadedSceneData[sIdx];
-
-          const hiddenVideo = document.createElement("video");
-          hiddenVideo.muted = true;
-          hiddenVideo.playsInline = true;
-          hiddenVideo.preload = "auto";
-          hiddenVideo.src = sceneData.objectUrl;
-
-          await waitForMetadata(hiddenVideo);
-
-          const duration = hiddenVideo.duration || 5;
-          const frameCount = sceneData.frames;
-          const offCanvas = document.createElement("canvas");
-          offCanvas.width = hiddenVideo.videoWidth || 1280;
-          offCanvas.height = hiddenVideo.videoHeight || 720;
-          const offCtx = offCanvas.getContext("2d");
-
-          for (let f = 0; f < frameCount; f++) {
-            if (!isMounted) break;
-            await seekTo(hiddenVideo, (f / (frameCount - 1)) * duration);
-
-            if (offCtx) {
-              offCtx.drawImage(hiddenVideo, 0, 0, offCanvas.width, offCanvas.height);
-              const pData = offCtx.getImageData(Math.floor(offCanvas.width / 2), 4, 1, 1).data;
-              allTopColors.push(`rgb(${pData[0]}, ${pData[1]}, ${pData[2]})`);
-              allMasterFrames.push(await createImageBitmap(offCanvas));
-            }
-
-            extracted++;
-            if (isMounted) setLoadProgress(20 + Math.round((extracted / totalFrames) * 80));
-          }
-        }
-
-        if (isMounted && allMasterFrames.length > 0) {
-          masterFramesRef.current = allMasterFrames;
-          topColorsRef.current = allTopColors;
-          isFrameCachedRef.current = true;
-          setLoadProgress(100);
-          setTimeout(() => {
-            if (isMounted) {
-              setIsLoading(false);
-              window.scrollTo(0, 0);
-            }
-          }, 400);
-        }
-      } catch (err) {
-        console.error("Frame preloader error:", err);
-        if (isMounted) setIsLoading(false);
-      }
-    }
-
-    loadAllScenesParallel();
-    return () => {
-      isMounted = false;
-      objectUrls.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, []);
-
-  // Canvas resize
+  // ── Canvas resize ─────────────────────────────────────────────────────────
   useEffect(() => {
     const handleResize = () => {
       if (canvasRef.current) {
-        canvasRef.current.width = window.innerWidth * window.devicePixelRatio;
+        canvasRef.current.width  = window.innerWidth  * window.devicePixelRatio;
         canvasRef.current.height = window.innerHeight * window.devicePixelRatio;
       }
     };
@@ -235,25 +140,54 @@ export default function CarmaQualityPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Scroll engine — only active after loading is done
+  // ── Preload all video elements in background ──────────────────────────────
   useEffect(() => {
-    if (isLoading) return;
+    const videos: HTMLVideoElement[] = SCENES.map((scene, i) => {
+      const v = document.createElement("video");
+      v.src         = scene.src;
+      v.muted       = true;
+      v.playsInline = true;
+      v.preload     = "auto";
+      v.crossOrigin = "anonymous";
 
+      const markReady = () => { videoReadyRef.current[i] = true; };
+      v.addEventListener("loadeddata",  markReady);
+      v.addEventListener("canplaythrough", markReady);
+
+      // Start loading
+      v.load();
+      return v;
+    });
+
+    videosRef.current = videos;
+
+    return () => {
+      videos.forEach((v) => {
+        v.src = "";
+        v.load();
+      });
+      videosRef.current = [];
+      videoReadyRef.current = SCENES.map(() => false);
+    };
+  }, []);
+
+  // ── Scroll + render loop ──────────────────────────────────────────────────
+  useEffect(() => {
     let animFrameId: number;
-    let targetProgress = 0;
-    let smoothProgress = 0;
+    let targetProgress  = 0;
+    let smoothProgress  = 0;
     let lastPopupState: 0 | 1 | 2 | 3 | 4 | 5 | null = null;
-    let lastSceneIndex = 0;
+    let lastSceneIdx    = 0;
 
     const renderLoop = () => {
       const canvas = canvasRef.current;
-      const ctx = canvas?.getContext("2d");
+      const ctx    = canvas?.getContext("2d");
 
       const videoSectionHeight = window.innerHeight * 10;
-      const currentScroll = Math.max(0, window.scrollY);
+      const currentScroll      = Math.max(0, window.scrollY);
       targetProgress = Math.min(1, Math.max(0, currentScroll / videoSectionHeight));
 
-      // Hide all fixed canvas/overlay elements once user scrolls past video section
+      // Hide fixed elements once past video section
       const nowPast = currentScroll >= videoSectionHeight;
       if (nowPast !== isPastVideoRef.current) {
         isPastVideoRef.current = nowPast;
@@ -261,6 +195,7 @@ export default function CarmaQualityPage() {
         if (nowPast) setActivePopup(null);
       }
 
+      // Smooth lerp
       const diff = targetProgress - smoothProgress;
       if (Math.abs(diff) > 0.0001) smoothProgress += diff * 0.35;
       else smoothProgress = targetProgress;
@@ -268,41 +203,62 @@ export default function CarmaQualityPage() {
       const rawScrollTime = smoothProgress * TOTAL_SCROLL_TIMELINE_SECONDS;
       const { videoTime, activePopup: currentPopup } = computeTimelineState(rawScrollTime);
 
-      const masterFrames = masterFramesRef.current;
-      const totalMasterCount = masterFrames.length;
+      // Derive scene index from videoTime
       const videoProgress = Math.min(1, Math.max(0, videoTime / TOTAL_VIDEO_SECONDS));
+      const { sceneIdx, localTime } = getSceneAndLocalTime(videoTime);
 
-      const sceneIdx = Math.min(SCENES.length - 1, Math.floor(videoProgress * SCENES.length));
-      if (sceneIdx !== lastSceneIndex) { lastSceneIndex = sceneIdx; setActiveSceneIndex(sceneIdx); }
-
-      if (sceneHudRef.current) sceneHudRef.current.textContent = SCENES[sceneIdx].name;
+      // HUD updates (direct DOM – no re-render)
+      if (sceneHudRef.current)   sceneHudRef.current.textContent   = SCENES[sceneIdx].name;
       if (percentHudRef.current) percentHudRef.current.textContent = `${Math.round(smoothProgress * 100)}%`;
-      if (scrollBarRef.current) scrollBarRef.current.style.height = `${smoothProgress * 100}%`;
+      if (scrollBarRef.current)  scrollBarRef.current.style.height = `${smoothProgress * 100}%`;
 
-      if (totalMasterCount > 0 && isFrameCachedRef.current && canvas && ctx) {
-        const masterFrameIndex = Math.min(totalMasterCount - 1, Math.max(0, Math.floor(videoProgress * totalMasterCount)));
-        const bitmap = masterFrames[masterFrameIndex];
-        const topColor = topColorsRef.current[masterFrameIndex] || "#000000";
+      if (sceneIdx !== lastSceneIdx) { lastSceneIdx = sceneIdx; setActiveSceneIndex(sceneIdx); }
 
-        if (bitmap) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          const vAspect = bitmap.width / bitmap.height;
-          const cAspect = canvas.width / canvas.height;
-          let drawW = canvas.width, drawH = canvas.height, drawX = 0, drawY = 0;
+      // Draw from video element
+      const video = videosRef.current[sceneIdx];
+      if (video && videoReadyRef.current[sceneIdx] && canvas && ctx) {
+        const seekKey = Math.round(localTime * 30) / 30; // quantise to ~30 fps precision
 
-          if (cAspect > 1.0) {
-            if (cAspect > vAspect) { drawH = canvas.width / vAspect; drawY = (canvas.height - drawH) / 2; }
-            else { drawW = canvas.height * vAspect; drawX = (canvas.width - drawW) / 2; }
-          } else {
-            const vAreaH = canvas.height * 0.75;
-            const vAreaY = canvas.height * 0.25;
-            ctx.fillStyle = topColor;
-            ctx.fillRect(0, 0, canvas.width, vAreaY + 4);
-            drawH = vAreaH; drawW = vAreaH * vAspect;
-            drawX = (canvas.width - drawW) / 2; drawY = vAreaY;
-            if (drawW < canvas.width) { drawW = canvas.width; drawH = canvas.width / vAspect; drawX = 0; drawY = vAreaY + (vAreaH - drawH) / 2; }
-          }
-          ctx.drawImage(bitmap, drawX, drawY, drawW, drawH);
+        if (!seekingRef.current[sceneIdx] && Math.abs(lastSeekTimeRef.current[sceneIdx] - seekKey) > 0.01) {
+          seekingRef.current[sceneIdx]    = true;
+          lastSeekTimeRef.current[sceneIdx] = seekKey;
+
+          // Clamp to video duration
+          const target = Math.max(0, Math.min(video.duration || PER_SCENE_SECONDS, localTime));
+          video.currentTime = target;
+
+          const onSeeked = () => {
+            video.removeEventListener("seeked", onSeeked);
+            seekingRef.current[sceneIdx] = false;
+
+            // Draw the sought frame
+            const c = canvasRef.current;
+            const cx = c?.getContext("2d");
+            if (!c || !cx) return;
+
+            cx.clearRect(0, 0, c.width, c.height);
+            const vAspect = video.videoWidth  / video.videoHeight;
+            const cAspect = c.width / c.height;
+            let drawW = c.width, drawH = c.height, drawX = 0, drawY = 0;
+
+            if (cAspect > 1.0) {
+              if (cAspect > vAspect) { drawH = c.width / vAspect; drawY = (c.height - drawH) / 2; }
+              else { drawW = c.height * vAspect; drawX = (c.width - drawW) / 2; }
+            } else {
+              // Portrait / mobile: top strip + scaled video
+              const topColor = getTopPixelColor(video, cx, c);
+              const vAreaH   = c.height * 0.75;
+              const vAreaY   = c.height * 0.25;
+              cx.fillStyle = topColor;
+              cx.fillRect(0, 0, c.width, vAreaY + 4);
+              drawH = vAreaH; drawW = vAreaH * vAspect;
+              drawX = (c.width - drawW) / 2; drawY = vAreaY;
+              if (drawW < c.width) { drawW = c.width; drawH = c.width / vAspect; drawX = 0; drawY = vAreaY + (vAreaH - drawH) / 2; }
+            }
+            cx.drawImage(video, drawX, drawY, drawW, drawH);
+          };
+
+          video.addEventListener("seeked", onSeeked);
         }
       }
 
@@ -312,47 +268,10 @@ export default function CarmaQualityPage() {
 
     animFrameId = requestAnimationFrame(renderLoop);
     return () => cancelAnimationFrame(animFrameId);
-  }, [isLoading]);
+  }, []);
 
   return (
     <div ref={containerRef} className="relative bg-black text-white font-sans selection:bg-cyan-500 selection:text-black">
-
-      {/* ── LOADING SCREEN ── */}
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeInOut" } }}
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black text-white"
-          >
-            <div className="flex flex-col items-center space-y-6 max-w-sm w-full px-6">
-              {/* Spinner */}
-              <div className="relative w-24 h-24 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full border-2 border-cyan-500/20 animate-ping" />
-                <div className="absolute inset-0 rounded-full border-t-2 border-r-2 border-cyan-400 animate-spin" />
-                <span className="text-sm font-mono font-bold tracking-widest text-cyan-400">{loadProgress}%</span>
-              </div>
-
-              <div className="text-center space-y-2">
-                <h2 className="text-xl font-bold tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">
-                  Rendering 3D Telemetry Canvas
-                </h2>
-                <p className="text-xs text-gray-400 font-mono tracking-wider">{loadingStatus}</p>
-              </div>
-
-              {/* Progress bar */}
-              <div className="w-full bg-gray-900 rounded-full h-2 overflow-hidden border border-gray-800">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500"
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${Math.max(5, loadProgress)}%` }}
-                  transition={{ duration: 0.15 }}
-                />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── VIDEO SCROLL SECTION (1000vh) ── */}
       <div className="relative h-[1000vh]">
@@ -364,16 +283,7 @@ export default function CarmaQualityPage() {
         <div className={`fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/10 to-black/70 ${isPastVideo ? "hidden" : ""}`} />
 
         {/* Header */}
-        <header className={`fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-4 backdrop-blur-md bg-black/40 border-b border-white/10 ${isPastVideo ? "hidden" : ""}`}>
-          <div className="flex items-center space-x-3">
-            <div className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_12px_#22d3ee]" />
-            <span className="font-mono text-sm tracking-widest font-bold uppercase text-white/90">Cardora MOTORS</span>
-          </div>
-          <div className="font-mono text-xs text-cyan-300 bg-cyan-950/50 px-4 py-1.5 rounded-full border border-cyan-500/30 flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span ref={sceneHudRef} className="font-bold tracking-wider text-cyan-400 uppercase">3D TELEMETRY CANVAS</span>
-          </div>
-        </header>
+        
 
         {/* Right scroll progress bar */}
         <div className={`fixed right-6 top-1/2 -translate-y-1/2 z-30 flex-col items-center space-y-4 ${isPastVideo ? "hidden" : "hidden md:flex"}`}>
@@ -394,7 +304,7 @@ export default function CarmaQualityPage() {
           <span ref={percentHudRef} className="font-mono text-xs text-cyan-400 font-bold">0%</span>
         </div>
 
-        {/* POPUP 0: Intro (0s – 1s) */}
+        {/* POPUP 0: Intro */}
         <AnimatePresence>
           {activePopup === 0 && (
             <motion.div
@@ -402,7 +312,7 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: -40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="fixed top-28 md:top-32 left-4 md:left-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-lg w-full rounded-xl p-4 md:p-5"
+              className="fixed top-48 md:top-32 left-4 md:left-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-lg w-full rounded-xl p-4 md:p-5"
             >
               <h4 className="text-4xl md:text-7xl font-bold text-white mb-1 leading-tight">
                 A tailored process like no other.
@@ -411,7 +321,7 @@ export default function CarmaQualityPage() {
           )}
         </AnimatePresence>
 
-        {/* POPUP 1: Certified Inspection (3.3s – 10.3s) */}
+        {/* POPUP 1: Certified Inspection */}
         <AnimatePresence>
           {activePopup === 1 && (
             <motion.div
@@ -419,22 +329,15 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-28 md:top-32 right-4 md:right-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5 bg-black/85 backdrop-blur-2xl border border-cyan-500/40 shadow-[0_0_40px_rgba(34,211,238,0.25)]"
+              className="fixed top-28 md:top-32 right-4 md:right-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5"
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase bg-cyan-500/20 text-cyan-300 rounded-full border border-cyan-400/30">FEATURE 01 // CERTIFIED INSPECTION</span>
-                <span className="text-[10px] font-mono text-white/40">NODE 01</span>
-              </div>
-              <h4 className="text-base md:text-lg font-bold text-white mb-1">150-Point Certified Inspection</h4>
-              <p className="text-xs text-gray-300 leading-relaxed">Every Cardora vehicle passes a rigorous 150-point inspection covering safety, performance, and cosmetics before it reaches your driveway.</p>
-              <div className="mt-3 pt-2 border-t border-white/10 flex justify-between text-[11px] font-mono text-cyan-400">
-                <span>INSPECTION: 150 POINTS</span><span>STATUS: CERTIFIED</span>
-              </div>
+              <h4 className="text-2xl md:text-4xl font-bold text-white mb-1">We handpick the highest quality cars in Australia.</h4>
+              <p className="text-xl text-gray-200 leading-relaxed">Our team is meticulous, and only the best make it to our website.</p>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* POPUP 2: Active Spoiler (11.3s – 13.3s) */}
+        {/* POPUP 2: Active Spoiler */}
         <AnimatePresence>
           {activePopup === 2 && (
             <motion.div
@@ -442,22 +345,18 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-28 md:top-32 right-4 md:right-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5 bg-black/85 backdrop-blur-2xl border border-cyan-500/40 shadow-[0_0_40px_rgba(34,211,238,0.25)]"
+              className="fixed top-14 md:top-32 lg:left-14 left-1 z-30 max-w-[calc(100vw-2rem)] md:max-w-xl w-full rounded-xl p-4 md:p-5"
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase bg-cyan-500/20 text-cyan-300 rounded-full border border-cyan-400/30">FEATURE 02 // ACTIVE SPOILER</span>
-                <span className="text-[10px] font-mono text-white/40">NODE 02</span>
-              </div>
-              <h4 className="text-base md:text-lg font-bold text-white mb-1">Active Carbon Airflow Spoiler</h4>
-              <p className="text-xs text-gray-300 leading-relaxed">Dynamically adjusts angle of attack at high speeds to generate over 450 kg of downforce for ultimate high-speed stability.</p>
-              <div className="mt-3 pt-2 border-t border-white/10 flex justify-between text-[11px] font-mono text-cyan-400">
-                <span>DOWNFORCE: 450 KG</span><span>STATUS: TELEMETRY ACTIVE</span>
+              <h4 className="text-base md:text-6xl font-bold text-white mb-1">Your personal pro test drivers.</h4>
+              <p className="text-2xl text-gray-200 leading-relaxed">We get behind the wheel to road test every aspect of the driver experience.</p>
+              <div>
+                <video src="/cut_1.mp4" autoPlay className="w-full h-auto rounded-2xl" />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* POPUP 3: Digital Cockpit (22.0s – 24.0s) */}
+        {/* POPUP 3: Digital Cockpit */}
         <AnimatePresence>
           {activePopup === 3 && (
             <motion.div
@@ -465,22 +364,19 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: -40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed bottom-12 left-4 md:left-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5 bg-black/85 backdrop-blur-2xl border border-cyan-500/40 shadow-[0_0_40px_rgba(34,211,238,0.25)]"
+              className="fixed top-18 lg:top-24 left-4 md:left-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5"
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase bg-cyan-500/20 text-cyan-300 rounded-full border border-cyan-400/30">FEATURE 03 // DIGITAL COCKPIT</span>
-                <span className="text-[10px] font-mono text-white/40">NODE 03</span>
-              </div>
-              <h4 className="text-base md:text-lg font-bold text-white mb-1">Digital Cockpit &amp; Telemetry HUD</h4>
-              <p className="text-xs text-gray-300 leading-relaxed">Dual holographic HUD projections with real-time G-force telemetry, tire thermal mapping, and predictive lap dynamics.</p>
-              <div className="mt-3 pt-2 border-t border-white/10 flex justify-between text-[11px] font-mono text-cyan-400">
-                <span>G-FORCE: 1.85 G</span><span>STATUS: TELEMETRY ACTIVE</span>
+             
+              <h4 className="text-2xl md:text-4xl font-bold text-white mb-1">90+ minutes, 10 experts and a mechanical hoist.</h4>
+              <p className="text-xl text-gray-200 leading-relaxed">Nothing escapes our forensic inspection process.</p>
+             <div>
+                <video src="/cut_1.mp4" autoPlay className="w-full h-auto rounded-2xl" />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* POPUP 4: Torque Vectoring (32.5s – 34.5s) */}
+        {/* POPUP 4: Torque Vectoring */}
         <AnimatePresence>
           {activePopup === 4 && (
             <motion.div
@@ -488,22 +384,19 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-28 md:top-32 right-4 md:right-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5 bg-black/85 backdrop-blur-2xl border border-cyan-500/40 shadow-[0_0_40px_rgba(34,211,238,0.25)]"
+              className="fixed top-18 md:top-32 right-4 md:right-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5"
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase bg-cyan-500/20 text-cyan-300 rounded-full border border-cyan-400/30">FEATURE 04 // TORQUE VECTORING</span>
-                <span className="text-[10px] font-mono text-white/40">NODE 04</span>
-              </div>
-              <h4 className="text-base md:text-lg font-bold text-white mb-1">Quad-Motor Torque Vectoring</h4>
-              <p className="text-xs text-gray-300 leading-relaxed">Independent electric motors at each wheel deliver 1,020 HP with 0-60 mph launch in 1.95 seconds and instant cornering vector control.</p>
-              <div className="mt-3 pt-2 border-t border-white/10 flex justify-between text-[11px] font-mono text-cyan-400">
-                <span>OUTPUT: 1,020 HP</span><span>STATUS: TELEMETRY ACTIVE</span>
+        
+              <h4 className="text-2xl md:text-4xl font-bold text-white mb-1">Reconditioned by our team of specialists.</h4>
+              <p className="text-xl text-gray-300 leading-relaxed">From testing to fine-tuning, we get it done to our exacting standards.</p>
+               <div>
+                <video src="/cut_1.mp4" autoPlay className="w-full h-auto rounded-2xl" />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* POPUP 5: Titanium Exhaust (56.0s – 58.0s) */}
+        {/* POPUP 5: Titanium Exhaust */}
         <AnimatePresence>
           {activePopup === 5 && (
             <motion.div
@@ -511,17 +404,10 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, y: 20, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed bottom-12 right-4 md:right-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5 bg-black/85 backdrop-blur-2xl border border-cyan-500/40 shadow-[0_0_40px_rgba(34,211,238,0.25)]"
+              className="fixed top-36 left-1 lg:left-14 z-30 max-w-[calc(100vw-2rem)] md:max-w-xl w-full rounded-xl p-4 md:p-5"
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase bg-cyan-500/20 text-cyan-300 rounded-full border border-cyan-400/30">FEATURE 05 // TITANIUM EXHAUST</span>
-                <span className="text-[10px] font-mono text-white/40">NODE 05</span>
-              </div>
-              <h4 className="text-base md:text-lg font-bold text-white mb-1">Titanium Performance &amp; Exhaust</h4>
-              <p className="text-xs text-gray-300 leading-relaxed">Active titanium acoustic bypass valves and lightweight race chassis engineering ready for ultimate track dominance.</p>
-              <div className="mt-3 pt-2 border-t border-white/10 flex justify-between text-[11px] font-mono text-cyan-400">
-                <span>EXHAUST: TITANIUM R</span><span>STATUS: READY TO DRIVE</span>
-              </div>
+              <h4 className="text-2xl md:text-5xl font-bold text-white mb-1">The finishing touches to showroom-standard.</h4>
+              <p className="text-xl text-gray-200 leading-relaxed">Deodorising, vacuuming, washing, waxing and buffing. So every car feels like new.</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -595,4 +481,22 @@ export default function CarmaQualityPage() {
   );
 }
 
-
+// ─── Helper: sample top-centre pixel colour from a video element ─────────────
+function getTopPixelColor(
+  video: HTMLVideoElement,
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement
+): string {
+  try {
+    // Draw a tiny 1×1 sample to a temp canvas to avoid clobbering main canvas
+    const tmp = document.createElement("canvas");
+    tmp.width = 1; tmp.height = 1;
+    const tc = tmp.getContext("2d");
+    if (!tc) return "#000000";
+    tc.drawImage(video, Math.floor(video.videoWidth / 2), 4, 1, 1, 0, 0, 1, 1);
+    const d = tc.getImageData(0, 0, 1, 1).data;
+    return `rgb(${d[0]}, ${d[1]}, ${d[2]})`;
+  } catch {
+    return "#000000";
+  }
+}
