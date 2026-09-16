@@ -98,11 +98,11 @@ function getSceneAndLocalTime(globalTime: number): { sceneIdx: number; localTime
 
 // ─── Component ──────────────────────────────────────────────────────────────
 export default function CarmaQualityPage() {
-  const canvasRef      = useRef<HTMLCanvasElement | null>(null);
-  const containerRef   = useRef<HTMLDivElement | null>(null);
-  const sceneHudRef    = useRef<HTMLSpanElement | null>(null);
-  const percentHudRef  = useRef<HTMLSpanElement | null>(null);
-  const scrollBarRef   = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const sceneHudRef = useRef<HTMLSpanElement | null>(null);
+  const percentHudRef = useRef<HTMLSpanElement | null>(null);
+  const scrollBarRef = useRef<HTMLDivElement | null>(null);
 
   // Hidden video elements – one per scene, preloaded in background
   const videosRef = useRef<HTMLVideoElement[]>([]);
@@ -112,9 +112,9 @@ export default function CarmaQualityPage() {
   const seekingRef = useRef<boolean[]>(SCENES.map(() => false));
   const lastSeekTimeRef = useRef<number[]>(SCENES.map(() => -1));
 
-  const [activePopup, setActivePopup]       = useState<0 | 1 | 2 | 3 | 4 | 5 | null>(0);
+  const [activePopup, setActivePopup] = useState<0 | 1 | 2 | 3 | 4 | 5 | null>(0);
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
-  const [isPastVideo, setIsPastVideo]       = useState(false);
+  const [isPastVideo, setIsPastVideo] = useState(false);
   const isPastVideoRef = useRef(false);
 
   // ── Reset scroll on mount ─────────────────────────────────────────────────
@@ -131,7 +131,7 @@ export default function CarmaQualityPage() {
   useEffect(() => {
     const handleResize = () => {
       if (canvasRef.current) {
-        canvasRef.current.width  = window.innerWidth  * window.devicePixelRatio;
+        canvasRef.current.width = window.innerWidth * window.devicePixelRatio;
         canvasRef.current.height = window.innerHeight * window.devicePixelRatio;
       }
     };
@@ -144,14 +144,14 @@ export default function CarmaQualityPage() {
   useEffect(() => {
     const videos: HTMLVideoElement[] = SCENES.map((scene, i) => {
       const v = document.createElement("video");
-      v.src         = scene.src;
-      v.muted       = true;
+      v.src = scene.src;
+      v.muted = true;
       v.playsInline = true;
-      v.preload     = "auto";
+      v.preload = "auto";
       v.crossOrigin = "anonymous";
 
       const markReady = () => { videoReadyRef.current[i] = true; };
-      v.addEventListener("loadeddata",  markReady);
+      v.addEventListener("loadeddata", markReady);
       v.addEventListener("canplaythrough", markReady);
 
       // Start loading
@@ -174,17 +174,17 @@ export default function CarmaQualityPage() {
   // ── Scroll + render loop ──────────────────────────────────────────────────
   useEffect(() => {
     let animFrameId: number;
-    let targetProgress  = 0;
-    let smoothProgress  = 0;
+    let targetProgress = 0;
+    let smoothProgress = 0;
     let lastPopupState: 0 | 1 | 2 | 3 | 4 | 5 | null = null;
-    let lastSceneIdx    = 0;
+    let lastSceneIdx = 0;
 
     const renderLoop = () => {
       const canvas = canvasRef.current;
-      const ctx    = canvas?.getContext("2d");
+      const ctx = canvas?.getContext("2d");
 
       const videoSectionHeight = window.innerHeight * 10;
-      const currentScroll      = Math.max(0, window.scrollY);
+      const currentScroll = Math.max(0, window.scrollY);
       targetProgress = Math.min(1, Math.max(0, currentScroll / videoSectionHeight));
 
       // Hide fixed elements once past video section
@@ -208,9 +208,9 @@ export default function CarmaQualityPage() {
       const { sceneIdx, localTime } = getSceneAndLocalTime(videoTime);
 
       // HUD updates (direct DOM – no re-render)
-      if (sceneHudRef.current)   sceneHudRef.current.textContent   = SCENES[sceneIdx].name;
+      if (sceneHudRef.current) sceneHudRef.current.textContent = SCENES[sceneIdx].name;
       if (percentHudRef.current) percentHudRef.current.textContent = `${Math.round(smoothProgress * 100)}%`;
-      if (scrollBarRef.current)  scrollBarRef.current.style.height = `${smoothProgress * 100}%`;
+      if (scrollBarRef.current) scrollBarRef.current.style.height = `${smoothProgress * 100}%`;
 
       if (sceneIdx !== lastSceneIdx) { lastSceneIdx = sceneIdx; setActiveSceneIndex(sceneIdx); }
 
@@ -220,7 +220,7 @@ export default function CarmaQualityPage() {
         const seekKey = Math.round(localTime * 30) / 30; // quantise to ~30 fps precision
 
         if (!seekingRef.current[sceneIdx] && Math.abs(lastSeekTimeRef.current[sceneIdx] - seekKey) > 0.01) {
-          seekingRef.current[sceneIdx]    = true;
+          seekingRef.current[sceneIdx] = true;
           lastSeekTimeRef.current[sceneIdx] = seekKey;
 
           // Clamp to video duration
@@ -237,28 +237,67 @@ export default function CarmaQualityPage() {
             if (!c || !cx) return;
 
             cx.clearRect(0, 0, c.width, c.height);
-            const vAspect = video.videoWidth  / video.videoHeight;
+
+            const vAspect = video.videoWidth / video.videoHeight;
             const cAspect = c.width / c.height;
 
-            // Cover-fit: scale the video to fully cover the canvas, cropping
-            // whichever dimension overflows, centered. This is the same math
-            // as before for landscape canvases (desktop, cAspect > vAspect
-            // crops top/bottom, otherwise crops left/right) — it's just no
-            // longer branched separately for portrait canvases, which is
-            // what caused the mismatched color band / bad cropping on mobile.
-            let drawW: number, drawH: number, drawX: number, drawY: number;
-            if (vAspect > cAspect) {
-              drawH = c.height;
-              drawW = c.height * vAspect;
-              drawX = (c.width - drawW) / 2;
-              drawY = 0;
+            if (window.innerWidth < 768) {
+
+              const videoAreaH = c.height * 0.99;
+              const videoAreaY = c.height * 0.05;
+
+              let topColor = "#000000";
+              try {
+                cx.drawImage(video, 0, 0, c.width, c.height);
+                const sampleX = Math.floor(c.width / 2);
+                const pData = cx.getImageData(sampleX, 4, 1, 1).data;
+                topColor = `rgb(${pData[0]}, ${pData[1]}, ${pData[2]})`;
+              } catch {
+                // Ignore sampling errors (e.g. canvas not yet paintable)
+              }
+
+              cx.clearRect(0, 0, c.width, c.height);
+
+              // Fill the top band with the sampled color
+              cx.fillStyle = topColor;
+              cx.fillRect(0, 0, c.width, videoAreaY + 4);
+
+              // Try to contain the video within the bottom video area first
+              let drawW = videoAreaH * vAspect;
+              let drawH = videoAreaH;
+              let drawX = (c.width - drawW) / 2;
+              let drawY = videoAreaY;
+
+              // If that leaves empty space on the sides, cover full width instead
+              if (drawW < c.width) {
+                drawW = c.width;
+                drawH = c.width / vAspect;
+                drawX = 0;
+                drawY = videoAreaY + (videoAreaH - drawH) / 2;
+              }
+
+              cx.drawImage(video, drawX, drawY, drawW, drawH);
             } else {
-              drawW = c.width;
-              drawH = c.width / vAspect;
-              drawX = 0;
-              drawY = (c.height - drawH) / 2;
+              // Desktop — keep existing behavior
+              let drawW: number;
+              let drawH: number;
+              let drawX: number;
+              let drawY: number;
+
+              if (vAspect > cAspect) {
+                drawH = c.height;
+                drawW = c.height * vAspect;
+                drawX = (c.width - drawW) / 2;
+                drawY = 0;
+              } else {
+                drawW = c.width;
+                drawH = c.width / vAspect;
+                drawX = 0;
+                drawY = (c.height - drawH) / 2;
+              }
+
+              cx.drawImage(video, drawX, drawY, drawW, drawH);
             }
-            cx.drawImage(video, drawX, drawY, drawW, drawH);
           };
 
           video.addEventListener("seeked", onSeeked);
@@ -285,16 +324,6 @@ export default function CarmaQualityPage() {
         <div className={`fixed inset-0 z-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/60 ${isPastVideo ? "hidden" : ""}`} />
         <div className={`fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/10 to-black/70 ${isPastVideo ? "hidden" : ""}`} />
 
-        {/* Header */}
-
-
-        {/*
-          Right scroll progress bar.
-          FIX: this used to be `hidden md:flex`, which hid the breakpoint dots
-          entirely on mobile. It's now visible at every size. On mobile it sits
-          closer to the edge (right-2) with a shorter bar / smaller dots; the
-          md: classes restore the exact original desktop size & position.
-        */}
         <div className={`fixed right-2 md:right-6 top-1/2 -translate-y-1/2 z-30 flex-col items-center space-y-2 md:space-y-4 ${isPastVideo ? "hidden" : "flex"}`}>
           <div className="w-1.5 md:w-2 h-40 md:h-64 bg-white/10 rounded-full relative">
             <div ref={scrollBarRef} className="w-full bg-gradient-to-b from-brand to-brand rounded-full" style={{ height: "0%" }} />
@@ -313,13 +342,6 @@ export default function CarmaQualityPage() {
           {/* <span ref={percentHudRef} className="font-mono text-xs text-brand font-bold">0%</span> */}
         </div>
 
-        {/*
-          POPUP 0: Intro
-          FIX: mobile now pins left-4 AND right-4 (width auto), which makes the
-          browser stretch the box to fill exactly between those two edges —
-          guaranteed equal margins on both sides, no clipping. md: classes
-          restore the original single-anchor + max-w desktop layout untouched.
-        */}
         <AnimatePresence>
           {activePopup === 0 && (
             <motion.div
@@ -344,10 +366,10 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-28 md:top-32 left-4 right-4 md:left-auto md:right-8 z-30 md:max-w-sm md:w-full rounded-xl p-4 md:p-5"
+              className="fixed top-40 md:top-32 left-4 right-4 md:left-auto md:right-8 z-30 md:max-w-sm md:w-full rounded-xl p-4 md:p-5"
             >
-              <h4 className="text-2xl md:text-4xl font-bold text-white mb-1">We handpick the highest quality cars in Australia.</h4>
-              <p className="text-xl text-gray-200 leading-relaxed">Our team is meticulous, and only the best make it to our website.</p>
+              <h4 className="text-xl md:text-4xl font-bold text-white mb-1">We handpick the highest quality cars in Australia.</h4>
+              <p className="text-md text-gray-200 leading-relaxed">Our team is meticulous, and only the best make it to our website.</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -360,10 +382,10 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-14 md:top-32 left-4 right-4 md:right-auto md:left-1 lg:left-14 z-30 md:max-w-xl md:w-full rounded-xl p-4 md:p-5"
+              className="fixed bottom-8 md:top-32 left-4 right-4 md:right-auto md:left-1 lg:left-14 z-30 md:max-w-xl md:w-full rounded-xl p-4 md:p-5"
             >
-              <h4 className="text-base md:text-6xl font-bold text-white mb-1">Your personal pro test drivers.</h4>
-              <p className="text-2xl text-gray-200 leading-relaxed">We get behind the wheel to road test every aspect of the driver experience.</p>
+              <h4 className="text-xl md:text-6xl font-bold text-white mb-1">Your personal pro test drivers.</h4>
+              <p className="text-md text-gray-200 leading-relaxed">We get behind the wheel to road test every aspect of the driver experience.</p>
               <div>
                 <video src="/cut_1.mp4" autoPlay className="w-full h-auto rounded-2xl" />
               </div>
@@ -379,12 +401,12 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: -40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-18 lg:top-24 left-4 right-4 md:right-auto md:left-8 z-30 md:max-w-sm md:w-full rounded-xl p-4 md:p-5"
+              className="fixed top-32 lg:top-24 left-4 right-4 md:right-auto md:left-8 z-30 md:max-w-sm md:w-full rounded-xl p-4 md:p-5"
             >
 
-              <h4 className="text-2xl md:text-4xl font-bold text-white mb-1">90+ minutes, 10 experts and a mechanical hoist.</h4>
-              <p className="text-xl text-gray-200 leading-relaxed">Nothing escapes our forensic inspection process.</p>
-             <div>
+              <h4 className="text-xl md:text-4xl font-bold text-white mb-1">90+ minutes, 10 experts and a mechanical hoist.</h4>
+              <p className="text-md text-gray-200 leading-relaxed">Nothing escapes our forensic inspection process.</p>
+              <div>
                 <video src="/cut_1.mp4" autoPlay className="w-full h-auto rounded-2xl" />
               </div>
             </motion.div>
@@ -399,12 +421,12 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-18 md:top-32 left-4 right-4 md:left-auto md:right-8 z-30 md:max-w-sm md:w-full rounded-xl p-4 md:p-5"
+              className="fixed bottom-12 md:top-32 left-4 right-4 md:left-auto md:right-8 z-30 md:max-w-sm md:w-full rounded-xl p-4 md:p-5"
             >
 
-              <h4 className="text-2xl md:text-4xl font-bold text-white mb-1">Reconditioned by our team of specialists.</h4>
-              <p className="text-xl text-gray-300 leading-relaxed">From testing to fine-tuning, we get it done to our exacting standards.</p>
-               <div>
+              <h4 className="text-xl md:text-4xl font-bold text-white mb-1">Reconditioned by our team of specialists.</h4>
+              <p className="text-md text-gray-300 leading-relaxed">From testing to fine-tuning, we get it done to our exacting standards.</p>
+              <div>
                 <video src="/cut_1.mp4" autoPlay className="w-full h-auto rounded-2xl" />
               </div>
             </motion.div>
@@ -419,10 +441,10 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, y: 20, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-36 left-4 right-4 md:right-auto md:left-1 lg:left-14 z-30 md:max-w-xl md:w-full rounded-xl p-4 md:p-5"
+              className="fixed top-44 left-4 right-4 md:right-auto md:left-1 lg:left-14 z-30 md:max-w-xl md:w-full rounded-xl p-4 md:p-5"
             >
-              <h4 className="text-2xl md:text-5xl font-bold text-white mb-1">The finishing touches to showroom-standard.</h4>
-              <p className="text-xl text-gray-200 leading-relaxed">Deodorising, vacuuming, washing, waxing and buffing. So every car feels like new.</p>
+              <h4 className="text-xl md:text-5xl font-bold text-white mb-1">The finishing touches to showroom-standard.</h4>
+              <p className="text-md text-gray-200 leading-relaxed">Deodorising, vacuuming, washing, waxing and buffing. So every car feels like new.</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -488,11 +510,7 @@ export default function CarmaQualityPage() {
             </div>
           </div>
         </div>
-
-        {/* Footer is the final view — nothing below */}
-        {/* <Footer /> */}
       </section>
     </div>
   );
 }
-
