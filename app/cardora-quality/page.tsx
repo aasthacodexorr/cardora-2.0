@@ -15,7 +15,7 @@ const SCENES = [
 ];
 
 const TOTAL_VIDEO_SECONDS = 60.0;
- 
+
 type PopupIndex = 1 | 2 | 3 | 4 | 5;
 
 const INTRO_DURATION = 1.0; // seconds of scroll for the popup-0 intro card
@@ -239,21 +239,24 @@ export default function CarmaQualityPage() {
             cx.clearRect(0, 0, c.width, c.height);
             const vAspect = video.videoWidth  / video.videoHeight;
             const cAspect = c.width / c.height;
-            let drawW = c.width, drawH = c.height, drawX = 0, drawY = 0;
 
-            if (cAspect > 1.0) {
-              if (cAspect > vAspect) { drawH = c.width / vAspect; drawY = (c.height - drawH) / 2; }
-              else { drawW = c.height * vAspect; drawX = (c.width - drawW) / 2; }
+            // Cover-fit: scale the video to fully cover the canvas, cropping
+            // whichever dimension overflows, centered. This is the same math
+            // as before for landscape canvases (desktop, cAspect > vAspect
+            // crops top/bottom, otherwise crops left/right) — it's just no
+            // longer branched separately for portrait canvases, which is
+            // what caused the mismatched color band / bad cropping on mobile.
+            let drawW: number, drawH: number, drawX: number, drawY: number;
+            if (vAspect > cAspect) {
+              drawH = c.height;
+              drawW = c.height * vAspect;
+              drawX = (c.width - drawW) / 2;
+              drawY = 0;
             } else {
-              // Portrait / mobile: top strip + scaled video
-              const topColor = getTopPixelColor(video, cx, c);
-              const vAreaH   = c.height * 0.75;
-              const vAreaY   = c.height * 0.25;
-              cx.fillStyle = topColor;
-              cx.fillRect(0, 0, c.width, vAreaY + 4);
-              drawH = vAreaH; drawW = vAreaH * vAspect;
-              drawX = (c.width - drawW) / 2; drawY = vAreaY;
-              if (drawW < c.width) { drawW = c.width; drawH = c.width / vAspect; drawX = 0; drawY = vAreaY + (vAreaH - drawH) / 2; }
+              drawW = c.width;
+              drawH = c.width / vAspect;
+              drawX = 0;
+              drawY = (c.height - drawH) / 2;
             }
             cx.drawImage(video, drawX, drawY, drawW, drawH);
           };
@@ -271,7 +274,7 @@ export default function CarmaQualityPage() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative bg-black text-white font-sans selection:bg-cyan-500 selection:text-black">
+    <div ref={containerRef} className="relative bg-black text-white font-sans selection:bg-brand selection:text-black">
 
       {/* ── VIDEO SCROLL SECTION (1000vh) ── */}
       <div className="relative h-[1000vh]">
@@ -283,28 +286,40 @@ export default function CarmaQualityPage() {
         <div className={`fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/10 to-black/70 ${isPastVideo ? "hidden" : ""}`} />
 
         {/* Header */}
-        
 
-        {/* Right scroll progress bar */}
-        <div className={`fixed right-6 top-1/2 -translate-y-1/2 z-30 flex-col items-center space-y-4 ${isPastVideo ? "hidden" : "hidden md:flex"}`}>
-          <div className="w-2 h-64 bg-white/10 rounded-full relative">
-            <div ref={scrollBarRef} className="w-full bg-gradient-to-b from-cyan-400 via-blue-500 to-indigo-600 rounded-full" style={{ height: "0%" }} />
+
+        {/*
+          Right scroll progress bar.
+          FIX: this used to be `hidden md:flex`, which hid the breakpoint dots
+          entirely on mobile. It's now visible at every size. On mobile it sits
+          closer to the edge (right-2) with a shorter bar / smaller dots; the
+          md: classes restore the exact original desktop size & position.
+        */}
+        <div className={`fixed right-2 md:right-6 top-1/2 -translate-y-1/2 z-30 flex-col items-center space-y-2 md:space-y-4 ${isPastVideo ? "hidden" : "flex"}`}>
+          <div className="w-1.5 md:w-2 h-40 md:h-64 bg-white/10 rounded-full relative">
+            <div ref={scrollBarRef} className="w-full bg-gradient-to-b from-brand to-brand rounded-full" style={{ height: "0%" }} />
             {CONTENT_BREAKPOINTS.map((bp) => {
               const isActive = activePopup === bp.matchPopup;
               return (
                 <div key={bp.id} className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 group flex items-center" style={{ top: `${bp.pct}%` }}>
-                  <div className={`rounded-full transition-all duration-300 ${isActive ? "w-4 h-4 bg-cyan-400 border-2 border-white shadow-[0_0_15px_#22d3ee] animate-pulse" : "w-2.5 h-2.5 bg-black border border-cyan-400/60 group-hover:bg-cyan-400 group-hover:scale-125"}`} />
-                  <div className="absolute right-6 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap bg-black/90 backdrop-blur-md px-2 py-0.5 rounded border border-cyan-500/40 text-[10px] font-mono text-cyan-300 shadow-lg">
+                  <div className={`rounded-full transition-all duration-300 ${isActive ? "w-3 h-3 md:w-4 md:h-4 bg-brand border-2 border-white shadow-[0_0_15px_#22d3ee] animate-pulse" : "w-2 h-2 md:w-2.5 md:h-2.5 bg-black border border-brand/60 group-hover:bg-brand group-hover:scale-125"}`} />
+                  <div className="absolute right-6 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap bg-black/90 backdrop-blur-md px-2 py-0.5 rounded border border-brand/40 text-[10px] font-mono text-brand shadow-lg">
                     {bp.label}
                   </div>
                 </div>
               );
             })}
           </div>
-          <span ref={percentHudRef} className="font-mono text-xs text-cyan-400 font-bold">0%</span>
+          {/* <span ref={percentHudRef} className="font-mono text-xs text-brand font-bold">0%</span> */}
         </div>
 
-        {/* POPUP 0: Intro */}
+        {/*
+          POPUP 0: Intro
+          FIX: mobile now pins left-4 AND right-4 (width auto), which makes the
+          browser stretch the box to fill exactly between those two edges —
+          guaranteed equal margins on both sides, no clipping. md: classes
+          restore the original single-anchor + max-w desktop layout untouched.
+        */}
         <AnimatePresence>
           {activePopup === 0 && (
             <motion.div
@@ -312,7 +327,7 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: -40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="fixed top-48 md:top-32 left-4 md:left-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-lg w-full rounded-xl p-4 md:p-5"
+              className="fixed top-48 md:top-32 left-4 right-4 md:right-auto md:left-8 z-30 md:max-w-lg md:w-full rounded-xl p-4 md:p-5"
             >
               <h4 className="text-4xl md:text-7xl font-bold text-white mb-1 leading-tight">
                 A tailored process like no other.
@@ -329,7 +344,7 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-28 md:top-32 right-4 md:right-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5"
+              className="fixed top-28 md:top-32 left-4 right-4 md:left-auto md:right-8 z-30 md:max-w-sm md:w-full rounded-xl p-4 md:p-5"
             >
               <h4 className="text-2xl md:text-4xl font-bold text-white mb-1">We handpick the highest quality cars in Australia.</h4>
               <p className="text-xl text-gray-200 leading-relaxed">Our team is meticulous, and only the best make it to our website.</p>
@@ -345,7 +360,7 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-14 md:top-32 lg:left-14 left-1 z-30 max-w-[calc(100vw-2rem)] md:max-w-xl w-full rounded-xl p-4 md:p-5"
+              className="fixed top-14 md:top-32 left-4 right-4 md:right-auto md:left-1 lg:left-14 z-30 md:max-w-xl md:w-full rounded-xl p-4 md:p-5"
             >
               <h4 className="text-base md:text-6xl font-bold text-white mb-1">Your personal pro test drivers.</h4>
               <p className="text-2xl text-gray-200 leading-relaxed">We get behind the wheel to road test every aspect of the driver experience.</p>
@@ -364,9 +379,9 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: -40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-18 lg:top-24 left-4 md:left-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5"
+              className="fixed top-18 lg:top-24 left-4 right-4 md:right-auto md:left-8 z-30 md:max-w-sm md:w-full rounded-xl p-4 md:p-5"
             >
-             
+
               <h4 className="text-2xl md:text-4xl font-bold text-white mb-1">90+ minutes, 10 experts and a mechanical hoist.</h4>
               <p className="text-xl text-gray-200 leading-relaxed">Nothing escapes our forensic inspection process.</p>
              <div>
@@ -384,9 +399,9 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-18 md:top-32 right-4 md:right-8 z-30 max-w-[calc(100vw-2rem)] md:max-w-sm w-full rounded-xl p-4 md:p-5"
+              className="fixed top-18 md:top-32 left-4 right-4 md:left-auto md:right-8 z-30 md:max-w-sm md:w-full rounded-xl p-4 md:p-5"
             >
-        
+
               <h4 className="text-2xl md:text-4xl font-bold text-white mb-1">Reconditioned by our team of specialists.</h4>
               <p className="text-xl text-gray-300 leading-relaxed">From testing to fine-tuning, we get it done to our exacting standards.</p>
                <div>
@@ -404,7 +419,7 @@ export default function CarmaQualityPage() {
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: 40, y: 20, scale: 0.9, filter: "blur(8px)" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-36 left-1 lg:left-14 z-30 max-w-[calc(100vw-2rem)] md:max-w-xl w-full rounded-xl p-4 md:p-5"
+              className="fixed top-36 left-4 right-4 md:right-auto md:left-1 lg:left-14 z-30 md:max-w-xl md:w-full rounded-xl p-4 md:p-5"
             >
               <h4 className="text-2xl md:text-5xl font-bold text-white mb-1">The finishing touches to showroom-standard.</h4>
               <p className="text-xl text-gray-200 leading-relaxed">Deodorising, vacuuming, washing, waxing and buffing. So every car feels like new.</p>
@@ -481,22 +496,3 @@ export default function CarmaQualityPage() {
   );
 }
 
-// ─── Helper: sample top-centre pixel colour from a video element ─────────────
-function getTopPixelColor(
-  video: HTMLVideoElement,
-  ctx: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement
-): string {
-  try {
-    // Draw a tiny 1×1 sample to a temp canvas to avoid clobbering main canvas
-    const tmp = document.createElement("canvas");
-    tmp.width = 1; tmp.height = 1;
-    const tc = tmp.getContext("2d");
-    if (!tc) return "#000000";
-    tc.drawImage(video, Math.floor(video.videoWidth / 2), 4, 1, 1, 0, 0, 1, 1);
-    const d = tc.getImageData(0, 0, 1, 1).data;
-    return `rgb(${d[0]}, ${d[1]}, ${d[2]})`;
-  } catch {
-    return "#000000";
-  }
-}
