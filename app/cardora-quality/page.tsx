@@ -368,8 +368,8 @@ export default function CarmaQualityPage() {
               transition={{ duration: 0.35, ease: "easeOut" }}
               className="fixed top-40 md:top-32 left-4 right-4 md:left-auto md:right-8 z-30 md:max-w-sm md:w-full rounded-xl p-4 md:p-5"
             >
-              <h4 className="text-xl md:text-4xl font-bold text-white mb-1">We handpick the highest quality cars in Australia.</h4>
-              <p className="text-md text-gray-200 leading-relaxed">Our team is meticulous, and only the best make it to our website.</p>
+              <h4 className="text-xl md:text-4xl font-bold text-white mb-1">We handpick the highest quality cars in Canada.</h4>
+              <p className="text-md lg:text-xl text-gray-100 leading-relaxed">Our team is meticulous, and only the best make it to our website.</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -385,7 +385,7 @@ export default function CarmaQualityPage() {
               className="fixed bottom-8 md:top-32 left-4 right-4 md:right-auto md:left-1 lg:left-14 z-30 md:max-w-xl md:w-full rounded-xl p-4 md:p-5"
             >
               <h4 className="text-xl md:text-6xl font-bold text-white mb-1">Your personal pro test drivers.</h4>
-              <p className="text-md text-gray-200 leading-relaxed">We get behind the wheel to road test every aspect of the driver experience.</p>
+              <p className="text-md lg:text-xl text-gray-100 leading-relaxed">We get behind the wheel to road test every aspect of the driver experience.</p>
               <div>
                 <video src="/cut_1.mp4" autoPlay className="w-full h-auto rounded-2xl" />
               </div>
@@ -425,7 +425,7 @@ export default function CarmaQualityPage() {
             >
 
               <h4 className="text-xl md:text-4xl font-bold text-white mb-1">Reconditioned by our team of specialists.</h4>
-              <p className="text-md text-gray-300 leading-relaxed">From testing to fine-tuning, we get it done to our exacting standards.</p>
+              <p className="text-md lg:text-xl   text-gray-100 leading-relaxed">From testing to fine-tuning, we get it done to our exacting standards.</p>
               <div>
                 <video src="/cut_1.mp4" autoPlay className="w-full h-auto rounded-2xl" />
               </div>
@@ -444,7 +444,7 @@ export default function CarmaQualityPage() {
               className="fixed top-44 left-4 right-4 md:right-auto md:left-1 lg:left-14 z-30 md:max-w-xl md:w-full rounded-xl p-4 md:p-5"
             >
               <h4 className="text-xl md:text-5xl font-bold text-white mb-1">The finishing touches to showroom-standard.</h4>
-              <p className="text-md text-gray-200 leading-relaxed">Deodorising, vacuuming, washing, waxing and buffing. So every car feels like new.</p>
+              <p className="text-md lg:text-xl  text-gray-100 leading-relaxed">Deodorising, vacuuming, washing, waxing and buffing. So every car feels like new.</p>
             </motion.div>
           )}
         </AnimatePresence>
