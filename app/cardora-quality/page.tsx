@@ -321,8 +321,8 @@ export default function CarmaQualityPage() {
           ref={canvasRef}
           className={`fixed inset-0 w-full h-full z-0 pointer-events-none object-cover brightness-95 contrast-105 ${isPastVideo ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         />
-        <div className={`fixed inset-0 z-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/60 ${isPastVideo ? "hidden" : ""}`} />
-        <div className={`fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/10 to-black/70 ${isPastVideo ? "hidden" : ""}`} />
+        <div className={`fixed inset-0 z-0 pointer-events-none ${isPastVideo ? "hidden" : ""}`} />
+        <div className={`fixed inset-0 z-0 pointer-events-none ${isPastVideo ? "hidden" : ""}`} />
 
         <div className={`fixed right-2 md:right-6 top-1/2 -translate-y-1/2 z-30 flex-col items-center space-y-2 md:space-y-4 ${isPastVideo ? "hidden" : "flex"}`}>
           <div className="w-1.5 md:w-2 h-40 md:h-64 bg-white/10 rounded-full relative">
