@@ -116,7 +116,8 @@ const Header = () => {
       </header>
 
       {/*  Mobile Header */}
-      <header className={`lg:hidden w-full shadow-none relative z-50 bg-neutral-offWhite`}>
+      <div className="lg:hidden h-[86px]" aria-hidden="true" />
+      <header className={`lg:hidden fixed top-0 left-0 w-full shadow-none z-50 bg-neutral-offWhite`}>
 
         {/* Top bar: logo + social icons */}
         <div className="flex items-center justify-between pl-[12px] pr-[29px] py-[5px]">
