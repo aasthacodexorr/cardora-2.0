@@ -31,7 +31,7 @@ export default async function BlogsPage({ searchParams }: BlogPageProps) {
   console.log("BlogsPage result:", result); // Log the result for debugging
 
   return (
-    <main className="min-h-screen bg-white pb-20 pt-16 lg:pt-48">
+    <main className="min-h-screen bg-white pb-20 pt-16 lg:pt-44">
       <section className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
         <div className="mb-12 max-w-3xl">
           <p className="mb-3 text-sm font-bold uppercase tracking-[0.18em] text-brand-green">Cardora Journal</p>
