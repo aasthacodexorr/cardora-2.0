@@ -72,4 +72,5 @@ declare module 'lucide-react' {
   export const Smartphone:Icon;
   export const Smile:Icon;
   export const CircleArrowUp:Icon;
+  export const ArrowLeft:Icon;
 }
