@@ -74,7 +74,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-white pb-20 pt-16 lg:pt-48">
+    <main className="min-h-screen bg-white pb-20 pt-16 lg:pt-44">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:px-12">
         <article>
           <Link href="/blogs" className="text-lg text-brand-green hover:underline flex items-center gap-1"><ArrowLeft />  Back to blogs</Link>
