@@ -43,7 +43,7 @@ export const SITE_PAGES = [
   '/thank-you/complete-verification/',
   '/thank-you/appointment/',
   '/thank-you/info/',
-  '/blog/',
+  '/blogs/',
   '/payment-calculator/',
   '/',
   '/about-us/',
@@ -55,8 +55,8 @@ export const SITE_PAGES = [
 ];
 
 export const SITE_POSTS = [
-  '/how-inflation-affects-the-used-suv-market/',
-  '/leasing-vs-buying-a-new-car/',
+  '/blogs/how-inflation-affects-the-used-suv-market/',
+  '/blogs/leasing-vs-buying-a-new-car/',
 ];
 
 export const INVENTORY_SITEMAP_API =

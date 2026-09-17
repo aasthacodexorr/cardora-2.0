@@ -1,4 +1,4 @@
-import { CARDORA_POSTS_BASE_URL, SITEMAP_INDEX, SITE_PAGES, SITE_POSTS } from './config';
+import { SITEMAP_INDEX, SITE_PAGES, SITE_POSTS } from './config';
 
 export function xmlResponse(xml: string) {
   return new Response(xml, {
@@ -48,7 +48,7 @@ ${urls}
 
 export function buildPostsXml(baseUrl: string) {
   const urls = SITE_POSTS.map((path) => {
-    const loc = `${CARDORA_POSTS_BASE_URL}${path}`;
+    const loc = `${baseUrl}${path}`;
     return `  <url>
     <loc>${loc}</loc>
   </url>`;

@@ -2,8 +2,8 @@ import { headers } from 'next/headers';
 
 export async function getSitemapBaseUrl() {
   const headersList = await headers();
-  const host = headersList.get('host') || 'www.cardora.ca';
-  const forwardedProto = headersList.get('x-forwarded-proto');
+  const host = headersList.get('x-forwarded-host') || headersList.get('host') || 'www.cardora.ca';
+  const forwardedProto = headersList.get('x-forwarded-proto')?.split(',')[0]?.trim();
   const isLocal =
     host.includes('localhost') ||
     host.includes('127.0.0.1') ||
