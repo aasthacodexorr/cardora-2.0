@@ -21,8 +21,8 @@ import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 
 /*  Constants */
-const MIN_HEIGHT      = 1540;
-const FALLBACK_HEIGHT = 1900;
+const MIN_HEIGHT      = 540;
+const FALLBACK_HEIGHT = 900;
 
 /*  Page Component */
 const Finance = () => {
