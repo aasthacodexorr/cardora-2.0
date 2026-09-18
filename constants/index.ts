@@ -144,7 +144,7 @@ export const getConstants = (appConfig: AppConfig) => {
     SITE_CONFIG: {
       urls: {
         financeBaseUrl: `${appConfig.site.saas_api}/api/templates/render/16`,
-        financeRenderApiUrl: `https://carma.zopsoftware.com/api/templates/render/19`,
+        financeRenderApiUrl: `${appConfig.site.saas_api}/api/templates/render/15`,
         assetBaseUrl: appConfig.site.cdn_api,
         googleMapsUrl: safeD.address_map_url_1 || safeD.address_1_bar,
         tradeFormByVehicle: `${appConfig.site.saas_api}/api/templates/render/17`,
