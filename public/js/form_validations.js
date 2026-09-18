@@ -1,6 +1,6 @@
 const ALLOWED_IFRAME_ORIGIN = "https://cardora.zopsoftware.com";
 
-$( document ).ready(function() {
+$(document).ready(function () {
 
     function wait(ms) {
         var start = new Date().getTime();
@@ -19,8 +19,8 @@ $( document ).ready(function() {
             alert.showLoading();
         },
     });
-    
-    window.addEventListener("message", function(event) {
+
+    window.addEventListener("message", function (event) {
 
         if (typeof global_properties != "undefined") {
             if (event.origin !== ALLOWED_IFRAME_ORIGIN) {
@@ -37,10 +37,10 @@ $( document ).ready(function() {
                 break;
             case 'alertSuccessUpdate':
                 console.log('alertSuccessUpdate');
-                 alert.update({
+                alert.update({
                     title: 'Thank You! \n Your request has been sent.',
                     icon: "success",
-                }); 
+                });
                 break;
             case 'redirectToThankYouPage':
                 console.log('redirectToThankYouPage');
@@ -61,61 +61,61 @@ $( document ).ready(function() {
             case 'singleCreditApplicationHeight':
                 console.log('singleCreditApplicationHeight')
                 break;
-			case 'redirectToDocumentPage':
+            case 'redirectToDocumentPage':
                 window.location.href = window.location.origin + '/thank-you/info';
                 break;
-			case 'redirectToAppointmentPage':
+            case 'redirectToAppointmentPage':
                 window.location.href = window.location.origin + '/thank-you/appointment';
                 break;
-			case 'redirectToAlternateThankYouPage':
+            case 'redirectToAlternateThankYouPage':
                 window.location.href = window.location.origin + '/thank-you/complete-verification';
                 break;
-			case 'redirectToCompleteTradeInMyCarByVehiclePage':
+            case 'redirectToCompleteTradeInMyCarByVehiclePage':
                 window.location.href = window.location.origin + '/trade-in-my-car/vehicle';
                 break;
-				
-			case 'redirectToCompleteTradeInMyCarByVINPage':
+
+            case 'redirectToCompleteTradeInMyCarByVINPage':
                 window.location.href = window.location.origin + '/trade-in-my-car/vin';
                 break;
-				
-			case 'redirectToThankYouPageForFinance':
+
+            case 'redirectToThankYouPageForFinance':
                 window.location.href = window.location.origin + '/thank-you-finance';
                 break;
-				
-			case 'redirectToBookAnAppointment':
-			case 'redirectToBookAnAppointmentPage':
+
+            case 'redirectToBookAnAppointment':
+            case 'redirectToBookAnAppointmentPage':
                 window.location.href = window.location.origin + '/schedule-an-appointment-with-expert/';
                 break;
-				
-			case 'redirectToTradeInPage':
+
+            case 'redirectToTradeInPage':
                 window.location.href = window.location.origin + '/trade-in-my-car/';
-                break; 
-				
-			case 'redirectToThankYouPageForTradeInPage':
+                break;
+
+            case 'redirectToThankYouPageForTradeInPage':
                 window.location.href = window.location.origin + '/thank-you-trade-in/';
-                break; 
-				
-				
+                break;
+
+
             default:
                 break;
         }
 
-        if(event.data.hasOwnProperty("type")){
-            if(event.data.type == "css"){
+        if (event.data.hasOwnProperty("type")) {
+            if (event.data.type == "css") {
                 $(`#${event.data.element_id}`).css("min-height", parseInt(event.data.value) + 180);
             }
         }
 
-         
+
     });
 
 
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const params = window.location.search.substring(1);
+    const pageParams = new URLSearchParams(window.location.search);
 
-    if (!params) {
+    if (!pageParams.toString()) {
         return;
     }
 
@@ -126,7 +126,14 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const separator = iframeSrc.includes("?") ? "&" : "?";
-        iframe.src = iframeSrc + separator + params;
+        const iframeUrl = new URL(iframeSrc, window.location.origin);
+
+        pageParams.forEach(function (value, key) {
+            if (!iframeUrl.searchParams.has(key)) {
+                iframeUrl.searchParams.append(key, value);
+            }
+        });
+
+        iframe.src = iframeUrl.toString();
     });
 });

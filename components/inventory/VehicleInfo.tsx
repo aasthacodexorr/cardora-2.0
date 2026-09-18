@@ -8,12 +8,14 @@ import { Fuel, PhoneCall } from "lucide-react";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { createPortal } from "react-dom";
+import { useSearchParams } from "next/navigation";
 
 
 export const PriceAndCTA = ({ vehicle }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<"asIs" | "finance" | "cash" | null>(null);
   const [showSticky, setShowSticky] = useState(false);
+  const searchParams = useSearchParams();
 
   const inlineContainerRef = useRef<HTMLDivElement>(null);
 
@@ -29,6 +31,15 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
   const financePrice = sellingPrice;
   const cashPrice = sellingPrice + 2000;
+
+  const financeParams = new URLSearchParams();
+  financeParams.set("inventory_id", String(vehicle?.id ?? ""));
+  searchParams.forEach((value, key) => {
+    if (key !== "inventory_id") {
+      financeParams.append(key, value);
+    }
+  });
+  const financeHref = `/finance/?${financeParams.toString()}`;
 
   // 1. Detect when inline CTAs are scrolled out of view
   useEffect(() => {
@@ -176,18 +187,18 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         aria-label="Price information"
                         className="flex items-center justify-center cursor-pointer"
                       >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-4 h-4 text-gray-400"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-4 h-4 text-gray-400"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
                       </button>
 
                       <div className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${activeTooltip === "finance" ? "opacity-100 visible" : "opacity-0 invisible"} lg:group-hover:opacity-100 lg:group-hover:visible`}>
@@ -224,18 +235,18 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         aria-label="Price information"
                         className="flex items-center justify-center cursor-pointer"
                       >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-4 h-4 text-gray-400"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-4 h-4 text-gray-400"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
                       </button>
 
                       <div className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${activeTooltip === "cash" ? "opacity-100 visible" : "opacity-0 invisible"} lg:group-hover:opacity-100 lg:group-hover:visible`}>
@@ -277,7 +288,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
         </div>
 
         <div className="mt-1 space-y-3">
-          <a href={`/finance/?inventory_id=${vehicle?.id}`}>
+          <a href={financeHref}>
             <button className="cursor-pointer my-3 font-bold w-full rounded-[10px] sm:rounded-[12px] border text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[20px] hover:opacity-90 shadow-md transition-opacity bg-brand-btn-gradient border-brand-green">
               Get started
             </button>
@@ -294,7 +305,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
       {/* Dynamic Sticky Mobile Action Bar */}
       <div className={`fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-3 shadow-2xl lg:hidden flex gap-3 transition-transform duration-300 ease-in-out ${showSticky ? "translate-y-0" : "translate-y-full"}`}>
-        <a href={`/finance/?inventory_id=${vehicle?.id}`} className="flex-1">
+        <a href={financeHref} className="flex-1">
           <button className="w-full font-bold rounded-xl text-white py-3 text-[15px] bg-brand-btn-gradient border border-brand-green shadow-md">
             Get started
           </button>
