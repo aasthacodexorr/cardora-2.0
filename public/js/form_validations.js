@@ -113,20 +113,20 @@ $( document ).ready(function() {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Select your iframe
-  const iframe = document.querySelector("iframe");
+    const params = window.location.search.substring(1);
 
-  if (iframe) {
-    // Get current page params
-    const params = window.location.search;
+    if (!params) {
+        return;
+    }
 
-    // Get current iframe src (base link)
-    const iframeSrc = iframe.getAttribute("src");
+    document.querySelectorAll("iframe").forEach(function (iframe) {
+        const iframeSrc = iframe.getAttribute("src");
 
-    // Check if iframe already has parameters
-    const separator = iframeSrc.includes("?") ? "&" : "?";
+        if (!iframeSrc) {
+            return;
+        }
 
-    // Update iframe URL with main page params
-    iframe.src = iframeSrc + separator + params.substring(1);
-  }
+        const separator = iframeSrc.includes("?") ? "&" : "?";
+        iframe.src = iframeSrc + separator + params;
+    });
 });
