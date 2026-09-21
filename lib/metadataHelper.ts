@@ -61,7 +61,6 @@ export async function generateMetadata(
   const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
   const baseUrl = `${protocol}://${host}`;
   const canonicalUrl = `${baseUrl}${options.canonicalPath || ""}`;
-  const faviconUrl = "/favicon.jpg?v=2";
   const resolvedImages = options.images && options.images.length > 0
     ? options.images
     : [safeD.dealership_logo];
@@ -70,11 +69,6 @@ export async function generateMetadata(
     title,
     description,
     metadataBase: new URL(baseUrl),
-    icons: {
-      icon: faviconUrl,
-      shortcut: faviconUrl,
-      apple: faviconUrl,
-    },
     alternates: {
       canonical: canonicalUrl,
     },
