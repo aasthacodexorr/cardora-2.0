@@ -8,14 +8,14 @@ import { Fuel, PhoneCall } from "lucide-react";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { createPortal } from "react-dom";
-import { useSearchParams } from "next/navigation";
+import { setQueryParams } from "@/utils/queryParams";
+import QueryParamIframe from "@/components/common/QueryParamIframe";
 
 
 export const PriceAndCTA = ({ vehicle }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<"asIs" | "finance" | "cash" | null>(null);
   const [showSticky, setShowSticky] = useState(false);
-  const searchParams = useSearchParams();
 
   const inlineContainerRef = useRef<HTMLDivElement>(null);
 
@@ -32,14 +32,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   const financePrice = sellingPrice;
   const cashPrice = sellingPrice + 2000;
 
-  const financeParams = new URLSearchParams();
-  financeParams.set("inventory_id", String(vehicle?.id ?? ""));
-  searchParams.forEach((value, key) => {
-    if (key !== "inventory_id") {
-      financeParams.append(key, value);
-    }
-  });
-  const financeHref = `/finance/?${financeParams.toString()}`;
+  const financeHref = setQueryParams(`/finance/?inventory_id=${String(vehicle?.id ?? "")}`);
 
   // 1. Detect when inline CTAs are scrolled out of view
   useEffect(() => {
@@ -373,7 +366,6 @@ export const VehicleHeader = ({ vehicle }: any) => (
 export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
   const appConfig = useAppConfig();
   const SITE_CONFIG = getConstants(appConfig).SITE_CONFIG;
-  const inventoryId = vehicle?.id || vehicle?.inventory_id;
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -411,8 +403,8 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
 
         <h2 className="text-[24px] font-bold text-gray-900 mb-5">Got a question</h2>
         <div className="w-full">
-          <iframe
-            src={`${SITE_CONFIG?.urls.vehiclePageContactUsBaseUrl}?inventory_id=${inventoryId}`}
+          <QueryParamIframe
+            src={`${SITE_CONFIG?.urls.vehiclePageContactUsBaseUrl}`}
             className="w-full rounded-2xl h-[600px] border-0"
             title="Contact Us"
             allow="payment"

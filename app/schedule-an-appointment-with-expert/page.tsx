@@ -5,6 +5,7 @@ import { Header, Footer } from "@/components/layout";
 import { GetInTouch } from "@/components/common";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
+import QueryParamIframe from "@/components/common/QueryParamIframe";
 
 const TradeInVehicle = () => {
   const appConfig = useAppConfig();
@@ -50,7 +51,7 @@ const TradeInVehicle = () => {
       {/* Vehicle Trade-In Content Section */}
       <section className="w-full relative px-4 lg:px-24 mt-10 lg:mt-28">
         <div className="mx-auto max-w-[900px] px-2 md:px-9 md:py-5 md:pb-14 pb-5">
-          <iframe
+          <QueryParamIframe
             id="book_an_appointment"
             src={SITE_CONFIG.urls.scheduleAnAppointmentWithExpert}
             title="scheduleAnAppointmentWithExpert"

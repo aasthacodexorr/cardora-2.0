@@ -33,6 +33,7 @@ import Terms from "@/components/inventory/Terms";
 import AboutVehicle from "@/components/inventory/AboutVehicle";
 import { PriceAndCTA, VehicleHeader } from "@/components/inventory/VehicleInfo";
 import CoverageModal from "@/components/inventory/CoverageModal";
+import TradeInLink from "@/components/inventory/TradeInLink";
 
 // Force dynamic rendering — vehicle data changes frequently
 export const dynamic = "force-dynamic";
@@ -226,10 +227,7 @@ export default async function VehicleDetailsPage({
                                     </div>
                                     <div className="flex-shrink-0 w-full md:w-auto text-center">
                                         <div>
-                                            <a href={`/trade-in-my-car?inventory_id=${vehicle.id}`}
-                                                className="inline-block w-full md:w-auto hover:opacity-90 shadow-md transition-opacity text-white text-lg font-semibold px-9 py-3.5 rounded-xl no-underline transition-all duration-200 text-center whitespace-nowrap bg-brand-btn-gradient">
-                                                Sell or trade in
-                                            </a>
+                                            <TradeInLink vehicleId={vehicle.id} />
                                         </div>
                                     </div>
                                 </div>

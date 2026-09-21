@@ -2,6 +2,7 @@
 import AdCard1 from '@/assets/icons/ad-card-1.jpg'
 import AdCard2 from '@/assets/icons/ad-card-2.jpg'
 import AdCard3 from '@/assets/icons/ad-card-3.jpg'
+import { setQueryParams } from "@/utils/queryParams";
 
 
 const CardShell = ({
@@ -30,7 +31,7 @@ export const FinanceAdCard = () => {
   return (
     <CardShell
       onClick={() => {
-        window.location.href = financeUrl;
+        window.location.href = setQueryParams(financeUrl);
       }}
       className="bg-white text-[#0B1A30] justify-center items-center gap-4 px-6 py-8 text-center border border-gray-200 rounded-2xl shadow-sm"
     >
@@ -68,7 +69,7 @@ export const TradeInAdCard = () => {
   return (
     <CardShell
       onClick={() => {
-        window.location.href = tradeInUrl;
+        window.location.href = setQueryParams(tradeInUrl);
       }}
       className="bg-white text-[#0B1A30] justify-center items-center gap-4 px-6 py-8 text-center border border-gray-200 rounded-2xl shadow-sm"
     >

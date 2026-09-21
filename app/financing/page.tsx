@@ -15,6 +15,7 @@ import { Header, Footer } from "@/components/layout";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
+import QueryParamIframe from "@/components/common/QueryParamIframe";
 
 // Config
 import { getConstants } from "@/constants";
@@ -56,7 +57,7 @@ const Finance = () => {
       <section className="py-6 md:py-10 pb-16 mb-52 lg:mt-28 mt-8">
         <div className="mx-auto max-w-[1100px] px-4 md:px-6">
           <div className="overflow-hidden">
-            <iframe
+            <QueryParamIframe
               ref={iframeRef}
               id="financing_form"
               src={`${SITE_CONFIG.urls.financeRenderApiUrl}?`}

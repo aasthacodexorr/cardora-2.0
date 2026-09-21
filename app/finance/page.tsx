@@ -13,6 +13,7 @@ import { Suspense, useEffect } from "react";
 
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
+import QueryParamIframe from "@/components/common/QueryParamIframe";
 const FinanceContent = () => {
   const appConfig = useAppConfig();
   const { SITE_CONFIG } = getConstants(appConfig);
@@ -54,7 +55,7 @@ const FinanceContent = () => {
       <main className="bg-background my-18 mx-5 xl:mx-36 lg:mt-36">
         <section className="flex-1 w-full">
           <div className="mx-auto">
-            <iframe
+            <QueryParamIframe
               id="financing_form"
               src={`${SITE_CONFIG?.urls.financeBaseUrl}`}
               className="w-full border-0 min-h-[1039px]"
