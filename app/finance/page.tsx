@@ -10,30 +10,12 @@
 "use client";
 
 import { Suspense, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
-import { Footer, Header } from "@/components/layout";
-import { GetInTouch } from "@/components/common";
-
 const FinanceContent = () => {
   const appConfig = useAppConfig();
   const { SITE_CONFIG } = getConstants(appConfig);
-
-  const searchParams = useSearchParams();
-  const iframeParams = new URLSearchParams();
-  const inventoryId = searchParams.get("inventory_id");
-
-  if (inventoryId) {
-    iframeParams.set("inventory_id", inventoryId);
-  }
-
-  searchParams.forEach((value, key) => {
-    if (key !== "inventory_id") {
-      iframeParams.append(key, value);
-    }
-  });
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -74,7 +56,7 @@ const FinanceContent = () => {
           <div className="mx-auto">
             <iframe
               id="financing_form"
-              src={`${SITE_CONFIG?.urls.financeBaseUrl}?${iframeParams.toString()}`}
+              src={`${SITE_CONFIG?.urls.financeBaseUrl}`}
               className="w-full border-0 min-h-[1039px]"
               title="Express Checkout - Finance"
               allow="payment"
