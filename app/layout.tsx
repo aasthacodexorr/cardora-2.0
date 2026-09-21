@@ -10,11 +10,20 @@ import { Footer, Header } from "@/components/layout";
 
 export async function generateMetadata(): Promise<Metadata> {
   const appConfig = await getAppConfig();
-  return generateMetadataHelper({
+  const metadata = await generateMetadataHelper({
     title: appConfig.site.home_page_title,
     description: appConfig.site.home_page_description,
     canonicalPath: "",
   });
+
+  return {
+    ...metadata,
+    icons: {
+      icon: "/favicon.png",
+      shortcut: "/favicon.png",
+      apple: "/favicon.png",
+    },
+  };
 }
 
 export default async function RootLayout({
@@ -67,9 +76,6 @@ export default async function RootLayout({
       style={CSS_VARIABLES as React.CSSProperties}
     >
       <head>
-        {/* Explicit favicon — prevents client-side libraries from overriding it */}
-        <link rel="icon" href="/favicon.jpg?v=2" type="image/jpeg" />
-        <link rel="shortcut icon" href="/favicon.jpg?v=2" type="image/jpeg" />
         {/* Load form validation script before any interactive content */}
         <ScriptLoader />
         <script
