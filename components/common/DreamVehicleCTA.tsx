@@ -7,6 +7,7 @@
 ========================= */
 
 import { ArrowRight } from "lucide-react";
+import QueryParamLink from "@/components/common/QueryParamLink";
 
 const DreamVehicleCTA = () => {
   return (
@@ -21,21 +22,21 @@ const DreamVehicleCTA = () => {
 
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           {/* Browse inventory CTA */}
-          <a
+          <QueryParamLink
             href="/inventory"
             className="inline-flex items-center gap-2 rounded-md bg-brand-green text-brand-green-foreground px-7 py-4 font-semibold text-[16px] hover:opacity-95 transition-opacity"
           >
             Browse all Cars
             <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
-          </a>
+          </QueryParamLink>
 
           {/* Pre-qualify CTA */}
-          <a
+          <QueryParamLink
             href="/financing"
             className="inline-flex items-center gap-2 rounded-md border-2 border-foreground/80 text-foreground px-7 py-4 font-semibold text-[16px] hover:bg-foreground hover:text-background transition-colors"
           >
             Get pre-qualified
-          </a>
+          </QueryParamLink>
         </div>
       </div>
     </section>

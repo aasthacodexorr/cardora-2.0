@@ -9,6 +9,7 @@ import envelopIcon from "@/assets/icons/envelop_icon.svg";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import Link from "next/link";
+import QueryParamIframe from "@/components/common/QueryParamIframe";
 
 export default function ContactUs() {
     const appConfig = useAppConfig();
@@ -123,7 +124,7 @@ export default function ContactUs() {
 
                         {/* Iframe wrapper auto-adjusts height cleanly */}
                         <div className="w-full overflow-hidden">
-                            <iframe
+                            <QueryParamIframe
                                 id="contact_us"
                                 src={SITE_CONFIG?.urls.contactUsBaseUrl}
                                 className="w-full min-h-[550px] rounded-2xl border-0"
