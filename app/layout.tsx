@@ -16,14 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     canonicalPath: "",
   });
 
-  return {
-    ...metadata,
-    icons: {
-      icon: "/favicon.png",
-      shortcut: "/favicon.png",
-      apple: "/favicon.png",
-    },
-  };
+  return metadata;
 }
 
 export default async function RootLayout({
