@@ -6,6 +6,7 @@ import { GetInTouch } from "@/components/common";
 import { Footer, Header } from "@/components/layout";
 import { useAppConfig } from "../providers";
 import { getConstants } from "@/constants";
+import QueryParamIframe from "@/components/common/QueryParamIframe";
 import {
   Lock,
   Mail,
@@ -66,7 +67,7 @@ export default function ThankYouFinance() {
       </div>
 
       <div className="w-full lg:px-80 lg:pb-2 px-4 pb-8 mb-12">
-        <iframe
+        <QueryParamIframe
           id="license_form"
           src={SITE_CONFIG?.urls.thankYouFinance}
           className="w-full border-0 block transition-[height] duration-300 ease-out"

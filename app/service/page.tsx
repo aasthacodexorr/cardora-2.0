@@ -41,6 +41,7 @@ import CheckIcon from "@/assets/icons/CHECK_ICON.svg";
 import MapIcon   from "@/assets/icons/MAP-ICON.svg";
 import HeartIcon from "@/assets/icons/HEART-ICON.svg";
 import DifferenceCard from "@/components/home/dealership-difference/DifferenceCard";
+import QueryParamLink from "@/components/common/QueryParamLink";
 
 const icons = [
   <Image src={CheckIcon} alt="Check Icon" width={77} height={77} className="w-[77px] h-[77px] rounded-[20px]" />,
@@ -230,11 +231,9 @@ const Service = () => {
                 <h3 className="text-xl md:text-[30px] font-bold text-gray-900">
                   Find the time that Works best for you.
                 </h3>
-                <Link href={"/book-an-appointment"} className="block text-center cursor-pointer text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-brand-btn-gradient">
-                  <button className="w-full h-full cursor-pointer">
-                    Schedule Online
-                  </button>
-                </Link>
+                <QueryParamLink href="/book-an-appointment" className="block text-center cursor-pointer text-white font-medium text-base w-full hover:opacity-90 transition-opacity rounded-[12px] py-3 px-[30px] bg-brand-btn-gradient">
+                  Schedule Online
+                </QueryParamLink>
               </div>
             </motion.div>
           </motion.div>
@@ -271,7 +270,7 @@ const Service = () => {
                 whileHover="hover"
                 className="w-full sm:w-[48%] md:w-[31%] lg:w-[19%] bg-white border-2 border-gray-100 rounded-2xl overflow-hidden flex flex-col justify-between shadow-sm group cursor-pointer"
               >
-                <Link href={id === "battery" ? "/book-an-appointment" : `/service/${id}`} className="h-full flex flex-col justify-between relative">
+                <QueryParamLink href={id === "battery" ? "/book-an-appointment" : `/service/${id}`} className="h-full flex flex-col justify-between relative">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none bg-black/20" />
                   
                   <div className="relative z-20 pb-5 h-full flex flex-col justify-between">
@@ -299,7 +298,7 @@ const Service = () => {
                       </div>
                     </div>
                   </div>
-                </Link>
+                </QueryParamLink>
               </motion.div>
             ))}
           </motion.div>
@@ -324,13 +323,13 @@ const Service = () => {
               <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-2">
                 {additionalServices.map(({ renderIcon: RenderIcon, label }) => (
                   <div key={label} className="shrink-0">
-                    <Link
+                    <QueryParamLink
                       href="/book-an-appointment"
                       className="shrink-0 inline-flex items-center gap-2 bg-white rounded-xl px-4 py-3 transition-all duration-150 border border-brand2 text-brand2 hover:bg-brand-btn-gradient hover:text-white"
                     >
                       <RenderIcon className="h-4 w-4 shrink-0" />
                       <span className="text-sm whitespace-nowrap mt-[3px]">{label}</span>
-                    </Link>
+                    </QueryParamLink>
                   </div>
                 ))}
               </div>

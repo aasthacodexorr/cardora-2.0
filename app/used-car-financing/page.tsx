@@ -19,6 +19,7 @@ import { GetInTouch } from "@/components/common";
 // Config
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
+import QueryParamIframe from "@/components/common/QueryParamIframe";
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { Reviews } from "@/components/home";
 import { ChevronDown } from "lucide-react";
@@ -120,7 +121,7 @@ const UsedCarFinance = () => {
             <section className="lg:mt-28">
                 <div className="mx-auto max-w-[1100px] px-4 md:px-6">
                     <div className="overflow-hidden">
-                        <iframe
+                        <QueryParamIframe
                             ref={iframeRef}
                             id="financing_form"
                             src={`${SITE_CONFIG.urls.usedCarFinance}?`}

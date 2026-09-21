@@ -1,7 +1,6 @@
 "use client"
 
 import { Suspense, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -14,6 +13,7 @@ import sec2Img from "@/assets/icons/comp-verify-2.jpg";
 import sec3Img from "@/assets/icons/comp-verify-3.jpg";
 import { useAppConfig } from '@/app/providers';
 import { getConstants } from '@/constants';
+import QueryParamIframe from '@/components/common/QueryParamIframe';
 
 /* Constants */
 const MIN_HEIGHT = 540;
@@ -22,8 +22,6 @@ const FALLBACK_HEIGHT = 900;
 function AppointmentContent() {
   const appConfig = useAppConfig();
   const { SITE_CONFIG } = getConstants(appConfig);
-
-  const searchParams = useSearchParams();
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState<number>(FALLBACK_HEIGHT);
@@ -57,7 +55,7 @@ function AppointmentContent() {
       {/* 1. Confirmation Banner / Form Section */}
       <section className="text-gray-900 bg-background-light flex-1 w-full">
         <div className="mx-auto">
-          <iframe
+          <QueryParamIframe
             ref={iframeRef}
             id="financing_form"
             src={`${SITE_CONFIG?.urls?.appointment}`}

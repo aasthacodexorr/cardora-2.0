@@ -25,6 +25,7 @@ import { GetInTouch } from "@/components/common";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import sell from "@/assets/pages/sell.jpg";
+import QueryParamIframe from "@/components/common/QueryParamIframe";
 
 /* Static Data */
 const steps = [
@@ -328,7 +329,7 @@ const TradeIn = () => {
               </button>
             </div>
 
-            <iframe
+              <QueryParamIframe
               key={mode}
               id={
                 mode === "vehicle"

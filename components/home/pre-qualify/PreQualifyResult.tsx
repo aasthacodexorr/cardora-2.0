@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { motion, useMotionValue, useInView, animate } from "framer-motion";
 
 import type { PreQualifyResultProps } from "./types";
+import QueryParamLink from "@/components/common/QueryParamLink";
 
 const PreQualifyResult = ({ biWeeklyPayment, rate, loanAmount }: PreQualifyResultProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -57,13 +58,11 @@ const PreQualifyResult = ({ biWeeklyPayment, rate, loanAmount }: PreQualifyResul
         </div>
       </div>
 
-      <motion.a
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+      <QueryParamLink
         href="/financing"
         className="mt-7 sm:mt-[10px] w-full min-w-full block text-center rounded-[10px] sm:rounded-[12px] text-white py-[12px] sm:py-[10px] text-[18px] sm:text-[16px] font-medium hover:opacity-90 transition-opacity bg-brand-btn-gradient border border-brand-green2">
         Get pre-qualified
-      </motion.a>
+      </QueryParamLink>
 
       <p className="my-4 lg:mt-[7px] text-center text-[14px] sm:text-[14px] lg:font-medium mb-0">
         No impact to your credit score

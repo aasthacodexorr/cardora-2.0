@@ -11,6 +11,7 @@ import DownloadCouponButton from '@/components/service/DownloadCouponButton';
 import { getServicesData } from '@/constants/serviceData';
 import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
 import type { Metadata } from "next";
+import AppointmentLink from '@/components/service/AppointmentLink';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -138,9 +139,9 @@ export default async function ServicePage({ params }: PageProps) {
 
                 {/* Action Buttons (Arranged horizontally matching image_f8518a.png) */}
                 <div className="flex flex-col lg:flex-row lg:justify-start lg:items-start justify-center items-center gap-3 mt-14">
-                  <Link href="/book-an-appointment" className="flex items-center w-full lg:w-fit justify-center hover:brightness-95 text-white font-medium py-3 px-6 rounded-xl transition duration-200 text-center text-xs md:text-sm shadow-sm bg-brand-btn-gradient border border-brand">
+                  <AppointmentLink className="flex items-center w-full lg:w-fit justify-center hover:brightness-95 text-white font-medium py-3 px-6 rounded-xl transition duration-200 text-center text-xs md:text-sm shadow-sm bg-brand-btn-gradient border border-brand">
                     Schedule Service
-                  </Link>
+                  </AppointmentLink>
                   <DownloadCouponButton
                     imageUrl={currentData.couponImg}
                     fileName={currentData.couponTitle || "Coupon"}
@@ -472,10 +473,10 @@ export default async function ServicePage({ params }: PageProps) {
             Book your oil change service today at {appConfig.dealership.dealership_name} {appConfig.dealership.city_1} and keep your vehicle performing at its best.
           </p>
           <div>
-            <Link href="/book-an-appointment" className="inline-block py-3 px-10 mt-4 rounded-lg transition duration-200 text-xs md:text-lg bg-brand-green-alpha text-white border border-brand2 hover:brightness-90 hover:text-white"
+            <AppointmentLink className="inline-block py-3 px-10 mt-4 rounded-lg transition duration-200 text-xs md:text-lg bg-brand-green-alpha text-white border border-brand2 hover:brightness-90 hover:text-white"
             >
               Schedule Service
-            </Link>
+            </AppointmentLink>
           </div>
         </div>
       </section>

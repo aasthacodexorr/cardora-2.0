@@ -5,6 +5,7 @@ import { Footer, Header } from "@/components/layout";
 import { useAppConfig } from "../providers";
 import { getConstants } from "@/constants";
 import { Lock, Mail, Smartphone } from "lucide-react";
+import QueryParamIframe from "@/components/common/QueryParamIframe";
 
 export default function ThankYouTradeIn() {
     const appConfig = useAppConfig();
@@ -29,7 +30,7 @@ export default function ThankYouTradeIn() {
             </div>
 
             <div className="w-full lg:px-80 lg:pb-20 px-4 pb-8 min-h-screen ">
-                <iframe
+                <QueryParamIframe
                     src={SITE_CONFIG?.urls.thankYouTradeIn}
                     className="w-full min-h-[115vh]"
                     title="Express Checkout - Finance"

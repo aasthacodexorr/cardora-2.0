@@ -68,8 +68,8 @@ export default async function RootLayout({
     >
       <head>
         {/* Explicit favicon — prevents client-side libraries from overriding it */}
-        <link rel="icon" href="/favicon.jpg" type="image/jpeg" />
-        <link rel="shortcut icon" href="/favicon.jpg" type="image/jpeg" />
+        <link rel="icon" href="/favicon.jpg?v=2" type="image/jpeg" />
+        <link rel="shortcut icon" href="/favicon.jpg?v=2" type="image/jpeg" />
         {/* Load form validation script before any interactive content */}
         <ScriptLoader />
         <script

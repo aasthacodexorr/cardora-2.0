@@ -9,6 +9,7 @@ import yearIcon from "@/assets/icons/year-icon.png";
 import vdpCar from "@/assets/icons/vdp-car.png";
 
 import { useAppConfig } from "@/app/providers";
+import { setQueryParams } from "@/utils/queryParams";
 
 interface FinanceCalculatorProps {
   vehiclePrice?: number;
@@ -370,7 +371,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
               </div>
               
               <motion.a
-                href={`/finance?inventory_id=${inventoryId}`}
+                href={setQueryParams(`/finance?inventory_id=${inventoryId}`)}
                 className="mt-2 block w-full text-white font-bold text-base py-4 px-6 rounded-xl text-center no-underline transition-all bg-brand-btn-gradient shadow-[0_2px_10px_rgba(16,185,129,0.1)]"
                 whileHover={{ scale: 1.01, filter: "brightness(1.05)" }}
                 whileTap={{ scale: 0.99 }}

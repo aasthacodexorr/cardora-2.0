@@ -5,6 +5,7 @@ import { GetInTouch } from "@/components/common";
 import { Footer, Header } from "@/components/layout";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
+import QueryParamIframe from "@/components/common/QueryParamIframe";
 
 const VehicleForm = () => {
   const appConfig = useAppConfig();
@@ -41,7 +42,7 @@ const VehicleForm = () => {
     <>
 
       <div className="bg-white mx-auto w-full px-5 lg:px-64 flex justify-center mt-3 tracking-wider lg:mt-32">
-        <iframe
+        <QueryParamIframe
           id="service_appointment"
           src={SITE_CONFIG.urls.bookAppointment}
           title="Vehicle Trade Form"
