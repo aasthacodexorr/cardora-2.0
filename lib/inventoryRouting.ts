@@ -194,24 +194,172 @@ function readPathOnlyFilters(segments: string[], refinementList: PlainObject) {
   set("location", location);
 }
 
-const slugify = (value: string) =>
-  value
-    .trim()
-    .toLowerCase()
-    .replace(/&/g, " and ")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-function routeValue(value: string) {
-  return encodeURIComponent(slugify(value));
-}
-
 export function queryValue(value: string) {
   return encodeURIComponent(value.replace(/-/g, "--").replace(/ /g, "-"));
 }
 
 function parseQueryValue(value: string) {
   return value.replace(/--/g, "\u0000").replace(/-/g, " ").replace(/\u0000/g, "-");
+}
+
+const COMPACT_FILTER_ORDER = [
+  "make",
+  "model",
+  "year",
+  "exterior_color",
+  "location",
+  "vehicle_type",
+  "body_type",
+  "transmission",
+  "fuel_type",
+] as const;
+
+const COMPACT_MAKES = [
+  "mercedes-benz", "aston-martin", "land-rover", "volkswagen", "mitsubishi",
+  "chevrolet", "cadillac", "chrysler", "hyundai", "infiniti", "jaguar", "mazda",
+  "nissan", "subaru", "toyota", "acura", "audi", "bmw", "buick", "dodge", "ford",
+  "gmc", "honda", "jeep", "kia", "lexus", "lincoln", "ram", "volvo",
+].map((value) => value.replace(/-/g, "--"));
+
+const COMPACT_BODY_TYPES = [
+  "sport-utility-vehicle", "suv-crossover", "pickup-truck", "hatchback", "convertible",
+  "minivan", "sedan", "coupe", "truck", "van", "suv",
+];
+
+const COMPACT_TRANSMISSIONS = ["automatic", "manual", "cvt"];
+const COMPACT_FUEL_TYPES = ["gasoline-fuel", "diesel-fuel", "plug-in-hybrid", "flex-fuel", "hybrid", "electric", "bev","phev"];
+const COMPACT_VEHICLE_TYPES = ["certified-pre-owned", "used", "new", "as-is"];
+const COMPACT_COLORS = [
+  "black", "blue", "brilliant-red", "crimson-red-tin-jet", "dark-green", "ebony-twilight-metallic",
+  "galaxy-silver-m", "gray", "grey", "green", "red", "silver", "white", "orange", "yellow",
+  "brown", "beige", "gold", "maroon", "purple", "pearl-white", "platinum",
+];
+
+const COMPACT_FACET_VALUES: Array<readonly [string, string[]]> = [
+  ["body_type", ["suv-crossover", "sport-utility-vehicle", "pickup-truck", "hatchback", "convertible", "minivan", "minivan-van", "sedan", "coupe", "truck", "van", "suv"]],
+  ["transmission", COMPACT_TRANSMISSIONS],
+  ["fuel_type", [
+    "bev", "diesel", "electric", "electric-battery", "gasoline", "gasoline-fuel", "hev",
+    "hybrid", "hybrid-gas/electric", "phev", "plug-in-hybrid", "other/don't-know",
+  ]],
+  ["vehicle_type", ["certified-pre-owned", "used", "new", "as-is"]],
+];
+
+const COMPACT_KNOWN_VALUES = COMPACT_FACET_VALUES.flatMap(([attribute, values]) =>
+  values.map((value) => [attribute, value] as const)
+);
+
+function setCompactFilter(refinementList: PlainObject, attribute: string, value: string) {
+  if (!value || refinementList[attribute]) return;
+  refinementList[attribute] = [value];
+}
+
+function readRepeatedCompactFilter(token: string, refinementList: PlainObject) {
+  for (const [attribute, value] of COMPACT_KNOWN_VALUES) {
+    const encoded = queryValue(value).toLowerCase();
+    const decoded = decodeURIComponent(encoded).toLowerCase();
+    const legacySlug = value.toLowerCase().replace(/\s+/g, "-");
+    const normalizedToken = token.toLowerCase();
+    const isExact = normalizedToken === encoded || normalizedToken === decoded;
+    const isDuplicate = normalizedToken === `${decoded}-${decoded}`
+      || normalizedToken === `${encoded}-${encoded}`
+      || normalizedToken === `${decoded}-${encoded}`
+      || normalizedToken === `${encoded}-${decoded}`
+      || normalizedToken === `${legacySlug}-${encoded}`
+      || normalizedToken === `${legacySlug}-${decoded}`;
+    if (isExact || isDuplicate) {
+      const originalEncodedValue = isExact
+        ? token
+        : token.slice(-(decoded.length));
+      setCompactFilter(refinementList, attribute, parseQueryValue(originalEncodedValue));
+      return true;
+    }
+  }
+  return false;
+}
+
+function readCompactFilter(value: string, refinementList: PlainObject) {
+  const token = decodeURIComponent(value);
+  if (!token) return;
+  if (readRepeatedCompactFilter(token, refinementList)) return;
+
+  const make = COMPACT_MAKES
+    .sort((a, b) => b.length - a.length)
+    .find((candidate) => token.toLowerCase() === candidate || token.toLowerCase().startsWith(`${candidate}-`));
+
+  if (make) {
+    // Keep canonical make punctuation. For example, the indexed value is
+    // "Mercedes-Benz", not "Mercedes Benz".
+    const parsedMake = parseQueryValue(make);
+    setCompactFilter(refinementList, "make", parsedMake);
+    const remaining = token.slice(make.length).replace(/^-/, "");
+    if (remaining) {
+      const yearIndex = remaining.search(/(?:^|-)(19\d{2}|20\d{2})(?:-|$)/);
+      if (yearIndex > 0) {
+        const model = remaining.slice(0, yearIndex).replace(/-$/, "");
+        setCompactFilter(refinementList, "model", parseQueryValue(model));
+        const yearAndRemainder = remaining.slice(yearIndex).replace(/^-/, "");
+        const yearMatch = yearAndRemainder.match(/^(19\d{2}|20\d{2})(?:-(.*))?$/);
+        if (yearMatch) {
+          setCompactFilter(refinementList, "year", yearMatch[1]);
+          if (yearMatch[2]) readCompactFilter(yearMatch[2], refinementList);
+        }
+      } else {
+        const color = COMPACT_COLORS
+          .sort((a, b) => b.length - a.length)
+          .find((candidate) => remaining.toLowerCase().endsWith(`-${candidate}`));
+        if (color) {
+          const model = remaining.slice(0, -(color.length + 1));
+          setCompactFilter(refinementList, "model", parseQueryValue(model));
+          setCompactFilter(refinementList, "exterior_color", titleCase(parseQueryValue(color)));
+        } else {
+          setCompactFilter(refinementList, "model", parseQueryValue(remaining));
+        }
+      }
+    }
+    return;
+  }
+
+  const year = token.match(/^(19\d{2}|20\d{2})(?:-|$)/);
+  if (year) {
+    setCompactFilter(refinementList, "year", year[1]);
+    const remainder = token.slice(year[0].length);
+    if (remainder) readCompactFilter(remainder, refinementList);
+    return;
+  }
+
+  const normalized = token.toLowerCase();
+  const locationIndex = normalized.indexOf("-cardora-");
+  if (normalized.startsWith("cardora-")) {
+    setCompactFilter(refinementList, "location", parseQueryValue(token));
+  } else if (locationIndex > 0) {
+    setCompactFilter(refinementList, "location", parseQueryValue(token.slice(locationIndex + 1)));
+    setCompactFilter(refinementList, "exterior_color", titleCase(parseQueryValue(token.slice(0, locationIndex))));
+  } else if (COMPACT_VEHICLE_TYPES.some((vehicleType) => normalized === vehicleType || normalized.endsWith(`-${vehicleType}`))) {
+    const vehicleType = COMPACT_VEHICLE_TYPES.find((candidate) => normalized === candidate || normalized.endsWith(`-${candidate}`));
+    if (vehicleType) setCompactFilter(refinementList, "vehicle_type", parseQueryValue(vehicleType));
+    const color = token.slice(0, -(vehicleType?.length || 0)).replace(/-$/, "");
+    if (color) setCompactFilter(refinementList, "exterior_color", titleCase(parseQueryValue(color)));
+  } else if (COMPACT_BODY_TYPES.some((bodyType) => normalized === bodyType || normalized.endsWith(`-${bodyType}`))) {
+    const bodyType = COMPACT_BODY_TYPES.find((candidate) => normalized === candidate || normalized.endsWith(`-${candidate}`));
+    if (bodyType) setCompactFilter(refinementList, "body_type", parseQueryValue(bodyType));
+    const color = token.slice(0, -(bodyType?.length || 0)).replace(/-$/, "");
+    if (color) setCompactFilter(refinementList, "exterior_color", titleCase(parseQueryValue(color)));
+  } else if (COMPACT_TRANSMISSIONS.some((transmission) => normalized === transmission || normalized.endsWith(`-${transmission}`))) {
+    const transmission = COMPACT_TRANSMISSIONS.find((candidate) => normalized === candidate || normalized.endsWith(`-${candidate}`));
+    if (transmission) setCompactFilter(refinementList, "transmission", parseQueryValue(transmission));
+    const color = token.slice(0, -(transmission?.length || 0)).replace(/-$/, "");
+    if (color) setCompactFilter(refinementList, "exterior_color", titleCase(parseQueryValue(color)));
+  } else if (COMPACT_FUEL_TYPES.some((fuelType) => normalized === fuelType || normalized.endsWith(`-${fuelType}`))) {
+    const fuelType = COMPACT_FUEL_TYPES.find((candidate) => normalized === candidate || normalized.endsWith(`-${candidate}`));
+    if (fuelType) setCompactFilter(refinementList, "fuel_type", parseQueryValue(fuelType));
+    const color = token.slice(0, -(fuelType?.length || 0)).replace(/-$/, "");
+    if (color) setCompactFilter(refinementList, "exterior_color", parseQueryValue(color));
+  } else if (COMPACT_BODY_TYPES.includes(normalized)) {
+    setCompactFilter(refinementList, "body_type", parseQueryValue(token));
+  } else {
+    setCompactFilter(refinementList, "exterior_color", titleCase(parseQueryValue(token)));
+  }
 }
 
 function getRangeBounds(value: unknown): [unknown, unknown] {
@@ -233,9 +381,69 @@ function getPathFilters(route: PlainObject): PathFilters {
   return filters;
 }
 
-function serializePublicUrl(route: PlainObject, pathFilters: PathFilters) {
+function serializePublicUrl(route: PlainObject) {
   const params: string[] = [];
   const appended = new Set<string>();
+  const sourceRefinementList = route.refinementList || {};
+  const refinementList: PlainObject = {};
+
+  Object.entries(sourceRefinementList).forEach(([attribute, values]) => {
+    if (!Array.isArray(values)) return;
+    refinementList[attribute] = [...new Set(values.map(String))];
+  });
+
+  // A compact token can be misread as a model when it is a body, fuel, or
+  // vehicle value containing hyphens. Do not serialize that duplicate model.
+  const nonModelFacetValues = new Set([
+    ...(refinementList.body_type || []),
+    ...(refinementList.vehicle_type || []),
+    ...(refinementList.fuel_type || []),
+    ...(refinementList.transmission || []),
+  ].map((value: string) => value.toLowerCase()));
+  if (Array.isArray(refinementList.model)) {
+    refinementList.model = refinementList.model.filter(
+      (model: string) => !nonModelFacetValues.has(model.toLowerCase())
+    );
+  }
+  const compactParts: string[] = [];
+  const compactAttributes = new Set<string>();
+
+  const selectedFacetAttributes = FILTER_ATTRIBUTES.filter(
+    (attribute) => (refinementList[attribute] || []).length > 0
+  );
+  const hasSingleMakeModelPair =
+    (refinementList.make || []).length === 1 &&
+    (refinementList.model || []).length === 1 &&
+    selectedFacetAttributes.every((attribute) => attribute === "make" || attribute === "model");
+  const allSelectedFacetsAreSingle = selectedFacetAttributes.every(
+    (attribute) => (refinementList[attribute] || []).length === 1
+  );
+  const canUseCompactFormat = allSelectedFacetsAreSingle &&
+    (selectedFacetAttributes.length === 1 || hasSingleMakeModelPair || selectedFacetAttributes.length > 1);
+
+  const addCompactFacet = (attribute: string) => {
+    const values: string[] = refinementList[attribute] || [];
+    if (values.length !== 1) return;
+    compactParts.push(queryValue(values[0]));
+    compactAttributes.add(attribute);
+  };
+
+  // A single value is kept readable without a query-key. Make and model are
+  // emitted together so the compact form remains unambiguous for shared URLs.
+  const makes: string[] = refinementList.make || [];
+  const models: string[] = refinementList.model || [];
+  if (canUseCompactFormat && makes.length === 1) {
+    compactParts.push(queryValue(makes[0]));
+    compactAttributes.add("make");
+    if (models.length === 1) {
+      compactParts[compactParts.length - 1] += `-${queryValue(models[0])}`;
+      compactAttributes.add("model");
+    }
+  }
+  if (canUseCompactFormat) {
+    COMPACT_FILTER_ORDER.filter((attribute) => attribute !== "make" && attribute !== "model")
+      .forEach(addCompactFacet);
+  }
   
   // Get the currently selected makes from the route
   const selectedMakes = new Set<string>(route.refinementList?.make || []);
@@ -263,7 +471,7 @@ function serializePublicUrl(route: PlainObject, pathFilters: PathFilters) {
   
   const appendFacet = (attribute: string) => {
     const values: string[] = route.refinementList?.[attribute] || [];
-    if (!values.length || pathFilters[attribute as keyof PathFilters]?.length) return;
+    if (!values.length || compactAttributes.has(attribute)) return;
 
     let serializedValues: string[];
     if (attribute === "model") {
@@ -318,18 +526,13 @@ function serializePublicUrl(route: PlainObject, pathFilters: PathFilters) {
     // this is left un-percent-encoded for a readable URL.
     params.push(`sortBy=status_rank:asc,${sort.field}:${sort.direction.toLowerCase()}`);
   }
+
+  if (compactParts.length) params.unshift(compactParts.join("-"));
   
-  const pathValues = (attributes: readonly (keyof PathFilters)[]) =>
-    attributes
-      .map((attribute) => pathFilters[attribute]?.map(routeValue).join(","))
-      .filter((value): value is string => Boolean(value));
-  const vehicleSegments = pathValues(["year", "make", "model", "body_type"]);
-  const detailSegments = pathValues(["vehicle_type", "exterior_color", "fuel_type", "location"]);
-  const path = vehicleSegments.length
-    ? `/inventory/${vehicleSegments.join("-")}${detailSegments.length ? `/${detailSegments.join("-")}` : ""}`
-    : detailSegments.length
-      ? `/inventory/${detailSegments.join("-")}`
-      : "/inventory";
+  // Keep filter state in query parameters. Joining slugs in the path makes
+  // values such as "CX-70 MHEV" indistinguishable from separate filters when
+  // a shared URL is parsed in a fresh tab.
+  const path = "/inventory/";
   return params.length ? `${path}?${params.join("&")}` : path;
 }
 
@@ -369,6 +572,42 @@ function readRouteState(): PlainObject {
     }
 
     refinementList[attribute] = value.split(",").filter(Boolean).map(parseQueryValue);
+  }
+
+  const namedKeys = new Set([
+    ...Object.values(FILTER_KEYS),
+    ...Object.values(RANGE_KEYS).flat(),
+    "q",
+    "sortBy",
+    "sortField",
+    "sortDirection",
+    "sort",
+  ]);
+  for (const [key, value] of params.entries()) {
+    // A compact filter is intentionally represented as a query key without
+    // an equals sign, for example ?black or ?BMW-3--Series.
+    if (!namedKeys.has(key) && value === "") {
+      readCompactFilter(key, refinementList);
+    }
+  }
+
+  Object.keys(refinementList).forEach((attribute) => {
+    if (Array.isArray(refinementList[attribute])) {
+      refinementList[attribute] = [...new Set(refinementList[attribute])];
+    }
+  });
+
+  const nonModelFacetValues = new Set([
+    ...(refinementList.body_type || []),
+    ...(refinementList.vehicle_type || []),
+    ...(refinementList.fuel_type || []),
+    ...(refinementList.transmission || []),
+  ].map((value: string) => value.toLowerCase()));
+  if (Array.isArray(refinementList.model)) {
+    refinementList.model = refinementList.model.filter(
+      (model: string) => !nonModelFacetValues.has(model.toLowerCase())
+    );
+    if (refinementList.model.length === 0) delete refinementList.model;
   }
 
   for (const [attribute, [lowKey, highKey]] of Object.entries(RANGE_KEYS)) {
@@ -490,7 +729,7 @@ export function createInventoryRouter(_config: AppConfig) {
   let lastWrittenUrl: string | null = null;
 
   if (typeof window !== "undefined" && Object.keys(pathFilters).length && window.location.pathname === "/inventory") {
-    const bootstrapUrl = serializePublicUrl(initialRoute, pathFilters);
+    const bootstrapUrl = serializePublicUrl(initialRoute);
     isInternalUrlWrite = true;
     window.history.replaceState({ ...initialRoute, __inventoryPathFilters: pathFilters }, "", bootstrapUrl);
     isInternalUrlWrite = false;
@@ -501,7 +740,7 @@ export function createInventoryRouter(_config: AppConfig) {
     if (typeof window === "undefined") return;
     if (!isInventoryListingPath(window.location.pathname)) return;
 
-    const url = serializePublicUrl(route, filters);
+    const url = serializePublicUrl(route);
 
     if (url === lastWrittenUrl) return;
     lastWrittenUrl = url;
