@@ -195,24 +195,16 @@ function readPathOnlyFilters(segments: string[], refinementList: PlainObject) {
 }
 
 export function queryValue(value: string) {
-  return encodeURIComponent(value.replace(/-/g, "--").replace(/ /g, "-"));
+  return encodeURIComponent(value);
 }
 
 function parseQueryValue(value: string) {
   return value.replace(/--/g, "\u0000").replace(/-/g, " ").replace(/\u0000/g, "-");
 }
 
-const COMPACT_FILTER_ORDER = [
-  "make",
-  "model",
-  "year",
-  "exterior_color",
-  "location",
-  "vehicle_type",
-  "body_type",
-  "transmission",
-  "fuel_type",
-] as const;
+function parseNamedQueryValue(value: string) {
+  return value;
+}
 
 const COMPACT_MAKES = [
   "mercedes-benz", "aston-martin", "land-rover", "volkswagen", "mitsubishi",
@@ -405,46 +397,6 @@ function serializePublicUrl(route: PlainObject) {
       (model: string) => !nonModelFacetValues.has(model.toLowerCase())
     );
   }
-  const compactParts: string[] = [];
-  const compactAttributes = new Set<string>();
-
-  const selectedFacetAttributes = FILTER_ATTRIBUTES.filter(
-    (attribute) => (refinementList[attribute] || []).length > 0
-  );
-  const hasSingleMakeModelPair =
-    (refinementList.make || []).length === 1 &&
-    (refinementList.model || []).length === 1 &&
-    selectedFacetAttributes.every((attribute) => attribute === "make" || attribute === "model");
-  const allSelectedFacetsAreSingle = selectedFacetAttributes.every(
-    (attribute) => (refinementList[attribute] || []).length === 1
-  );
-  const canUseCompactFormat = allSelectedFacetsAreSingle &&
-    (selectedFacetAttributes.length === 1 || hasSingleMakeModelPair || selectedFacetAttributes.length > 1);
-
-  const addCompactFacet = (attribute: string) => {
-    const values: string[] = refinementList[attribute] || [];
-    if (values.length !== 1) return;
-    compactParts.push(queryValue(values[0]));
-    compactAttributes.add(attribute);
-  };
-
-  // A single value is kept readable without a query-key. Make and model are
-  // emitted together so the compact form remains unambiguous for shared URLs.
-  const makes: string[] = refinementList.make || [];
-  const models: string[] = refinementList.model || [];
-  if (canUseCompactFormat && makes.length === 1) {
-    compactParts.push(queryValue(makes[0]));
-    compactAttributes.add("make");
-    if (models.length === 1) {
-      compactParts[compactParts.length - 1] += `-${queryValue(models[0])}`;
-      compactAttributes.add("model");
-    }
-  }
-  if (canUseCompactFormat) {
-    COMPACT_FILTER_ORDER.filter((attribute) => attribute !== "make" && attribute !== "model")
-      .forEach(addCompactFacet);
-  }
-  
   // Get the currently selected makes from the route
   const selectedMakes = new Set<string>(route.refinementList?.make || []);
   
@@ -471,7 +423,7 @@ function serializePublicUrl(route: PlainObject) {
   
   const appendFacet = (attribute: string) => {
     const values: string[] = route.refinementList?.[attribute] || [];
-    if (!values.length || compactAttributes.has(attribute)) return;
+    if (!values.length) return;
 
     let serializedValues: string[];
     if (attribute === "model") {
@@ -489,8 +441,7 @@ function serializePublicUrl(route: PlainObject) {
           return isValid;
         })
         .map((model) => {
-          const make = modelMakeAssociations.get(model);
-          return make ? `${queryValue(make)};${queryValue(model)}` : queryValue(model);
+          return queryValue(model);
         });
       // If no valid models remain, don't add the parameter at all
       if (!serializedValues.length) return;
@@ -527,12 +478,9 @@ function serializePublicUrl(route: PlainObject) {
     params.push(`sortBy=status_rank:asc,${sort.field}:${sort.direction.toLowerCase()}`);
   }
 
-  if (compactParts.length) params.unshift(compactParts.join("-"));
-  
-  // Keep filter state in query parameters. Joining slugs in the path makes
-  // values such as "CX-70 MHEV" indistinguishable from separate filters when
-  // a shared URL is parsed in a fresh tab.
-  const path = "/inventory/";
+  // Canonical URLs always use named parameters. This keeps make/model hyphens
+  // literal and prevents filter boundaries from becoming ambiguous.
+  const path = "/inventory";
   return params.length ? `${path}?${params.join("&")}` : path;
 }
 
@@ -554,11 +502,11 @@ function readRouteState(): PlainObject {
       const impliedMakes: string[] = [];
       value.split(",").filter(Boolean).forEach((entry) => {
         const [rawMake, rawModel] = entry.includes(";") ? entry.split(";", 2) : [undefined, entry];
-        const model = parseQueryValue(rawModel);
+        const model = parseNamedQueryValue(rawModel);
         models.push(model);
         if (rawMake) {
           hasExplicitModelEncoding = true;
-          const make = parseQueryValue(rawMake);
+          const make = parseNamedQueryValue(rawMake);
           impliedMakes.push(make);
           modelMakeAssociations.set(model, make);
         }
@@ -571,7 +519,7 @@ function readRouteState(): PlainObject {
       continue;
     }
 
-    refinementList[attribute] = value.split(",").filter(Boolean).map(parseQueryValue);
+    refinementList[attribute] = value.split(",").filter(Boolean).map(parseNamedQueryValue);
   }
 
   const namedKeys = new Set([
