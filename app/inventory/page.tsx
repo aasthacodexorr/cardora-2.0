@@ -641,7 +641,7 @@ const MakeRefinementList = () => {
     refine: refineMake,
   } = useRefinementList({
     attribute: "make",
-    limit: 200,
+    limit: 500,
     sortBy: ["name:asc"],
   });
 
@@ -655,6 +655,44 @@ const MakeRefinementList = () => {
   });
 
   const [allMakes, setAllMakes] = useState<typeof makeItems>([]);
+  const config = useAppConfig();
+  const [globalMakesFetched, setGlobalMakesFetched] = useState(false);
+
+  useEffect(() => {
+    if (globalMakesFetched) return;
+    const fetchGlobalMakes = async () => {
+      try {
+        const client = getTypesenseClient(config).searchClient;
+        const res = await client.search([{
+          indexName: config.site.collection,
+          params: {
+            facets: ["make"],
+            hitsPerPage: 0,
+          }
+        }]);
+        
+        const facetsObj = (res as any).results?.[0]?.facets?.make || {};
+        const initialMakes = Object.entries(facetsObj).map(([value, count]) => ({
+          value,
+          label: value,
+          count: count as number,
+          isRefined: false,
+        }));
+        
+        setAllMakes((previous) => {
+          const merged = new Map<string, typeof makeItems[number]>();
+          initialMakes.forEach((item) => merged.set(String(item.value), item as any));
+          previous.forEach((item) => merged.set(String(item.value), item));
+          return Array.from(merged.values());
+        });
+      } catch (err) {
+        console.error("Failed to fetch global makes", err);
+      } finally {
+        setGlobalMakesFetched(true);
+      }
+    };
+    fetchGlobalMakes();
+  }, [config, globalMakesFetched]);
 
   useEffect(() => {
     if (!makeItems.length) return;
@@ -818,42 +856,66 @@ const ModelRefinementList = () => {
     );
   }, [currentRefinements]);
 
-  // Always merge the latest hits into the existing model -> make cache.
-  // This makes the relationship update immediately after a make refinement.
-  const modelMakeMap = useMemo(() => {
-    const merged = new Map(getModelMakeMap());
+  const [globalModelMakeMap, setGlobalModelMakeMap] = useState<Map<string, string>>(new Map());
+  const config = useAppConfig();
 
+  useEffect(() => {
+    let active = true;
+    const fetchGlobalMap = async () => {
+      try {
+        const url = `${config.site.typesense_protocol}://${config.site.typesense_host}:${config.site.typesense_port || 443}/collections/${config.site.collection}/documents/search?q=*&group_by=model&group_limit=1&per_page=250`;
+        const res = await fetch(url, {
+          headers: { "X-TYPESENSE-API-KEY": config.site.inventory_search_only_key }
+        });
+        const data = await res.json();
+        if (!active) return;
+        const newMap = new Map<string, string>();
+        data.grouped_hits?.forEach((group: any) => {
+          const hit = group.hits?.[0]?.document;
+          if (hit?.model && hit?.make) {
+            newMap.set(String(hit.model), String(hit.make));
+          }
+        });
+        setGlobalModelMakeMap(newMap);
+      } catch (err) {
+        console.error("Failed to fetch global model map", err);
+      }
+    };
+    fetchGlobalMap();
+    return () => { active = false; };
+  }, [config]);
+
+  const combinedModelMakeMap = useMemo(() => {
+    const merged = new Map(globalModelMakeMap);
+    // Overlay local dynamic hits and URL map just in case
+    getModelMakeMap().forEach((make, model) => merged.set(model, make));
     hits.forEach((hit: any) => {
       if (hit?.model && hit?.make) {
         merged.set(String(hit.model), String(hit.make));
       }
     });
-
     return merged;
-  }, [hits]);
+  }, [globalModelMakeMap, hits]);
 
   const visibleModelItems = useMemo(() => {
-    // No make selected: show all available models.
     if (selectedMakeValues.size === 0) {
       return modelItems;
     }
 
-    // One or more makes selected: only show models belonging to those makes.
-    // Keep selected models visible during the InstantSearch update.
     return modelItems.filter((item) => {
       const model = String(item.value);
-      const make = modelMakeMap.get(model);
+      const make = combinedModelMakeMap.get(model);
 
       return (
         selectedModelValues.has(model) ||
         (make ? selectedMakeValues.has(make) : false)
       );
     });
-  }, [modelItems, selectedMakeValues, selectedModelValues, modelMakeMap]);
+  }, [modelItems, selectedMakeValues, selectedModelValues, combinedModelMakeMap]);
 
   const handleToggle = (item: typeof modelItems[number]) => {
     const model = item.value as string;
-    const make = modelMakeMap.get(model);
+    const make = combinedModelMakeMap.get(model);
 
     if (!item.isRefined) {
       // Selecting a model automatically selects its make.
@@ -1275,19 +1337,29 @@ const MainLayoutWrapper = ({
 
 const SyncModelMakeMap = () => {
   const { hits } = useHits();
+  const { refresh } = useInstantSearch();
 
   useEffect(() => {
     const existing = getModelMakeMap();
     const merged = new Map(existing);
+    let changed = false;
 
     hits.forEach((hit: any) => {
       if (hit.model && hit.make) {
-        merged.set(hit.model as string, hit.make as string);
+        const model = hit.model as string;
+        const make = hit.make as string;
+        if (merged.get(model) !== make) {
+          merged.set(model, make);
+          changed = true;
+        }
       }
     });
 
-    setModelMakeMap(Array.from(merged.entries()));
-  }, [hits]);
+    if (changed) {
+      setModelMakeMap(Array.from(merged.entries()));
+      refresh();
+    }
+  }, [hits, refresh]);
 
   return null;
 };
