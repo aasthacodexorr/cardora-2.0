@@ -3,7 +3,140 @@ import type { UiState } from "instantsearch.js";
 
 type PlainObject = Record<string, any>;
 
-const MODEL_TO_MAKE = new Map<string, string>();
+export const BASELINE_MODEL_TO_MAKE: Record<string, string> = {
+  "200": "Chrysler",
+  "300": "Chrysler",
+  "911": "Porsche",
+  "1500": "Ram",
+  "Sierra 1500": "GMC",
+  "Civic": "Honda",
+  "WRX": "Subaru",
+  "Highlander": "Toyota",
+  "Corolla": "Toyota",
+  "Yukon XL": "GMC",
+  "Escape": "Ford",
+  "Taos": "Volkswagen",
+  "C-Class": "Mercedes-Benz",
+  "Charger": "Dodge",
+  "Sonata": "Hyundai",
+  "Qashqai": "Nissan",
+  "Camry": "Toyota",
+  "Corolla Hybrid": "Toyota",
+  "Fusion Energi": "Ford",
+  "Mustang": "Ford",
+  "RAV4": "Toyota",
+  "Durango": "Dodge",
+  "IS 300": "Lexus",
+  "Edge": "Ford",
+  "Acadia": "GMC",
+  "Encore": "Buick",
+  "G70": "Genesis",
+  "Envision": "Buick",
+  "Santa Fe": "Hyundai",
+  "Encore GX": "Buick",
+  "Rogue": "Nissan",
+  "Corvette": "Chevrolet",
+  "KONA": "Hyundai",
+  "Silverado 1500": "Chevrolet",
+  "Grand Caravan": "Chrysler",
+  "Terrain": "GMC",
+  "Enclave": "Buick",
+  "Trax": "Chevrolet",
+  "Grand Cherokee WK": "Jeep",
+  "F-150": "Ford",
+  "Envista": "Buick",
+  "Jetta": "Volkswagen",
+  "Tucson": "Hyundai",
+  "Accord Hybrid": "Honda",
+  "Jetta GLI": "Volkswagen",
+  "A-Class": "Mercedes-Benz",
+  "Challenger": "Dodge",
+  "CLA-Class": "Mercedes-Benz",
+  "Elantra": "Hyundai",
+  "Q3": "Audi",
+  "Grand Cherokee": "Jeep",
+  "Q50": "Infiniti",
+  "Altima": "Nissan",
+  "Versa": "Nissan",
+  "Corsair": "Lincoln",
+  "A4": "Audi",
+  "Wrangler": "Jeep",
+  "S-Class": "Mercedes-Benz",
+  "Malibu": "Chevrolet",
+  "Range Rover Sport": "Land Rover",
+  "3-Series": "BMW",
+  "Gladiator": "Jeep",
+  "Tiguan": "Volkswagen",
+  "E-Class": "Mercedes-Benz",
+  "Accord": "Honda",
+  "Forte": "KIA",
+  "Q5": "Audi",
+  "Suburban": "Chevrolet",
+  "Grand Cherokee L": "Jeep",
+  "Range Rover Velar": "Land Rover",
+  "Wrangler 4XE": "Jeep",
+  "4Runner": "Toyota",
+  "ES": "Lexus",
+  "Sentra": "Nissan",
+  "CR-V": "Honda",
+  "4-Series": "BMW",
+  "SIERRA 2500HD": "GMC",
+  "Defender": "Land Rover",
+  "K4": "Kia",
+  "Venue": "Hyundai",
+  "Carnival": "Kia",
+  "Sorento": "Kia",
+  "Seltos": "Kia",
+  "Compass": "Jeep",
+  "X1": "BMW",
+  "Sportage": "Kia",
+  "Range Rover": "Land Rover",
+  "Yukon": "GMC",
+  "Q7": "Audi",
+  "Odyssey": "Honda",
+  "SUPER DUTY F-250 SRW": "Ford",
+  "GLC-Class": "Mercedes-Benz",
+  "Model 3": "Tesla",
+  "Grecale": "Maserati",
+  "GranTurismo": "Maserati",
+  "Cayenne": "Porsche",
+  "CX-5": "Mazda",
+  "Stinger": "Kia",
+  "Canyon": "GMC",
+  "Tahoe": "Chevrolet",
+  "GR COROLLA": "Toyota",
+  "TT COUPE": "Audi",
+  "Express Cargo Van": "Chevrolet",
+  "Civic Hatchback": "Honda",
+  "RX 350": "Lexus",
+  "1500 Classic": "Ram",
+  "Outlander": "Mitsubishi",
+  "GLE-Class": "Mercedes-Benz",
+  "Atlas": "Volkswagen",
+  "Model Y": "Tesla",
+  "Impreza": "Subaru",
+  "LaCrosse": "Buick",
+  "TrailBlazer": "Chevrolet",
+  "MKX": "Lincoln",
+  "RX": "Lexus",
+  "Ram 1500": "Dodge",
+  "Journey": "Dodge",
+  "SILVERADO 2500HD": "Chevrolet",
+  "Camry Hybrid": "Toyota",
+  "Passat": "Volkswagen",
+  "ZDX": "Acura",
+  "CX-70 MHEV": "Mazda",
+  "TLX": "Acura",
+  "GOLF SPORTWAGEN": "Volkswagen",
+  "Aviator": "Lincoln",
+  "SUPER DUTY F-450 DRW": "Ford",
+  "3 Series": "BMW",
+  "Explorer": "Ford",
+  "Transit 150": "Ford",
+  "CR-V Hybrid": "Honda",
+};
+
+const MODEL_TO_MAKE = new Map<string, string>(Object.entries(BASELINE_MODEL_TO_MAKE));
 
 const BASELINE_KNOWN_MODELS = [
   "1500", "1500 Classic", "200", "3 Series", "3-Series", "300", "4-Series", "4Runner", "911",
@@ -46,6 +179,7 @@ function indexKnownModel(model: string) {
 }
 
 BASELINE_KNOWN_MODELS.forEach(indexKnownModel);
+Object.keys(BASELINE_MODEL_TO_MAKE).forEach(indexKnownModel);
 
 export function registerKnownModels(models: Iterable<string>) {
   for (const model of models) {
@@ -114,6 +248,7 @@ export function queryValueToModel(value: string): string {
 export function setModelMakeMap(entries: Iterable<[string, string]>) {
   for (const [model, make] of entries) {
     MODEL_TO_MAKE.set(model, make);
+    modelMakeAssociations.set(model, make);
     indexKnownModel(model);
   }
 }
@@ -134,7 +269,7 @@ export const FILTER_KEYS: Record<string, string> = {
   fuel_type: "fuelTypes",
 };
  
-export const modelMakeAssociations = new Map<string, string>();
+export const modelMakeAssociations = new Map<string, string>(Object.entries(BASELINE_MODEL_TO_MAKE));
 
 export type MakeModelSelection = { make: string; model: string };
 
@@ -719,6 +854,11 @@ function readRouteState(): PlainObject {
           impliedMakes.push(make);
           modelMakeAssociations.set(model, make);
           setModelMakeMap([[model, make]]);
+        } else {
+          const make = modelMakeAssociations.get(model) || getModelMakeMap().get(model);
+          if (make) {
+            impliedMakes.push(make);
+          }
         }
       });
       refinementList.model = models;
@@ -765,7 +905,17 @@ function readRouteState(): PlainObject {
     refinementList.model = refinementList.model.filter(
       (model: string) => !nonModelFacetValues.has(model.toLowerCase())
     );
-    if (refinementList.model.length === 0) delete refinementList.model;
+    const selectedMakes = new Set<string>(refinementList.make || []);
+    if (selectedMakes.size > 0) {
+      const modelMakeMap = getModelMakeMap();
+      refinementList.model = refinementList.model.filter((model: string) => {
+        const make = modelMakeAssociations.get(model) || modelMakeMap.get(model);
+        return make ? selectedMakes.has(make) : true;
+      });
+    } else {
+      delete refinementList.model;
+    }
+    if (refinementList.model && refinementList.model.length === 0) delete refinementList.model;
   }
 
   for (const [attribute, [lowKey, highKey]] of Object.entries(RANGE_KEYS)) {
@@ -826,12 +976,32 @@ export const createInventoryStateMapping = (config: AppConfig) => {
   const indexName = config.site.collection || "";
   const defaultSort = `${indexName}/sort/status_rank:asc,created_at:desc`;
 
+  const sanitizeRefinementList = (rawRefinementList: PlainObject) => {
+    const refinementList = { ...rawRefinementList };
+    const selectedMakes = new Set<string>(refinementList.make || []);
+    if (Array.isArray(refinementList.model)) {
+      if (selectedMakes.size === 0) {
+        delete refinementList.model;
+      } else {
+        const modelMakeMap = getModelMakeMap();
+        refinementList.model = refinementList.model.filter((model: string) => {
+          const make = modelMakeAssociations.get(model) || modelMakeMap.get(model);
+          return make ? selectedMakes.has(make) : true;
+        });
+        if (refinementList.model.length === 0) {
+          delete refinementList.model;
+        }
+      }
+    }
+    return refinementList;
+  };
+
   return {
     stateToRoute(uiState: UiState) {
       const state = uiState[indexName] || {};
       return {
         query: state.query || undefined,
-        refinementList: state.refinementList || {},
+        refinementList: sanitizeRefinementList(state.refinementList || {}),
         range: state.range || {},
         sortBy: state.sortBy && state.sortBy !== defaultSort ? state.sortBy : undefined,
       };
@@ -845,7 +1015,7 @@ export const createInventoryStateMapping = (config: AppConfig) => {
       return {
         [indexName]: {
           query: route.query || "",
-          refinementList: route.refinementList || {},
+          refinementList: sanitizeRefinementList(route.refinementList || {}),
           range: route.range || {},
           sortBy,
         },
