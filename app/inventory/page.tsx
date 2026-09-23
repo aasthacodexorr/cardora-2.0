@@ -668,6 +668,7 @@ const MakeRefinementList = () => {
           params: {
             facets: ["make"],
             hitsPerPage: 0,
+            maxValuesPerFacet: 250,
           }
         }]);
         
