@@ -29,6 +29,16 @@ export const FILTER_KEYS: Record<string, string> = {
  
 export const modelMakeAssociations = new Map<string, string>();
 
+export type MakeModelSelection = { make: string; model: string };
+
+export function parseMakeModelSelections(value: string): MakeModelSelection[] {
+  return value.split(",").filter(Boolean).flatMap((entry) => {
+    const separator = entry.indexOf(";");
+    if (separator < 1 || separator === entry.length - 1) return [];
+    return [{ make: entry.slice(0, separator), model: entry.slice(separator + 1) }];
+  });
+}
+
 let activeRouterResync: (() => void) | null = null;
 
 export function resyncInventoryUrl() {
@@ -375,7 +385,6 @@ function getPathFilters(route: PlainObject): PathFilters {
 
 function serializePublicUrl(route: PlainObject) {
   const params: string[] = [];
-  const appended = new Set<string>();
   const sourceRefinementList = route.refinementList || {};
   const refinementList: PlainObject = {};
 
@@ -397,29 +406,7 @@ function serializePublicUrl(route: PlainObject) {
       (model: string) => !nonModelFacetValues.has(model.toLowerCase())
     );
   }
-  // Get the currently selected makes from the route
-  const selectedMakes = new Set<string>(route.refinementList?.make || []);
-  
-  // Clean up the route state to remove orphaned models BEFORE serialization
-  // This ensures models are always removed when their make is removed
-  if (route.refinementList?.model && route.refinementList.model.length > 0 && selectedMakes.size > 0) {
-    const modelMakeMap = getModelMakeMap();
-    const validModels = route.refinementList.model.filter((model: string) => {
-      const make = modelMakeMap.get(model);
-      // Keep model if its make is in selectedMakes or if make is unknown
-      return !make || selectedMakes.has(make);
-    });
-    
-    // Update the route state in-place to remove orphaned models
-    if (validModels.length !== route.refinementList.model.length) {
-      console.log(`[serializePublicUrl] cleaning up orphaned models from route state. Before: ${route.refinementList.model.join(",")}, After: ${validModels.join(",")}`);
-      if (validModels.length === 0) {
-        delete route.refinementList.model;
-      } else {
-        route.refinementList.model = validModels;
-      }
-    }
-  }
+  const selectedMakes = new Set<string>(refinementList.make || []);
   
   const appendFacet = (attribute: string) => {
     const values: string[] = route.refinementList?.[attribute] || [];
@@ -427,22 +414,12 @@ function serializePublicUrl(route: PlainObject) {
 
     let serializedValues: string[];
     if (attribute === "model") {
-      // Filter models to only include those whose make is in selectedMakes
       serializedValues = values
-        .filter((model) => {
-          const make = modelMakeAssociations.get(model);
-          // Keep the model if:
-          // 1. Its make is in selectedMakes, OR
-          // 2. Its make is unknown (not yet in map - will be resolved when data loads)
-          const isValid = !make || selectedMakes.has(make);
-          if (!isValid) {
-            console.log(`[serializePublicUrl] filtering out orphaned model: ${model} (make: ${make}, selected: ${Array.from(selectedMakes).join(",")})`);
-          }
-          return isValid;
-        })
         .map((model) => {
-          return queryValue(model);
-        });
+          const make = modelMakeAssociations.get(model) || getModelMakeMap().get(model);
+          return make && selectedMakes.has(make) ? `${queryValue(make)};${queryValue(model)}` : null;
+        })
+        .filter((value): value is string => value !== null);
       // If no valid models remain, don't add the parameter at all
       if (!serializedValues.length) return;
     } else {
@@ -450,7 +427,6 @@ function serializePublicUrl(route: PlainObject) {
     }
     
     params.push(`${FILTER_KEYS[attribute]}=${serializedValues.join(",")}`);
-    appended.add(attribute);
   };
   const appendRange = (attribute: keyof typeof RANGE_KEYS, index: 0 | 1) => {
     const [low, high] = getRangeBounds(route.range?.[attribute]);
@@ -460,15 +436,24 @@ function serializePublicUrl(route: PlainObject) {
     }
   };
 
-  // Canonical query order, independent of the order in which filters were selected.
-  appendRange("selling_price", 0);
-  appendRange("odometer", 0);
+  // Canonical query order — always serialized in this exact sequence,
+  // regardless of the order in which the user selected the filters.
+  // 1. makes  2. models  3. year  4. priceLow  5. locations
+  // 6. colors  7. bodyTypes  8. transmissions  9. fuelTypes
+  // 10. odometerLow  11. vehicleTypes  12. priceHigh  13. odometerHigh
+  appendFacet("make");
+  appendFacet("model");
+  appendFacet("year");
+  appendRange("selling_price", 0);   // priceLow
+  appendFacet("location");
+  appendFacet("exterior_color");
+  appendFacet("body_type");
   appendFacet("transmission");
-  appendRange("selling_price", 1);
-  appendRange("odometer", 1);
-  FILTER_ATTRIBUTES.forEach((attribute) => {
-    if (!appended.has(attribute)) appendFacet(attribute);
-  });
+  appendFacet("fuel_type");
+  appendRange("odometer", 0);        // odometerLow
+  appendFacet("vehicle_type");
+  appendRange("selling_price", 1);   // priceHigh
+  appendRange("odometer", 1);        // odometerHigh
   if (route.query) params.push(`q=${encodeURIComponent(route.query)}`);
   const sort = getPublicSort(route.sortBy);
   if (sort) {
@@ -491,8 +476,6 @@ function readRouteState(): PlainObject {
   const refinementList: PlainObject = {};
   const range: PlainObject = {};
   
-  let hasExplicitModelEncoding = false;
-
   for (const [attribute, key] of Object.entries(FILTER_KEYS)) {
     const value = params.get(key);
     if (!value) continue;
@@ -505,10 +488,10 @@ function readRouteState(): PlainObject {
         const model = parseNamedQueryValue(rawModel);
         models.push(model);
         if (rawMake) {
-          hasExplicitModelEncoding = true;
           const make = parseNamedQueryValue(rawMake);
           impliedMakes.push(make);
           modelMakeAssociations.set(model, make);
+          setModelMakeMap([[model, make]]);
         }
       });
       refinementList.model = models;
@@ -568,24 +551,6 @@ function readRouteState(): PlainObject {
   }
 
   const route: PlainObject = { refinementList, range };
-  
-  // Clean up orphaned models ONLY if they came from explicit make;model encoding
-  // This prevents removing models when the page first loads with just makes in the URL
-  if (hasExplicitModelEncoding && refinementList.model && refinementList.model.length > 0 && refinementList.make && refinementList.make.length > 0) {
-    const selectedMakes = new Set<string>(refinementList.make);
-    const validModels = refinementList.model.filter((model: string) => {
-      const make = modelMakeAssociations.get(model);
-      // Keep model if its make is in selectedMakes or if we don't know its make yet
-      return !make || selectedMakes.has(make);
-    });
-    
-    // Only update if we actually filtered something out
-    if (validModels.length === 0) {
-      delete refinementList.model;
-    } else if (validModels.length < refinementList.model.length) {
-      refinementList.model = validModels;
-    }
-  }
   
   const query = params.get("q");
   if (query) route.query = query;
