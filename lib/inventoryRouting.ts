@@ -5,9 +5,116 @@ type PlainObject = Record<string, any>;
 
 const MODEL_TO_MAKE = new Map<string, string>();
 
+const BASELINE_KNOWN_MODELS = [
+  "1500", "1500 Classic", "200", "3 Series", "3-Series", "300", "4-Series", "4Runner", "911",
+  "A-Class", "A4", "Acadia", "Accord", "Accord Hybrid", "Altima", "Atlas", "Aviator",
+  "C-Class", "CLA-Class", "CR-V", "CR-V Hybrid", "CX-5", "CX-70 MHEV", "Camry", "Camry Hybrid",
+  "Canyon", "Carnival", "Cayenne", "Challenger", "Charger", "Civic", "Civic Hatchback", "Compass",
+  "Corolla", "Corolla Hybrid", "Corsair", "Corvette", "Defender", "Durango", "E-Class", "ES",
+  "Edge", "Elantra", "Enclave", "Encore", "Encore GX", "Envision", "Envista", "Escape", "Explorer",
+  "Express Cargo Van", "F-150", "Forte", "Fusion Energi", "G70", "GLC-Class", "GLE-Class",
+  "GOLF SPORTWAGEN", "GR COROLLA", "Gladiator", "GranTurismo", "Grand Caravan", "Grand Cherokee",
+  "Grand Cherokee L", "Grand Cherokee WK", "Grecale", "Highlander", "IS 300", "Impreza", "Jetta",
+  "Jetta GLI", "Journey", "K4", "KONA", "LaCrosse", "MKX", "Malibu", "Model 3", "Model Y", "Mustang",
+  "Odyssey", "Outlander", "Passat", "Q3", "Q5", "Q50", "Q7", "Qashqai", "RAV4", "RX", "RX 350",
+  "Ram 1500", "Range Rover", "Range Rover Sport", "Range Rover Velar", "Rogue", "S-Class",
+  "SIERRA 2500HD", "SILVERADO 2500HD", "SUPER DUTY F-250 SRW", "SUPER DUTY F-450 DRW", "Santa Fe",
+  "Seltos", "Sentra", "Sierra 1500", "Silverado 1500", "Sonata", "Sorento", "Sportage", "Stinger",
+  "Suburban", "TLX", "TT COUPE", "Tahoe", "Taos", "Terrain", "Tiguan", "TrailBlazer", "Transit 150",
+  "Trax", "Tucson", "Venue", "Versa", "WRX", "Wrangler", "Wrangler 4XE", "X1", "Yukon", "Yukon XL", "ZDX"
+];
+
+const KNOWN_MODELS_REGISTRY = new Set<string>();
+const KNOWN_MODELS_BY_LOWER = new Map<string, string>();
+const KNOWN_MODELS_BY_SLUG = new Map<string, string>();
+
+function indexKnownModel(model: string) {
+  if (!model) return;
+  KNOWN_MODELS_REGISTRY.add(model);
+  const lower = model.toLowerCase();
+  if (!KNOWN_MODELS_BY_LOWER.has(lower)) {
+    KNOWN_MODELS_BY_LOWER.set(lower, model);
+  }
+  const slug = lower.replace(/\s+/g, "-");
+  if (!KNOWN_MODELS_BY_SLUG.has(slug)) {
+    KNOWN_MODELS_BY_SLUG.set(slug, model);
+  }
+  const unhyphenated = lower.replace(/-/g, " ");
+  if (!KNOWN_MODELS_BY_SLUG.has(unhyphenated)) {
+    KNOWN_MODELS_BY_SLUG.set(unhyphenated, model);
+  }
+}
+
+BASELINE_KNOWN_MODELS.forEach(indexKnownModel);
+
+export function registerKnownModels(models: Iterable<string>) {
+  for (const model of models) {
+    if (model) indexKnownModel(model);
+  }
+}
+
+/**
+ * Converts a model name for use in URL query parameter.
+ * Replaces spaces with hyphens (e.g. "1500 Classic" -> "1500-Classic", "3 Series" -> "3-Series")
+ * avoiding %20 in the URL.
+ */
+export function modelToQueryValue(model: string): string {
+  if (!model || typeof model !== "string") return "";
+  return encodeURIComponent(model.trim().replace(/\s+/g, "-"));
+}
+
+/**
+ * Resolves a model query slug (e.g. "1500-Classic" or legacy "1500%20Classic")
+ * back to the canonical database model name ("1500 Classic").
+ */
+export function queryValueToModel(value: string): string {
+  if (!value || typeof value !== "string") return "";
+  const decoded = decodeURIComponent(value).trim();
+  if (!decoded) return "";
+
+  // 1. Direct match in registry (exact case)
+  if (KNOWN_MODELS_REGISTRY.has(decoded)) {
+    return decoded;
+  }
+
+  // 2. Case-insensitive exact match
+  const lower = decoded.toLowerCase();
+  const directMatch = KNOWN_MODELS_BY_LOWER.get(lower);
+  if (directMatch) {
+    return directMatch;
+  }
+
+  // 3. Slug match (e.g. "1500-classic" -> "1500 Classic")
+  const slugMatch = KNOWN_MODELS_BY_SLUG.get(lower);
+  if (slugMatch) {
+    return slugMatch;
+  }
+
+  // 4. Also check if decoded has hyphens and converting to spaces matches a known model
+  const withSpaces = lower.replace(/-/g, " ");
+  const spaceMatch = KNOWN_MODELS_BY_LOWER.get(withSpaces) || KNOWN_MODELS_BY_SLUG.get(withSpaces);
+  if (spaceMatch) {
+    return spaceMatch;
+  }
+
+  // 5. Fallback for new/unknown models not in registry:
+  // If it matches standard hyphenated format (e.g. F-150, CX-5, C-Class, 3-Series), keep the hyphen.
+  if (
+    /^[a-z]{1,4}-\d+$/i.test(decoded) ||
+    /^[a-z0-9]+-class$/i.test(decoded) ||
+    /^\d+-series$/i.test(decoded)
+  ) {
+    return decoded;
+  }
+
+  // Otherwise convert hyphens back to spaces
+  return decoded.replace(/-/g, " ");
+}
+
 export function setModelMakeMap(entries: Iterable<[string, string]>) {
   for (const [model, make] of entries) {
     MODEL_TO_MAKE.set(model, make);
+    indexKnownModel(model);
   }
 }
 
@@ -35,7 +142,7 @@ export function parseMakeModelSelections(value: string): MakeModelSelection[] {
   return value.split(",").filter(Boolean).flatMap((entry) => {
     const separator = entry.indexOf(";");
     if (separator < 1 || separator === entry.length - 1) return [];
-    return [{ make: entry.slice(0, separator), model: entry.slice(separator + 1) }];
+    return [{ make: entry.slice(0, separator), model: queryValueToModel(entry.slice(separator + 1)) }];
   });
 }
 
@@ -417,7 +524,7 @@ function serializePublicUrl(route: PlainObject) {
       serializedValues = values
         .map((model) => {
           const make = modelMakeAssociations.get(model) || getModelMakeMap().get(model);
-          return make && selectedMakes.has(make) ? `${queryValue(make)};${queryValue(model)}` : null;
+          return make && selectedMakes.has(make) ? `${queryValue(make)};${modelToQueryValue(model)}` : null;
         })
         .filter((value): value is string => value !== null);
       // If no valid models remain, don't add the parameter at all
@@ -485,7 +592,7 @@ function readRouteState(): PlainObject {
       const impliedMakes: string[] = [];
       value.split(",").filter(Boolean).forEach((entry) => {
         const [rawMake, rawModel] = entry.includes(";") ? entry.split(";", 2) : [undefined, entry];
-        const model = parseNamedQueryValue(rawModel);
+        const model = queryValueToModel(rawModel);
         models.push(model);
         if (rawMake) {
           const make = parseNamedQueryValue(rawMake);

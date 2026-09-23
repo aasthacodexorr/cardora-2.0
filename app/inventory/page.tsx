@@ -35,7 +35,7 @@ import {
 import { getTypesenseClient } from "@/lib/typesense";
 
 // Custom router/stateMapping that produces the client-required URL format
-import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, setModelMakeMap } from "@/lib/inventoryRouting";
+import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, setModelMakeMap, registerKnownModels } from "@/lib/inventoryRouting";
 import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "@/components/inventory/HitCardSkeleton";
 import { AD_CARDS } from "@/components/inventory/AdCard";
@@ -878,6 +878,8 @@ const ModelRefinementList = () => {
           }
         });
         setGlobalModelMakeMap(newMap);
+        setModelMakeMap(newMap.entries());
+        registerKnownModels(newMap.keys());
       } catch (err) {
         console.error("Failed to fetch global model map", err);
       }
@@ -1358,6 +1360,7 @@ const SyncModelMakeMap = () => {
 
     if (changed) {
       setModelMakeMap(Array.from(merged.entries()));
+      registerKnownModels(merged.keys());
       refresh();
     }
   }, [hits, refresh]);
