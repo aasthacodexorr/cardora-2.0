@@ -71,13 +71,28 @@ function buildMakeModelFilter(
   availableModels: string[],
 ) {
   const canonicalMakes = new Map(selectedMakes.map((make) => [make.toLowerCase(), make]));
-  const canonicalModels = new Map(availableModels.map((model) => [model.toLowerCase(), model]));
+  const canonicalModels = new Map<string, string>();
+  availableModels.forEach((model) => {
+    canonicalModels.set(model.toLowerCase(), model);
+    const slug = model.toLowerCase().replace(/\s+/g, "-");
+    if (!canonicalModels.has(slug)) {
+      canonicalModels.set(slug, model);
+    }
+    const spaced = model.toLowerCase().replace(/-/g, " ");
+    if (!canonicalModels.has(spaced)) {
+      canonicalModels.set(spaced, model);
+    }
+  });
   const grouped = new Map<string, string[]>();
 
   selections.forEach(({ make, model }) => {
     const canonicalMake = canonicalMakes.get(make.toLowerCase());
     if (!canonicalMake) return;
-    const canonicalModel = canonicalModels.get(model.toLowerCase()) || model;
+    const canonicalModel =
+      canonicalModels.get(model.toLowerCase()) ||
+      canonicalModels.get(model.toLowerCase().replace(/\s+/g, "-")) ||
+      canonicalModels.get(model.toLowerCase().replace(/-/g, " ")) ||
+      model;
     grouped.set(canonicalMake, [...(grouped.get(canonicalMake) || []), canonicalModel]);
   });
 
