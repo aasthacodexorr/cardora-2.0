@@ -387,6 +387,17 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
 
   if (!isOpen || !mounted) return null;
 
+  const baseUrl = SITE_CONFIG?.urls.vehiclePageContactUsBaseUrl || "";
+  const inventoryId =
+    typeof vehicle === "string" || typeof vehicle === "number"
+      ? vehicle
+      : vehicle?.id || vehicle?.inventory_id || "";
+
+  const separator = baseUrl.includes("?") ? "&" : "?";
+  const iframeSrc = inventoryId
+    ? setQueryParams(`${baseUrl}${separator}inventory_id=${inventoryId}`)
+    : setQueryParams(baseUrl);
+
   return createPortal(
     <div className="fixed inset-0 bg-black/50 z-[9999] overflow-y-auto p-4 sm:p-6 flex min-h-full items-center justify-center">
       <div className="bg-white rounded-2xl w-full max-w-[520px] relative p-6 lg:p-8 flex flex-col my-auto shadow-xl">
@@ -404,7 +415,7 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
         <h2 className="text-[24px] font-bold text-gray-900 mb-5">Got a question</h2>
         <div className="w-full">
           <QueryParamIframe
-            src={`${SITE_CONFIG?.urls.vehiclePageContactUsBaseUrl}`}
+            src={iframeSrc}
             className="w-full rounded-2xl h-[600px] border-0"
             title="Contact Us"
             allow="payment"
