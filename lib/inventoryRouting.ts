@@ -311,16 +311,136 @@ function readPathOnlyFilters(segments: string[], refinementList: PlainObject) {
   set("location", location);
 }
 
+const BASELINE_FACET_VALUES: Record<string, string[]> = {
+  location: [
+    "Cardora Brampton",
+    "Cardora Guelph",
+    "Cardora Brampton Lot 2",
+  ],
+  make: [
+    "GMC", "Toyota", "Volkswagen", "Dodge", "Honda", "Jeep", "Chevrolet", "Nissan",
+    "Hyundai", "Ford", "Buick", "Mercedes-Benz", "BMW", "Chrysler", "KIA", "Land Rover",
+    "Audi", "Lexus", "Tesla", "Mazda", "Ram", "Porsche", "Lincoln", "Acura", "Subaru",
+    "Genesis", "Maserati", "Infiniti", "Mitsubishi"
+  ],
+  body_type: [
+    "Sedan", "Truck", "SUV-Crossover", "Pickup-Truck", "Sport Utility Vehicle", "SUV",
+    "Other/Don't Know", "Coupe", "Pickup Truck", "Convertible", "Van", "Hatchback",
+    "Minivan", "Minivan-Van"
+  ],
+  vehicle_type: [
+    "Used", "As-is", "Certified Pre-Owned", "New"
+  ],
+  transmission: [
+    "Automatic", "CVT", "Other", "Manual"
+  ],
+  fuel_type: [
+    "Gasoline Fuel", "Gasoline", "Diesel", "Other/Don't Know", "Electric Battery",
+    "HEV", "Hybrid Gas/Electric", "PHEV", "BEV", "Hybrid"
+  ],
+  exterior_color: [
+    "Black", "White", "Grey", "ONYX BLACK", "Silver", "SUMMIT WHITE", "Red", "Blue",
+    "Gray", "MOONSTONE GRAY", "Green", "Orange", "WHITE FROST TRICOAT",
+    "EBONY TWILIGHT METALLIC", "DARK GREEN", "WHITE DIAMOND", "BRILLIANT RED",
+    "GALAXY SILVER M", "QUICKSILVER MET", "THUNDERSTORM GREY", "STERLING METALLIC",
+    "SUMMIT WHITE, EBONY", "CRIMSON RED TIN, JET", "TITANIUM RUSH METALLIC",
+    "MOONSTONE GRAY METALLIC"
+  ],
+};
+
+interface FacetRegistry {
+  exact: Set<string>;
+  byLower: Map<string, string>;
+  bySlug: Map<string, string>;
+}
+
+const FACET_REGISTRIES: Record<string, FacetRegistry> = {};
+
+function initFacetRegistry(attribute: string, values: Iterable<string>) {
+  if (!FACET_REGISTRIES[attribute]) {
+    FACET_REGISTRIES[attribute] = {
+      exact: new Set<string>(),
+      byLower: new Map<string, string>(),
+      bySlug: new Map<string, string>(),
+    };
+  }
+  const reg = FACET_REGISTRIES[attribute];
+  for (const v of values) {
+    if (!v) continue;
+    reg.exact.add(v);
+    const lower = v.toLowerCase();
+    if (!reg.byLower.has(lower)) {
+      reg.byLower.set(lower, v);
+    }
+    const slug = lower.replace(/\s+/g, "-");
+    if (!reg.bySlug.has(slug)) {
+      reg.bySlug.set(slug, v);
+    }
+    const unhyphenated = lower.replace(/-/g, " ");
+    if (!reg.bySlug.has(unhyphenated)) {
+      reg.bySlug.set(unhyphenated, v);
+    }
+  }
+}
+
+// Initialize all baseline facets
+for (const [attr, vals] of Object.entries(BASELINE_FACET_VALUES)) {
+  initFacetRegistry(attr, vals);
+}
+
+export function registerFacetValues(attribute: string, values: Iterable<string>) {
+  initFacetRegistry(attribute, values);
+}
+
 export function queryValue(value: string) {
-  return encodeURIComponent(value);
+  if (!value || typeof value !== "string") return "";
+  return encodeURIComponent(value.trim().replace(/\s+/g, "-"));
 }
 
 function parseQueryValue(value: string) {
   return value.replace(/--/g, "\u0000").replace(/-/g, " ").replace(/\u0000/g, "-");
 }
 
-function parseNamedQueryValue(value: string) {
-  return value;
+export function parseNamedQueryValue(value: string, attribute?: string): string {
+  if (!value || typeof value !== "string") return "";
+  const decoded = decodeURIComponent(value).trim();
+  if (!decoded) return "";
+
+  if (attribute === "model") {
+    return queryValueToModel(decoded);
+  }
+
+  const reg = attribute ? FACET_REGISTRIES[attribute] : undefined;
+  if (reg) {
+    if (reg.exact.has(decoded)) return decoded;
+    const lower = decoded.toLowerCase();
+    if (reg.byLower.has(lower)) return reg.byLower.get(lower)!;
+    if (reg.bySlug.has(lower)) return reg.bySlug.get(lower)!;
+    const withSpaces = lower.replace(/-/g, " ");
+    if (reg.byLower.has(withSpaces)) return reg.byLower.get(withSpaces)!;
+    if (reg.bySlug.has(withSpaces)) return reg.bySlug.get(withSpaces)!;
+  }
+
+  // If attribute wasn't specified, check all registries
+  if (!attribute) {
+    for (const registry of Object.values(FACET_REGISTRIES)) {
+      if (registry.exact.has(decoded)) return decoded;
+      const lower = decoded.toLowerCase();
+      if (registry.byLower.has(lower)) return registry.byLower.get(lower)!;
+      if (registry.bySlug.has(lower)) return registry.bySlug.get(lower)!;
+      const withSpaces = lower.replace(/-/g, " ");
+      if (registry.byLower.has(withSpaces)) return registry.byLower.get(withSpaces)!;
+      if (registry.bySlug.has(withSpaces)) return registry.bySlug.get(withSpaces)!;
+    }
+  }
+
+  // Preserve hyphen for known hyphenated patterns like Mercedes-Benz or As-is
+  if (/^[a-z]+-benz$/i.test(decoded) || /^as-is$/i.test(decoded)) {
+    return decoded;
+  }
+
+  // Fallback: convert hyphens back to spaces
+  return decoded.replace(/-/g, " ");
 }
 
 const COMPACT_MAKES = [
@@ -595,7 +715,7 @@ function readRouteState(): PlainObject {
         const model = queryValueToModel(rawModel);
         models.push(model);
         if (rawMake) {
-          const make = parseNamedQueryValue(rawMake);
+          const make = parseNamedQueryValue(rawMake, "make");
           impliedMakes.push(make);
           modelMakeAssociations.set(model, make);
           setModelMakeMap([[model, make]]);
@@ -609,7 +729,7 @@ function readRouteState(): PlainObject {
       continue;
     }
 
-    refinementList[attribute] = value.split(",").filter(Boolean).map(parseNamedQueryValue);
+    refinementList[attribute] = value.split(",").filter(Boolean).map((v) => parseNamedQueryValue(v, attribute));
   }
 
   const namedKeys = new Set([
