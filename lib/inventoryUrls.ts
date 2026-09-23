@@ -1,5 +1,13 @@
 import { AppConfig } from "@/lib/appConfig";
-import { FILTER_KEYS, RANGE_KEYS, queryValue as friendlyValue } from "@/lib/inventoryRouting";
+import {
+  FILTER_KEYS,
+  RANGE_KEYS,
+  queryValue as friendlyValue,
+  modelToQueryValue,
+  modelMakeAssociations,
+  getModelMakeMap,
+  BASELINE_MODEL_TO_MAKE,
+} from "@/lib/inventoryRouting";
 
 // Helper to turn a make/model/body-type label into a URL path segment,
 // e.g. "Mercedes-Benz" → "mercedes-benz", "Sport Utility Vehicle" → "sport-utility-vehicle".
@@ -11,15 +19,16 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-// Query-param URL builder used for body-type / vehicle-type links (multi-value),
-// which don't have a clean single-segment path representation.
-const inventoryUrl = (key: string, values: readonly string[]) => `/inventory?${key}=${values.map(friendlyValue).join(",")}`;
+// Query-param URL builder: single value omits the key name, multiple values include the key.
+const inventoryUrl = (key: string, values: readonly string[]) => {
+  if (values.length === 1) {
+    return `/inventory?${friendlyValue(values[0])}`;
+  }
+  return `/inventory?${key}=${values.map(friendlyValue).join(",")}`;
+};
 
-// Make links use the clean path form (/inventory/toyota) so the href already
-// looks like the canonical URL. The router's readPathOnlyFilters parses these
-// on fresh load; the footer's window.location.href redirect triggers a fresh
-// load when already on the inventory page.
-export const getInventoryUrlByMake = (make: string, _appConfig: AppConfig) => `/inventory/${slugify(make)}`;
+// Make links use /inventory?{makename}
+export const getInventoryUrlByMake = (make: string, _appConfig: AppConfig) => `/inventory?${friendlyValue(make)}`;
 export const getInventoryUrlByBodyType = (bodyType: string, _appConfig: AppConfig) => inventoryUrl(FILTER_KEYS.body_type, [bodyType]);
 export const getInventoryUrlByVehicleType = (vehicleType: string, _appConfig: AppConfig) => inventoryUrl(FILTER_KEYS.vehicle_type, [vehicleType]);
 export const getInventoryUrlWithParams = (params: Record<string, string>, _appConfig: AppConfig) => {
@@ -48,6 +57,13 @@ export const getMakeUrl = (make: string, appConfig: AppConfig) => getInventoryUr
 export const getBodyTypeUrl = (bodyType: string, appConfig: AppConfig) => getInventoryUrlByBodyType(bodyType, appConfig);
 export const getInventoryUrlByQuery = (query: string, _appConfig: AppConfig) => `/inventory?q=${encodeURIComponent(query)}`;
 export const getInventoryUrlByRefinement = (attribute: string, values: readonly string[], _appConfig: AppConfig) => {
+  if (attribute === "model" && values.length === 1) {
+    const model = values[0];
+    const make = modelMakeAssociations.get(model) || getModelMakeMap().get(model) || BASELINE_MODEL_TO_MAKE[model];
+    if (make) {
+      return `/inventory?${friendlyValue(make)}&${modelToQueryValue(model)}`;
+    }
+  }
   const key = FILTER_KEYS[attribute];
   return key ? inventoryUrl(key, values) : "/inventory";
 };

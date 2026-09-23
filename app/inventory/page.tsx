@@ -35,7 +35,7 @@ import {
 import { getTypesenseClient } from "@/lib/typesense";
 
 // Custom router/stateMapping that produces the client-required URL format
-import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, setModelMakeMap, registerKnownModels, modelMakeAssociations } from "@/lib/inventoryRouting";
+import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, setModelMakeMap, registerKnownModels, modelMakeAssociations, registerFacetValues } from "@/lib/inventoryRouting";
 import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "@/components/inventory/HitCardSkeleton";
 import { AD_CARDS } from "@/components/inventory/AdCard";
@@ -703,6 +703,8 @@ const MakeRefinementList = () => {
           isRefined: false,
         }));
         
+        registerFacetValues("make", initialMakes.map((m) => String(m.value)));
+
         setAllMakes((previous) => {
           const merged = new Map<string, typeof makeItems[number]>();
           initialMakes.forEach((item) => merged.set(String(item.value), item as any));
@@ -906,6 +908,8 @@ const ModelRefinementList = () => {
         setGlobalModelMakeMap(newMap);
         setModelMakeMap(newMap.entries());
         registerKnownModels(newMap.keys());
+        registerFacetValues("model", newMap.keys());
+        registerFacetValues("make", newMap.values());
       } catch (err) {
         console.error("Failed to fetch global model map", err);
       }
@@ -1387,6 +1391,8 @@ const SyncModelMakeMap = () => {
     if (changed) {
       setModelMakeMap(Array.from(merged.entries()));
       registerKnownModels(merged.keys());
+      registerFacetValues("model", merged.keys());
+      registerFacetValues("make", merged.values());
       refresh();
     }
   }, [hits, refresh]);
