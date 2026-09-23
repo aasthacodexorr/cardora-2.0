@@ -5,7 +5,7 @@
 
 import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
 import { AppConfig } from "@/lib/appConfig";
-import { parseMakeModelSelections } from "@/lib/inventoryRouting";
+import { parseMakeModelSelections, readRouteState, modelMakeAssociations, getModelMakeMap } from "@/lib/inventoryRouting";
 
 /* =========================
    Make/Model filter rewriting
@@ -107,7 +107,19 @@ function buildMakeModelFilter(
 
 function getUrlMakeModelSelections() {
   if (typeof window === "undefined") return [];
-  return parseMakeModelSelections(new URLSearchParams(window.location.search).get("models") || "");
+  const fromModels = parseMakeModelSelections(new URLSearchParams(window.location.search).get("models") || "");
+  if (fromModels.length > 0) return fromModels;
+
+  const route = readRouteState();
+  const routeModels: string[] = route.refinementList?.model || [];
+  const routeMakes: string[] = route.refinementList?.make || [];
+  if (routeModels.length === 0) return [];
+
+  const modelMakeMap = getModelMakeMap();
+  return routeModels.map((model) => {
+    const make = modelMakeAssociations.get(model) || modelMakeMap.get(model) || routeMakes[0] || "";
+    return { make, model };
+  }).filter((entry) => Boolean(entry.make && entry.model));
 }
 
 function getMakeModelBranches(request: any) {

@@ -35,7 +35,7 @@ import {
 import { getTypesenseClient } from "@/lib/typesense";
 
 // Custom router/stateMapping that produces the client-required URL format
-import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, setModelMakeMap, registerKnownModels } from "@/lib/inventoryRouting";
+import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, setModelMakeMap, registerKnownModels, modelMakeAssociations, registerFacetValues } from "@/lib/inventoryRouting";
 import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "@/components/inventory/HitCardSkeleton";
 import { AD_CARDS } from "@/components/inventory/AdCard";
@@ -496,6 +496,29 @@ const GroupedCurrentRefinements = () => {
     return priorityA - priorityB;
   });
 
+  const handleRemoveRefinement = (
+    category: (typeof items)[number],
+    refinement: (typeof category.refinements)[number]
+  ) => {
+    if (category.attribute === "make") {
+      const makeToRemove = String(refinement.value);
+      const modelCategory = items.find((cat) => cat.attribute === "model");
+      const modelMakeMap = getModelMakeMap();
+      const isRemovingLastMake = category.refinements.length <= 1;
+
+      if (modelCategory) {
+        modelCategory.refinements.forEach((modelRefinement) => {
+          const modelVal = String(modelRefinement.value);
+          const make = modelMakeAssociations.get(modelVal) || modelMakeMap.get(modelVal);
+          if (isRemovingLastMake || make === makeToRemove) {
+            refine(modelRefinement);
+          }
+        });
+      }
+    }
+    refine(refinement);
+  };
+
   return (
     <div className="w-full flex flex-wrap gap-y-2 gap-x-2">
       {orderedItems.map((category) => (
@@ -507,7 +530,7 @@ const GroupedCurrentRefinements = () => {
             >
               <span className="cursor-pointer tracking-wider font-light">{refinement.label}</span>
               <button
-                onClick={() => refine(refinement)}
+                onClick={() => handleRemoveRefinement(category, refinement)}
                 className="ml-2 hover:text-gray-950 focus:outline-none flex items-center justify-center cursor-pointer"
               >
                 <X className="h-4 w-4" />
@@ -634,7 +657,7 @@ const StableRefinementList = ({
 };
 
 const MakeRefinementList = () => {
-  const { items: currentRefinements } = useCurrentRefinements();
+  const { items: currentRefinements, refine: refineCurrentRefinement } = useCurrentRefinements();
 
   const {
     items: makeItems,
@@ -680,6 +703,8 @@ const MakeRefinementList = () => {
           isRefined: false,
         }));
         
+        registerFacetValues("make", initialMakes.map((m) => String(m.value)));
+
         setAllMakes((previous) => {
           const merged = new Map<string, typeof makeItems[number]>();
           initialMakes.forEach((item) => merged.set(String(item.value), item as any));
@@ -758,16 +783,19 @@ const MakeRefinementList = () => {
 
     if (isCurrentlyRefined) {
       const modelMakeMap = getModelMakeMap();
+      const modelCategory = currentRefinements.find((cat) => cat.attribute === "model");
+      const isRemovingLastMake = refinedMakeValues.size <= 1;
 
-      const modelsToRemove = modelItems.filter(
-        (model) =>
-          model.isRefined &&
-          modelMakeMap.get(model.value as string) === make
-      );
-
-      modelsToRemove.forEach((model) => {
-        refineModel(model.value as string);
-      });
+      if (modelCategory) {
+        modelCategory.refinements.forEach((modelRefinement) => {
+          const modelVal = String(modelRefinement.value);
+          const modelMake = modelMakeAssociations.get(modelVal) || modelMakeMap.get(modelVal);
+          if (isRemovingLastMake || modelMake === make) {
+            refineCurrentRefinement(modelRefinement);
+            refineModel(modelVal);
+          }
+        });
+      }
 
       refineMake(make);
       return;
@@ -880,6 +908,8 @@ const ModelRefinementList = () => {
         setGlobalModelMakeMap(newMap);
         setModelMakeMap(newMap.entries());
         registerKnownModels(newMap.keys());
+        registerFacetValues("model", newMap.keys());
+        registerFacetValues("make", newMap.values());
       } catch (err) {
         console.error("Failed to fetch global model map", err);
       }
@@ -1361,6 +1391,8 @@ const SyncModelMakeMap = () => {
     if (changed) {
       setModelMakeMap(Array.from(merged.entries()));
       registerKnownModels(merged.keys());
+      registerFacetValues("model", merged.keys());
+      registerFacetValues("make", merged.values());
       refresh();
     }
   }, [hits, refresh]);
@@ -1380,15 +1412,10 @@ const SyncModelMakeMap = () => {
 // a make chip). Conflating the two caused models to unselect themselves
 // right after being selected, requiring a second click to "stick".
 const SyncOrphanedModels = () => {
-  const { items: currentRefinements } = useCurrentRefinements();
+  const { items: currentRefinements, refine: refineCurrentRefinement } = useCurrentRefinements();
 
-  const { items: modelItems, refine: refineModel } = useRefinementList({
+  const { refine: refineModel } = useRefinementList({
     attribute: "model",
-    limit: 200,
-  });
-
-  const { refine: refineMake } = useRefinementList({
-    attribute: "make",
     limit: 200,
   });
 
@@ -1398,6 +1425,9 @@ const SyncOrphanedModels = () => {
     const makeCategory = currentRefinements.find(
       (category) => category.attribute === "make"
     );
+    const modelCategory = currentRefinements.find(
+      (category) => category.attribute === "model"
+    );
 
     const selectedMakes = new Set(
       makeCategory?.refinements.map((refinement) => String(refinement.value)) ?? []
@@ -1406,41 +1436,27 @@ const SyncOrphanedModels = () => {
     const previousSelectedMakes = previousSelectedMakesRef.current;
     const modelMakeMap = getModelMakeMap();
 
-    // A make counts as "removed" only if it was selected on the previous
-    // run and is no longer selected now.
+    // A make counts as "removed" if it was selected on the previous run and is no longer selected now.
     const removedMakes = new Set(
       Array.from(previousSelectedMakes).filter((make) => !selectedMakes.has(make))
     );
 
-    if (removedMakes.size > 0) {
-      const modelsToRemove = modelItems.filter((model) => {
-        if (!model.isRefined) return false;
+    if (removedMakes.size > 0 || (previousSelectedMakes.size > 0 && selectedMakes.size === 0)) {
+      if (modelCategory?.refinements.length) {
+        modelCategory.refinements.forEach((modelRefinement) => {
+          const modelVal = String(modelRefinement.value);
+          const make = modelMakeAssociations.get(modelVal) || modelMakeMap.get(modelVal);
 
-        const make = modelMakeMap.get(model.value as string);
-
-        return Boolean(make && removedMakes.has(make));
-      });
-
-      modelsToRemove.forEach((model) => {
-        refineModel(model.value as string);
-      });
+          if (selectedMakes.size === 0 || (make && removedMakes.has(make))) {
+            refineCurrentRefinement(modelRefinement);
+            refineModel(modelVal);
+          }
+        });
+      }
     }
 
-    // Once a selected model's make becomes known (it may not have been at
-    // selection time), make sure the make is selected too — matching the
-    // "selecting a model selects its make" behavior everywhere else.
-    modelItems.forEach((model) => {
-      if (!model.isRefined) return;
-
-      const make = modelMakeMap.get(model.value as string);
-
-      if (make && !selectedMakes.has(make) && !removedMakes.has(make)) {
-        refineMake(make);
-      }
-    });
-
     previousSelectedMakesRef.current = selectedMakes;
-  }, [currentRefinements, modelItems, refineModel, refineMake]);
+  }, [currentRefinements, refineCurrentRefinement, refineModel]);
 
   return null;
 };
