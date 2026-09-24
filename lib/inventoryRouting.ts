@@ -969,14 +969,16 @@ export function serializePublicUrl(route: PlainObject) {
   // Multi-select or parameters mode: serialized starting with /inventory/
   // Rule: Only add the key for fields that have MORE THAN ONE value.
   // Single-value fields should be UNKEYED.
+  let makePrefix = "";
   const params: string[] = [];
 
   // 1. Make & Model
   if (totalMakesCount === 1 && validModels.length === 1) {
-    // Exactly 1 make + 1 model -> single value -> unkeyed Make:Model (e.g. Ram:1500)
+    // Exactly 1 make + 1 model -> Make as path prefix, model as unkeyed parameter
     const make = getMakeForModel(validModels[0]) || allSelectedMakes[0];
     if (make) {
-      params.push(`${queryValue(make)}:${modelToQueryValue(validModels[0])}`);
+      makePrefix = queryValue(make);
+      params.push(modelToQueryValue(validModels[0]));
     } else {
       params.push(modelToQueryValue(validModels[0]));
     }
@@ -1047,7 +1049,14 @@ export function serializePublicUrl(route: PlainObject) {
     params.push(`sortBy=status_rank:asc,${sort.field}:${sort.direction.toLowerCase()}`);
   }
 
-  return params.length ? `/inventory/${params.join("&")}` : "/inventory";
+  const queryPart = params.join("&");
+  if (makePrefix && queryPart) {
+    return `/inventory/${makePrefix}/${queryPart}`;
+  }
+  if (makePrefix) {
+    return `/inventory/${makePrefix}`;
+  }
+  return queryPart ? `/inventory/${queryPart}` : "/inventory";
 }
 
 export function readRouteState(): PlainObject {
