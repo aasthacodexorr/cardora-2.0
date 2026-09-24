@@ -9,7 +9,6 @@
  * - setQueryParams()  — applies current page query parameters to any URL
  * - isZopSoftwareUrl() — validates whether a URL belongs to ZopSoftware
  *
- * Nothing in here is tied to a specific parameter name (e.g. inventory_id).
  * All logic is generic so any parameter propagates automatically.
  */
 
@@ -31,52 +30,115 @@ export function getQueryParams(): URLSearchParams {
 }
 
 /**
- * Applies the current page query parameters to a destination URL.
+ * Applies query parameters from the current page (or a provided search string)
+ * to a destination URL.
  *
  * - Accepts both absolute URLs (https://...) and relative paths (/finance).
- * - Uses set() so existing parameters on the destination URL are overwritten
- *   by the page parameter when the same key is present.
- * - Preserves any parameters that already exist on the destination URL and
- *   are not present in the current page parameters.
- * - Returns the URL unchanged (same string reference) if there are no page
- *   query parameters to apply.
+ * - Parameters already specified on the destination URL (e.g. inventory_id=3195)
+ *   are preserved and take precedence over current page parameters.
+ * - Current page parameters (e.g. sdnfsdjk, utm_*, source, etc.) are appended.
+ * - Valueless parameters (e.g. ?sdnfsdjk without an '=') are preserved without
+ *   an unnecessary trailing '='.
+ * - Normalizes any accidental trailing slashes before the query string on
+ *   internal routes (e.g. /finance/?... -> /finance?...).
+ * - Works in SSR by returning the original URL when no window or search string is available.
  *
  * Example:
- *   Current page:   /inventory?inventory_id=2588&source=website
- *   Input:          /finance
- *   Output:         /finance?inventory_id=2588&source=website
+ *   Current page:   /inventory/3195-2026-gmc-sierra-1500-at4?sdnfsdjk
+ *   Input:          /finance?inventory_id=3195
+ *   Output:         /finance?inventory_id=3195&sdnfsdjk
  *
- *   Current page:   /inventory?inventory_id=2588
- *   Input:          https://cardora.zopsoftware.com/api/templates/render/7?foo=bar
- *   Output:         https://cardora.zopsoftware.com/api/templates/render/7?foo=bar&inventory_id=2588
+ *   Input:          /trade-in-my-car?inventory_id=3195
+ *   Output:         /trade-in-my-car?inventory_id=3195&sdnfsdjk
  *
- * @param url - Absolute URL or root-relative path to decorate.
- * @returns   - The decorated URL as a string.
+ * @param url           - Absolute URL or root-relative path to decorate.
+ * @param currentSearch - Optional query string to use instead of window.location.search.
+ * @returns             - The decorated URL string.
  */
-export function setQueryParams(url: string): string {
-  const pageParams = getQueryParams();
+export function setQueryParams(url: string, currentSearch?: string): string {
+  const search =
+    currentSearch !== undefined
+      ? currentSearch
+      : typeof window !== "undefined"
+      ? window.location.search
+      : "";
 
-  if (!pageParams.toString()) {
+  if (!search) {
     return url;
   }
 
-  // URL constructor requires an absolute base when the input is relative.
-  const base =
-    typeof window !== "undefined" ? window.location.origin : "http://localhost";
-
-  const parsed = new URL(url, base);
-
-  pageParams.forEach((value, key) => {
-    parsed.searchParams.set(key, value);
-  });
-
-  // Return a root-relative path for relative inputs so callers don't end up
-  // with unexpected origins embedded in internal links.
-  if (url.startsWith("/") || (!url.startsWith("http://") && !url.startsWith("https://"))) {
-    return parsed.pathname + (parsed.search ? parsed.search : "") + (parsed.hash ? parsed.hash : "");
+  const rawSearch = search.startsWith("?") ? search.slice(1) : search;
+  if (!rawSearch) {
+    return url;
   }
 
-  return parsed.toString();
+  // Handle hash
+  const hashIndex = url.indexOf("#");
+  let hash = "";
+  let withoutHash = url;
+  if (hashIndex !== -1) {
+    hash = url.slice(hashIndex);
+    withoutHash = url.slice(0, hashIndex);
+  }
+
+  // Handle existing query in url
+  const queryIndex = withoutHash.indexOf("?");
+  let basePath = withoutHash;
+  let existingQuery = "";
+  if (queryIndex !== -1) {
+    basePath = withoutHash.slice(0, queryIndex);
+    existingQuery = withoutHash.slice(queryIndex + 1);
+  }
+
+  // Normalize trailing slash on relative paths (e.g. /finance/ -> /finance)
+  if (basePath.startsWith("/") && basePath.length > 1 && basePath.endsWith("/")) {
+    basePath = basePath.slice(0, -1);
+  }
+
+  const params = new Map<string, { value: string; hasEqual: boolean }>();
+
+  if (existingQuery) {
+    existingQuery.split("&").forEach((part) => {
+      if (!part) return;
+      const eqIdx = part.indexOf("=");
+      if (eqIdx === -1) {
+        params.set(part, { value: "", hasEqual: false });
+      } else {
+        const key = part.slice(0, eqIdx);
+        const val = part.slice(eqIdx + 1);
+        params.set(key, { value: val, hasEqual: true });
+      }
+    });
+  }
+
+  rawSearch.split("&").forEach((part) => {
+    if (!part) return;
+    const eqIdx = part.indexOf("=");
+    if (eqIdx === -1) {
+      if (!params.has(part)) {
+        params.set(part, { value: "", hasEqual: false });
+      }
+    } else {
+      const key = part.slice(0, eqIdx);
+      const val = part.slice(eqIdx + 1);
+      // Destination URL params (like inventory_id=3195) take precedence if already set
+      if (!params.has(key)) {
+        params.set(key, { value: val, hasEqual: true });
+      }
+    }
+  });
+
+  const queryParts: string[] = [];
+  params.forEach((meta, key) => {
+    if (meta.hasEqual) {
+      queryParts.push(`${key}=${meta.value}`);
+    } else {
+      queryParts.push(key);
+    }
+  });
+
+  const finalQuery = queryParts.length ? `?${queryParts.join("&")}` : "";
+  return `${basePath}${finalQuery}${hash}`;
 }
 
 /**

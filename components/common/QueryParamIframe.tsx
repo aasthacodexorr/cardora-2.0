@@ -12,6 +12,11 @@ export default function QueryParamIframe({ src, ...props }: QueryParamIframeProp
 
   useEffect(() => {
     setIframeSrc(setQueryParams(source));
+    const handleLocationChange = () => {
+      setIframeSrc(setQueryParams(source));
+    };
+    window.addEventListener("popstate", handleLocationChange);
+    return () => window.removeEventListener("popstate", handleLocationChange);
   }, [source]);
 
   return <iframe {...props} src={iframeSrc} />;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { setQueryParams } from "@/utils/queryParams";
 import car1 from "@/assets/icons/verification-car1.png";
 import car2 from "@/assets/icons/verification-car2.png";
 import car3 from "@/assets/icons/verification-car3.png";
@@ -26,7 +27,7 @@ const VehicleCategoryGrid = () => {
     const vehicleUrl = `/inventory?${new URLSearchParams({
       bodyStyles: bodyTypes.join(',')
     }).toString()}`;
-    router.push(vehicleUrl);
+    router.push(setQueryParams(vehicleUrl));
   };
 
   return (

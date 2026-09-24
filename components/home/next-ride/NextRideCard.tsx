@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import QueryParamLink from '@/components/common/QueryParamLink';
 import Image from 'next/image';
 
 import sec1 from "@/assets/cars/sec1.png";
@@ -14,7 +14,7 @@ export default function NextRideCard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-[40px] w-full max-w-[1250px]">
 
         {/* Card 1: Shop all cars */}
-        <Link
+        <QueryParamLink
           href="/inventory"
           className="card w-full min-h-[480px] sm:min-h-[200px] bg-white rounded-[14px] border border-[#e5e7eb] shadow-[0_1px_3px_rgba(0,0,0,0.06)] overflow-hidden cursor-pointer transition-all duration-200 ease text-inherit flex flex-col h-full hover:-translate-y-[2px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] group"
           aria-label="Shop all cars — a wide selection, updated daily"
@@ -65,10 +65,10 @@ export default function NextRideCard() {
               </svg>
             </span>
           </div>
-        </Link>
+        </QueryParamLink>
 
         {/* Card 2: Trade-in / Jeep card */}
-      <Link
+      <QueryParamLink
   href="/trade-in-my-car"
   className="card w-full min-h-[480px] sm:min-h-[200px] bg-white rounded-[14px] border border-[#e5e7eb] shadow-[0_1px_3px_rgba(0,0,0,0.06)] overflow-hidden cursor-pointer transition-all duration-200 ease text-inherit flex flex-col h-full hover:-translate-y-[2px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] group"
   aria-label="Start with a trade-in — get an offer in under 2 minutes"
@@ -112,9 +112,9 @@ export default function NextRideCard() {
       </svg>
     </span>
   </div>
-</Link>
+</QueryParamLink>
         {/* Card 3: Monthly / VW card */}
-        <Link
+        <QueryParamLink
           href="/finance"
           className="card w-full min-h-[480px] sm:min-h-[200px] bg-white rounded-[14px] border border-[#e5e7eb] shadow-[0_1px_3px_rgba(0,0,0,0.06)] overflow-hidden cursor-pointer transition-all duration-200 ease text-inherit flex flex-col h-full hover:-translate-y-[2px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] group"
           aria-label="Get pre-qualified — no impact to your credit"
@@ -148,7 +148,7 @@ export default function NextRideCard() {
               </svg>
             </span>
           </div>
-        </Link>
+        </QueryParamLink>
 
       </div>
     </div>

@@ -10,6 +10,7 @@ import vdpCar from "@/assets/icons/vdp-car.png";
 
 import { useAppConfig } from "@/app/providers";
 import { setQueryParams } from "@/utils/queryParams";
+import { useRouter } from "next/navigation";
 
 interface FinanceCalculatorProps {
   vehiclePrice?: number;
@@ -62,6 +63,12 @@ const AnimatedCounter = ({ value }: { value: number }) => {
 
 const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalculatorProps) => {
   const appConfig = useAppConfig();
+  const router = useRouter();
+  const [financeHref, setFinanceHref] = useState(`/finance?inventory_id=${inventoryId}`);
+
+  useEffect(() => {
+    setFinanceHref(setQueryParams(`/finance?inventory_id=${inventoryId}`));
+  }, [inventoryId]);
   
   // State management
   const [purchasePrice, setPurchasePrice] = useState<number>(vehiclePrice || appConfig.payment_calculator.vehicle_price);
@@ -371,8 +378,13 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
               </div>
               
               <motion.a
-                href={setQueryParams(`/finance?inventory_id=${inventoryId}`)}
-                className="mt-2 block w-full text-white font-bold text-base py-4 px-6 rounded-xl text-center no-underline transition-all bg-brand-btn-gradient shadow-[0_2px_10px_rgba(16,185,129,0.1)]"
+                href={financeHref}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const target = setQueryParams(`/finance?inventory_id=${inventoryId}`);
+                  router.push(target);
+                }}
+                className="mt-2 block w-full text-white font-bold text-base py-4 px-6 rounded-xl text-center no-underline transition-all bg-brand-btn-gradient shadow-[0_2px_10px_rgba(16,185,129,0.1)] cursor-pointer"
                 whileHover={{ scale: 1.01, filter: "brightness(1.05)" }}
                 whileTap={{ scale: 0.99 }}
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}

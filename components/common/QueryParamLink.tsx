@@ -22,7 +22,7 @@
  *   page params win on key collisions via URLSearchParams.set).
  */
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { setQueryParams } from "@/utils/queryParams";
@@ -43,6 +43,11 @@ export default function QueryParamLink({
   ...rest
 }: QueryParamLinkProps) {
   const router = useRouter();
+  const [decoratedHref, setDecoratedHref] = useState(href);
+
+  useEffect(() => {
+    setDecoratedHref(setQueryParams(href));
+  }, [href]);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -75,7 +80,7 @@ export default function QueryParamLink({
   }
 
   return (
-    <Link href={href} onClick={handleClick} {...rest}>
+    <Link href={decoratedHref} onClick={handleClick} {...rest}>
       {children}
     </Link>
   );
