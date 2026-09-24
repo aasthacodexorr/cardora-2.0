@@ -130,7 +130,6 @@ export const BASELINE_MODEL_TO_MAKE: Record<string, string> = {
   "GOLF SPORTWAGEN": "Volkswagen",
   "Aviator": "Lincoln",
   "SUPER DUTY F-450 DRW": "Ford",
-  "3 Series": "BMW",
   "Explorer": "Ford",
   "Transit 150": "Ford",
   "CR-V Hybrid": "Honda",
@@ -139,7 +138,7 @@ export const BASELINE_MODEL_TO_MAKE: Record<string, string> = {
 const MODEL_TO_MAKE = new Map<string, string>(Object.entries(BASELINE_MODEL_TO_MAKE));
 
 const BASELINE_KNOWN_MODELS = [
-  "1500", "1500 Classic", "200", "3 Series", "3-Series", "300", "4-Series", "4Runner", "911",
+  "1500", "1500 Classic", "200", "3-Series", "300", "4-Series", "4Runner", "911",
   "A-Class", "A4", "Acadia", "Accord", "Accord Hybrid", "Altima", "Atlas", "Aviator",
   "C-Class", "CLA-Class", "CR-V", "CR-V Hybrid", "CX-5", "CX-70 MHEV", "Camry", "Camry Hybrid",
   "Canyon", "Carnival", "Cayenne", "Challenger", "Charger", "Civic", "Civic Hatchback", "Compass",
@@ -160,11 +159,29 @@ const BASELINE_KNOWN_MODELS = [
 const KNOWN_MODELS_REGISTRY = new Set<string>();
 const KNOWN_MODELS_BY_LOWER = new Map<string, string>();
 const KNOWN_MODELS_BY_SLUG = new Map<string, string>();
+const KNOWN_MODELS_BY_NORM = new Map<string, string>();
 
 function indexKnownModel(model: string) {
   if (!model) return;
-  KNOWN_MODELS_REGISTRY.add(model);
   const lower = model.toLowerCase();
+  const norm = lower.replace(/[^a-z0-9]/g, "");
+
+  // If a canonical version of this model is already registered (e.g. "3-Series"),
+  // map this alias (e.g. "3 Series") to that canonical model.
+  if (KNOWN_MODELS_BY_NORM.has(norm)) {
+    const canonical = KNOWN_MODELS_BY_NORM.get(norm)!;
+    KNOWN_MODELS_REGISTRY.add(canonical);
+    KNOWN_MODELS_BY_LOWER.set(lower, canonical);
+    const slug = lower.replace(/\s+/g, "-");
+    KNOWN_MODELS_BY_SLUG.set(slug, canonical);
+    const unhyphenated = lower.replace(/-/g, " ");
+    KNOWN_MODELS_BY_SLUG.set(unhyphenated, canonical);
+    return;
+  }
+
+  KNOWN_MODELS_REGISTRY.add(model);
+  KNOWN_MODELS_BY_NORM.set(norm, model);
+
   if (!KNOWN_MODELS_BY_LOWER.has(lower)) {
     KNOWN_MODELS_BY_LOWER.set(lower, model);
   }
@@ -189,8 +206,62 @@ export function registerKnownModels(models: Iterable<string>) {
 }
 
 /**
+ * Returns all variants for a model name (e.g. "3-Series" -> ["3-Series", "3 Series"])
+ * to match database entries that might use hyphens or spaces.
+ */
+export function getModelVariants(model: string): string[] {
+  if (!model || typeof model !== "string") return [];
+  const trimmed = model.trim();
+  const set = new Set<string>();
+  set.add(trimmed);
+
+  const norm = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (norm === "3series") {
+    set.add("3-Series");
+    set.add("3 Series");
+  } else if (norm === "4series") {
+    set.add("4-Series");
+    set.add("4 Series");
+  } else if (trimmed.includes("-")) {
+    set.add(trimmed.replace(/-/g, " "));
+  } else if (trimmed.includes(" ")) {
+    set.add(trimmed.replace(/\s+/g, "-"));
+  }
+  return Array.from(set);
+}
+
+const PRESERVE_UPPERCASE_TOKENS = new Set([
+  "BMW", "GMC", "SUV", "CVT", "EV", "HEV", "PHEV", "BEV", "AWD", "4WD", "4X4",
+  "SRW", "DRW", "HD", "GR", "TT", "ZDX", "GLI", "WK", "MKX", "TLX", "WRX", "MHEV",
+  "CR", "CX", "CLA", "GLC", "GLE", "ES", "IS", "RX"
+]);
+
+/**
+ * Formats all-uppercase or uncapitalized facet labels to Title Case for UI display
+ * while preserving standard automotive acronyms (e.g. "ONYX BLACK" -> "Onyx Black",
+ * "SIERRA 2500HD" -> "Sierra 2500HD", "BMW" -> "BMW", "CVT" -> "CVT").
+ */
+export function formatFacetLabel(label: string): string {
+  if (!label || typeof label !== "string") return "";
+  const hasLetters = /[a-zA-Z]/.test(label);
+  if (!hasLetters) return label;
+
+  return label.replace(/[a-zA-Z0-9]+(?:'[a-zA-Z0-9]+)?/g, (word) => {
+    const upper = word.toUpperCase();
+    if (PRESERVE_UPPERCASE_TOKENS.has(upper)) return upper;
+    if (/^\d+HD$/i.test(word)) return word.toUpperCase();
+    if (/^[A-Z]\d+$/i.test(word)) return word.toUpperCase();
+    const isAllCaps = word === word.toUpperCase() && word.length > 1;
+    if (isAllCaps) {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  });
+}
+
+/**
  * Converts a model name for use in URL query parameter.
- * Replaces spaces with hyphens (e.g. "1500 Classic" -> "1500-Classic", "3 Series" -> "3-Series")
+ * Replaces spaces with hyphens (e.g. "1500 Classic" -> "1500-Classic", "3-Series" -> "3-Series")
  * avoiding %20 in the URL.
  */
 export function modelToQueryValue(model: string): string {
@@ -199,40 +270,46 @@ export function modelToQueryValue(model: string): string {
 }
 
 /**
- * Resolves a model query slug (e.g. "1500-Classic" or legacy "1500%20Classic")
- * back to the canonical database model name ("1500 Classic").
+ * Resolves a model query slug (e.g. "3-Series", "3%20Series", "1500-Classic")
+ * back to the canonical database model name ("3-Series", "1500 Classic").
  */
 export function queryValueToModel(value: string): string {
   if (!value || typeof value !== "string") return "";
   const decoded = decodeURIComponent(value).trim();
   if (!decoded) return "";
 
-  // 1. Direct match in registry (exact case)
+  // 1. Check normalized key (handles "3-Series", "3 Series", "3-series" consistently)
+  const norm = decoded.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (KNOWN_MODELS_BY_NORM.has(norm)) {
+    return KNOWN_MODELS_BY_NORM.get(norm)!;
+  }
+
+  // 2. Direct match in registry (exact case)
   if (KNOWN_MODELS_REGISTRY.has(decoded)) {
     return decoded;
   }
 
-  // 2. Case-insensitive exact match
+  // 3. Case-insensitive exact match
   const lower = decoded.toLowerCase();
   const directMatch = KNOWN_MODELS_BY_LOWER.get(lower);
   if (directMatch) {
     return directMatch;
   }
 
-  // 3. Slug match (e.g. "1500-classic" -> "1500 Classic", "c-class" -> "C-Class")
+  // 4. Slug match (e.g. "1500-classic" -> "1500 Classic", "c-class" -> "C-Class")
   const slugMatch = KNOWN_MODELS_BY_SLUG.get(lower);
   if (slugMatch) {
     return slugMatch;
   }
 
-  // 4. Also check if decoded has hyphens and converting to spaces matches a known model
+  // 5. Also check if decoded has hyphens and converting to spaces matches a known model
   const withSpaces = lower.replace(/-/g, " ");
   const spaceMatch = KNOWN_MODELS_BY_LOWER.get(withSpaces) || KNOWN_MODELS_BY_SLUG.get(withSpaces);
   if (spaceMatch) {
     return spaceMatch;
   }
 
-  // 5. Fallback for new/unknown models not in registry:
+  // 6. Fallback for new/unknown models not in registry:
   // If it matches standard hyphenated format (e.g. F-150, CX-5, C-Class, 3-Series, CR-V, RX-350, AMG-GT), keep the hyphen.
   if (
     /^[a-z]{1,4}-\d+$/i.test(decoded) ||

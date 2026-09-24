@@ -5,7 +5,13 @@
 
 import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
 import { AppConfig } from "@/lib/appConfig";
-import { parseMakeModelSelections, readRouteState, modelMakeAssociations, getModelMakeMap } from "@/lib/inventoryRouting";
+import {
+  parseMakeModelSelections,
+  readRouteState,
+  modelMakeAssociations,
+  getModelMakeMap,
+  getModelVariants,
+} from "@/lib/inventoryRouting";
 
 /* =========================
    Make/Model filter rewriting
@@ -93,15 +99,16 @@ function buildMakeModelFilter(
       canonicalModels.get(model.toLowerCase().replace(/\s+/g, "-")) ||
       canonicalModels.get(model.toLowerCase().replace(/-/g, " ")) ||
       model;
-    grouped.set(canonicalMake, [...(grouped.get(canonicalMake) || []), canonicalModel]);
+    const variants = getModelVariants(canonicalModel);
+    grouped.set(canonicalMake, [...(grouped.get(canonicalMake) || []), ...variants]);
   });
 
   return selectedMakes.map((make) => {
     const models = grouped.get(make);
     const makeFilter = `make:=[${escapeFilterValue(make)}]`;
-    return models?.length
-      ? `${makeFilter} && model:=[${models.map(escapeFilterValue).join(",")}]`
-      : makeFilter;
+    if (!models?.length) return makeFilter;
+    const uniqueModels = Array.from(new Set(models));
+    return `${makeFilter} && model:[${uniqueModels.map((m) => `=${escapeFilterValue(m)}`).join(",")}]`;
   });
 }
 
@@ -184,6 +191,43 @@ function mergeSearchResults(results: any[], request: any, branchCount: number) {
   };
 }
 
+function expandFacetFiltersWithModelVariants(
+  facetFilters: FacetFilterEntry[] | undefined
+): FacetFilterEntry[] | undefined {
+  if (!facetFilters || !Array.isArray(facetFilters)) return facetFilters;
+  return facetFilters.map((entry) => {
+    if (typeof entry === "string") {
+      if (entry.startsWith("model:")) {
+        const val = normalizeFacetValue(entry.slice("model:".length));
+        const variants = getModelVariants(val);
+        if (variants.length > 1) {
+          return variants.map((v) => `model:${v}`);
+        }
+      }
+      return entry;
+    }
+    if (Array.isArray(entry)) {
+      const expanded: string[] = [];
+      let hadModel = false;
+      entry.forEach((item) => {
+        if (typeof item === "string" && item.startsWith("model:")) {
+          hadModel = true;
+          const val = normalizeFacetValue(item.slice("model:".length));
+          const variants = getModelVariants(val);
+          variants.forEach((v) => {
+            const f = `model:${v}`;
+            if (!expanded.includes(f)) expanded.push(f);
+          });
+        } else {
+          expanded.push(item);
+        }
+      });
+      return hadModel ? expanded : entry;
+    }
+    return entry;
+  });
+}
+
 function wrapSearchClientWithMakeModelFilter(searchClient: any) {
   const originalSearch = searchClient.search.bind(searchClient);
 
@@ -191,7 +235,18 @@ function wrapSearchClientWithMakeModelFilter(searchClient: any) {
     const expandedRequests: any[] = [];
     const groups: Array<{ request: any; start: number; count: number }> = [];
 
-    requests.forEach((request) => {
+    const processedRequests = requests.map((req) => {
+      if (!req?.params?.facetFilters) return req;
+      return {
+        ...req,
+        params: {
+          ...req.params,
+          facetFilters: expandFacetFiltersWithModelVariants(req.params.facetFilters),
+        },
+      };
+    });
+
+    processedRequests.forEach((request) => {
       try {
         const branches = getMakeModelBranches(request);
         if (!branches) {
