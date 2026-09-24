@@ -43,6 +43,7 @@ import {
   modelMakeAssociations,
   registerFacetValues,
   formatFacetLabel,
+  getMakeForModel,
 } from "@/lib/inventoryRouting";
 import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "@/components/inventory/HitCardSkeleton";
@@ -514,6 +515,7 @@ const ClearFiltersButton = ({ mobile = false }: { mobile?: boolean }) => {
 
 const GroupedCurrentRefinements = () => {
   const { items, refine } = useCurrentRefinements();
+  const { setIndexUiState } = useInstantSearch();
 
   if (items.length === 0) return null;
 
@@ -538,29 +540,74 @@ const GroupedCurrentRefinements = () => {
   ) => {
     if (category.attribute === "make") {
       const makeToRemove = String(refinement.value);
-      const modelCategory = items.find((cat) => cat.attribute === "model");
-      const modelMakeMap = getModelMakeMap();
-      const isRemovingLastMake = category.refinements.length <= 1;
+      setIndexUiState((prevIndexUiState) => {
+        const currentRefinementList = prevIndexUiState.refinementList || {};
+        const currentMakes = (currentRefinementList.make || []).map(String);
+        const currentModels = (currentRefinementList.model || []).map(String);
 
-      if (modelCategory) {
-        modelCategory.refinements.forEach((modelRefinement) => {
-          const modelVal = String(modelRefinement.value);
-          const make = modelMakeAssociations.get(modelVal) || modelMakeMap.get(modelVal);
-          if (isRemovingLastMake || make === makeToRemove) {
-            refine(modelRefinement);
-          }
+        const nextMakes = currentMakes.filter(
+          (m) => m !== makeToRemove && m.toLowerCase() !== makeToRemove.toLowerCase()
+        );
+
+        const nextModels = currentModels.filter((modelVal) => {
+          const modelMake = getMakeForModel(modelVal);
+          if (modelMake && modelMake.toLowerCase() === makeToRemove.toLowerCase()) return false;
+          if (nextMakes.length === 0) return false;
+          if (modelMake && !nextMakes.some((m) => m.toLowerCase() === modelMake.toLowerCase())) return false;
+          return true;
         });
-      }
-    } else if (category.attribute === "model") {
-      const targetNorm = formatFacetLabel(refinement.label).toLowerCase().replace(/[^a-z0-9]/g, "");
-      category.refinements.forEach((r) => {
-        const rNorm = formatFacetLabel(r.label).toLowerCase().replace(/[^a-z0-9]/g, "");
-        if (rNorm === targetNorm) {
-          refine(r);
+
+        const nextRefinementList: Record<string, string[]> = {
+          ...currentRefinementList,
+        };
+        if (nextMakes.length > 0) {
+          nextRefinementList.make = nextMakes;
+        } else {
+          delete nextRefinementList.make;
         }
+        if (nextModels.length > 0) {
+          nextRefinementList.model = nextModels;
+        } else {
+          delete nextRefinementList.model;
+        }
+
+        return {
+          ...prevIndexUiState,
+          page: 1,
+          refinementList: nextRefinementList,
+        };
       });
       return;
     }
+
+    if (category.attribute === "model") {
+      const targetNorm = formatFacetLabel(refinement.label).toLowerCase().replace(/[^a-z0-9]/g, "");
+      setIndexUiState((prevIndexUiState) => {
+        const currentRefinementList = prevIndexUiState.refinementList || {};
+        const currentModels = (currentRefinementList.model || []).map(String);
+        const nextModels = currentModels.filter((m) => {
+          const mNorm = formatFacetLabel(m).toLowerCase().replace(/[^a-z0-9]/g, "");
+          return mNorm !== targetNorm && m !== String(refinement.value);
+        });
+
+        const nextRefinementList: Record<string, string[]> = {
+          ...currentRefinementList,
+        };
+        if (nextModels.length > 0) {
+          nextRefinementList.model = nextModels;
+        } else {
+          delete nextRefinementList.model;
+        }
+
+        return {
+          ...prevIndexUiState,
+          page: 1,
+          refinementList: nextRefinementList,
+        };
+      });
+      return;
+    }
+
     refine(refinement);
   };
 
@@ -716,23 +763,14 @@ const StableRefinementList = ({
 };
 
 const MakeRefinementList = () => {
-  const { items: currentRefinements, refine: refineCurrentRefinement } = useCurrentRefinements();
+  const { items: currentRefinements } = useCurrentRefinements();
+  const { setIndexUiState } = useInstantSearch();
 
   const {
     items: makeItems,
-    refine: refineMake,
   } = useRefinementList({
     attribute: "make",
     limit: 500,
-    sortBy: ["name:asc"],
-  });
-
-  const {
-    items: modelItems,
-    refine: refineModel,
-  } = useRefinementList({
-    attribute: "model",
-    limit: 200,
     sortBy: ["name:asc"],
   });
 
@@ -841,27 +879,63 @@ const MakeRefinementList = () => {
     const isCurrentlyRefined = refinedMakeValues.has(make);
 
     if (isCurrentlyRefined) {
-      const modelMakeMap = getModelMakeMap();
-      const modelCategory = currentRefinements.find((cat) => cat.attribute === "model");
-      const isRemovingLastMake = refinedMakeValues.size <= 1;
+      setIndexUiState((prevIndexUiState) => {
+        const currentRefinementList = prevIndexUiState.refinementList || {};
+        const currentMakes = (currentRefinementList.make || []).map(String);
+        const currentModels = (currentRefinementList.model || []).map(String);
 
-      if (modelCategory) {
-        modelCategory.refinements.forEach((modelRefinement) => {
-          const modelVal = String(modelRefinement.value);
-          const modelMake = modelMakeAssociations.get(modelVal) || modelMakeMap.get(modelVal);
-          if (isRemovingLastMake || modelMake === make) {
-            refineCurrentRefinement(modelRefinement);
-            refineModel(modelVal);
-          }
+        const nextMakes = currentMakes.filter(
+          (m) => m !== make && m.toLowerCase() !== make.toLowerCase()
+        );
+
+        const nextModels = currentModels.filter((modelVal) => {
+          const modelMake = getMakeForModel(modelVal);
+          if (modelMake && modelMake.toLowerCase() === make.toLowerCase()) return false;
+          if (nextMakes.length === 0) return false;
+          if (modelMake && !nextMakes.some((m) => m.toLowerCase() === modelMake.toLowerCase())) return false;
+          return true;
         });
-      }
 
-      refineMake(make);
+        const nextRefinementList: Record<string, string[]> = {
+          ...currentRefinementList,
+        };
+        if (nextMakes.length > 0) {
+          nextRefinementList.make = nextMakes;
+        } else {
+          delete nextRefinementList.make;
+        }
+        if (nextModels.length > 0) {
+          nextRefinementList.model = nextModels;
+        } else {
+          delete nextRefinementList.model;
+        }
+
+        return {
+          ...prevIndexUiState,
+          page: 1,
+          refinementList: nextRefinementList,
+        };
+      });
       return;
     }
 
     // Add this make without clearing any previously selected makes.
-    refineMake(make);
+    setIndexUiState((prevIndexUiState) => {
+      const currentRefinementList = prevIndexUiState.refinementList || {};
+      const currentMakes = (currentRefinementList.make || []).map(String);
+      const nextMakes = currentMakes.some((m) => m.toLowerCase() === make.toLowerCase())
+        ? currentMakes
+        : [...currentMakes, make];
+
+      return {
+        ...prevIndexUiState,
+        page: 1,
+        refinementList: {
+          ...currentRefinementList,
+          make: nextMakes,
+        },
+      };
+    });
   };
 
   return (
@@ -904,6 +978,7 @@ const MakeRefinementList = () => {
 
 const ModelRefinementList = () => {
   const { items: currentRefinements } = useCurrentRefinements();
+  const { setIndexUiState } = useInstantSearch();
 
   const {
     items: modelItems,
@@ -1051,28 +1126,57 @@ const ModelRefinementList = () => {
 
   const handleToggle = (item: DedupedModelItem) => {
     const model = item.value;
-    const make = combinedModelMakeMap.get(model);
+    const make = combinedModelMakeMap.get(model) || getMakeForModel(model);
 
     if (!item.isRefined) {
       // Selecting a model automatically selects its make.
       // Existing makes stay selected.
-      if (make && !selectedMakeValues.has(make)) {
-        refineMake(make);
-      }
+      setIndexUiState((prevIndexUiState) => {
+        const currentRefinementList = prevIndexUiState.refinementList || {};
+        const currentMakes = (currentRefinementList.make || []).map(String);
+        const currentModels = (currentRefinementList.model || []).map(String);
 
-      refineModel(model);
+        const nextMakes =
+          make && !currentMakes.some((m) => m.toLowerCase() === make.toLowerCase())
+            ? [...currentMakes, make]
+            : currentMakes;
+        const nextModels = currentModels.includes(model) ? currentModels : [...currentModels, model];
+
+        return {
+          ...prevIndexUiState,
+          page: 1,
+          refinementList: {
+            ...currentRefinementList,
+            make: nextMakes,
+            model: nextModels,
+          },
+        };
+      });
       return;
     }
 
     // Deselecting a model: unrefine any variant that was refined
-    item.allValues.forEach((val) => {
-      if (selectedModelValues.has(val)) {
-        refineModel(val);
+    setIndexUiState((prevIndexUiState) => {
+      const currentRefinementList = prevIndexUiState.refinementList || {};
+      const currentModels = (currentRefinementList.model || []).map(String);
+      const toRemove = new Set([model, ...item.allValues]);
+      const nextModels = currentModels.filter((m) => !toRemove.has(m));
+
+      const nextRefinementList: Record<string, string[]> = {
+        ...currentRefinementList,
+      };
+      if (nextModels.length > 0) {
+        nextRefinementList.model = nextModels;
+      } else {
+        delete nextRefinementList.model;
       }
+
+      return {
+        ...prevIndexUiState,
+        page: 1,
+        refinementList: nextRefinementList,
+      };
     });
-    if (!item.allValues.some((v) => selectedModelValues.has(v))) {
-      refineModel(model);
-    }
   };
 
   return (
@@ -1522,12 +1626,8 @@ const SyncModelMakeMap = () => {
 // a make chip). Conflating the two caused models to unselect themselves
 // right after being selected, requiring a second click to "stick".
 const SyncOrphanedModels = () => {
-  const { items: currentRefinements, refine: refineCurrentRefinement } = useCurrentRefinements();
-
-  const { refine: refineModel } = useRefinementList({
-    attribute: "model",
-    limit: 200,
-  });
+  const { items: currentRefinements } = useCurrentRefinements();
+  const { setIndexUiState } = useInstantSearch();
 
   const previousSelectedMakesRef = useRef<Set<string>>(new Set());
 
@@ -1540,11 +1640,10 @@ const SyncOrphanedModels = () => {
     );
 
     const selectedMakes = new Set(
-      makeCategory?.refinements.map((refinement) => String(refinement.value)) ?? []
+      makeCategory?.refinements.map((refinement) => String(refinement.value).toLowerCase()) ?? []
     );
 
     const previousSelectedMakes = previousSelectedMakesRef.current;
-    const modelMakeMap = getModelMakeMap();
 
     // A make counts as "removed" if it was selected on the previous run and is no longer selected now.
     const removedMakes = new Set(
@@ -1553,20 +1652,44 @@ const SyncOrphanedModels = () => {
 
     if (removedMakes.size > 0 || (previousSelectedMakes.size > 0 && selectedMakes.size === 0)) {
       if (modelCategory?.refinements.length) {
+        const orphanedModels = new Set<string>();
         modelCategory.refinements.forEach((modelRefinement) => {
           const modelVal = String(modelRefinement.value);
-          const make = modelMakeAssociations.get(modelVal) || modelMakeMap.get(modelVal);
+          const make = getMakeForModel(modelVal);
 
-          if (selectedMakes.size === 0 || (make && removedMakes.has(make))) {
-            refineCurrentRefinement(modelRefinement);
-            refineModel(modelVal);
+          if (selectedMakes.size === 0 || (make && removedMakes.has(make.toLowerCase()))) {
+            orphanedModels.add(modelVal);
           }
         });
+
+        if (orphanedModels.size > 0) {
+          setIndexUiState((prevState) => {
+            const currentRefinementList = prevState.refinementList || {};
+            const currentModels = (currentRefinementList.model || []).map(String);
+            const nextModels = currentModels.filter((m) => !orphanedModels.has(m));
+            if (nextModels.length === currentModels.length) return prevState;
+
+            const nextRefinements: Record<string, string[]> = {
+              ...currentRefinementList,
+            };
+            if (nextModels.length > 0) {
+              nextRefinements.model = nextModels;
+            } else {
+              delete nextRefinements.model;
+            }
+
+            return {
+              ...prevState,
+              page: 1,
+              refinementList: nextRefinements,
+            };
+          });
+        }
       }
     }
 
     previousSelectedMakesRef.current = selectedMakes;
-  }, [currentRefinements, refineCurrentRefinement, refineModel]);
+  }, [currentRefinements, setIndexUiState]);
 
   return null;
 };
