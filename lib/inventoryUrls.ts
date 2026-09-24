@@ -19,16 +19,16 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-// Query-param URL builder: single value omits the key name, multiple values include the key.
+// Query-param URL builder: single value uses path, multiple values use query.
 const inventoryUrl = (key: string, values: readonly string[]) => {
   if (values.length === 1) {
-    return `/inventory?${friendlyValue(values[0])}`;
+    return `/inventory/${friendlyValue(values[0])}`;
   }
   return `/inventory?${key}=${values.map(friendlyValue).join(",")}`;
 };
 
-// Make links use /inventory?{makename}
-export const getInventoryUrlByMake = (make: string, _appConfig: AppConfig) => `/inventory?${friendlyValue(make)}`;
+// Make links use /inventory/{makename}
+export const getInventoryUrlByMake = (make: string, _appConfig: AppConfig) => `/inventory/${friendlyValue(make)}`;
 export const getInventoryUrlByBodyType = (bodyType: string, _appConfig: AppConfig) => inventoryUrl(FILTER_KEYS.body_type, [bodyType]);
 export const getInventoryUrlByVehicleType = (vehicleType: string, _appConfig: AppConfig) => inventoryUrl(FILTER_KEYS.vehicle_type, [vehicleType]);
 export const getInventoryUrlWithParams = (params: Record<string, string>, _appConfig: AppConfig) => {
@@ -61,8 +61,12 @@ export const getInventoryUrlByRefinement = (attribute: string, values: readonly 
     const model = values[0];
     const make = modelMakeAssociations.get(model) || getModelMakeMap().get(model) || BASELINE_MODEL_TO_MAKE[model];
     if (make) {
-      return `/inventory?${friendlyValue(make)}&${modelToQueryValue(model)}`;
+      return `/inventory/${friendlyValue(make)}/${modelToQueryValue(model)}`;
     }
+    return `/inventory/${modelToQueryValue(model)}`;
+  }
+  if (values.length === 1) {
+    return `/inventory/${friendlyValue(values[0])}`;
   }
   const key = FILTER_KEYS[attribute];
   return key ? inventoryUrl(key, values) : "/inventory";
@@ -77,9 +81,16 @@ export const getInventoryUrlByRange = (attribute: string, range: string, _appCon
 
 export function isVehicleDetailSlug(slug: string[] | undefined | null): boolean {
   if (!slug || slug.length !== 1) return false;
-  const leadingToken = slug[0].split("-", 1)[0] || "";
+  const firstDash = slug[0].indexOf("-");
+  if (firstDash === -1) return false;
+  const leadingToken = slug[0].substring(0, firstDash);
   const leadingNumber = Number(leadingToken);
-  return /^\d+$/.test(leadingToken) && (leadingNumber < 1900 || leadingNumber > 2100);
+  if (/^\d+$/.test(leadingToken) && (leadingNumber < 1900 || leadingNumber > 2100)) {
+    const lower = slug[0].toLowerCase();
+    if (lower === "1500-classic" || lower === "1500") return false;
+    return true;
+  }
+  return false;
 }
 
 export async function getVehicleById(id: string, appConfig: AppConfig): Promise<Record<string, any> | null> {
