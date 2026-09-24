@@ -10,6 +10,7 @@ import { useAppConfig } from "@/app/providers";
 import { createPortal } from "react-dom";
 import { setQueryParams } from "@/utils/queryParams";
 import QueryParamIframe from "@/components/common/QueryParamIframe";
+import QueryParamLink from "@/components/common/QueryParamLink";
 
 
 export const PriceAndCTA = ({ vehicle }: any) => {
@@ -32,7 +33,8 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   const financePrice = sellingPrice;
   const cashPrice = sellingPrice + 2000;
 
-  const financeHref = setQueryParams(`/finance/?inventory_id=${String(vehicle?.id ?? "")}`);
+  const vehicleId = String(vehicle?.id || vehicle?.inventory_id || "");
+  const financeHref = `/finance?inventory_id=${vehicleId}`;
 
   // 1. Detect when inline CTAs are scrolled out of view
   useEffect(() => {
@@ -281,11 +283,12 @@ export const PriceAndCTA = ({ vehicle }: any) => {
         </div>
 
         <div className="mt-1 space-y-3">
-          <a href={financeHref}>
-            <button className="cursor-pointer my-3 font-bold w-full rounded-[10px] sm:rounded-[12px] border text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[20px] hover:opacity-90 shadow-md transition-opacity bg-brand-btn-gradient border-brand-green">
-              Get started
-            </button>
-          </a>
+          <QueryParamLink
+            href={financeHref}
+            className="cursor-pointer my-3 font-bold w-full rounded-[10px] sm:rounded-[12px] border text-white py-[12px] sm:py-[10px] text-[15px] sm:text-[20px] hover:opacity-90 shadow-md transition-opacity bg-brand-btn-gradient border-brand-green block text-center"
+          >
+            Get started
+          </QueryParamLink>
 
           <button
             onClick={() => setIsModalOpen(true)}
@@ -298,11 +301,12 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
       {/* Dynamic Sticky Mobile Action Bar */}
       <div className={`fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-3 shadow-2xl lg:hidden flex gap-3 transition-transform duration-300 ease-in-out ${showSticky ? "translate-y-0" : "translate-y-full"}`}>
-        <a href={financeHref} className="flex-1">
-          <button className="w-full font-bold rounded-xl text-white py-3 text-[15px] bg-brand-btn-gradient border border-brand-green shadow-md">
-            Get started
-          </button>
-        </a>
+        <QueryParamLink
+          href={financeHref}
+          className="flex-1 text-center font-bold rounded-xl text-white py-3 text-[15px] bg-brand-btn-gradient border border-brand-green shadow-md flex items-center justify-center"
+        >
+          Get started
+        </QueryParamLink>
 
         <button
           onClick={() => setIsModalOpen(true)}
@@ -395,8 +399,8 @@ export const MessageModal = ({ isOpen, onClose, vehicle }: any) => {
 
   const separator = baseUrl.includes("?") ? "&" : "?";
   const iframeSrc = inventoryId
-    ? setQueryParams(`${baseUrl}${separator}inventory_id=${inventoryId}`)
-    : setQueryParams(baseUrl);
+    ? `${baseUrl}${separator}inventory_id=${inventoryId}`
+    : baseUrl;
 
   return createPortal(
     <div className="fixed inset-0 bg-black/50 z-[9999] overflow-y-auto p-4 sm:p-6 flex min-h-full items-center justify-center">
