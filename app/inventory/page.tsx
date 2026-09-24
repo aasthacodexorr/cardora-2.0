@@ -155,6 +155,33 @@ type FilterGroupProps = {
 };
 
 const FilterGroup = ({ title, children, isOpen, onToggle }: FilterGroupProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const resetScroll = () => {
+      if (contentRef.current) {
+        const scrollables = contentRef.current.querySelectorAll<HTMLElement>(
+          ".overflow-y-auto, ul, [class*='overflow-y']"
+        );
+        scrollables.forEach((el) => {
+          el.scrollTop = 0;
+          if (typeof el.scrollTo === "function") {
+            el.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+          }
+        });
+        contentRef.current.scrollTop = 0;
+      }
+    };
+
+    resetScroll();
+
+    if (isOpen) {
+      requestAnimationFrame(resetScroll);
+      const timer = setTimeout(resetScroll, 310);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   return (
     <div className={`border-b border-border py-[7px] mb-0  transition-all duration-300 ${isOpen ? "pb-4" : ""}`}>
       <button onClick={onToggle} className="w-full cursor-pointer">
@@ -168,6 +195,7 @@ const FilterGroup = ({ title, children, isOpen, onToggle }: FilterGroupProps) =>
         </div>
       </button>
       <div
+        ref={contentRef}
         className={`grid transition-all duration-300 ease-in-out ${isOpen
           ? "grid-rows-[1fr] opacity-100 mt-3 px-[10px]"
           : "grid-rows-[0fr] opacity-0 mt-0 px-[10px]"
