@@ -24,9 +24,7 @@ const VehicleCategoryGrid = () => {
   ];
 
   const handleCategoryClick = (bodyTypes: string[]) => {
-    const vehicleUrl = `/inventory?${new URLSearchParams({
-      bodyStyles: bodyTypes.join(',')
-    }).toString()}`;
+    const vehicleUrl = `/inventory/bodyStyles=${encodeURIComponent(bodyTypes.join(","))}`;
     router.push(setQueryParams(vehicleUrl));
   };
 
