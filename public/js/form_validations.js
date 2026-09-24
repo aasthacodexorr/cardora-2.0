@@ -189,32 +189,78 @@ $(document).ready(function () {
      * Returns the final URL string, or null if no change is needed.
      */
     function buildUpdatedSrc(iframeSrc) {
-        var pageParams = getQueryParams();
-
-        if (!pageParams.toString()) {
+        if (!iframeSrc || !isZopSoftwareUrl(iframeSrc)) {
             return null;
         }
 
-        if (!isZopSoftwareUrl(iframeSrc)) {
+        var search = window.location.search;
+        if (!search) {
             return null;
         }
 
-        var iframeUrl = new URL(iframeSrc);
-        var changed = false;
+        var rawSearch = search.startsWith("?") ? search.slice(1) : search;
+        if (!rawSearch) {
+            return null;
+        }
 
-        pageParams.forEach(function (value, key) {
-            /*
-             * Use set() instead of append().
-             * Prevents duplicate parameters and makes the
-             * parent page parameter the source of truth.
-             */
-            if (iframeUrl.searchParams.get(key) !== value) {
-                iframeUrl.searchParams.set(key, value);
-                changed = true;
+        var hashIndex = iframeSrc.indexOf("#");
+        var hash = "";
+        var withoutHash = iframeSrc;
+        if (hashIndex !== -1) {
+            hash = iframeSrc.slice(hashIndex);
+            withoutHash = iframeSrc.slice(0, hashIndex);
+        }
+
+        var queryIndex = withoutHash.indexOf("?");
+        var basePath = withoutHash;
+        var existingQuery = "";
+        if (queryIndex !== -1) {
+            basePath = withoutHash.slice(0, queryIndex);
+            existingQuery = withoutHash.slice(queryIndex + 1);
+        }
+
+        var params = new Map();
+
+        if (existingQuery) {
+            existingQuery.split("&").forEach(function (part) {
+                if (!part) return;
+                var eqIdx = part.indexOf("=");
+                if (eqIdx === -1) {
+                    params.set(part, { value: "", hasEqual: false });
+                } else {
+                    var key = part.slice(0, eqIdx);
+                    var val = part.slice(eqIdx + 1);
+                    params.set(key, { value: val, hasEqual: true });
+                }
+            });
+        }
+
+        rawSearch.split("&").forEach(function (part) {
+            if (!part) return;
+            var eqIdx = part.indexOf("=");
+            if (eqIdx === -1) {
+                if (!params.has(part)) {
+                    params.set(part, { value: "", hasEqual: false });
+                }
+            } else {
+                var key = part.slice(0, eqIdx);
+                var val = part.slice(eqIdx + 1);
+                params.set(key, { value: val, hasEqual: true });
             }
         });
 
-        return changed ? iframeUrl.toString() : null;
+        var queryParts = [];
+        params.forEach(function (meta, key) {
+            if (meta.hasEqual) {
+                queryParts.push(key + "=" + meta.value);
+            } else {
+                queryParts.push(key);
+            }
+        });
+
+        var finalQuery = queryParts.length ? "?" + queryParts.join("&") : "";
+        var newUrl = basePath + finalQuery + hash;
+        return newUrl !== iframeSrc ? newUrl : null;
     }
 
     /**

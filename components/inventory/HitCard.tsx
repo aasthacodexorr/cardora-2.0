@@ -8,6 +8,7 @@ import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { useWishlist } from "@/context/WishlistContext";
 import { MessageModal } from "./VehicleInfo";
+import { setQueryParams } from "@/utils/queryParams";
 
 /* =========================
    HitCard Component (Inventory)
@@ -114,7 +115,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
       <div className="block h-full rounded-[20px] cursor-pointer bg-white overflow-visible flex flex-col gap-2 hover:shadow-none transition-none relative border border-border-standard">
         <article
           onClick={() => {
-            window.location.href = vehicleUrl;
+            window.location.href = setQueryParams(vehicleUrl);
           }}
         >
           {/* Vehicle image with heart overlay */}
