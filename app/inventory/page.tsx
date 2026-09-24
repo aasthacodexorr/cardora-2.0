@@ -34,8 +34,16 @@ import {
 
 import { getTypesenseClient } from "@/lib/typesense";
 
-// Custom router/stateMapping that produces the client-required URL format
-import { createInventoryRouter, createInventoryStateMapping, getModelMakeMap, setModelMakeMap, registerKnownModels, modelMakeAssociations, registerFacetValues } from "@/lib/inventoryRouting";
+import {
+  createInventoryRouter,
+  createInventoryStateMapping,
+  getModelMakeMap,
+  setModelMakeMap,
+  registerKnownModels,
+  modelMakeAssociations,
+  registerFacetValues,
+  formatFacetLabel,
+} from "@/lib/inventoryRouting";
 import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "@/components/inventory/HitCardSkeleton";
 import { AD_CARDS } from "@/components/inventory/AdCard";
@@ -543,30 +551,51 @@ const GroupedCurrentRefinements = () => {
           }
         });
       }
+    } else if (category.attribute === "model") {
+      const targetNorm = formatFacetLabel(refinement.label).toLowerCase().replace(/[^a-z0-9]/g, "");
+      category.refinements.forEach((r) => {
+        const rNorm = formatFacetLabel(r.label).toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (rNorm === targetNorm) {
+          refine(r);
+        }
+      });
+      return;
     }
     refine(refinement);
   };
 
   return (
     <div className="w-full flex flex-wrap gap-y-2 gap-x-2">
-      {orderedItems.map((category) => (
-        <div key={category.attribute} className="flex flex-wrap items-center gap-[0.5px] bg-transparent">
-          {category.refinements.map((refinement) => (
-            <div
-              key={refinement.label}
-              className="flex items-center bg-white rounded-lg px-[12px] py-[6px] border border-gray-200 text-[14px] text-gray-600 font-light shadow-sm"
-            >
-              <span className="cursor-pointer tracking-wider font-light">{refinement.label}</span>
-              <button
-                onClick={() => handleRemoveRefinement(category, refinement)}
-                className="ml-2 hover:text-gray-950 focus:outline-none flex items-center justify-center cursor-pointer"
+      {orderedItems.map((category) => {
+        const seenNorms = new Set<string>();
+        const uniqueRefinements = category.refinements.filter((refinement) => {
+          const norm = formatFacetLabel(refinement.label).toLowerCase().replace(/[^a-z0-9]/g, "");
+          if (seenNorms.has(norm)) return false;
+          seenNorms.add(norm);
+          return true;
+        });
+
+        return (
+          <div key={category.attribute} className="flex flex-wrap items-center gap-[0.5px] bg-transparent">
+            {uniqueRefinements.map((refinement) => (
+              <div
+                key={refinement.label}
+                className="flex items-center bg-white rounded-lg px-[12px] py-[6px] border border-gray-200 text-[14px] text-gray-600 font-light shadow-sm"
               >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-        </div>
-      ))}
+                <span className="cursor-pointer tracking-wider font-light">
+                  {formatFacetLabel(refinement.label)}
+                </span>
+                <button
+                  onClick={() => handleRemoveRefinement(category, refinement)}
+                  className="ml-2 hover:text-gray-950 focus:outline-none flex items-center justify-center cursor-pointer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -675,7 +704,9 @@ const StableRefinementList = ({
               onChange={() => refine(item.value)}
               className={refinementListClassNames.checkbox}
             />
-            <span className={refinementListClassNames.labelText}>{item.label}</span>
+            <span className={refinementListClassNames.labelText}>
+              {formatFacetLabel(item.label)}
+            </span>
             <span className={refinementListClassNames.count}>{item.count}</span>
           </label>
         </li>
@@ -858,7 +889,7 @@ const MakeRefinementList = () => {
             />
 
             <span className={refinementListClassNames.labelText}>
-              {item.label}
+              {formatFacetLabel(item.label)}
             </span>
 
             <span className={refinementListClassNames.count}>
@@ -974,8 +1005,52 @@ const ModelRefinementList = () => {
     });
   }, [modelItems, selectedMakeValues, selectedModelValues, combinedModelMakeMap]);
 
-  const handleToggle = (item: typeof modelItems[number]) => {
-    const model = item.value as string;
+  type DedupedModelItem = {
+    label: string;
+    value: string;
+    count: number;
+    isRefined: boolean;
+    allValues: string[];
+  };
+
+  const normalizedModelItems = useMemo<DedupedModelItem[]>(() => {
+    const map = new Map<string, DedupedModelItem>();
+
+    visibleModelItems.forEach((item) => {
+      // Normalise key: lowercase alphanumeric only (e.g. "3 Series" and "3-Series" both become "3series")
+      const normKey = item.label.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+      const existing = map.get(normKey);
+      const isItemRefined = item.isRefined || selectedModelValues.has(String(item.value));
+
+      if (!existing) {
+        map.set(normKey, {
+          label: item.label,
+          value: String(item.value),
+          count: item.count,
+          isRefined: isItemRefined,
+          allValues: [String(item.value)],
+        });
+      } else {
+        // Prefer hyphenated or higher count variant as canonical
+        const preferExisting = existing.count >= item.count;
+        const preferredLabel = preferExisting ? existing.label : item.label;
+        const preferredValue = preferExisting ? existing.value : String(item.value);
+
+        map.set(normKey, {
+          label: preferredLabel,
+          value: preferredValue,
+          count: existing.count + item.count,
+          isRefined: existing.isRefined || isItemRefined,
+          allValues: Array.from(new Set([...existing.allValues, String(item.value)])),
+        });
+      }
+    });
+
+    return Array.from(map.values()).sort((a, b) => a.label.localeCompare(b.label));
+  }, [visibleModelItems, selectedModelValues]);
+
+  const handleToggle = (item: DedupedModelItem) => {
+    const model = item.value;
     const make = combinedModelMakeMap.get(model);
 
     if (!item.isRefined) {
@@ -989,8 +1064,15 @@ const ModelRefinementList = () => {
       return;
     }
 
-    // Deselecting a model does not remove its make.
-    refineModel(model);
+    // Deselecting a model: unrefine any variant that was refined
+    item.allValues.forEach((val) => {
+      if (selectedModelValues.has(val)) {
+        refineModel(val);
+      }
+    });
+    if (!item.allValues.some((v) => selectedModelValues.has(v))) {
+      refineModel(model);
+    }
   };
 
   return (
@@ -1007,7 +1089,7 @@ const ModelRefinementList = () => {
         "lg:[scrollbar-width:thin]",
       ].join(" ")}
     >
-      {visibleModelItems.map((item) => (
+      {normalizedModelItems.map((item) => (
         <li key={item.value}>
           <label className={refinementListClassNames.label}>
             <input
@@ -1018,7 +1100,7 @@ const ModelRefinementList = () => {
             />
 
             <span className={refinementListClassNames.labelText}>
-              {item.label}
+              {formatFacetLabel(item.label)}
             </span>
 
             <span className={refinementListClassNames.count}>
