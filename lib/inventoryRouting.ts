@@ -336,6 +336,41 @@ export function setModelMakeMap(entries: Iterable<[string, string]>) {
 export function getModelMakeMap() {
   return MODEL_TO_MAKE;
 }
+
+export function getMakeForModel(model: string): string | undefined {
+  if (!model || typeof model !== "string") return undefined;
+  const trimmed = model.trim();
+  const modelMakeMap = getModelMakeMap();
+  const direct = modelMakeAssociations.get(trimmed) || modelMakeMap.get(trimmed) || BASELINE_MODEL_TO_MAKE[trimmed];
+  if (direct) return direct;
+
+  const withSpaces = trimmed.replace(/-/g, " ");
+  const fromSpaces = modelMakeAssociations.get(withSpaces) || modelMakeMap.get(withSpaces) || BASELINE_MODEL_TO_MAKE[withSpaces];
+  if (fromSpaces) return fromSpaces;
+
+  const withHyphens = trimmed.replace(/\s+/g, "-");
+  const fromHyphens = modelMakeAssociations.get(withHyphens) || modelMakeMap.get(withHyphens) || BASELINE_MODEL_TO_MAKE[withHyphens];
+  if (fromHyphens) return fromHyphens;
+
+  const canonical = queryValueToModel(trimmed);
+  if (canonical && canonical !== trimmed) {
+    const fromCanonical = modelMakeAssociations.get(canonical) || modelMakeMap.get(canonical) || BASELINE_MODEL_TO_MAKE[canonical];
+    if (fromCanonical) return fromCanonical;
+  }
+
+  const lower = trimmed.toLowerCase();
+  for (const [m, mk] of modelMakeMap.entries()) {
+    if (m.toLowerCase() === lower) return mk;
+  }
+  for (const [m, mk] of modelMakeAssociations.entries()) {
+    if (m.toLowerCase() === lower) return mk;
+  }
+  for (const [m, mk] of Object.entries(BASELINE_MODEL_TO_MAKE)) {
+    if (m.toLowerCase() === lower) return mk;
+  }
+
+  return undefined;
+}
  
 export const FILTER_KEYS: Record<string, string> = {
   location: "locations",
@@ -824,29 +859,20 @@ export function serializePublicUrl(route: PlainObject) {
     );
   }
 
-  // Ensure that for any model selected, its corresponding make is automatically included in refinementList.make
-  if (Array.isArray(refinementList.model) && refinementList.model.length > 0) {
-    const modelMakeMap = getModelMakeMap();
-    const makes = new Set<string>(refinementList.make || []);
-    refinementList.model.forEach((model: string) => {
-      const make = modelMakeAssociations.get(model) || modelMakeMap.get(model) || BASELINE_MODEL_TO_MAKE[model];
-      if (make) makes.add(make);
-    });
-    refinementList.make = Array.from(makes);
-  }
-
   const allSelectedMakes: string[] = refinementList.make || [];
   const allSelectedModels: string[] = refinementList.model || [];
 
   const modelMakeMap = getModelMakeMap();
   const validModels = allSelectedModels.filter((model) => {
-    const make = modelMakeAssociations.get(model) || modelMakeMap.get(model) || BASELINE_MODEL_TO_MAKE[model];
-    return !make || allSelectedMakes.length === 0 || allSelectedMakes.includes(make);
+    const make = getMakeForModel(model);
+    return make
+      ? allSelectedMakes.some((m) => m.toLowerCase() === make.toLowerCase())
+      : allSelectedMakes.length > 0;
   });
 
   const makesWithModels = new Set<string>();
   validModels.forEach((model) => {
-    const make = modelMakeAssociations.get(model) || modelMakeMap.get(model) || BASELINE_MODEL_TO_MAKE[model];
+    const make = getMakeForModel(model);
     if (make) makesWithModels.add(make);
   });
 
@@ -890,8 +916,6 @@ export function serializePublicUrl(route: PlainObject) {
     } else if (allSelectedMakes.length === 1 && validModels.length === 0) {
       pathSegments.push(queryValue(allSelectedMakes[0]));
     } else if (allSelectedMakes.length === 0 && validModels.length === 1) {
-      const make = modelMakeAssociations.get(validModels[0]) || modelMakeMap.get(validModels[0]) || BASELINE_MODEL_TO_MAKE[validModels[0]];
-      if (make) pathSegments.push(queryValue(make));
       pathSegments.push(modelToQueryValue(validModels[0]));
     }
 
@@ -1214,23 +1238,13 @@ export const createInventoryStateMapping = (config: AppConfig) => {
 
   const sanitizeRefinementList = (rawRefinementList: PlainObject) => {
     const refinementList = { ...rawRefinementList };
-    let selectedMakes = new Set<string>(refinementList.make || []);
+    const selectedMakes = new Set<string>(
+      (refinementList.make || []).map((m: string) => m.toLowerCase())
+    );
     if (Array.isArray(refinementList.model) && refinementList.model.length > 0) {
-      const modelMakeMap = getModelMakeMap();
-      const impliedMakes: string[] = [];
-      refinementList.model.forEach((model: string) => {
-        const make = modelMakeAssociations.get(model) || modelMakeMap.get(model) || BASELINE_MODEL_TO_MAKE[model];
-        if (make && !selectedMakes.has(make)) {
-          impliedMakes.push(make);
-        }
-      });
-      if (impliedMakes.length > 0) {
-        refinementList.make = [...new Set([...(refinementList.make || []), ...impliedMakes])];
-        selectedMakes = new Set<string>(refinementList.make);
-      }
       refinementList.model = refinementList.model.filter((model: string) => {
-        const make = modelMakeAssociations.get(model) || modelMakeMap.get(model) || BASELINE_MODEL_TO_MAKE[model];
-        return make ? selectedMakes.has(make) : true;
+        const make = getMakeForModel(model);
+        return make ? selectedMakes.has(make.toLowerCase()) : selectedMakes.size > 0;
       });
       if (refinementList.model.length === 0) {
         delete refinementList.model;
