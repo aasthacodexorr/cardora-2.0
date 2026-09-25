@@ -618,7 +618,7 @@ export default function CardoraQualityPage() {
                   <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center">
                     <div className="relative rounded-2xl md:rounded-3xl border-[3px] border-white shadow-2xl shadow-neutral-900/15 overflow-hidden w-full max-w-[340px] sm:max-w-[390px] md:max-w-[430px] aspect-[16/10] bg-neutral-900 group">
                       <video
-                        src="/intro.mp4"
+                        src="/car.mp4"
                         autoPlay
                         loop
                         muted
@@ -851,7 +851,7 @@ export default function CardoraQualityPage() {
                 ✕
               </button>
               <video
-                src="/intro.mp4"
+                src="/car.mp4"
                 autoPlay
                 controls
                 playsInline
@@ -871,7 +871,7 @@ export default function CardoraQualityPage() {
             <div className="relative rounded-3xl overflow-hidden min-h-[560px] bg-neutral-900 flex flex-col justify-end p-8 md:p-10">
               <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center">
                 <video
-                  src="/intro.mp4"
+                  src="/car.mp4"
                   autoPlay
                   loop
                   muted
