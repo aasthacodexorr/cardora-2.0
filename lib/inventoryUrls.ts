@@ -19,12 +19,12 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-// Query-param URL builder: single value uses path, multiple values use /inventory/{key}={values}.
+// Query-param URL builder: single value uses path, multiple values use /inventory?{key}={values}.
 const inventoryUrl = (key: string, values: readonly string[]) => {
   if (values.length === 1) {
     return `/inventory/${friendlyValue(values[0])}`;
   }
-  return `/inventory/${key}=${values.map(friendlyValue).join(",")}`;
+  return `/inventory?${key}=${values.map(friendlyValue).join(",")}`;
 };
 
 // Make links use /inventory/{makename}
@@ -33,7 +33,7 @@ export const getInventoryUrlByBodyType = (bodyType: string, _appConfig: AppConfi
 export const getInventoryUrlByVehicleType = (vehicleType: string, _appConfig: AppConfig) => inventoryUrl(FILTER_KEYS.vehicle_type, [vehicleType]);
 export const getInventoryUrlWithParams = (params: Record<string, string>, _appConfig: AppConfig) => {
   const query = Object.entries(params).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join("&");
-  return query ? `/inventory/${query}` : "/inventory";
+  return query ? `/inventory?${query}` : "/inventory";
 };
 
 export const POPULAR_MAKES = [
@@ -55,7 +55,7 @@ export const POPULAR_CAR_TYPES = [
 
 export const getMakeUrl = (make: string, appConfig: AppConfig) => getInventoryUrlByMake(make, appConfig);
 export const getBodyTypeUrl = (bodyType: string, appConfig: AppConfig) => getInventoryUrlByBodyType(bodyType, appConfig);
-export const getInventoryUrlByQuery = (query: string, _appConfig: AppConfig) => `/inventory/q=${encodeURIComponent(query)}`;
+export const getInventoryUrlByQuery = (query: string, _appConfig: AppConfig) => `/inventory?q=${encodeURIComponent(query)}`;
 export const getInventoryUrlByRefinement = (attribute: string, values: readonly string[], _appConfig: AppConfig) => {
   if (attribute === "model" && values.length === 1) {
     const model = values[0];
@@ -76,7 +76,7 @@ export const getInventoryUrlByRange = (attribute: string, range: string, _appCon
   if (!keys) return "/inventory";
   const [low = "", high = ""] = range.split(":", 2);
   const query = [low && `${keys[0]}=${encodeURIComponent(low)}`, high && `${keys[1]}=${encodeURIComponent(high)}`].filter(Boolean).join("&");
-  return query ? `/inventory/${query}` : "/inventory";
+  return query ? `/inventory?${query}` : "/inventory";
 };
 
 export function isVehicleDetailSlug(slug: string[] | undefined | null): boolean {
