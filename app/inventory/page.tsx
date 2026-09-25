@@ -1308,12 +1308,6 @@ const PriceRangeFilter = () => {
   const [selectedMin, setSelectedMin] = useState(dynamicMin);
   const [selectedMax, setSelectedMax] = useState(dynamicMax);
 
-  useEffect(() => {
-    if (range.min !== undefined || range.max !== undefined) {
-      registerRangeBounds("selling_price", range.min, range.max);
-    }
-  }, [range.min, range.max]);
-
   // ── Track if the user is actively dragging a slider track ──
   const isDragging = useRef(false);
   // ── Track the previous committed start values to detect real changes ──
@@ -1350,12 +1344,10 @@ const PriceRangeFilter = () => {
     const minValue = minInput !== "" ? Math.max(Number(minInput), dynamicMin) : dynamicMin;
     const maxValue = maxInput !== "" ? Math.min(Number(maxInput), dynamicMax) : dynamicMax;
 
-    if (minInput === "" && maxInput === "") {
-      refine([undefined, undefined]);
-      return;
-    }
-
-    refine([minValue, maxValue]);
+    refine([
+      minValue > dynamicMin ? minValue : undefined,
+      maxValue < dynamicMax ? maxValue : undefined,
+    ]);
   };
 
   const handleInputChange = (type: "min" | "max", value: string) => {
@@ -1378,7 +1370,10 @@ const PriceRangeFilter = () => {
   // Shared completion function when releasing handles
   const handleCommitChange = (currentMin: number, currentMax: number) => {
     isDragging.current = false;
-    refine([currentMin, currentMax]);
+    refine([
+      currentMin > dynamicMin ? currentMin : undefined,
+      currentMax < dynamicMax ? currentMax : undefined,
+    ]);
   };
 
   return (
@@ -1405,7 +1400,15 @@ const PriceRangeFilter = () => {
           onChange={(e) => handleInputChange("max", e.target.value)}
           onBlur={handleApply}
           onKeyDown={handleKeyDown}
-          className="w-full h-[40px] px-3 border border-border-lightGray rounded-[6px] text-[16px] lg:text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+          className="w-full h-[40px] px-3 border border-border-lightGray rounded-[6px] text-[14px] font-medium outline-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+        <button
+          type="button"
+          onClick={handleApply}
+          className="h-[40px] px-4 shrink-0 text-white rounded-[6px] cursor-pointer bg-brand text-[14px] font-bold"
+        >
+          Go
+        </button>
       </div>
 
       {/* Slider Bars Track */}
@@ -1464,7 +1467,6 @@ const PriceRangeFilter = () => {
     </div>
   );
 };
-
 
 const OdometerRangeFilter = () => {
   const { start, range, refine } = useRange({ attribute: "odometer" });
