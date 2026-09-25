@@ -609,7 +609,39 @@ const GroupedCurrentRefinements = () => {
       return;
     }
 
-    refine(refinement);
+    const targetNorm = (category.attribute === "year" ? refinement.label : formatFacetLabel(refinement.label))
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
+
+    setIndexUiState((prevIndexUiState) => {
+      const currentRefinementList = prevIndexUiState.refinementList || {};
+      const currentValues = (currentRefinementList[category.attribute] || []).map(String);
+      const nextValues = currentValues.filter((v) => {
+        const vNorm = (category.attribute === "year" ? v : formatFacetLabel(v))
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "");
+        return (
+          vNorm !== targetNorm &&
+          v !== String(refinement.value) &&
+          v.toLowerCase() !== refinement.label.toLowerCase()
+        );
+      });
+
+      const nextRefinementList: Record<string, string[]> = {
+        ...currentRefinementList,
+      };
+      if (nextValues.length > 0) {
+        nextRefinementList[category.attribute] = nextValues;
+      } else {
+        delete nextRefinementList[category.attribute];
+      }
+
+      return {
+        ...prevIndexUiState,
+        page: 1,
+        refinementList: nextRefinementList,
+      };
+    });
   };
 
   return (
@@ -659,6 +691,14 @@ type RefinementItem = {
   isRefined: boolean;
 };
 
+type StableItem = {
+  label: string;
+  value: string;
+  count: number;
+  isRefined: boolean;
+  allValues: string[];
+};
+
 const StableRefinementList = ({
   attribute,
   sortBy,
@@ -668,20 +708,19 @@ const StableRefinementList = ({
   sortBy?: readonly string[];
   limit?: number;
 }) => {
-  const { items, refine } = useRefinementList({
+  const { items } = useRefinementList({
     attribute,
     limit,
     sortBy: sortBy as any,
   });
+  const { items: currentRefinements } = useCurrentRefinements();
+  const { setIndexUiState } = useInstantSearch();
 
   // Cache every item we've ever seen so they don't vanish when a price
   // filter narrows the result set.
-  // Key is the EXACT value from Typesense (case-sensitive) so refine() works correctly.
   const seenItemsRef = useRef<Map<string, RefinementItem>>(new Map());
 
   // Merge latest items into the cache.
-  // Never overwrite a previously non-zero count with 0 — that happens when a
-  // price/range filter narrows results and Typesense drops facet values entirely.
   items.forEach((item) => {
     const key = String(item.value);
     const existing = seenItemsRef.current.get(key);
@@ -693,15 +732,23 @@ const StableRefinementList = ({
     });
   });
 
+  const refinedValues = useMemo(() => {
+    const attrCategory = currentRefinements.find(
+      (category) => category.attribute === attribute
+    );
+    return new Set(
+      attrCategory?.refinements.map((refinement) => String(refinement.value)) ?? []
+    );
+  }, [currentRefinements, attribute]);
+
   const liveValues = new Map(items.map((i) => [String(i.value), i]));
 
   // Deduplicate by normalised label so variants like "Black"/"BLACK" or
   // "Pickup Truck"/"Pickup-Truck" collapse into one row.
-  // Normalise: lowercase + strip all non-alphanumeric characters.
-  const normalizedMap = new Map<string, RefinementItem>();
+  const normalizedMap = new Map<string, StableItem>();
   Array.from(seenItemsRef.current.values()).forEach((cached) => {
     const live = liveValues.get(cached.value);
-    const resolved: RefinementItem = live
+    const resolved = live
       ? {
         label: live.label,
         value: String(live.value),
@@ -710,28 +757,38 @@ const StableRefinementList = ({
       }
       : { ...cached, isRefined: false };
 
-    // Strip case + all non-alphanumeric chars so "Pickup Truck", "Pickup-Truck",
-    // "PICKUP TRUCK" all collapse to the same key "pickuptruck".
-    const normKey = resolved.label.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+    const formattedLabel = attribute === "year" ? resolved.label : formatFacetLabel(resolved.label);
+    const normKey = formattedLabel.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+
+    const isCurrentlyRefined =
+      Array.from(refinedValues).some((ref) => {
+        const refNorm = (attribute === "year" ? ref : formatFacetLabel(ref))
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "");
+        return (
+          refNorm === normKey ||
+          ref === resolved.value ||
+          ref.toLowerCase() === resolved.label.toLowerCase()
+        );
+      }) || resolved.isRefined;
+
     const existing = normalizedMap.get(normKey);
     if (!existing) {
-      normalizedMap.set(normKey, resolved);
-    } else {
-      // Merge: sum counts, mark refined if either is.
-      // Prefer the label that is NOT all-uppercase; if both are mixed case, keep the longer one.
-      const existingIsAllCaps = existing.label === existing.label.toUpperCase();
-      const resolvedIsAllCaps = resolved.label === resolved.label.toUpperCase();
-      let preferredLabel = existing.label;
-      if (existingIsAllCaps && !resolvedIsAllCaps) preferredLabel = resolved.label;
-      else if (!existingIsAllCaps && resolvedIsAllCaps) preferredLabel = existing.label;
-      else if (resolved.label.length > existing.label.length) preferredLabel = resolved.label;
-
       normalizedMap.set(normKey, {
-        label: preferredLabel,
-        // Keep the value of whichever variant has the higher count so refine() hits the dominant entry.
+        label: formattedLabel,
+        value: resolved.value,
+        count: resolved.count,
+        isRefined: isCurrentlyRefined,
+        allValues: [resolved.value],
+      });
+    } else {
+      normalizedMap.set(normKey, {
+        label: existing.label,
         value: resolved.count >= existing.count ? resolved.value : existing.value,
         count: existing.count + resolved.count,
-        isRefined: existing.isRefined || resolved.isRefined,
+        isRefined: existing.isRefined || isCurrentlyRefined,
+        allValues: Array.from(new Set([...existing.allValues, resolved.value])),
       });
     }
   });
@@ -741,19 +798,73 @@ const StableRefinementList = ({
     return a.label.localeCompare(b.label);
   });
 
+  const handleToggle = (item: StableItem) => {
+    const isCurrentlyRefined = item.isRefined;
+    const targetNorm = (attribute === "year" ? item.label : formatFacetLabel(item.label))
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
+    const toRemove = new Set([item.value, item.label, ...item.allValues]);
+
+    setIndexUiState((prevIndexUiState) => {
+      const currentRefinementList = prevIndexUiState.refinementList || {};
+      const currentValues = (currentRefinementList[attribute] || []).map(String);
+
+      let nextValues: string[];
+      if (isCurrentlyRefined) {
+        nextValues = currentValues.filter((v) => {
+          const vNorm = (attribute === "year" ? v : formatFacetLabel(v))
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "");
+          return (
+            vNorm !== targetNorm &&
+            !toRemove.has(v) &&
+            v.toLowerCase() !== item.label.toLowerCase()
+          );
+        });
+      } else {
+        const filtered = currentValues.filter((v) => {
+          const vNorm = (attribute === "year" ? v : formatFacetLabel(v))
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "");
+          return vNorm !== targetNorm;
+        });
+        const preferredVal = attribute === "year" ? item.label : formatFacetLabel(item.label);
+        nextValues = [...filtered, preferredVal];
+      }
+
+      const nextRefinementList: Record<string, string[]> = {
+        ...currentRefinementList,
+      };
+      if (nextValues.length > 0) {
+        nextRefinementList[attribute] = nextValues;
+      } else {
+        delete nextRefinementList[attribute];
+      }
+
+      return {
+        ...prevIndexUiState,
+        page: 1,
+        refinementList: nextRefinementList,
+      };
+    });
+  };
+
   return (
     <ul className={refinementListClassNames.list}>
       {visibleItems.map((item) => (
-        <li key={item.value}>
+        <li key={item.label}>
           <label className={refinementListClassNames.label}>
             <input
               type="checkbox"
               checked={item.isRefined}
-              onChange={() => refine(item.value)}
+              onChange={() => handleToggle(item)}
               className={refinementListClassNames.checkbox}
             />
             <span className={refinementListClassNames.labelText}>
-              {formatFacetLabel(item.label)}
+              {item.label}
             </span>
             <span className={refinementListClassNames.count}>{item.count}</span>
           </label>

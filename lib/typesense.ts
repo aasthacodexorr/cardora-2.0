@@ -11,6 +11,7 @@ import {
   modelMakeAssociations,
   getModelMakeMap,
   getModelVariants,
+  formatFacetLabel,
 } from "@/lib/inventoryRouting";
 
 /* =========================
@@ -191,38 +192,86 @@ function mergeSearchResults(results: any[], request: any, branchCount: number) {
   };
 }
 
+function getFacetCasingVariants(attribute: string, value: string): string[] {
+  const set = new Set<string>();
+  set.add(value);
+  if (attribute !== "year") {
+    set.add(formatFacetLabel(value));
+    set.add(value.toUpperCase());
+    set.add(value.toLowerCase());
+  }
+  return Array.from(set).filter(Boolean);
+}
+
 function expandFacetFiltersWithModelVariants(
   facetFilters: FacetFilterEntry[] | undefined
 ): FacetFilterEntry[] | undefined {
   if (!facetFilters || !Array.isArray(facetFilters)) return facetFilters;
   return facetFilters.map((entry) => {
     if (typeof entry === "string") {
-      if (entry.startsWith("model:")) {
-        const val = normalizeFacetValue(entry.slice("model:".length));
-        const variants = getModelVariants(val);
-        if (variants.length > 1) {
-          return variants.map((v) => `model:${v}`);
+      const colonIdx = entry.indexOf(":");
+      if (colonIdx > 0) {
+        const attr = entry.slice(0, colonIdx);
+        const rawVal = normalizeFacetValue(entry.slice(colonIdx + 1));
+        if (attr === "model") {
+          const variants = getModelVariants(rawVal);
+          if (variants.length > 1) {
+            return variants.map((v) => `model:${v}`);
+          }
+        } else if (
+          attr === "exterior_color" ||
+          attr === "body_type" ||
+          attr === "transmission" ||
+          attr === "fuel_type" ||
+          attr === "vehicle_type" ||
+          attr === "location"
+        ) {
+          const variants = getFacetCasingVariants(attr, rawVal);
+          if (variants.length > 1) {
+            return variants.map((v) => `${attr}:${v}`);
+          }
         }
       }
       return entry;
     }
     if (Array.isArray(entry)) {
       const expanded: string[] = [];
-      let hadModel = false;
+      let modified = false;
       entry.forEach((item) => {
-        if (typeof item === "string" && item.startsWith("model:")) {
-          hadModel = true;
-          const val = normalizeFacetValue(item.slice("model:".length));
-          const variants = getModelVariants(val);
-          variants.forEach((v) => {
-            const f = `model:${v}`;
-            if (!expanded.includes(f)) expanded.push(f);
-          });
-        } else {
-          expanded.push(item);
+        if (typeof item === "string") {
+          const colonIdx = item.indexOf(":");
+          if (colonIdx > 0) {
+            const attr = item.slice(0, colonIdx);
+            const rawVal = normalizeFacetValue(item.slice(colonIdx + 1));
+            if (attr === "model") {
+              modified = true;
+              const variants = getModelVariants(rawVal);
+              variants.forEach((v) => {
+                const f = `model:${v}`;
+                if (!expanded.includes(f)) expanded.push(f);
+              });
+              return;
+            } else if (
+              attr === "exterior_color" ||
+              attr === "body_type" ||
+              attr === "transmission" ||
+              attr === "fuel_type" ||
+              attr === "vehicle_type" ||
+              attr === "location"
+            ) {
+              modified = true;
+              const variants = getFacetCasingVariants(attr, rawVal);
+              variants.forEach((v) => {
+                const f = `${attr}:${v}`;
+                if (!expanded.includes(f)) expanded.push(f);
+              });
+              return;
+            }
+          }
         }
+        expanded.push(item);
       });
-      return hadModel ? expanded : entry;
+      return modified ? expanded : entry;
     }
     return entry;
   });
