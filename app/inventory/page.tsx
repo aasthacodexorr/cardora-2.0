@@ -44,6 +44,7 @@ import {
   registerFacetValues,
   formatFacetLabel,
   getMakeForModel,
+  registerRangeBounds,
 } from "@/lib/inventoryRouting";
 import { useAppConfig } from "@/app/providers";
 import { InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "@/components/inventory/HitCardSkeleton";
@@ -1307,6 +1308,12 @@ const PriceRangeFilter = () => {
   const [selectedMin, setSelectedMin] = useState(dynamicMin);
   const [selectedMax, setSelectedMax] = useState(dynamicMax);
 
+  useEffect(() => {
+    if (range.min !== undefined || range.max !== undefined) {
+      registerRangeBounds("selling_price", range.min, range.max);
+    }
+  }, [range.min, range.max]);
+
   // ── Track if the user is actively dragging a slider track ──
   const isDragging = useRef(false);
   // ── Track the previous committed start values to detect real changes ──
@@ -1343,10 +1350,12 @@ const PriceRangeFilter = () => {
     const minValue = minInput !== "" ? Math.max(Number(minInput), dynamicMin) : dynamicMin;
     const maxValue = maxInput !== "" ? Math.min(Number(maxInput), dynamicMax) : dynamicMax;
 
-    refine([
-      minValue > dynamicMin ? minValue : undefined,
-      maxValue < dynamicMax ? maxValue : undefined,
-    ]);
+    if (minInput === "" && maxInput === "") {
+      refine([undefined, undefined]);
+      return;
+    }
+
+    refine([minValue, maxValue]);
   };
 
   const handleInputChange = (type: "min" | "max", value: string) => {
@@ -1369,10 +1378,7 @@ const PriceRangeFilter = () => {
   // Shared completion function when releasing handles
   const handleCommitChange = (currentMin: number, currentMax: number) => {
     isDragging.current = false;
-    refine([
-      currentMin > dynamicMin ? currentMin : undefined,
-      currentMax < dynamicMax ? currentMax : undefined,
-    ]);
+    refine([currentMin, currentMax]);
   };
 
   return (
@@ -1473,6 +1479,12 @@ const OdometerRangeFilter = () => {
   const dynamicMin = toFiniteNumber(range.min, 0);
   const dynamicMax = toFiniteNumber(range.max, Infinity);
 
+  useEffect(() => {
+    if (range.min !== undefined || range.max !== undefined) {
+      registerRangeBounds("odometer", Number.isFinite(range.min) ? range.min : 0, Number.isFinite(range.max) ? range.max : undefined);
+    }
+  }, [range.min, range.max]);
+
   // Sync local fields to a real, committed InstantSearch refinement.
   useEffect(() => {
     const startMin = typeof start?.[0] === "number" && Number.isFinite(start[0]) ? start[0] : undefined;
@@ -1486,24 +1498,22 @@ const OdometerRangeFilter = () => {
     setMax(startMax === undefined ? "" : String(startMax));
   }, [start]);
 
-  // One-time autofill: show the real min/max from Typesense as the default
-  // display value when nothing is committed yet and the user hasn't typed.
-  useEffect(() => {
-    const hasCommittedFilter = prevStartRef.current[0] !== undefined || prevStartRef.current[1] !== undefined;
-    if (hasCommittedFilter) return;
-    if (!Number.isFinite(range.min) || !Number.isFinite(range.max)) return;
-    if (min !== "" || max !== "") return;
 
-    setMin(String(range.min));
-    setMax(String(range.max));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [range.min, range.max]);
 
   const handleApply = () => {
     setError("");
 
-    const minValue = min !== "" ? Math.max(Number(min), dynamicMin) : undefined;
-    const maxValue = max !== "" ? Math.min(Number(max), dynamicMax) : undefined;
+    const hasMinInput = min !== "";
+    const hasMaxInput = max !== "";
+
+    if (!hasMinInput && !hasMaxInput) {
+      prevStartRef.current = [undefined, undefined];
+      refine([undefined, undefined]);
+      return;
+    }
+
+    const minValue = hasMinInput ? Math.max(Number(min), dynamicMin) : undefined;
+    const maxValue = hasMaxInput ? Math.min(Number(max), dynamicMax) : undefined;
 
     if (minValue !== undefined && maxValue !== undefined && minValue > maxValue) {
       setError("Minimum odometer cannot be greater than maximum odometer");

@@ -429,6 +429,23 @@ export const RANGE_KEYS: Record<string, readonly [string, string]> = {
   odometer: ["odometerLow", "odometerHigh"],
 };
 
+export const DYNAMIC_RANGE_BOUNDS: Record<string, { min?: number; max?: number }> = {
+  selling_price: { min: 0, max: 100000 },
+  odometer: { min: 0, max: 200000 },
+};
+
+export function registerRangeBounds(attribute: string, min?: number, max?: number) {
+  if (!DYNAMIC_RANGE_BOUNDS[attribute]) {
+    DYNAMIC_RANGE_BOUNDS[attribute] = {};
+  }
+  if (min !== undefined && Number.isFinite(min)) {
+    DYNAMIC_RANGE_BOUNDS[attribute].min = min;
+  }
+  if (max !== undefined && Number.isFinite(max)) {
+    DYNAMIC_RANGE_BOUNDS[attribute].max = max;
+  }
+}
+
  
 const PUBLIC_SORT_FIELDS: Record<string, string> = {
   selling_price: "price",
@@ -878,117 +895,42 @@ export function serializePublicUrl(route: PlainObject) {
 
   // Standalone makes are makes with NO models selected
   const standaloneMakes = allSelectedMakes.filter((make) => !makesWithModels.has(make));
-
-  const otherFacetAttributes = [
-    "year",
-    "exterior_color",
-    "body_type",
-    "vehicle_type",
-    "fuel_type",
-    "transmission",
-    "location",
-  ] as const;
-
   const totalMakesCount = makesWithModels.size + standaloneMakes.length;
-  const hasMultiMakeOrModel = totalMakesCount > 1 || validModels.length > 1;
-  const hasMultiOtherFacets = otherFacetAttributes.some(
-    (attr) => (refinementList[attr] || []).length > 1
-  );
 
-  const isMultiSelect = hasMultiMakeOrModel || hasMultiOtherFacets;
+  const pathSegments: string[] = [];
+  const queryParams: string[] = [];
 
-  const hasRanges = Object.keys(RANGE_KEYS).some((attr) => {
-    const [low, high] = getRangeBounds(route.range?.[attr]);
-    return (low !== undefined && low !== "") || (high !== undefined && high !== "");
-  });
-  const hasQuery = Boolean(route.query);
-  const sort = getPublicSort(route.sortBy);
-  const hasSort = Boolean(sort);
-
-  const appendRange = (attribute: keyof typeof RANGE_KEYS, index: 0 | 1, targetParams: string[]) => {
-    const [low, high] = getRangeBounds(route.range?.[attribute]);
-    const value = index === 0 ? low : high;
-    if (value !== undefined && value !== "") {
-      targetParams.push(`${RANGE_KEYS[attribute][index]}=${encodeURIComponent(String(value))}`);
-    }
-  };
-
-  // If there are NO multi-selections and NO ranges/query/sort, format as clean path segments:
-  // e.g. /inventory/Ram/1500/Blue or /inventory/Audi or /inventory/Sedan
-  if (!isMultiSelect && !hasRanges && !hasQuery && !hasSort) {
-    const pathSegments: string[] = [];
-
-    // 1. Make and Model: e.g. /inventory/Audi or /inventory/Ford/F-150 or /inventory/Audi/A4
-    if (allSelectedMakes.length === 1 && validModels.length === 1) {
-      pathSegments.push(queryValue(allSelectedMakes[0]));
-      pathSegments.push(modelToQueryValue(validModels[0]));
-    } else if (allSelectedMakes.length === 1 && validModels.length === 0) {
-      pathSegments.push(queryValue(allSelectedMakes[0]));
-    } else if (allSelectedMakes.length === 0 && validModels.length === 1) {
-      pathSegments.push(modelToQueryValue(validModels[0]));
-    }
-
-    // 2. Year:
-    if ((refinementList.year || []).length === 1) {
-      pathSegments.push(queryValue(refinementList.year[0]));
-    }
-
-    // 3. Exterior Color:
-    if ((refinementList.exterior_color || []).length === 1) {
-      pathSegments.push(queryValue(refinementList.exterior_color[0]));
-    }
-
-    // 4. Body Type:
-    if ((refinementList.body_type || []).length === 1) {
-      pathSegments.push(queryValue(refinementList.body_type[0]));
-    }
-
-    // 5. Vehicle Type:
-    if ((refinementList.vehicle_type || []).length === 1) {
-      pathSegments.push(queryValue(refinementList.vehicle_type[0]));
-    }
-
-    // 6. Fuel Type:
-    if ((refinementList.fuel_type || []).length === 1) {
-      pathSegments.push(queryValue(refinementList.fuel_type[0]));
-    }
-
-    // 7. Transmission:
-    if ((refinementList.transmission || []).length === 1) {
-      pathSegments.push(queryValue(refinementList.transmission[0]));
-    }
-
-    // 8. Location:
-    if ((refinementList.location || []).length === 1) {
-      pathSegments.push(queryValue(refinementList.location[0]));
-    }
-
-    return pathSegments.length ? `/inventory/${pathSegments.join("/")}` : "/inventory";
-  }
-
-  // Multi-select or parameters mode: serialized starting with /inventory/
-  // Rule: Only add the key for fields that have MORE THAN ONE value.
-  // Single-value fields should be UNKEYED.
-  let makePrefix = "";
-  const params: string[] = [];
-
-  // 1. Make & Model
+  // 1. Makes & Models
   if (totalMakesCount === 1 && validModels.length === 1) {
-    // Exactly 1 make + 1 model -> Make as path prefix, model as unkeyed parameter
+    // Single make + Single model -> both in path
     const make = getMakeForModel(validModels[0]) || allSelectedMakes[0];
     if (make) {
-      makePrefix = queryValue(make);
-      params.push(modelToQueryValue(validModels[0]));
+      pathSegments.push(queryValue(make));
+      pathSegments.push(modelToQueryValue(validModels[0]));
     } else {
-      params.push(modelToQueryValue(validModels[0]));
+      pathSegments.push(modelToQueryValue(validModels[0]));
     }
   } else if (totalMakesCount === 1 && validModels.length === 0 && standaloneMakes.length === 1) {
-    // Exactly 1 make, no model -> single value -> unkeyed Make (e.g. Ram or Audi)
-    params.push(queryValue(standaloneMakes[0]));
+    // Single make, no models -> make in path
+    pathSegments.push(queryValue(standaloneMakes[0]));
+  } else if (totalMakesCount === 0 && validModels.length === 1) {
+    // No make selected, but 1 valid model -> model in path
+    const make = getMakeForModel(validModels[0]);
+    if (make) {
+      pathSegments.push(queryValue(make));
+    }
+    pathSegments.push(modelToQueryValue(validModels[0]));
+  } else if (totalMakesCount === 1 && standaloneMakes.length === 0 && makesWithModels.size === 1 && validModels.length > 1) {
+    // Exactly 1 make with multiple models of only that make -> make in path, models in query
+    const onlyMake = Array.from(makesWithModels)[0];
+    pathSegments.push(queryValue(onlyMake));
+
+    const modelTokens = validModels.map(modelToQueryValue).join(",");
+    queryParams.push(`${FILTER_KEYS.model}=${queryValue(onlyMake)}:${modelTokens}`);
   } else {
-    // Multiple makes or multiple models -> KEYED
+    // Multiple makes or models across multiple makes -> ALL go to query params
     if (standaloneMakes.length > 0) {
-      params.push(`${FILTER_KEYS.make}=${standaloneMakes.map(queryValue).join(",")}`);
+      queryParams.push(`${FILTER_KEYS.make}=${standaloneMakes.map(queryValue).join(",")}`);
     }
 
     if (validModels.length > 0) {
@@ -1014,49 +956,67 @@ export function serializePublicUrl(route: PlainObject) {
         modelTokens.push(modelToQueryValue(model));
       });
 
-      params.push(`${FILTER_KEYS.model}=${modelTokens.join(",")}`);
+      queryParams.push(`${FILTER_KEYS.model}=${modelTokens.join(",")}`);
     }
   }
 
-  // Helper for other facet attributes:
-  // If 1 value -> UNKEYED (e.g. Blue, 2026, Sedan)
-  // If > 1 values -> KEYED (e.g. colors=Blue,BRILLIANT-RED, year=2026,2025)
-  const appendFacet = (attribute: string) => {
-    const values: string[] = refinementList[attribute] || [];
+  // 2. Other facet attributes:
+  // year, exterior_color, body_type, vehicle_type, fuel_type, transmission, location
+  const otherFacetAttributes = [
+    "year",
+    "exterior_color",
+    "body_type",
+    "vehicle_type",
+    "fuel_type",
+    "transmission",
+    "location",
+  ] as const;
+
+  otherFacetAttributes.forEach((attr) => {
+    const values: string[] = refinementList[attr] || [];
     if (!values.length) return;
     if (values.length === 1) {
-      params.push(queryValue(values[0]));
+      // Single value -> add to PATH before '?'
+      pathSegments.push(queryValue(values[0]));
     } else {
+      // Multi value -> add to QUERY PARAMS after '?'
       const serializedValues = values.map(queryValue);
-      params.push(`${FILTER_KEYS[attribute]}=${serializedValues.join(",")}`);
+      queryParams.push(`${FILTER_KEYS[attr]}=${serializedValues.join(",")}`);
     }
-  };
+  });
 
-  appendFacet("year");
-  appendRange("selling_price", 0, params);   // priceLow
-  appendFacet("location");
-  appendFacet("exterior_color");
-  appendFacet("body_type");
-  appendFacet("transmission");
-  appendFacet("fuel_type");
-  appendRange("odometer", 0, params);        // odometerLow
-  appendFacet("vehicle_type");
-  appendRange("selling_price", 1, params);   // priceHigh
-  appendRange("odometer", 1, params);        // odometerHigh
+  // 3. Ranges (price, odometer) -> query params
+  const [rawPriceLow, rawPriceHigh] = getRangeBounds(route.range?.selling_price);
+  if (rawPriceLow !== undefined && rawPriceLow !== "") {
+    queryParams.push(`priceLow=${encodeURIComponent(String(rawPriceLow))}`);
+  }
+  if (rawPriceHigh !== undefined && rawPriceHigh !== "") {
+    queryParams.push(`priceHigh=${encodeURIComponent(String(rawPriceHigh))}`);
+  }
 
-  if (route.query) params.push(`q=${encodeURIComponent(route.query)}`);
+  const [rawOdoLow, rawOdoHigh] = getRangeBounds(route.range?.odometer);
+  if (rawOdoLow !== undefined && rawOdoLow !== "") {
+    queryParams.push(`odometerLow=${encodeURIComponent(String(rawOdoLow))}`);
+  }
+  if (rawOdoHigh !== undefined && rawOdoHigh !== "") {
+    queryParams.push(`odometerHigh=${encodeURIComponent(String(rawOdoHigh))}`);
+  }
+
+  // 4. Search query q -> query params
+  if (route.query) {
+    queryParams.push(`q=${encodeURIComponent(route.query)}`);
+  }
+
+  // 5. Sorting -> query params
+  const sort = getPublicSort(route.sortBy);
   if (sort) {
-    params.push(`sortBy=status_rank:asc,${sort.field}:${sort.direction.toLowerCase()}`);
+    queryParams.push(`sortBy=status_rank:asc,${sort.field}:${sort.direction.toLowerCase()}`);
   }
 
-  const queryPart = params.join("&");
-  if (makePrefix && queryPart) {
-    return `/inventory/${makePrefix}/${queryPart}`;
-  }
-  if (makePrefix) {
-    return `/inventory/${makePrefix}`;
-  }
-  return queryPart ? `/inventory/${queryPart}` : "/inventory";
+  const basePath = pathSegments.length ? `/inventory/${pathSegments.join("/")}` : "/inventory";
+  const queryString = queryParams.length ? `?${queryParams.join("&")}` : "";
+
+  return `${basePath}${queryString}`;
 }
 
 export function readRouteState(): PlainObject {

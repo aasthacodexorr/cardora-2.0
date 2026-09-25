@@ -24,7 +24,10 @@ const VehicleCategoryGrid = () => {
   ];
 
   const handleCategoryClick = (bodyTypes: string[]) => {
-    const vehicleUrl = `/inventory/bodyStyles=${encodeURIComponent(bodyTypes.join(","))}`;
+    const vehicleUrl =
+      bodyTypes.length === 1
+        ? `/inventory/${encodeURIComponent(bodyTypes[0])}`
+        : `/inventory?bodyStyles=${encodeURIComponent(bodyTypes.join(","))}`;
     router.push(setQueryParams(vehicleUrl));
   };
 
