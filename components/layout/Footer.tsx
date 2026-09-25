@@ -73,8 +73,8 @@ const Footer = () => {
         { label: "Payment Calculator", href: "/payment-calculator", external: false },
         { label: "Skip the Dealership", href: "/skip-the-dealership", external: false },
         { label: "About Us", href: "/about-us", external: false },
+        { label: "Cardora Quality", href: "/cardora-quality", external: false },
         { label: "Contact Us", href: "/contact-us", external: false },
-        // { label: "Cardora Quality", href: "/cardora-quality", external: false },
       ],
     },
     {
