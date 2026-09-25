@@ -582,12 +582,12 @@ const BASELINE_FACET_VALUES: Record<string, string[]> = {
     "HEV", "Hybrid Gas/Electric", "PHEV", "BEV", "Hybrid"
   ],
   exterior_color: [
-    "Black", "White", "Grey", "ONYX BLACK", "Silver", "SUMMIT WHITE", "Red", "Blue",
-    "Gray", "MOONSTONE GRAY", "Green", "Orange", "WHITE FROST TRICOAT",
-    "EBONY TWILIGHT METALLIC", "DARK GREEN", "WHITE DIAMOND", "BRILLIANT RED",
-    "GALAXY SILVER M", "QUICKSILVER MET", "THUNDERSTORM GREY", "STERLING METALLIC",
-    "SUMMIT WHITE, EBONY", "CRIMSON RED TIN, JET", "TITANIUM RUSH METALLIC",
-    "MOONSTONE GRAY METALLIC"
+    "Black", "White", "Grey", "Onyx Black", "Silver", "Summit White", "Red", "Blue",
+    "Gray", "Moonstone Gray", "Green", "Orange", "White Frost Tricoat",
+    "Ebony Twilight Metallic", "Dark Green", "White Diamond", "Brilliant Red",
+    "Galaxy Silver M", "Quicksilver Met", "Thunderstorm Grey", "Sterling Metallic",
+    "Summit White, Ebony", "Crimson Red Tin, Jet", "Titanium Rush Metallic",
+    "Moonstone Gray Metallic"
   ],
 };
 
@@ -608,21 +608,26 @@ function initFacetRegistry(attribute: string, values: Iterable<string>) {
     };
   }
   const reg = FACET_REGISTRIES[attribute];
-  for (const v of values) {
-    if (!v) continue;
-    reg.exact.add(v);
-    const lower = v.toLowerCase();
-    if (!reg.byLower.has(lower)) {
-      reg.byLower.set(lower, v);
-    }
+  for (const rawV of values) {
+    if (!rawV) continue;
+    const formatted = attribute === "year" ? rawV : formatFacetLabel(rawV);
+    reg.exact.add(rawV);
+    reg.exact.add(formatted);
+    const lower = rawV.toLowerCase();
+    const formattedLower = formatted.toLowerCase();
+
+    reg.byLower.set(lower, formatted);
+    reg.byLower.set(formattedLower, formatted);
+
     const slug = lower.replace(/\s+/g, "-");
-    if (!reg.bySlug.has(slug)) {
-      reg.bySlug.set(slug, v);
-    }
+    reg.bySlug.set(slug, formatted);
+    const formattedSlug = formattedLower.replace(/\s+/g, "-");
+    reg.bySlug.set(formattedSlug, formatted);
+
     const unhyphenated = lower.replace(/-/g, " ");
-    if (!reg.bySlug.has(unhyphenated)) {
-      reg.bySlug.set(unhyphenated, v);
-    }
+    reg.bySlug.set(unhyphenated, formatted);
+    const formattedUnhyphenated = formattedLower.replace(/-/g, " ");
+    reg.bySlug.set(formattedUnhyphenated, formatted);
   }
 }
 
@@ -656,25 +661,25 @@ export function parseNamedQueryValue(value: string, attribute?: string): string 
 
   const reg = attribute ? FACET_REGISTRIES[attribute] : undefined;
   if (reg) {
-    if (reg.exact.has(decoded)) return decoded;
     const lower = decoded.toLowerCase();
     if (reg.byLower.has(lower)) return reg.byLower.get(lower)!;
     if (reg.bySlug.has(lower)) return reg.bySlug.get(lower)!;
     const withSpaces = lower.replace(/-/g, " ");
     if (reg.byLower.has(withSpaces)) return reg.byLower.get(withSpaces)!;
     if (reg.bySlug.has(withSpaces)) return reg.bySlug.get(withSpaces)!;
+    if (reg.exact.has(decoded)) return attribute === "year" ? decoded : formatFacetLabel(decoded);
   }
 
   // If attribute wasn't specified, check all registries
   if (!attribute) {
     for (const registry of Object.values(FACET_REGISTRIES)) {
-      if (registry.exact.has(decoded)) return decoded;
       const lower = decoded.toLowerCase();
       if (registry.byLower.has(lower)) return registry.byLower.get(lower)!;
       if (registry.bySlug.has(lower)) return registry.bySlug.get(lower)!;
       const withSpaces = lower.replace(/-/g, " ");
       if (registry.byLower.has(withSpaces)) return registry.byLower.get(withSpaces)!;
       if (registry.bySlug.has(withSpaces)) return registry.bySlug.get(withSpaces)!;
+      if (registry.exact.has(decoded)) return formatFacetLabel(decoded);
     }
   }
 
@@ -684,7 +689,8 @@ export function parseNamedQueryValue(value: string, attribute?: string): string 
   }
 
   // Fallback: convert hyphens back to spaces
-  return decoded.replace(/-/g, " ");
+  const unhyphenated = decoded.replace(/-/g, " ");
+  return attribute === "year" ? unhyphenated : formatFacetLabel(unhyphenated);
 }
 
 function setRefinement(refinementList: PlainObject, attribute: string, value: string) {
@@ -975,12 +981,13 @@ export function serializePublicUrl(route: PlainObject) {
   otherFacetAttributes.forEach((attr) => {
     const values: string[] = refinementList[attr] || [];
     if (!values.length) return;
-    if (values.length === 1) {
+    const formattedValues = values.map((v) => (attr === "year" ? v : formatFacetLabel(v)));
+    if (formattedValues.length === 1) {
       // Single value -> add to PATH before '?'
-      pathSegments.push(queryValue(values[0]));
+      pathSegments.push(queryValue(formattedValues[0]));
     } else {
       // Multi value -> add to QUERY PARAMS after '?'
-      const serializedValues = values.map(queryValue);
+      const serializedValues = formattedValues.map(queryValue);
       queryParams.push(`${FILTER_KEYS[attr]}=${serializedValues.join(",")}`);
     }
   });
@@ -1291,6 +1298,22 @@ export const createInventoryStateMapping = (config: AppConfig) => {
 
   const sanitizeRefinementList = (rawRefinementList: PlainObject) => {
     const refinementList = { ...rawRefinementList };
+    Object.keys(refinementList).forEach((attr) => {
+      if (Array.isArray(refinementList[attr])) {
+        const seenNorms = new Set<string>();
+        const deduped: string[] = [];
+        refinementList[attr].forEach((item: string) => {
+          const formatted = attr === "year" ? String(item) : formatFacetLabel(String(item));
+          const norm = formatted.toLowerCase().replace(/[^a-z0-9]/g, "");
+          if (!seenNorms.has(norm)) {
+            seenNorms.add(norm);
+            deduped.push(formatted);
+          }
+        });
+        refinementList[attr] = deduped;
+      }
+    });
+
     const selectedMakes = new Set<string>(
       (refinementList.make || []).map((m: string) => m.toLowerCase())
     );
