@@ -30,6 +30,8 @@ function getFrameUrl(index: number, portrait = false) {
   if (portrait) return `https://ik.imagekit.io/c1dpz1c7j/Portrait_Media/seq_${seqNum}.webp`;
   // Desktop frames 1–70 use the updated renders at the ImageKit root
   if (frameNumber <= 70) return `https://ik.imagekit.io/c1dpz1c7j/seq_${seqNum}.webp`;
+  // Desktop frames 536–643 have the Cardora logo moved down so it clears the header
+  if (frameNumber >= 536 && frameNumber <= 643) return `https://ik.imagekit.io/c1dpz1c7j/fixed%20frames/seq_${seqNum}.webp`;
   // Complete, fully edited landscape (desktop) sequence on ImageKit
   return `https://ik.imagekit.io/c1dpz1c7j/desktop_media/seq_${seqNum}.webp`;
 }
