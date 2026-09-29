@@ -982,7 +982,7 @@ export default function CardoraQualityPage() {
           {/* Row 1 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Top Left: Video / Large Hero Card */}
-            <div className="relative rounded-3xl overflow-hidden bg-neutral-900 flex flex-col justify-end p-8 md:p-10 min-h-[400px] md:min-h-full">
+            <div className="relative rounded-3xl overflow-hidden bg-neutral-900 flex flex-col justify-end p-8 md:p-10 min-h-[440px] md:min-h-full">
               <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[16/12] lg:aspect-[16/9]">
                 <video
                   src={CARDORA_VIDEO_CDN}
@@ -1008,7 +1008,7 @@ export default function CardoraQualityPage() {
             </div>
 
             {/* Top Right: Diagonal Cut Image Card */}
-            <div className="relative rounded-3xl overflow-hidden bg-white border border-black/[0.06] flex flex-col">
+            <div className="relative rounded-3xl overflow-hidden bg-white   min-h-[400px] md:min-h-full border border-black/[0.06] flex flex-col">
               {/* Angled Image Header */}
               <div className="relative h-64 md:h-[600px] overflow-hidden [clip-path:polygon(0_0,_100%_0,_100%_78%,_0_100%)]">
                 <Image
