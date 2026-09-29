@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import q1 from "@/assets/cars/quality-1.webp";
-import q2 from "@/assets/cars/quality-2.webp";
+import q1 from "@/assets/cars/quality-1.png";
+import q2 from "@/assets/cars/quality-2.png";
 import q3 from "@/assets/cars/quality-3.webp";
 
 const CARDORA_VIDEO_CDN =
@@ -160,6 +160,7 @@ export default function CardoraQualityPage() {
   const [showReconditioned, setShowReconditioned] = useState(false);
   const [showFinishingTouches, setShowFinishingTouches] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [showQualitySection, setShowQualitySection] = useState(false);
 
   // Master frame cache & dynamic top boundary colors
   const framesRef = useRef<(HTMLImageElement | null)[]>([]);
@@ -350,6 +351,8 @@ export default function CardoraQualityPage() {
     let lastShowReconditioned = false;
     let lastShowFinishingTouches = false;
     let lastStep = 0;
+    let qualityRevealTimer: ReturnType<typeof setTimeout> | null = null;
+    let qualityRevealStarted = false;
 
     // Track previously drawn frame, canvas dimensions and topColor to prevent unnecessary canvas repainting
     let lastDrawnImg: HTMLImageElement | null = null;
@@ -412,6 +415,27 @@ export default function CardoraQualityPage() {
       if (step !== lastStep) {
         lastStep = step;
         setCurrentStep(step);
+      }
+
+      // Wait until the final animation breakpoint is reached, then delay
+      // the final section reveal by 1 second. If the user scrolls back before
+      // the delay finishes, cancel the pending reveal.
+      if (step >= 5 && !qualityRevealStarted && !qualityRevealTimer) {
+        qualityRevealTimer = setTimeout(() => {
+          qualityRevealStarted = true;
+          setShowQualitySection(true);
+          qualityRevealTimer = null;
+        }, 1000);
+      } else if (step < 5) {
+        if (qualityRevealTimer) {
+          clearTimeout(qualityRevealTimer);
+          qualityRevealTimer = null;
+        }
+
+        if (qualityRevealStarted) {
+          qualityRevealStarted = false;
+          setShowQualitySection(false);
+        }
       }
 
       if (isHeroActive !== lastShowHero) {
@@ -572,6 +596,9 @@ export default function CardoraQualityPage() {
 
     return () => {
       cancelAnimationFrame(animFrameId);
+      if (qualityRevealTimer) {
+        clearTimeout(qualityRevealTimer);
+      }
     };
   }, []);
 
@@ -945,10 +972,13 @@ export default function CardoraQualityPage() {
       </AnimatePresence>
 
       {/* ── CARDORA QUALITY SECTION (FINAL SECTION BEFORE SITE FOOTER) ── */}
-      <section className="relative z-30 bg-[#FAFAF8] text-[#161616] py-10">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
+      {/* Reveal only after reaching the final breakpoint and waiting 1 second. */}
+      <section
+        className={`relative z-40 bg-[#FAFAF8] text-[#161616] py-10 shadow-[0_-18px_50px_rgba(0,0,0,0.12)] transition-[margin] duration-700 ease-out ${showQualitySection ? "-mt-[100vh]" : "mt-0"}`}
+      >
+        <div className="max-w-[1680px] mx-auto px-6 md:px-10 ">
           {/* Row 1 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
             {/* Top Left: Video / Large Hero Card */}
             <div className="relative rounded-3xl overflow-hidden bg-neutral-900 flex flex-col justify-end p-8 md:p-10">
               <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center">
@@ -967,7 +997,7 @@ export default function CardoraQualityPage() {
                 </h2>
                 <button
                   onClick={() => setIsTourModalOpen(true)}
-                  className="bg-[#ff2a5f] hover:bg-[#ff144f] text-white text-xs sm:text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full flex items-center gap-2 shadow-lg shadow-pink-600/35 transition-all hover:scale-105 active:scale-95 cursor-pointer pointer-events-auto mt-1"
+                  className="bg-[#ff2a5f] hover:bg-[#ff144f] text-white text-xs sm:text-xl font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-pink-600/35 transition-all hover:scale-105 active:scale-95 cursor-pointer pointer-events-auto mt-1"
                 >
                   <span className="w-0 h-0 border-y-[4.5px] border-y-transparent border-l-[7.5px] border-l-white inline-block ml-0.5" />
                   Take the Cardora tour
@@ -978,7 +1008,7 @@ export default function CardoraQualityPage() {
             {/* Top Right: Diagonal Cut Image Card */}
             <div className="relative rounded-3xl overflow-hidden bg-white border border-black/[0.06] flex flex-col">
               {/* Angled Image Header */}
-              <div className="relative h-64 md:h-72 overflow-hidden [clip-path:polygon(0_0,_100%_0,_100%_78%,_0_100%)]">
+              <div className="relative h-64 md:h-[600px] overflow-hidden [clip-path:polygon(0_0,_100%_0,_100%_78%,_0_100%)]">
                 <Image
                   src={q3}
                   alt="Dealership"
@@ -993,11 +1023,11 @@ export default function CardoraQualityPage() {
               </div>
 
               {/* Content */}
-              <div className="p-8 pt-4 flex-1 flex flex-col justify-center">
-                <h3 className="text-xl md:text-2xl font-bold mb-3 leading-snug">
+              <div className="py-8 pt-4 px-4 flex-1 flex flex-col justify-center">
+                <h3 className="text-xl md:text-3xl font-bold mb-3 leading-snug">
                   Cardora is the exclusive certified dealer for every model we carry
                 </h3>
-                <p className="text-xs md:text-sm text-[#161616]/70 leading-relaxed">
+                <p className="text-xs md:text-xl text-[#161616]/70 leading-relaxed">
                   Every step of our process is measured against the highest industry benchmarks — from inspection and reconditioning to final quality assurance.
                 </p>
               </div>
@@ -1005,9 +1035,9 @@ export default function CardoraQualityPage() {
           </div>
 
           {/* Row 2 */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6 lg:mt-32">
             {/* Card 1: Find your own Cardora car */}
-            <div className="relative rounded-[28px] overflow-hidden min-h-[340px] md:min-h-[380px] flex items-center p-3 md:p-4">
+            <div className="relative rounded-[28px] overflow-hidden min-h-[340px] md:min-h-[340px] flex items-center p-3 md:p-4">
               {/* Full Background Image */}
               <Image
                 src={q1}
@@ -1017,12 +1047,12 @@ export default function CardoraQualityPage() {
               />
 
               {/* Floating Angled White Card */}
-              <div className="relative z-10 bg-white/95 rounded-2xl h-full w-full sm:w-[75%] md:w-[65%] lg:w-[68%] p-6 md:p-8 flex flex-col justify-between [clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-12 md:pr-16 shadow-sm">
+              <div className="relative z-10 bg-white/95 rounded-2xl h-full w-full sm:w-[75%] md:w-[65%] lg:w-[52%] p-6 md:p-8 flex flex-col justify-between [clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-12 md:pr-1 shadow-sm">
                 <div className="max-w-[280px]">
                   <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
                     Find your own<br />Cardora car
                   </h3>
-                  <p className="text-xs md:text-sm text-[#161616]/75 leading-relaxed font-normal">
+                  <p className="text-xs md:text-lg text-[#161616]/75 leading-relaxed font-normal">
                     With unbeatable quality and the peace of mind of 7-day returns, there’s simply no better way to buy a used car. Start your search today.
                   </p>
                 </div>
@@ -1039,22 +1069,22 @@ export default function CardoraQualityPage() {
             </div>
 
             {/* Card 2: Our quality standards */}
-            <div className="relative rounded-[28px] overflow-hidden min-h-[340px] md:min-h-[380px] flex items-center p-3 md:p-4 bg-[#EDE8E4]">
+            <div className="relative rounded-[28px] overflow-hidden min-h-[340px] md:min-h-[30px] flex items-center p-3 md:p-4 bg-[#EDE8E4]">
               {/* Full Background Image */}
               <Image
                 src={q2}
                 alt="Our quality standards"
                 fill
-                className="object-cover"
+                className="object-cover object-center"
               />
 
               {/* Floating Angled Warm-White Card */}
-              <div className="relative z-10 bg-[#FAF8F5]/95 rounded-2xl h-full w-full sm:w-[75%] md:w-[65%] lg:w-[68%] p-6 md:p-8 flex flex-col justify-between [clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-12 md:pr-16 shadow-sm">
-                <div className="max-w-[280px]">
+              <div className="relative z-10 bg-[#FAF8F5]/95 rounded-2xl h-full w-full sm:w-[75%] md:w-[65%] lg:w-[44%] p-6 md:p-8 flex flex-col justify-between [clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-12 md:pr-16 shadow-sm">
+                <div className="w-full">
                   <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
                     Our quality standards
                   </h3>
-                  <p className="text-xs md:text-sm text-[#161616]/75 leading-relaxed font-normal">
+                  <p className="text-xs md:text-lg text-[#161616]/75 leading-relaxed font-normal">
                     See how our verified inspection and reconditioning processes prepare every car to a higher standard.
                   </p>
                 </div>
