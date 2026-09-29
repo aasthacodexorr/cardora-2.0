@@ -227,7 +227,7 @@ export default function CardoraQualityPage() {
           // Decode off main thread before frame can be drawn so scrolling remains liquid smooth
           try {
             await img.decode();
-          } catch {}
+          } catch { }
           if (!isMounted) {
             resolve(false);
             return;
@@ -702,7 +702,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute top-10 sm:top-14 lg:top-[15.5vh] left-6 sm:left-10 lg:left-[10vw] right-6 sm:right-10 lg:right-[7.4vw] z-30 pointer-events-none max-md:top-4! max-md:left-5! max-md:right-5!"
+                className="absolute top-10 sm:top-14 lg:top-[18.5vh] left-6 sm:left-10 lg:left-[10vw] right-6 sm:right-10 lg:right-[7.4vw] z-30 pointer-events-none max-md:left-5! max-md:right-5!"
               >
                 <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 max-md:gap-5!">
                   {/* LEFT COLUMN: TITLE + BADGES */}
@@ -737,18 +737,18 @@ export default function CardoraQualityPage() {
                   {/* RIGHT COLUMN: VIDEO CARD */}
                   <div className="pointer-events-auto flex-shrink-0 self-start lg:mt-[0.5vw] max-md:self-stretch!">
                     <div className="relative rounded-[clamp(1rem,1.5vw,1.5rem)] bg-white p-[clamp(5px,0.5vw,8px)] shadow-[0_2px_14px_rgba(14,11,31,0.08)] ring-1 ring-[#0e0b1f]/[0.06] w-[clamp(280px,27.6vw,520px)] max-md:w-full!">
-                      <div className="relative rounded-[clamp(0.7rem,1.1vw,1.1rem)] overflow-hidden aspect-[1920/820] bg-neutral-900">
+                      <div className="relative rounded-[clamp(0.7rem,1.1vw,1.1rem)] overflow-hidden aspect-[16/12] lg:aspect-[16/9] bg-neutral-900">
                         <video
                           src={CARDORA_VIDEO_CDN}
                           autoPlay
                           loop
                           muted
                           playsInline
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover object-center"
                         />
                         <button
                           onClick={() => setIsTourModalOpen(true)}
-                          className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#ec4d63] to-[#d9375c] hover:from-[#f05a6f] hover:to-[#e0405f] text-white text-[clamp(0.7rem,0.85vw,0.95rem)] font-semibold px-[clamp(0.7rem,1vw,1.1rem)] py-[clamp(0.4rem,0.6vw,0.65rem)] rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-rose-700/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
+                          className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#ec4d63] to-[#d9375c] hover:from-[#f05a6f] hover:to-[#e0405f] text-white text-[22px] font-semibold px-4 py-4 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-rose-700/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
                         >
                           <span className="w-0 h-0 border-y-[0.42em] border-y-transparent border-l-[0.7em] border-l-white inline-block" />
                           Take the Cardora tour
@@ -770,7 +770,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none select-none text-left top-44 sm:top-32 md:top-1/2 md:-translate-y-1/2 right-6 sm:right-10 md:right-16 lg:right-24 xl:right-32 max-w-[320px] sm:max-w-md md:max-w-lg lg:max-w-xl max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none  text-left top-44 sm:top-32 md:top-1/2 md:-translate-y-1/2 right-6 sm:right-10 md:right-16 lg:right-24 xl:right-32 max-w-[320px] sm:max-w-md md:max-w-lg lg:max-w-xl max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-3 md:space-y-4">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.06] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -795,7 +795,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none select-none text-left top-40 sm:top-24 md:top-1/2 md:-translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-24 max-w-[320px] sm:max-w-md md:max-w-lg space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none  text-left top-40 sm:top-24 md:top-1/2 md:-translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-24 max-w-[320px] sm:max-w-md md:max-w-lg space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.06] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -808,7 +808,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-[3px] border-white bg-neutral-900 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px]  aspect-[16/10] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-[3px] border-white bg-neutral-900 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -831,7 +831,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none select-none text-left top-40 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[440px] space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none  text-left top-40 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[440px] space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-white max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -846,7 +846,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/10 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/9] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/10 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -869,7 +869,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none select-none text-left top-40 md:top-1/2 -translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none  text-left top-40 md:top-1/2 -translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -883,7 +883,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/7] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -906,7 +906,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none select-none text-left top-40 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none  text-left top-40 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -921,7 +921,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -952,7 +952,7 @@ export default function CardoraQualityPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-4xl bg-black rounded-3xl overflow-hidden border border-white/20 shadow-2xl aspect-[1920/820]"
+              className="relative w-full max-w-4xl bg-black rounded-3xl overflow-hidden border border-white/20 shadow-2xl aspect-[16/11]"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -978,12 +978,12 @@ export default function CardoraQualityPage() {
       <section
         className={`relative z-40 bg-[#FAFAF8] text-[#161616] py-10 shadow-[0_-18px_50px_rgba(0,0,0,0.12)] transition-[margin] duration-700 ease-out ${showQualitySection ? "-mt-[100vh]" : "mt-0"}`}
       >
-        <div className="max-w-[1680px] mx-auto px-6 md:px-10 ">
+        <div className="max-w-[1600px] mx-auto px-6 md:px-10 ">
           {/* Row 1 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Top Left: Video / Large Hero Card */}
-            <div className="relative rounded-3xl overflow-hidden bg-neutral-900 flex flex-col justify-end p-8 md:p-10">
-              <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center">
+            <div className="relative rounded-3xl overflow-hidden bg-neutral-900 flex flex-col justify-end p-8 md:p-10 min-h-[400px] md:min-h-full">
+              <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[16/12] lg:aspect-[16/9]">
                 <video
                   src={CARDORA_VIDEO_CDN}
                   autoPlay
@@ -999,9 +999,9 @@ export default function CardoraQualityPage() {
                 </h2>
                 <button
                   onClick={() => setIsTourModalOpen(true)}
-                  className="bg-[#ff2a5f] hover:bg-[#ff144f] text-white text-xs sm:text-xl font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-pink-600/35 transition-all hover:scale-105 active:scale-95 cursor-pointer pointer-events-auto mt-1"
+                  className=" bottom-[6%] bg-gradient-to-r from-[#ec4d63] to-[#d9375c] hover:from-[#f05a6f] hover:to-[#e0405f] text-white text-[22px] font-semibold px-4 py-4 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-rose-700/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
                 >
-                  <span className="w-0 h-0 border-y-[4.5px] border-y-transparent border-l-[7.5px] border-l-white inline-block ml-0.5" />
+                  <span className="w-0 h-0 border-y-[0.42em] border-y-transparent border-l-[0.7em] border-l-white inline-block" />
                   Take the Cardora tour
                 </button>
               </div>
@@ -1029,7 +1029,7 @@ export default function CardoraQualityPage() {
                 <h3 className="text-xl md:text-3xl font-bold mb-3 leading-snug">
                   Cardora is the exclusive certified dealer for every model we carry
                 </h3>
-                <p className="text-xs md:text-xl text-[#161616]/70 leading-relaxed">
+                <p className="text-base md:text-xl text-[#161616]/70 leading-relaxed">
                   Every step of our process is measured against the highest industry benchmarks — from inspection and reconditioning to final quality assurance.
                 </p>
               </div>
@@ -1039,7 +1039,7 @@ export default function CardoraQualityPage() {
           {/* Row 2 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6 lg:mt-32">
             {/* Card 1: Find your own Cardora car */}
-            <div className="relative rounded-[28px] overflow-hidden min-h-[340px] md:min-h-[340px] flex items-center p-3 md:p-4">
+            <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[350px] md:max-h-[350px] flex items-end md:items-center p-3 md:p-4">
               {/* Full Background Image */}
               <Image
                 src={q1}
@@ -1048,13 +1048,13 @@ export default function CardoraQualityPage() {
                 className="object-cover"
               />
 
-              {/* Floating Angled White Card */}
-              <div className="relative z-10 bg-white/95 rounded-2xl h-full w-full sm:w-[75%] md:w-[65%] lg:w-[52%] p-6 md:p-8 flex flex-col justify-between [clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-12 md:pr-1 shadow-sm">
-                <div className="max-w-[280px]">
+              {/* Floating White Card */}
+              <div className="relative z-10 bg-white/95 rounded-[18px] md:rounded-2xl w-full sm:w-[75%] md:w-[65%] lg:w-[52%] md:h-full pt-18 pb-6 px-6 md:p-6 flex flex-col justify-between [clip-path:polygon(0_0,_100%_20%,_100%_100%,_0_100%)] md:[clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-6 md:pr-1 shadow-sm">
+                <div className="max-w-[300px]">
                   <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
                     Find your own<br />Cardora car
                   </h3>
-                  <p className="text-xs md:text-lg text-[#161616]/75 leading-relaxed font-normal">
+                  <p className="text-base md:text-lg text-[#161616]/75 leading-relaxed font-normal">
                     With unbeatable quality and the peace of mind of 7-day returns, there’s simply no better way to buy a used car. Start your search today.
                   </p>
                 </div>
@@ -1071,22 +1071,22 @@ export default function CardoraQualityPage() {
             </div>
 
             {/* Card 2: Our quality standards */}
-            <div className="relative rounded-[28px] overflow-hidden min-h-[340px] md:min-h-[30px] flex items-center p-3 md:p-4 bg-[#EDE8E4]">
+            <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[350px] md:max-h-[350px]  flex items-end md:items-center p-3 md:p-4 bg-[#EDE8E4]">
               {/* Full Background Image */}
               <Image
                 src={q2}
                 alt="Our quality standards"
                 fill
-                className="object-cover object-center"
+                className="object-cover "
               />
 
-              {/* Floating Angled Warm-White Card */}
-              <div className="relative z-10 bg-[#FAF8F5]/95 rounded-2xl h-full w-full sm:w-[75%] md:w-[65%] lg:w-[44%] p-6 md:p-8 flex flex-col justify-between [clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-12 md:pr-16 shadow-sm">
+              {/* Floating Warm-White Card */}
+              <div className="relative z-10 bg-[#FAF8F5]/95 rounded-[18px] md:rounded-2xl w-full sm:w-[75%] md:w-[65%] lg:w-[46%] md:h-full pt-18 pb-6 px-6 md:p-6 flex flex-col justify-between [clip-path:polygon(0_0,_100%_20%,_100%_100%,_0_100%)] md:[clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-6 md:pr-16 shadow-sm">
                 <div className="w-full">
                   <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
                     Our quality standards
                   </h3>
-                  <p className="text-xs md:text-lg text-[#161616]/75 leading-relaxed font-normal">
+                  <p className="text-base md:text-lg text-[#161616]/75 leading-relaxed font-normal">
                     See how our verified inspection and reconditioning processes prepare every car to a higher standard.
                   </p>
                 </div>
