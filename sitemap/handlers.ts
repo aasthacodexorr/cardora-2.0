@@ -1,8 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { INVENTORY_HOST_REWRITES, INVENTORY_SITEMAP_API } from './config';
+import { INVENTORY_HOST_REWRITES, INVENTORY_SITEMAP_API, SITE_PAGES } from './config';
 import { getSitemapBaseUrl } from './getBaseUrl';
 import { buildIndexXml, buildPostsXml, buildUrlsetXml, xmlResponse } from './xml';
+import { getBlogDomain } from '@/lib/wordpress';
 
 export async function GET_SITEMAP_INDEX() {
   const baseUrl = await getSitemapBaseUrl();
@@ -11,12 +12,16 @@ export async function GET_SITEMAP_INDEX() {
 
 export async function GET_SITEMAP_PAGES() {
   const baseUrl = await getSitemapBaseUrl();
-  return xmlResponse(buildUrlsetXml(baseUrl));
+  const host = baseUrl.replace(/^https?:\/\//, '');
+  const blogBaseUrl = getBlogDomain(host);
+  return xmlResponse(buildUrlsetXml(baseUrl, SITE_PAGES, blogBaseUrl));
 }
 
 export async function GET_SITEMAP_POSTS() {
   const baseUrl = await getSitemapBaseUrl();
-  return xmlResponse(buildPostsXml(baseUrl));
+  const host = baseUrl.replace(/^https?:\/\//, '');
+  const blogBaseUrl = getBlogDomain(host);
+  return xmlResponse(buildPostsXml(baseUrl, blogBaseUrl));
 }
 
 export async function GET_WEBSITE_SITEMAP() {
@@ -70,4 +75,3 @@ export async function GET_SITEMAP_XSL() {
     },
   });
 }
-

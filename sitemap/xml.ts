@@ -28,10 +28,18 @@ ${sitemaps}
 `;
 }
 
-export function buildUrlsetXml(baseUrl: string, paths: string[] = SITE_PAGES) {
+export function buildUrlsetXml(baseUrl: string, paths: string[] = SITE_PAGES, blogBaseUrl: string = 'https://blog.cardora.ca') {
+  const normalizedBlogBase = blogBaseUrl.replace(/\/+$/, '');
   const urls = paths
     .map((path) => {
-      const loc = path === '/' ? `${baseUrl}/` : `${baseUrl}${path}`;
+      let loc: string;
+      if (path === '/blogs' || path === '/blogs/') {
+        loc = `${normalizedBlogBase}/`;
+      } else if (path.startsWith('http://') || path.startsWith('https://')) {
+        loc = path;
+      } else {
+        loc = path === '/' ? `${baseUrl}/` : `${baseUrl}${path}`;
+      }
       return `  <url>
     <loc>${loc}</loc>
   </url>`;
@@ -46,9 +54,10 @@ ${urls}
 `;
 }
 
-export function buildPostsXml(baseUrl: string) {
-  const urls = SITE_POSTS.map((path) => {
-    const loc = `${baseUrl}${path}`;
+export function buildPostsXml(baseUrl: string, blogBaseUrl: string = 'https://blog.cardora.ca') {
+  const normalizedBlogBase = blogBaseUrl.replace(/\/+$/, '');
+  const urls = SITE_POSTS.map((post) => {
+    const loc = `${normalizedBlogBase}/${post.slug}/`;
     return `  <url>
     <loc>${loc}</loc>
   </url>`;
@@ -61,5 +70,3 @@ ${urls}
 </urlset>
 `;
 }
-
-
