@@ -750,7 +750,7 @@ export default function CardoraQualityPage() {
                         />
                         <button
                           onClick={() => setIsTourModalOpen(true)}
-                          className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#ec4d63] to-[#d9375c] hover:from-[#f05a6f] hover:to-[#e0405f] text-white text-[22px] font-semibold px-4 py-4 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-rose-700/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
+                          className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#ec4d63] to-[#d9375c] hover:from-[#f05a6f] hover:to-[#e0405f] text-white text-[18px] font-semibold px-4 py-3 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-rose-700/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
                         >
                           <span className="w-0 h-0 border-y-[0.42em] border-y-transparent border-l-[0.7em] border-l-white inline-block" />
                           Take the Cardora tour
@@ -835,7 +835,7 @@ export default function CardoraQualityPage() {
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                 className="absolute z-30 pointer-events-none  text-left top-40 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[440px] space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
-                <div className="space-y-2 md:space-y-3">
+                <div className="space-y-2 md:space-y-3 lg:mt-6">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-white max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
                     90+ minutes, <br className="max-md:hidden" />
                     10 experts and <br className="max-md:hidden" />
@@ -873,7 +873,7 @@ export default function CardoraQualityPage() {
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                 className="absolute z-30 pointer-events-none  text-left top-40 md:top-1/2 -translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
-                <div className="space-y-2 md:space-y-3">
+                <div className="space-y-2 md:space-y-3 lg:mt-6">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
                     Reconditioned <br className="max-md:hidden" />
                     by our team of <br className="max-md:hidden" />
@@ -1001,7 +1001,7 @@ export default function CardoraQualityPage() {
                 </h2>
                 <button
                   onClick={() => setIsTourModalOpen(true)}
-                  className=" bottom-[6%] bg-gradient-to-r from-[#ec4d63] to-[#d9375c] hover:from-[#f05a6f] hover:to-[#e0405f] text-white text-[22px] font-semibold px-4 py-4 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-rose-700/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
+                  className=" bottom-[6%] bg-gradient-to-r from-[#ec4d63] to-[#d9375c] hover:from-[#f05a6f] hover:to-[#e0405f] text-white text-[18px] font-semibold px-4 py-3 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-rose-700/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
                 >
                   <span className="w-0 h-0 border-y-[0.42em] border-y-transparent border-l-[0.7em] border-l-white inline-block" />
                   Take the Cardora tour
