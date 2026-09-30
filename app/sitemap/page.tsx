@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { GetInTouch } from '@/components/common';
-import { Footer, Header } from '@/components/layout';
 import { useAppConfig } from '@/app/providers';
 import {
   POPULAR_MAKES,
@@ -11,6 +9,7 @@ import {
   getMakeUrl,
   getInventoryUrlByRefinement
 } from '@/lib/inventoryUrls';
+import { getBlogDomain } from '@/lib/wordpress';
 
 interface SitemapUrl {
   loc: string;
@@ -78,6 +77,13 @@ export default function SitemapPage() {
   const [inventoryListings, setInventoryListings] = useState<SitemapLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [blogDomain, setBlogDomain] = useState('https://blog.cardora.ca');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setBlogDomain(getBlogDomain(window.location.host));
+    }
+  }, []);
 
   useEffect(() => {
     const fetchSitemap = async () => {
@@ -131,10 +137,8 @@ export default function SitemapPage() {
 
   return (
     <>
-      {/* <Header /> */}
-
       <main className="min-h-screen bg-gray-50">
-        <div className="max-w-[1300px] mx-auto px-4 lg:px-0 py-10 md:py-14 lg:mt-18">
+        <div className="max-w-[1240px] mx-auto px-4 lg:px-0 py-10 md:py-14 lg:mt-18">
 
           {/* Main H1 Page Heading */}
           <div className="mb-4">
@@ -206,6 +210,15 @@ export default function SitemapPage() {
                 >
                   <h2 className="text-[20px] font-semibold text-gray-900">About Us</h2>
                 </Link>
+
+                <a
+                  href={blogDomain}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-fit transition-colors hover:text-gray-600"
+                >
+                  <h2 className="text-[20px] font-semibold text-gray-900">Blog</h2>
+                </a>
 
                 <Link
                   href="/contact-us"
@@ -303,8 +316,6 @@ export default function SitemapPage() {
           </div>
         </div>
       </main>
-
-{/* s      <Footer /> */}
     </>
   );
 }

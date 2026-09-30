@@ -4,8 +4,7 @@ export type SitemapIndexItem = {
 };
 
 export const SITE_BASE_URL = 'https://cardora.ca';
-export const CARDORA_POSTS_BASE_URL = 'https://cardora.ca';
-
+export const CARDORA_POSTS_BASE_URL = 'https://blog.cardora.ca';
 
 export const SITEMAP_INDEX: SitemapIndexItem[] = [
   {
@@ -55,8 +54,14 @@ export const SITE_PAGES = [
 ];
 
 export const SITE_POSTS = [
-  '/blogs/how-inflation-affects-the-used-suv-market/',
-  '/blogs/leasing-vs-buying-a-new-car/',
+  {
+    title: 'How Inflation Affects the Used SUV Market',
+    slug: 'how-inflation-affects-the-used-suv-market',
+  },
+  {
+    title: 'Leasing vs. Buying a New Car',
+    slug: 'leasing-vs-buying-a-new-car',
+  },
 ];
 
 export const INVENTORY_SITEMAP_API =
@@ -76,5 +81,3 @@ export function formatSitemapLastmod(iso: string) {
   if (!iso) return '';
   return `${iso.slice(0, 10)} ${iso.slice(11, 19)} (${iso.slice(19, 25)})`;
 }
-
-
