@@ -1045,7 +1045,7 @@ export default function CardoraQualityPage() {
           {/* Row 2 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6 lg:mt-32">
             {/* Card 1: Find your own Cardora car */}
-            <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[350px] md:max-h-[350px] flex items-end md:items-center p-3 md:p-4">
+            <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[380px] flex items-end md:items-stretch p-3 md:p-4">
               {/* Full Background Image */}
               <Image
                 src={q1}
@@ -1055,17 +1055,17 @@ export default function CardoraQualityPage() {
               />
 
               {/* Floating White Card */}
-              <div className="relative z-10 bg-white/95 rounded-[18px] md:rounded-2xl w-full sm:w-[75%] md:w-[65%] lg:w-[52%] md:h-full pt-18 pb-6 px-6 md:p-6 flex flex-col justify-between [clip-path:polygon(0_0,_100%_20%,_100%_100%,_0_100%)] md:[clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-6 md:pr-1 shadow-sm">
-                <div className="max-w-[300px]">
+              <div className="relative z-10 bg-white/95 rounded-[18px] md:rounded-2xl w-full sm:w-[85%] md:w-[70%] lg:w-[52%] pt-10 pb-6 px-6 md:p-5 flex flex-col justify-between [clip-path:polygon(0_0,_100%_15%,_100%_100%,_0_100%)] md:[clip-path:polygon(0_0,_100%_0,_86%_100%,_0_100%)] pr-6 md:pr-10 shadow-sm">
+                <div className="lg:max-w-[290px]">
                   <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
-                    Find your own<br />Cardora car
+                    Find your own Cardora car
                   </h3>
-                  <p className="text-base md:text-lg text-[#161616]/75 leading-relaxed font-normal md:pr-8">
+                  <p className="text-sm md:text-base text-[#161616]/75 leading-relaxed font-normal">
                     With unbeatable quality and the peace of mind of 7-days exchange, there’s simply no better way to buy a used car. Start your search today.
                   </p>
                 </div>
 
-                <div className="pt-6">
+                <div className="pt-4 md:pt-6">
                   <Link
                     href="/inventory"
                     className="inline-block px-5 py-2.5 rounded-xl border border-brand-green text-xs lg:text-base font-semibold text-brand-green hover:bg-brand-green hover:text-white transition-all duration-200"
@@ -1077,7 +1077,7 @@ export default function CardoraQualityPage() {
             </div>
 
             {/* Card 2: Our quality standards */}
-            <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[350px] md:max-h-[350px] flex items-end md:items-center p-3 md:p-4 bg-[#EDE8E4]">
+            <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[380px] flex items-end md:items-stretch p-3 md:p-4 bg-[#EDE8E4]">
               {/* Full Background Image */}
               <Image
                 src={q2}
@@ -1087,17 +1087,17 @@ export default function CardoraQualityPage() {
               />
 
               {/* Floating Warm-White Card */}
-              <div className="relative z-10 bg-[#FAF8F5]/95 rounded-[18px] md:rounded-2xl w-full sm:w-[75%] md:w-[65%] lg:w-[48%] md:h-full pt-18 pb-6 px-6 md:p-6 flex flex-col justify-between [clip-path:polygon(0_0,_100%_20%,_100%_100%,_0_100%)] md:[clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-6 md:pr-8 shadow-sm">
+              <div className="relative z-10 bg-[#FAF8F5]/95 rounded-[18px] md:rounded-2xl w-full sm:w-[85%] md:w-[70%] lg:w-[50%] pt-10 pb-6 px-6 md:p-5 flex flex-col justify-between [clip-path:polygon(0_0,_100%_15%,_100%_100%,_0_100%)] md:[clip-path:polygon(0_0,_100%_0,_86%_100%,_0_100%)] pr-6 md:pr-10 shadow-sm">
                 <div className="w-full">
-                  <h3 className="text-xl md:text-xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
+                  <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
                     Our quality standards
                   </h3>
-                  <p className="text-base md:text-lg text-[#161616]/75 leading-relaxed font-normal">
+                  <p className="text-sm md:text-base text-[#161616]/75 leading-relaxed font-normal">
                     See how our verified inspection and reconditioning processes prepare every car to a higher standard.
                   </p>
                 </div>
 
-                <div className="mt-14">
+                <div className="pt-4 md:pt-6">
                   <Link
                     href="/service"
                     className="inline-block px-5 py-2.5 rounded-xl border border-brand-green text-xs lg:text-base font-semibold text-brand-green hover:bg-brand-green hover:text-white transition-all duration-200"
