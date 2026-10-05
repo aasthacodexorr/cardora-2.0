@@ -37,7 +37,7 @@ const FRAME_VERSION = "final1";
 // Hero badge icons
 const ICON_BASE = USE_BUNNY_CDN ? `${BUNNY_CDN}/icons` : "/icons";
 
-// 1920x1080 file with the picture letterboxed to 1920x820: every video box uses aspect-[1920/820]
+// 1920x1080 file with the picture letterboxed to 1920x820: every video box uses aspect-[16/12] lg:aspect-[16/9]
 // with object-cover, so exactly the black bars are cropped and none of the picture
 const CARDORA_VIDEO_CDN = USE_BUNNY_CDN
   ? `${BUNNY_CDN}/video/video_asset_cardora.mp4`
@@ -739,7 +739,7 @@ export default function CardoraQualityPage() {
                   {/* RIGHT COLUMN: VIDEO CARD */}
                   <div className="pointer-events-auto flex-shrink-0 self-start lg:mt-[0.5vw] max-md:self-stretch!">
                     <div className="relative rounded-[clamp(1rem,1.5vw,1.5rem)] bg-white p-[clamp(5px,0.5vw,8px)] shadow-[0_2px_14px_rgba(14,11,31,0.08)] ring-1 ring-[#0e0b1f]/[0.06] w-[clamp(280px,27.6vw,520px)] max-md:w-full!">
-                      <div className="relative rounded-[clamp(0.7rem,1.1vw,1.1rem)] overflow-hidden aspect-[1920/820] bg-neutral-900">
+                      <div className="relative rounded-[clamp(0.7rem,1.1vw,1.1rem)] overflow-hidden aspect-[16/12] lg:aspect-[16/9] bg-neutral-900">
                         <video
                           src={CARDORA_VIDEO_CDN}
                           autoPlay
@@ -810,7 +810,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-[3px] border-white bg-neutral-900 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px] aspect-[16/12] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-[3px] border-white bg-neutral-900 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -848,7 +848,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/10 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/12] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/10 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -885,7 +885,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/12] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -908,7 +908,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none text-left top-40 md:top-[360px] -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-40 md:top-[370px] -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -923,7 +923,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/12] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -954,7 +954,7 @@ export default function CardoraQualityPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-4xl bg-black rounded-3xl overflow-hidden border border-white/20 shadow-2xl aspect-[1920/820]"
+              className="relative w-full max-w-4xl bg-black rounded-3xl overflow-hidden border border-white/20 shadow-2xl aspect-[16/12] lg:aspect-[16/9]"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -985,7 +985,7 @@ export default function CardoraQualityPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Top Left: Video / Large Hero Card */}
             <div className="relative rounded-3xl overflow-hidden bg-neutral-900 flex flex-col justify-end p-8 md:p-10 min-h-[440px] md:min-h-full">
-              <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[1920/820] w-full">
+              <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[16/12] lg:aspect-[16/9] w-full">
                 <video
                   src={CARDORA_VIDEO_CDN}
                   autoPlay
@@ -1020,14 +1020,14 @@ export default function CardoraQualityPage() {
                   className="object-right object-cover"
                 />
                 {/* Badge */}
-                <div className="absolute top-5 left-5 w-16 h-16 rounded-full bg-white shadow-md flex flex-col items-center justify-center text-center text-[8px] font-bold tracking-tight text-[#161616] border border-black/5 leading-tight z-10">
+                {/* <div className="absolute top-5 left-5 w-16 h-16 rounded-full bg-white shadow-md flex flex-col items-center justify-center text-center text-[8px] font-bold tracking-tight text-[#161616] border border-black/5 leading-tight z-10">
                 <Image
                   src={"https://images.ctfassets.net/r0of6sld2ads/2RQz1zUSI5oQcI5rqRgV3M/ea278a9f2c38d307427f1b02af12ee9e/Badge_Carma_Preferred_dealership_RGB_White_w-_navy.svg"}
                   alt="Dealership"
                   fill
                   className="object-right object-cover"
                 />
-                </div>
+                </div> */}
               </div>
 
               {/* Content */}
