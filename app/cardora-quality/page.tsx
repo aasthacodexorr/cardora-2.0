@@ -1060,7 +1060,7 @@ export default function CardoraQualityPage() {
                   <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
                     Find your own<br />Cardora car
                   </h3>
-                  <p className="text-base md:text-lg text-[#161616]/75 leading-relaxed font-normal lg:pr-4">
+                  <p className="text-base md:text-lg text-[#161616]/75 leading-relaxed font-normal md:pr-8">
                     With unbeatable quality and the peace of mind of 7-days exchange, there’s simply no better way to buy a used car. Start your search today.
                   </p>
                 </div>
