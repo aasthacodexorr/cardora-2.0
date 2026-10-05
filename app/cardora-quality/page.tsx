@@ -6,10 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import q1 from "@/assets/cars/quality-1.png";
 import q2 from "@/assets/cars/quality-2.png";
-import q3 from "@/assets/cars/quality-3.webp";
-
-const CARDORA_VIDEO_CDN =
-  "https://ik.imagekit.io/c1dpz1c7j/Video_assets/video_asset_cardora.mp4";
+import q3 from "@/assets/cars/quality-3.png";
 
 const SCENES = [
   { id: 1, name: "SCENE 01 // SHOWROOM QUALITY STANDARD" },
@@ -22,20 +19,40 @@ const SCENES = [
 
 const TOTAL_FRAMES = 750;
 
+// How softly the frame sequence follows the scroll position (seconds to close ~63% of the gap);
+// higher = smoother/floatier, lower = snappier
+const SCROLL_EASE_SECONDS = 0.12;
+
+// Media CDN. ImageKit holds the complete final frame sets (number plate, wall logo and shirt prints
+// removed): desktop frames in desktop_media/, portrait (mobile) frames in Portrait_Media/.
+// Set USE_BUNNY_CDN to true to serve all media from Bunny CDN instead (same final set uploaded there).
+const USE_BUNNY_CDN = false;
+const BUNNY_CDN = "https://zweb-local.b-cdn.net/cardora";
+const IMAGEKIT = "https://ik.imagekit.io/c1dpz1c7j";
+
+// The final frames overwrote files ImageKit had already cached, so a version query makes the CDN fetch
+// the new files without purging every URL. Bump it whenever frames are re-uploaded over existing ones.
+const FRAME_VERSION = "final1";
+
+// Hero badge icons
+const ICON_BASE = USE_BUNNY_CDN ? `${BUNNY_CDN}/icons` : "/icons";
+
+// 1920x1080 file with the picture letterboxed to 1920x820: every video box uses aspect-[1920/820]
+// with object-cover, so exactly the black bars are cropped and none of the picture
+const CARDORA_VIDEO_CDN = USE_BUNNY_CDN
+  ? `${BUNNY_CDN}/video/video_asset_cardora.mp4`
+  : `${IMAGEKIT}/Video_assets/video_asset_cardora.mp4`;
+
 function getFrameUrl(index: number, portrait = false) {
-  // Frames exist up to seq_00749.jpg on CDN, safely clamp so frame 750 resolves without 404
+  // Frames exist up to seq_00749, safely clamp so frame 750 resolves without 404
   const frameNumber = Math.min(749, Math.max(1, index + 1));
   const seqNum = String(frameNumber).padStart(5, "0");
-  // Portrait (mobile) screens use the separately rendered, fully edited portrait sequence
-  if (portrait) return `https://ik.imagekit.io/c1dpz1c7j/Portrait_Media/seq_${seqNum}.webp`;
-  // Desktop frames 1–70 use the updated renders at the ImageKit root
-  if (frameNumber <= 70) return `https://ik.imagekit.io/c1dpz1c7j/seq_${seqNum}.webp`;
-  // Desktop frames 536–643 have the Cardora logo moved down so it clears the header
-  // Frames 539–542 were re-uploaded with plain t-shirts; the version query bypasses the stale CDN cache
-  if (frameNumber >= 539 && frameNumber <= 542) return `https://ik.imagekit.io/c1dpz1c7j/fixed%20frames/seq_${seqNum}.webp?v=2`;
-  if (frameNumber >= 536 && frameNumber <= 643) return `https://ik.imagekit.io/c1dpz1c7j/fixed%20frames/seq_${seqNum}.webp`;
-  // Complete, fully edited landscape (desktop) sequence on ImageKit
-  return `https://ik.imagekit.io/c1dpz1c7j/desktop_media/seq_${seqNum}.webp`;
+  if (USE_BUNNY_CDN) {
+    return `${BUNNY_CDN}/frames/${portrait ? "portrait" : "desktop"}/seq_${seqNum}.webp`;
+  }
+  // Portrait (mobile) screens use the separately rendered portrait sequence
+  const folder = portrait ? "Portrait_Media" : "desktop_media";
+  return `${IMAGEKIT}/${folder}/seq_${seqNum}.webp?v=${FRAME_VERSION}`;
 }
 
 const CONTENT_BREAKPOINTS = [
@@ -71,81 +88,6 @@ function getUiProgress(rawProgress: number): number {
   return rawProgress;
 }
 
-function Star90Badge() {
-  return (
-    <div className="relative w-8 h-8 flex-shrink-0 flex items-center justify-center">
-      <svg className="w-8 h-8 drop-shadow-sm" viewBox="0 0 32 32" fill="none">
-        <defs>
-          <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#ec4899" />
-            <stop offset="50%" stopColor="#8b5cf6" />
-            <stop offset="100%" stopColor="#3b82f6" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M16 2l3.4 3.9 5.2-.8 1.4 5 4.8 2.1-1.6 4.9 3.2 4.2-4.2 3.2-1.6 4.9-5-1.4-3.6 3.8-3.6-3.8-5 1.4-1.6-4.9-4.2-3.2 3.2-4.2-1.6-4.9 4.8-2.1 1.4-5 5.2.8L16 2z"
-          fill="url(#starGrad)"
-        />
-      </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-white tracking-tighter">
-        90
-      </span>
-    </div>
-  );
-}
-
-function ShieldCheckBadge() {
-  return (
-    <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">
-      <svg className="w-8 h-8 drop-shadow-sm" viewBox="0 0 32 32" fill="none">
-        <defs>
-          <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#a855f7" />
-            <stop offset="100%" stopColor="#6366f1" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M16 3L26 7v8c0 6.5-4.2 12.6-10 14-5.8-1.4-10-7.5-10-14V7l10-4z"
-          fill="url(#shieldGrad)"
-        />
-        <path
-          d="M12 16l3 3 5-6"
-          stroke="#ffffff"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </div>
-  );
-}
-
-function CardoraCertifiedBadge() {
-  return (
-    <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">
-      <svg className="w-8 h-8 drop-shadow-sm" viewBox="0 0 32 32" fill="none">
-        <defs>
-          <linearGradient id="cardoraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#4f46e5" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M16 2l2.6 2.4 3.5-.7 1.8 3.1 3.5.8.8 3.5 3.1 1.8-.7 3.5 2.4 2.6-2.4 2.6.7 3.5-3.1 1.8-.8 3.5-3.5.8-1.8 3.1-3.5-.7L16 30l-2.6-2.4-3.5.7-1.8-3.1-3.5-.8-.8-3.5-3.1-1.8.7-3.5-2.4-2.6 2.4-2.6-.7-3.5 3.1-1.8.8-3.5 3.5-.8 1.8-3.1 3.5.7L16 2z"
-          fill="url(#cardoraGrad)"
-        />
-        <path
-          d="M11 16.5l3.5 3.5L21 13"
-          stroke="#ffffff"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </div>
-  );
-}
-
 export default function CardoraQualityPage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -169,6 +111,9 @@ export default function CardoraQualityPage() {
   // Master frame cache & dynamic top boundary colors
   const framesRef = useRef<(HTMLImageElement | null)[]>([]);
   const topColorsRef = useRef<(string | null)[]>([]);
+  const isFrameCachedRef = useRef(false);
+  // Frame the scroll engine is currently showing, so the loader can stream frames around it first
+  const currentFrameRef = useRef(0);
 
   // Portrait (mobile) frames detection on phone-sized portrait viewport
   const [usePortraitFrames, setUsePortraitFrames] = useState<boolean | null>(null);
@@ -229,7 +174,7 @@ export default function CardoraQualityPage() {
           // Decode off main thread before frame can be drawn so scrolling remains liquid smooth
           try {
             await img.decode();
-          } catch { }
+          } catch {}
           if (!isMounted) {
             resolve(false);
             return;
@@ -263,7 +208,7 @@ export default function CardoraQualityPage() {
       });
     };
 
-    // High-performance streaming: Critical frames first, keyframes next, background sequence afterwards
+    // High-performance streaming: Critical frames first, nearest remaining frames streamed dynamically
     async function loadAllFrames() {
       try {
         const runQueue = async (indices: number[], concurrency: number, priority: "high" | "low") => {
@@ -277,13 +222,13 @@ export default function CardoraQualityPage() {
           await Promise.all(workers);
         };
 
-        // Phase 1: Critical start frames (0..24) loaded first
+        // Phase 1: Critical start frames (0..24) loaded first so initial scene is razor sharp immediately
         const criticalIndices: number[] = [];
         for (let i = 0; i < 25; i++) criticalIndices.push(i);
         await runQueue(criticalIndices, 8, "high");
         if (!isMounted) return;
 
-        // Background streaming starts once document is complete and idle
+        // Background streaming starts only once document is complete and idle
         await new Promise<void>((resolve) => {
           if (document.readyState === "complete") resolve();
           else window.addEventListener("load", () => resolve(), { once: true });
@@ -297,20 +242,32 @@ export default function CardoraQualityPage() {
         });
         if (!isMounted) return;
 
-        // Phase 2: Keyframe milestones distributed across timeline (every 6 frames)
-        const keyframeIndices: number[] = [];
-        for (let i = 25; i < TOTAL_FRAMES; i += 6) keyframeIndices.push(i);
-        keyframeIndices.push(TOTAL_FRAMES - 1);
-        await runQueue(keyframeIndices, 6, "low");
+        // Phase 2: Stream remaining frames picking nearest to where user is scrolling
+        const requested = new Uint8Array(TOTAL_FRAMES);
+        for (const i of criticalIndices) requested[i] = 1;
+        const nextNearest = (): number => {
+          const cur = currentFrameRef.current;
+          for (let offset = 0; offset < TOTAL_FRAMES; offset++) {
+            const ahead = cur + offset;
+            if (ahead < TOTAL_FRAMES && !requested[ahead]) return ahead;
+            const behind = cur - Math.ceil(offset / 2);
+            if (behind >= 0 && !requested[behind]) return behind;
+          }
+          return -1;
+        };
+        const streamWorkers = Array.from({ length: 12 }, async () => {
+          while (isMounted) {
+            const idx = nextNearest();
+            if (idx < 0) break;
+            requested[idx] = 1;
+            const nearUser = Math.abs(idx - currentFrameRef.current) < 30;
+            await loadSingleFrame(idx, nearUser ? "high" : "low");
+          }
+        });
+        await Promise.all(streamWorkers);
         if (!isMounted) return;
 
-        // Phase 3: Seamlessly fill all remaining frames in the background
-        const remainingIndices: number[] = [];
-        const loadedSet = new Set([...criticalIndices, ...keyframeIndices]);
-        for (let i = 0; i < TOTAL_FRAMES; i++) {
-          if (!loadedSet.has(i)) remainingIndices.push(i);
-        }
-        runQueue(remainingIndices, 4, "low");
+        isFrameCachedRef.current = true;
       } catch (err) {
         console.error("Frame sequence loader error", err);
       }
@@ -323,15 +280,20 @@ export default function CardoraQualityPage() {
     };
   }, [usePortraitFrames]);
 
-  // Canvas resize handler
+  // Canvas resize handler with capped DPR to match source resolution
   useEffect(() => {
     const handleResize = () => {
       if (canvasRef.current) {
-        const dpr = window.devicePixelRatio || 1;
         const w = window.innerWidth;
         const h = window.innerHeight;
-        canvasRef.current.width = Math.round(w * dpr);
-        canvasRef.current.height = Math.round(h * dpr);
+        const portrait = w < 768 && h > w;
+        const srcW = portrait ? 1080 : 1920;
+        const srcH = portrait ? 1920 : 1080;
+        const dpr = Math.min(window.devicePixelRatio || 1, Math.max(1, srcW / w, srcH / h));
+        const pw = Math.round(w * dpr);
+        const ph = Math.round(h * dpr);
+        if (canvasRef.current.width !== pw) canvasRef.current.width = pw;
+        if (canvasRef.current.height !== ph) canvasRef.current.height = ph;
         canvasRef.current.style.width = `${w}px`;
         canvasRef.current.style.height = `${h}px`;
       }
@@ -363,6 +325,7 @@ export default function CardoraQualityPage() {
     let lastDrawnW = -1;
     let lastDrawnH = -1;
     let lastDrawnTopColor = "";
+    let lastTime = performance.now();
 
     const renderLoop = () => {
       const canvas = canvasRef.current;
@@ -376,19 +339,29 @@ export default function CardoraQualityPage() {
       const currentScroll = Math.max(0, window.scrollY);
       targetProgress = Math.min(1, Math.max(0, currentScroll / scrollDistance));
 
+      // Time-based exponential easing: glides smoothly across 60Hz and 120Hz screens
+      const now = performance.now();
+      const dt = Math.min(0.1, (now - lastTime) / 1000);
+      lastTime = now;
       const diff = targetProgress - smoothProgress;
-      if (Math.abs(diff) > 0.0001) {
-        smoothProgress += diff * 0.22;
+      if (Math.abs(diff) > 0.00005) {
+        smoothProgress += diff * (1 - Math.exp(-dt / SCROLL_EASE_SECONDS));
       } else {
         smoothProgress = targetProgress;
       }
 
-      // Direct linear continuous frame mapping (never pauses, never stops!)
+      // Direct linear continuous frame mapping
       const targetFrameIndex = Math.min(
         TOTAL_FRAMES - 1,
         Math.max(0, Math.floor(smoothProgress * (TOTAL_FRAMES - 1)))
       );
       const currentFrameNumber = targetFrameIndex + 1;
+
+      // Update current frame pointer so loader streams upcoming frames first
+      currentFrameRef.current = Math.min(
+        TOTAL_FRAMES - 1,
+        Math.max(0, Math.floor(targetProgress * (TOTAL_FRAMES - 1)))
+      );
 
       // Determine active scene index based on continuous scroll progress
       const sceneIdx = Math.min(SCENES.length - 1, Math.floor(smoothProgress * SCENES.length));
@@ -421,9 +394,7 @@ export default function CardoraQualityPage() {
         setCurrentStep(step);
       }
 
-      // Wait until the final animation breakpoint is reached, then delay
-      // the final section reveal by 1 second. If the user scrolls back before
-      // the delay finishes, cancel the pending reveal.
+      // Wait until final breakpoint is reached, then reveal Cardora Quality section smoothly
       if (step >= 5 && !qualityRevealStarted && !qualityRevealTimer) {
         qualityRevealTimer = setTimeout(() => {
           qualityRevealStarted = true;
@@ -609,7 +580,7 @@ export default function CardoraQualityPage() {
   return (
     <div
       ref={containerRef}
-      className="relative bg-black text-white font-sans selection:bg-[#ff2a5f] selection:text-white"
+      className="relative bg-black text-white font-sans selection:bg-[#01A969] selection:text-white"
     >
       {/* STICKY CANVAS HERO WRAPPER FOR VIDEO TIMELINE */}
       <div ref={trackRef} className="relative h-[850vh]">
@@ -631,7 +602,7 @@ export default function CardoraQualityPage() {
               {/* Active progress fill */}
               <div
                 ref={scrollBarRef}
-                className="w-full bg-[#ff2a5f] rounded-full transition-all duration-75 shadow-[0_0_10px_rgba(255,42,95,0.7)]"
+                className="w-full bg-[#01A969] rounded-full shadow-[0_0_10px_rgba(1,169,105,0.7)]"
                 style={{ height: "0%" }}
               />
 
@@ -676,11 +647,11 @@ export default function CardoraQualityPage() {
                     className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 group flex items-center justify-center cursor-pointer pointer-events-auto"
                     style={{ top: `${bp.displayPct}%` }}
                   >
-                    {/* Breakpoint Dot */}
+                    {/* Breakpoint Dot matching Cardora design */}
                     {isActive ? (
-                      <div className="w-4 h-4 rounded-full bg-[#ff2a5f] border-[2.5px] border-white shadow-[0_0_10px_rgba(255,42,95,0.8)] flex items-center justify-center transition-all duration-300 ring-2 ring-[#ff2a5f]/40" />
+                      <div className="w-4 h-4 rounded-full bg-[#01A969] border-[2.5px] border-white shadow-[0_0_10px_rgba(1,169,105,0.8)] flex items-center justify-center transition-all duration-300 ring-2 ring-[#01A969]/40" />
                     ) : isCompleted ? (
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#ff2a5f] shadow-sm transition-all duration-300" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#01A969] shadow-sm transition-all duration-300" />
                     ) : (
                       <div className="w-2.5 h-2.5 rounded-full bg-white/20 border-2 border-white/80 transition-all duration-300" />
                     )}
@@ -717,16 +688,45 @@ export default function CardoraQualityPage() {
 
                     <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-x-[clamp(1.25rem,2.2vw,2.5rem)] gap-y-3 mt-[clamp(1.5rem,3vw,2.75rem)] max-md:flex-row! max-md:flex-nowrap! max-md:items-start! max-md:justify-between! max-md:gap-x-2! max-md:mt-4!">
                       {[
-                        { icon: <Star90Badge />, label: "90-minute inspections" },
-                        { icon: <ShieldCheckBadge />, label: "10+ inspection experts" },
-                        { icon: <CardoraCertifiedBadge />, label: "Cardora Certified" },
+                        {
+                          icon: (
+                            <img
+                              src={`${ICON_BASE}/illustration-inspections.svg`}
+                              alt=""
+                              className="w-full h-full"
+                            />
+                          ),
+                          label: "90-minute inspections",
+                        },
+                        {
+                          icon: (
+                            <img
+                              src={`${ICON_BASE}/illustration-experts.svg`}
+                              alt=""
+                              className="w-full h-full"
+                            />
+                          ),
+                          label: "10+ inspection experts",
+                        },
+                        {
+                          icon: (
+                            <img
+                              src={`${ICON_BASE}/illustration-certified.svg`}
+                              alt=""
+                              className="w-full h-full"
+                            />
+                          ),
+                          label: "Cardora Certified",
+                        },
                       ].map(({ icon, label }) => (
                         <div
                           key={label}
                           className="flex items-center gap-[clamp(0.6rem,1vw,1rem)] max-md:flex-1 max-md:flex-col! max-md:gap-2!"
                         >
                           <div className="w-[clamp(2.75rem,3.8vw,3.75rem)] max-md:w-10! aspect-square rounded-full bg-[#0e0b1f]/[0.045] flex items-center justify-center flex-shrink-0">
-                            <div className="scale-[1.2]">{icon}</div>
+                            <div className="w-[82%] h-[82%] flex items-center justify-center">
+                              {icon}
+                            </div>
                           </div>
                           <span className="text-[clamp(0.85rem,1.1vw,1.1rem)] font-normal text-[#1b1a2a] whitespace-nowrap max-md:whitespace-normal! max-md:text-[14px]! max-md:leading-[1.3] max-md:text-center">
                             {label}
@@ -739,18 +739,18 @@ export default function CardoraQualityPage() {
                   {/* RIGHT COLUMN: VIDEO CARD */}
                   <div className="pointer-events-auto flex-shrink-0 self-start lg:mt-[0.5vw] max-md:self-stretch!">
                     <div className="relative rounded-[clamp(1rem,1.5vw,1.5rem)] bg-white p-[clamp(5px,0.5vw,8px)] shadow-[0_2px_14px_rgba(14,11,31,0.08)] ring-1 ring-[#0e0b1f]/[0.06] w-[clamp(280px,27.6vw,520px)] max-md:w-full!">
-                      <div className="relative rounded-[clamp(0.7rem,1.1vw,1.1rem)] overflow-hidden aspect-[16/12] lg:aspect-[16/9] bg-neutral-900">
+                      <div className="relative rounded-[clamp(0.7rem,1.1vw,1.1rem)] overflow-hidden aspect-[1920/820] bg-neutral-900">
                         <video
                           src={CARDORA_VIDEO_CDN}
                           autoPlay
                           loop
                           muted
                           playsInline
-                          className="w-full h-full object-cover object-center"
+                          className="w-full h-full object-cover"
                         />
                         <button
                           onClick={() => setIsTourModalOpen(true)}
-                          className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#ec4d63] to-[#d9375c] hover:from-[#f05a6f] hover:to-[#e0405f] text-white text-[18px] font-semibold px-4 py-3 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-rose-700/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
+                          className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#01A969] to-[#018f59] hover:from-[#02b874] hover:to-[#01A969] text-white text-[clamp(0.7rem,0.85vw,0.95rem)] font-semibold px-[clamp(0.7rem,1vw,1.1rem)] py-[clamp(0.4rem,0.6vw,0.65rem)] rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-[#01A969]/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
                         >
                           <span className="w-0 h-0 border-y-[0.42em] border-y-transparent border-l-[0.7em] border-l-white inline-block" />
                           Take the Cardora tour
@@ -772,7 +772,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none  text-left top-44 sm:top-32 md:top-1/2 md:-translate-y-1/2 right-6 sm:right-10 md:right-16 lg:right-24 xl:right-32 max-w-[320px] sm:max-w-md md:max-w-lg lg:max-w-xl max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-44 sm:top-32 md:top-1/2 md:-translate-y-1/2 right-6 sm:right-10 md:right-16 lg:right-24 xl:right-32 max-w-[320px] sm:max-w-md md:max-w-lg lg:max-w-xl max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-3 md:space-y-4">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.06] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -797,7 +797,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none  text-left top-40 sm:top-24 md:top-1/2 md:-translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-24 max-w-[320px] sm:max-w-md md:max-w-lg space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-40 sm:top-24 md:top-1/2 md:-translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-24 max-w-[320px] sm:max-w-md md:max-w-lg space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.06] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -810,7 +810,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px]  aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-[3px] border-white bg-neutral-900 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-[3px] border-white bg-neutral-900 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -833,7 +833,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none  text-left top-40 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[440px] space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-40 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[440px] space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3 lg:mt-6">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-white max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -848,7 +848,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/9] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/10 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/10 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -871,7 +871,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none  text-left top-40 md:top-1/2 -translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-40 md:top-1/2 -translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3 lg:mt-6">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -885,7 +885,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/6] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -908,7 +908,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none  text-left top-40 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-40 md:top-[360px] -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -923,7 +923,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[1920/820] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -954,7 +954,7 @@ export default function CardoraQualityPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-4xl bg-black rounded-3xl overflow-hidden border border-white/20 shadow-2xl aspect-[16/11]"
+              className="relative w-full max-w-4xl bg-black rounded-3xl overflow-hidden border border-white/20 shadow-2xl aspect-[1920/820]"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -985,7 +985,7 @@ export default function CardoraQualityPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Top Left: Video / Large Hero Card */}
             <div className="relative rounded-3xl overflow-hidden bg-neutral-900 flex flex-col justify-end p-8 md:p-10 min-h-[440px] md:min-h-full">
-              <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[16/12] lg:aspect-[16/9]">
+              <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[1920/820] w-full">
                 <video
                   src={CARDORA_VIDEO_CDN}
                   autoPlay
@@ -1001,7 +1001,7 @@ export default function CardoraQualityPage() {
                 </h2>
                 <button
                   onClick={() => setIsTourModalOpen(true)}
-                  className=" bottom-[6%] bg-gradient-to-r from-[#ec4d63] to-[#d9375c] hover:from-[#f05a6f] hover:to-[#e0405f] text-white text-[18px] font-semibold px-4 py-3 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-rose-700/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
+                  className="bottom-[6%] bg-gradient-to-r from-[#01A969] to-[#018f59] hover:from-[#02b874] hover:to-[#01A969] text-white text-[18px] font-semibold px-4 py-3 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-[#01A969]/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
                 >
                   <span className="w-0 h-0 border-y-[0.42em] border-y-transparent border-l-[0.7em] border-l-white inline-block" />
                   Take the Cardora tour
@@ -1010,19 +1010,23 @@ export default function CardoraQualityPage() {
             </div>
 
             {/* Top Right: Diagonal Cut Image Card */}
-            <div className="relative rounded-3xl overflow-hidden bg-white   min-h-[400px] md:min-h-full border border-black/[0.06] flex flex-col">
+            <div className="relative rounded-3xl overflow-hidden bg-white min-h-[400px] md:min-h-full border border-black/[0.06] flex flex-col">
               {/* Angled Image Header */}
               <div className="relative h-64 md:h-[600px] overflow-hidden [clip-path:polygon(0_0,_100%_0,_100%_78%,_0_100%)]">
                 <Image
                   src={q3}
                   alt="Dealership"
                   fill
-                  className="object-cover"
+                  className="object-right object-cover"
                 />
                 {/* Badge */}
                 <div className="absolute top-5 left-5 w-16 h-16 rounded-full bg-white shadow-md flex flex-col items-center justify-center text-center text-[8px] font-bold tracking-tight text-[#161616] border border-black/5 leading-tight z-10">
-                  <span>CERTIFIED</span>
-                  <span className="text-[10px] text-brand-green">DEALER</span>
+                <Image
+                  src={"https://images.ctfassets.net/r0of6sld2ads/2RQz1zUSI5oQcI5rqRgV3M/ea278a9f2c38d307427f1b02af12ee9e/Badge_Carma_Preferred_dealership_RGB_White_w-_navy.svg"}
+                  alt="Dealership"
+                  fill
+                  className="object-right object-cover"
+                />
                 </div>
               </div>
 
@@ -1056,8 +1060,8 @@ export default function CardoraQualityPage() {
                   <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
                     Find your own<br />Cardora car
                   </h3>
-                  <p className="text-base md:text-lg text-[#161616]/75 leading-relaxed font-normal">
-                    With unbeatable quality and the peace of mind of 7-day returns, there’s simply no better way to buy a used car. Start your search today.
+                  <p className="text-base md:text-lg text-[#161616]/75 leading-relaxed font-normal lg:pr-4">
+                    With unbeatable quality and the peace of mind of 7-days exchange, there’s simply no better way to buy a used car. Start your search today.
                   </p>
                 </div>
 
@@ -1073,19 +1077,19 @@ export default function CardoraQualityPage() {
             </div>
 
             {/* Card 2: Our quality standards */}
-            <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[350px] md:max-h-[350px]  flex items-end md:items-center p-3 md:p-4 bg-[#EDE8E4]">
+            <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[350px] md:max-h-[350px] flex items-end md:items-center p-3 md:p-4 bg-[#EDE8E4]">
               {/* Full Background Image */}
               <Image
                 src={q2}
                 alt="Our quality standards"
                 fill
-                className="object-cover "
+                className="object-cover"
               />
 
               {/* Floating Warm-White Card */}
-              <div className="relative z-10 bg-[#FAF8F5]/95 rounded-[18px] md:rounded-2xl w-full sm:w-[75%] md:w-[65%] lg:w-[46%] md:h-full pt-18 pb-6 px-6 md:p-6 flex flex-col justify-between [clip-path:polygon(0_0,_100%_20%,_100%_100%,_0_100%)] md:[clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-6 md:pr-16 shadow-sm">
+              <div className="relative z-10 bg-[#FAF8F5]/95 rounded-[18px] md:rounded-2xl w-full sm:w-[75%] md:w-[65%] lg:w-[48%] md:h-full pt-18 pb-6 px-6 md:p-6 flex flex-col justify-between [clip-path:polygon(0_0,_100%_20%,_100%_100%,_0_100%)] md:[clip-path:polygon(0_0,_100%_0,_84%_100%,_0_100%)] pr-6 md:pr-8 shadow-sm">
                 <div className="w-full">
-                  <h3 className="text-xl md:text-2xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
+                  <h3 className="text-xl md:text-xl font-bold tracking-tight text-[#161616] mb-2 leading-tight">
                     Our quality standards
                   </h3>
                   <p className="text-base md:text-lg text-[#161616]/75 leading-relaxed font-normal">
@@ -1093,7 +1097,7 @@ export default function CardoraQualityPage() {
                   </p>
                 </div>
 
-                <div className="pt-6">
+                <div className="mt-14">
                   <Link
                     href="/service"
                     className="inline-block px-5 py-2.5 rounded-xl border border-brand-green text-xs lg:text-base font-semibold text-brand-green hover:bg-brand-green hover:text-white transition-all duration-200"
