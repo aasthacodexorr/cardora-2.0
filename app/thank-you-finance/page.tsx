@@ -14,6 +14,8 @@ import {
   Smile,
 } from "lucide-react";
 
+declare const fbq: any;
+
 const FALLBACK_HEIGHT = 700;
 
 export default function ThankYouFinance() {
@@ -21,6 +23,12 @@ export default function ThankYouFinance() {
   const { SITE_CONFIG } = getConstants(appConfig);
 
   const [iframeHeight, setIframeHeight] = useState(FALLBACK_HEIGHT);
+
+  useEffect(() => {
+    if (typeof fbq === "function") {
+      fbq("track", "Lead");
+    }
+  }, []);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
