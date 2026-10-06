@@ -19,10 +19,16 @@ const SCENES = [
 ];
 
 const TOTAL_FRAMES = 750;
-
+// Fraction of viewport height to push portrait (mobile) frames upward, on the hero screen only
+const PORTRAIT_SHIFT_UP = 0.06;
+// Shift is held in full until this frame, then eases to 0 by the end frame (next scene starts at 74)
+const PORTRAIT_SHIFT_HOLD_FRAME = 25;
+const PORTRAIT_SHIFT_END_FRAME = 45;
 // How softly the frame sequence follows the scroll position (seconds to close ~63% of the gap);
 // higher = smoother/floatier, lower = snappier
 const SCROLL_EASE_SECONDS = 0.12;
+// Colour of the empty space under the lifted frame on the hero screen (match the floor)
+const PORTRAIT_FILL_COLOR = "#ffffff";
 
 // Media CDN. ImageKit holds the complete final frame sets (number plate, wall logo and shirt prints
 // removed): desktop frames in desktop_media/, portrait (mobile) frames in Portrait_Media/.
@@ -175,7 +181,7 @@ export default function CardoraQualityPage() {
           // Decode off main thread before frame can be drawn so scrolling remains liquid smooth
           try {
             await img.decode();
-          } catch {}
+          } catch { }
           if (!isMounted) {
             resolve(false);
             return;
@@ -326,11 +332,16 @@ export default function CardoraQualityPage() {
     let lastDrawnW = -1;
     let lastDrawnH = -1;
     let lastDrawnTopColor = "";
+    let lastDrawnShift = -1;
     let lastTime = performance.now();
+
+
 
     const renderLoop = () => {
       const canvas = canvasRef.current;
       const ctx = canvas?.getContext("2d");
+
+
 
       // Calculate scroll progress relative to the animation track
       const track = trackRef.current;
@@ -482,19 +493,32 @@ export default function CardoraQualityPage() {
         }
         if (!topColor) topColor = "#000000";
 
+        // 1 on the hero screen, easing down to 0 as the next scene begins
+        const shiftT =
+          currentFrameNumber <= PORTRAIT_SHIFT_HOLD_FRAME
+            ? 1
+            : currentFrameNumber >= PORTRAIT_SHIFT_END_FRAME
+              ? 0
+              : 1 -
+              (currentFrameNumber - PORTRAIT_SHIFT_HOLD_FRAME) /
+              (PORTRAIT_SHIFT_END_FRAME - PORTRAIT_SHIFT_HOLD_FRAME);
+        const portraitShiftPx = Math.round(canvas.height * PORTRAIT_SHIFT_UP * shiftT);
+
         // Avoid repainting canvas every tick if frame, canvas size or top color haven't changed
         const needsDraw =
           img &&
           (img !== lastDrawnImg ||
             canvas.width !== lastDrawnW ||
             canvas.height !== lastDrawnH ||
-            topColor !== lastDrawnTopColor);
+            topColor !== lastDrawnTopColor ||
+            portraitShiftPx !== lastDrawnShift);
 
         if (img && needsDraw) {
           lastDrawnImg = img;
           lastDrawnW = canvas.width;
           lastDrawnH = canvas.height;
           lastDrawnTopColor = topColor;
+          lastDrawnShift = portraitShiftPx;
 
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = "high";
@@ -513,8 +537,10 @@ export default function CardoraQualityPage() {
           let drawH = cHeight;
           let drawX = 0;
           let drawY = 0;
+           let portraitFadeTop = -1;
 
           if (cAspect > 1.0) {
+           
             // Desktop view (landscape / widescreen) -> full screen cover scaling
             if (cAspect > vAspect) {
               drawW = cWidth;
@@ -528,7 +554,6 @@ export default function CardoraQualityPage() {
               drawY = 0;
             }
           } else if (vAspect < 1 && cAspect <= 1) {
-            // Mobile view with portrait frames -> full screen cover scaling
             if (cAspect > vAspect) {
               drawW = cWidth;
               drawH = cWidth / vAspect;
@@ -539,7 +564,13 @@ export default function CardoraQualityPage() {
               drawW = cHeight * vAspect;
               drawX = (cWidth - drawW) / 2;
               drawY = 0;
-            }
+            } 
+           
+
+            // Hero screen only: lift the picture, then fill the strip that opens at the bottom
+     // Hero screen only: lift the picture; the gap is covered after drawing
+drawY -= portraitShiftPx;
+portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
           } else {
             // Responsive / Mobile view with landscape frames -> video at bottom, top sampled
             const videoAreaH = cHeight * 0.75;
@@ -562,6 +593,20 @@ export default function CardoraQualityPage() {
           }
 
           ctx.drawImage(img, drawX, drawY, drawW, drawH);
+
+          if (portraitFadeTop >= 0 && portraitFadeTop < cHeight) {
+  // Soft fade of the frame's bottom edge into the fill colour
+  const fadeH = Math.min(cHeight * 0.1, portraitFadeTop);
+  const g = ctx.createLinearGradient(0, portraitFadeTop - fadeH, 0, portraitFadeTop);
+  g.addColorStop(0, "rgba(255,255,255,0)");
+  g.addColorStop(1, PORTRAIT_FILL_COLOR);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, portraitFadeTop - fadeH, cWidth, fadeH);
+
+  // Solid fill below the frame
+  ctx.fillStyle = PORTRAIT_FILL_COLOR;
+  ctx.fillRect(0, portraitFadeTop, cWidth, cHeight - portraitFadeTop);
+}
         }
       }
 
@@ -740,7 +785,7 @@ export default function CardoraQualityPage() {
                   {/* RIGHT COLUMN: VIDEO CARD */}
                   <div className="pointer-events-auto flex-shrink-0 self-start lg:mt-[0.5vw] max-md:self-stretch!">
                     <div className="relative rounded-[clamp(1rem,1.5vw,1.5rem)] bg-white p-[clamp(5px,0.5vw,8px)] shadow-[0_2px_14px_rgba(14,11,31,0.08)] ring-1 ring-[#0e0b1f]/[0.06] w-[clamp(280px,27.6vw,520px)] max-md:w-full!">
-                      <div className="relative rounded-[clamp(0.7rem,1.1vw,1.1rem)] overflow-hidden aspect-[16/10] lg:aspect-[16/9] bg-neutral-900">
+                      <div className="relative rounded-2xl   md:rounded-3xl overflow-hidden aspect-[16/10] lg:aspect-[16/9] bg-neutral-900 max-md:rounded-2xl!">
                         <video
                           src={CARDORA_VIDEO_CDN}
                           autoPlay
@@ -802,7 +847,7 @@ export default function CardoraQualityPage() {
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.06] text-neutral-950 max-md:text-[28px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
-                    Your personal 
+                    Your personal
                     pro test drivers.
                   </h2>
                   <p className="text-xs sm:text-sm md:text-base font-medium leading-relaxed text-neutral-700 max-w-sm sm:max-w-md max-md:text-[15px]! max-md:font-normal! max-md:leading-[1.4]! max-md:max-w-none! max-md:mt-2! max-md:text-[#1b1a2a]!">
