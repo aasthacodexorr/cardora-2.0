@@ -811,7 +811,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px] aspect-[16/9] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-[3px] border-white bg-neutral-900 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px] aspect-[16/7] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-[3px] border-white bg-neutral-900 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -849,7 +849,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/9] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/10 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/10 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -886,7 +886,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/7] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -924,7 +924,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/9] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/7] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
