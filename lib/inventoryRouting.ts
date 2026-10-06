@@ -512,6 +512,9 @@ const PATH_ATTRIBUTES = [
 type PathFilters = Partial<Record<(typeof PATH_ATTRIBUTES)[number], string[]>>;
 
 function isInventoryListingPath(pathname: string) {
+  // Must start with /inventory — guard against false positives on other routes
+  if (!pathname.startsWith("/inventory")) return false;
+
   const segments = pathname.replace(/^\/inventory\/?/, "").split("/").filter(Boolean);
   if (!segments.length) return pathname === "/inventory" || pathname === "/inventory/";
 
