@@ -798,7 +798,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none text-left top-40 sm:top-24 md:top-1/2 md:-translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-24 max-w-[320px] sm:max-w-md md:max-w-lg space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-36 sm:top-24 md:top-1/2 md:-translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-24 max-w-[320px] sm:max-w-md md:max-w-lg space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.06] text-neutral-950 max-md:text-[28px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -811,7 +811,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px] aspect-[16/9] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-[3px] border-white bg-neutral-900 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px] aspect-[16/7] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-[3px] border-white bg-neutral-900 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -834,7 +834,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none text-left top-40 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[440px] space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-36 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[440px] space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3 lg:mt-6">
                   <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-white max-md:text-[28px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -849,7 +849,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/9] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/10 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-white/10 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -872,7 +872,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none text-left top-40 md:top-1/2 -translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-36 md:top-1/2 -translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3 lg:mt-6">
                   <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-neutral-950 max-md:text-[26px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -886,7 +886,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/7] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
@@ -909,7 +909,7 @@ export default function CardoraQualityPage() {
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none text-left top-40 md:top-[370px] -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-36 md:top-[370px] -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-neutral-950 max-md:text-[28px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -924,7 +924,7 @@ export default function CardoraQualityPage() {
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/9] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/7] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-200/60 max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
                     src={CARDORA_VIDEO_CDN}
                     autoPlay
