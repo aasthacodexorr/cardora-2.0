@@ -22,11 +22,13 @@ const TOTAL_FRAMES = 750;
 // Fraction of viewport height to push portrait (mobile) frames upward, on the hero screen only
 const PORTRAIT_SHIFT_UP = 0.06;
 // Shift is held in full until this frame, then eases to 0 by the end frame (next scene starts at 74)
-const PORTRAIT_SHIFT_HOLD_FRAME = 45;
-const PORTRAIT_SHIFT_END_FRAME = 70;
+const PORTRAIT_SHIFT_HOLD_FRAME = 25;
+const PORTRAIT_SHIFT_END_FRAME = 45;
 // How softly the frame sequence follows the scroll position (seconds to close ~63% of the gap);
 // higher = smoother/floatier, lower = snappier
 const SCROLL_EASE_SECONDS = 0.12;
+// Colour of the empty space under the lifted frame on the hero screen (match the floor)
+const PORTRAIT_FILL_COLOR = "#ffffff";
 
 // Media CDN. ImageKit holds the complete final frame sets (number plate, wall logo and shirt prints
 // removed): desktop frames in desktop_media/, portrait (mobile) frames in Portrait_Media/.
@@ -535,8 +537,10 @@ export default function CardoraQualityPage() {
           let drawH = cHeight;
           let drawX = 0;
           let drawY = 0;
+           let portraitFadeTop = -1;
 
           if (cAspect > 1.0) {
+           
             // Desktop view (landscape / widescreen) -> full screen cover scaling
             if (cAspect > vAspect) {
               drawW = cWidth;
@@ -560,18 +564,13 @@ export default function CardoraQualityPage() {
               drawW = cHeight * vAspect;
               drawX = (cWidth - drawW) / 2;
               drawY = 0;
-            }
+            } 
+           
 
             // Hero screen only: lift the picture, then fill the strip that opens at the bottom
-            drawY -= portraitShiftPx;
-            const gap = cHeight - (drawY + drawH);
-            if (gap > 0) {
-              ctx.drawImage(
-                img,
-                0, vHeight - 1, vWidth, 1,
-                drawX, drawY + drawH - 1, drawW, gap + 1
-              );
-            }
+     // Hero screen only: lift the picture; the gap is covered after drawing
+drawY -= portraitShiftPx;
+portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
           } else {
             // Responsive / Mobile view with landscape frames -> video at bottom, top sampled
             const videoAreaH = cHeight * 0.75;
@@ -594,6 +593,20 @@ export default function CardoraQualityPage() {
           }
 
           ctx.drawImage(img, drawX, drawY, drawW, drawH);
+
+          if (portraitFadeTop >= 0 && portraitFadeTop < cHeight) {
+  // Soft fade of the frame's bottom edge into the fill colour
+  const fadeH = Math.min(cHeight * 0.1, portraitFadeTop);
+  const g = ctx.createLinearGradient(0, portraitFadeTop - fadeH, 0, portraitFadeTop);
+  g.addColorStop(0, "rgba(255,255,255,0)");
+  g.addColorStop(1, PORTRAIT_FILL_COLOR);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, portraitFadeTop - fadeH, cWidth, fadeH);
+
+  // Solid fill below the frame
+  ctx.fillStyle = PORTRAIT_FILL_COLOR;
+  ctx.fillRect(0, portraitFadeTop, cWidth, cHeight - portraitFadeTop);
+}
         }
       }
 
