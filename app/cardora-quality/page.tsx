@@ -740,7 +740,7 @@ export default function CardoraQualityPage() {
                   {/* RIGHT COLUMN: VIDEO CARD */}
                   <div className="pointer-events-auto flex-shrink-0 self-start lg:mt-[0.5vw] max-md:self-stretch!">
                     <div className="relative rounded-[clamp(1rem,1.5vw,1.5rem)] bg-white p-[clamp(5px,0.5vw,8px)] shadow-[0_2px_14px_rgba(14,11,31,0.08)] ring-1 ring-[#0e0b1f]/[0.06] w-[clamp(280px,27.6vw,520px)] max-md:w-full!">
-                      <div className="relative rounded-[clamp(0.7rem,1.1vw,1.1rem)] overflow-hidden aspect-[16/12] lg:aspect-[16/9] bg-neutral-900">
+                      <div className="relative rounded-[clamp(0.7rem,1.1vw,1.1rem)] overflow-hidden aspect-[16/10] lg:aspect-[16/9] bg-neutral-900">
                         <video
                           src={CARDORA_VIDEO_CDN}
                           autoPlay
@@ -751,7 +751,7 @@ export default function CardoraQualityPage() {
                         />
                         <button
                           onClick={() => setIsTourModalOpen(true)}
-                          className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#01A969] to-[#018f59] hover:from-[#02b874] hover:to-[#01A969] text-white text-[clamp(0.7rem,0.85vw,0.95rem)] font-semibold px-[clamp(0.7rem,1vw,1.1rem)] py-[clamp(0.4rem,0.6vw,0.65rem)] rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-[#01A969]/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
+                          className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#01A969] to-[#018f59] hover:from-[#02b874] hover:to-[#01A969] text-white text-lg lg:text-[clamp(0.7rem,0.85vw,0.95rem)] font-semibold px-[clamp(0.7rem,1vw,1.1rem)] py-2 lg:py-[clamp(0.4rem,0.6vw,0.65rem)] rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-[#01A969]/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
                         >
                           <span className="w-0 h-0 border-y-[0.42em] border-y-transparent border-l-[0.7em] border-l-white inline-block" />
                           Take the Cardora tour
@@ -985,24 +985,24 @@ export default function CardoraQualityPage() {
           {/* Row 1 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Top Left: Video / Large Hero Card */}
-            <div className="relative rounded-3xl overflow-hidden bg-neutral-900 flex flex-col justify-end p-8 md:p-7   min-h-[440px] md:min-h-full">
-              <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[16/12] lg:aspect-[16/9] w-full">
+            <div className="relative rounded-3xl overflow-hidden flex flex-col justify-end md:justify-start p-8 md:p-0 md:min-h-full min-h-[500px]">
+              <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[16/12] lg:aspect-[16/6] w-full ">
                 <video
                   src={CARDORA_VIDEO_CDN}
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full h-full object-cover absolute inset-0 rounded-3xl"
+                  className="w-full h-full object-cover absolute  inset-0 md:inset-block rounded-3xl"
                 />
               </div>
-              <div className="relative z-10 flex flex-col items-start gap-4">
+              <div className="absolute z-10 flex flex-col items-start gap-4 bottom-3 lg:left-18 lg:bottom-5">
                 <h2 className="text-3xl md:text-5xl font-bold text-white leading-[1.1] max-w-sm">
                   From our experts to your driveway
                 </h2>
                 <button
                   onClick={() => setIsTourModalOpen(true)}
-                  className="bottom-[8%] bg-gradient-to-r from-[#01A969] to-[#018f59] hover:from-[#02b874] hover:to-[#01A969] text-white text-[18px] font-semibold px-4 py-3 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-[#01A969]/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
+                  className="bottom-[0%] lg:bottom-[8%] bg-gradient-to-r from-[#01A969] to-[#018f59] hover:from-[#02b874] hover:to-[#01A969] text-white py-1.5 lg:text-[18px] font-semibold px-4 lg:py-3 rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-[#01A969]/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
                 >
                   <span className="w-0 h-0 border-y-[0.42em] border-y-transparent border-l-[0.7em] border-l-white inline-block" />
                   Take the Cardora tour
@@ -1011,9 +1011,9 @@ export default function CardoraQualityPage() {
             </div>
 
             {/* Top Right: Diagonal Cut Image Card */}
-            <div className="relative rounded-3xl overflow-hidden bg-white min-h-[400px] md:min-h-full border border-black/[0.06] flex flex-col">
+            <div className="relative rounded-3xl overflow-hidden bg-white md:min-h-full border border-black/[0.06] flex flex-col">
               {/* Angled Image Header */}
-              <div className="relative h-64 md:h-[600px] overflow-hidden [clip-path:polygon(0_0,_100%_0,_100%_78%,_0_100%)]">
+              <div className="relative h-64 md:h-[500px] overflow-hidden [clip-path:polygon(0_0,_100%_0,_100%_78%,_0_100%)]">
                 <Image
                   src={q3}
                   alt="Dealership"
