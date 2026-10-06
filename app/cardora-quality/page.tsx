@@ -7,6 +7,7 @@ import Image from "next/image";
 import q1 from "@/assets/cars/quality-1.png";
 import q2 from "@/assets/cars/quality-2.png";
 import q3 from "@/assets/cars/quality-3.png";
+import q1Mobile from "@/assets/cars/quality-mobile.png";
 
 const SCENES = [
   { id: 1, name: "SCENE 01 // SHOWROOM QUALITY STANDARD" },
@@ -1048,11 +1049,11 @@ export default function CardoraQualityPage() {
             <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[380px] flex items-end md:items-stretch p-3 md:p-4">
               {/* Mobile Background Image (q1) */}
               <Image
-                src={q1}
+                src={q1Mobile}
                 alt="Find your own Cardora car"
                 fill
                 priority
-                className="object-cover block md:hidden"
+                className="object-cover object-right block md:hidden"
                 sizes="100vw"
               />
 
