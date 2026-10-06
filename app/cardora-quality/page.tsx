@@ -32,7 +32,7 @@ const IMAGEKIT = "https://ik.imagekit.io/c1dpz1c7j";
 
 // The final frames overwrote files ImageKit had already cached, so a version query makes the CDN fetch
 // the new files without purging every URL. Bump it whenever frames are re-uploaded over existing ones.
-const FRAME_VERSION = "final1";
+const FRAME_VERSION = "final2";
 
 // Hero badge icons
 const ICON_BASE = USE_BUNNY_CDN ? `${BUNNY_CDN}/icons` : "/icons";
