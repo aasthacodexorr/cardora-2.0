@@ -33,8 +33,9 @@ const PORTRAIT_FILL_COLOR = "#ffffff";
 // Media CDN. ImageKit holds the complete final frame sets (number plate, wall logo and shirt prints
 // removed): desktop frames in desktop_media/, portrait (mobile) frames in Portrait_Media/.
 // Set USE_BUNNY_CDN to true to serve all media from Bunny CDN instead (same final set uploaded there).
-const USE_BUNNY_CDN = false;
-const BUNNY_CDN = "https://zweb-local.b-cdn.net/cardora";
+const USE_BUNNY_CDN = true;
+const BUNNY_CDN = "https://phaeton.b-cdn.net/cardora";
+const BUNNY_MEDIA = `${BUNNY_CDN}/v2`;
 const IMAGEKIT = "https://ik.imagekit.io/c1dpz1c7j";
 
 // The final frames overwrote files ImageKit had already cached, so a version query makes the CDN fetch
@@ -42,7 +43,7 @@ const IMAGEKIT = "https://ik.imagekit.io/c1dpz1c7j";
 const FRAME_VERSION = "final2";
 
 // Hero badge icons
-const ICON_BASE = USE_BUNNY_CDN ? `${BUNNY_CDN}/icons` : "/icons";
+const ICON_BASE = USE_BUNNY_CDN ? `${BUNNY_MEDIA}/icons` : "/icons";
 
 // 1920x1080 file with the picture letterboxed to 1920x820: every video box uses aspect-[16/12] lg:aspect-[16/9]
 // with object-cover, so exactly the black bars are cropped and none of the picture
@@ -55,7 +56,7 @@ function getFrameUrl(index: number, portrait = false) {
   const frameNumber = Math.min(749, Math.max(1, index + 1));
   const seqNum = String(frameNumber).padStart(5, "0");
   if (USE_BUNNY_CDN) {
-    return `${BUNNY_CDN}/frames/${portrait ? "portrait" : "desktop"}/seq_${seqNum}.webp`;
+    return `${BUNNY_MEDIA}/frames/${portrait ? "portrait" : "desktop"}/seq_${seqNum}.webp`;
   }
   // Portrait (mobile) screens use the separately rendered portrait sequence
   const folder = portrait ? "Portrait_Media" : "desktop_media";
