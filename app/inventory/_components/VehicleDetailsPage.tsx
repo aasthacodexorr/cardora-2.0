@@ -28,6 +28,7 @@ import { headers } from "next/headers";
 import doller from "@/assets/icons/doller-1.png";
 import protectShield from "@/assets/icons/trade-shield.png";
 import Image from "next/image";
+import Script from "next/script";
 import VehicleSpecificationsAccordion from "@/components/inventory/Faq";
 import Terms from "@/components/inventory/Terms";
 import AboutVehicle from "@/components/inventory/AboutVehicle";
@@ -176,6 +177,16 @@ export default async function VehicleDetailsPage({
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(carSchema) }}
             />
+            
+            {/* Facebook Pixel ViewContent Event */}
+            <Script id="fb-view-content" strategy="afterInteractive">
+                {`
+                    fbq('track', 'ViewContent', {
+                        content_ids: ['${vehicle.stock_no || vehicle.id}'],
+                        content_type: 'vehicle'
+                    });
+                `}
+            </Script>
             {/* Header spanning 100% viewport, inside contents are usually centered natively */}
             <div className="w-full bg-hero-bg">
                 {/* <Header /> */}
@@ -199,7 +210,7 @@ export default async function VehicleDetailsPage({
                             <ImageGallery images={images} title={titleText} isSold={isSold} centered={!showSidebar} />
 
                             <div className="text-[12px] font-light border-b border-gray-200">
-                                <p><strong className="font-medium">STOCK #</strong>: G-148421</p>
+                                <p><strong className="font-medium">STOCK #</strong>: {vehicle?.stock_no}</p>
                             </div>
 
                             {/* vehicle header on mobile */}
