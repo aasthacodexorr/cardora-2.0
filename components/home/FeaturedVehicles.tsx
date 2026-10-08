@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { getFeaturedVehicles, type FeaturedVehicle } from "@/lib/featuredVehicles";
 import { useAppConfig } from "@/app/providers";
+import cardoraImg from "@/assets/icons/ad-card-3.jpg"
 
 type DisplayVehicle = {
   id: string;
@@ -25,6 +26,8 @@ type DisplayVehicle = {
 };
 
 const SCROLL_AMOUNT = 314; // Card width (290px) + Gap (24px)
+
+const defaultImg = cardoraImg?.src
 
 export default function FeaturedVehicles() {
   const appConfig = useAppConfig();
@@ -111,10 +114,10 @@ export default function FeaturedVehicles() {
 
   if (loading || vehicles.length === 0) return null;
 
-  const duplicatedVehicles = [...vehicles, ...vehicles, ...vehicles];
+  const duplicatedVehicles = [...vehicles, ...vehicles, ...vehicles];  
 
   return (
-    <section className="w-full bg-background mt-[40px] mb-[50px] overflow-hidden font-carmax">
+    <section className="w-full bg-background mt-[36px] mb-[35px] overflow-hidden font-carmax">
       <div className="max-w-[1280px] mx-auto px-[23px] lg:px-[20px] py-10 lg:py-12 relative">
         <h2 className="text-[28px] lg:text-[44px] lg:font-bold text-foreground tracking-tight text-center mb-12 lg:mb-8">
           Shop featured vehicles
@@ -136,11 +139,11 @@ export default function FeaturedVehicles() {
             {duplicatedVehicles.map((v, index) => (
               <article
                 key={`${v.id}-${index}`}
-                className="snap-start shrink-0 w-full lg:w-[290px] rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
+                className="snap-start shrink-0 w-full lg:w-[390px] rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
               >
                 <div className="aspect-square bg-muted">
                   <Image
-                    src={v.image}
+                    src={v.image || defaultImg}
                     alt={v.title}
                     width={290}
                     height={290}
