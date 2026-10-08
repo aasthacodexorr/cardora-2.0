@@ -5,12 +5,14 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import checkout from "@/assets/icons/checkout.png";
 import { Fuel, PhoneCall } from "lucide-react";
+import { PriceDrop } from "@/components/common/PriceDrop";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { createPortal } from "react-dom";
 import { setQueryParams } from "@/utils/queryParams";
 import QueryParamIframe from "@/components/common/QueryParamIframe";
 import QueryParamLink from "@/components/common/QueryParamLink";
+import { getEffectivePrice } from "@/utils/pricing";
 
 
 export const PriceAndCTA = ({ vehicle }: any) => {
@@ -20,7 +22,9 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
   const inlineContainerRef = useRef<HTMLDivElement>(null);
 
-  const sellingPrice = Number(vehicle?.selling_price || 0);
+
+  const sellingPrice =
+    getEffectivePrice(vehicle?.selling_price, vehicle?.special_price) ?? 0;
 
   const isSold =
     vehicle?.status?.toLowerCase() !== "instock";
@@ -29,9 +33,6 @@ export const PriceAndCTA = ({ vehicle }: any) => {
     vehicle?.vehicle_type?.toLowerCase() === "as-is";
 
   const hasPrice = sellingPrice > 0;
-
-  const financePrice = sellingPrice;
-  const cashPrice = sellingPrice + 2000;
 
   const vehicleId = String(vehicle?.id || vehicle?.inventory_id || "");
   const financeHref = `/finance?inventory_id=${vehicleId}`;
@@ -100,7 +101,11 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                 {hasPrice ? (
                   <>
                     <p className="text-[32px] font-extrabold leading-none text-price-green">
-                      ${sellingPrice.toLocaleString("en-CA")}.00
+                      <PriceDrop
+                        price={vehicle?.selling_price}
+                        specialPrice={vehicle?.special_price}
+                        className="text-[32px] font-extrabold leading-none text-price-green"
+                      />
                     </p>
 
                     {/* Info icon */}
@@ -171,7 +176,11 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                       className="text-[24px] font-bold text-price-green cursor-pointer"
                       onClick={() => setActiveTooltip(null)}
                     >
-                      ${financePrice.toLocaleString("en-CA")}.00
+                      <PriceDrop
+                        price={vehicle?.selling_price}
+                        specialPrice={vehicle?.special_price}
+                        className="text-[24px] font-bold text-price-green cursor-pointer"
+                      />
                     </span>
 
                     {/* Info icon */}
@@ -219,7 +228,12 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                       className="text-[24px] font-bold text-price-green cursor-pointer"
                       onClick={() => setActiveTooltip(null)}
                     >
-                      ${cashPrice.toLocaleString("en-CA")}.00
+                      <PriceDrop
+                        price={vehicle?.selling_price}
+                        specialPrice={vehicle?.special_price}
+                        adjustment={2000}
+                        className="text-[24px] font-bold text-price-green cursor-pointer"
+                      />
                     </span>
 
                     {/* Info icon */}

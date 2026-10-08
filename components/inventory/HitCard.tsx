@@ -4,9 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 
+import { PriceDrop } from "@/components/common/PriceDrop";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { useWishlist } from "@/context/WishlistContext";
+import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
 import { MessageModal } from "./VehicleInfo";
 
 /* =========================
@@ -64,7 +66,11 @@ export const HitCard = ({ hit }: { hit: any }) => {
     hit.trim || ""
   }`.trim();
 
-  const price = Number(hit.selling_price) || 0;
+  const price = getEffectivePrice(hit.selling_price, hit.special_price) ?? 0;
+  const hasPriceDrop = isValidPriceDrop(
+    hit.selling_price,
+    hit.special_price,
+  );
   const km = Number(hit.odometer) || 0;
   const drivetrain = hit.drivetrain || "N/A";
   const stock = hit.stock_no || "N/A";
@@ -130,6 +136,12 @@ export const HitCard = ({ hit }: { hit: any }) => {
                   : ""
               }`}
             />
+
+            {!isSold && hasPriceDrop && (
+              <div className="absolute top-5 left-5 z-10 rounded-lg bg-brand px-2.5 py-2.5 text-[14px] font-medium leading-none text-white">
+                Price drop
+              </div>
+            )}
 
             {/* SOLD Ribbon */}
             {isSold && (
@@ -208,9 +220,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
                   <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px]">
                     <div className="flex justify-between items-center w-full">
                       {price > 0 ? (
-                        <span>
-                          ${price.toLocaleString("en-CA")}.00
-                        </span>
+                        <PriceDrop
+                          price={hit.selling_price}
+                          specialPrice={hit.special_price}
+                        />
                       ) : (
                         /* Single Call for price */
                         <span className="flex items-center gap-1 text-price-green">
@@ -246,9 +259,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
                       <span>Finance Price</span>
 
                       <div className="relative inline-flex items-center gap-1">
-                        <span>
-                          ${price.toLocaleString("en-CA")}.00
-                        </span>
+                        <PriceDrop
+                          price={hit.selling_price}
+                          specialPrice={hit.special_price}
+                        />
 
                         {/* Finance Info */}
                         <div className="relative group shrink-0">
@@ -301,9 +315,11 @@ export const HitCard = ({ hit }: { hit: any }) => {
                       <span>Cash Price</span>
 
                       <div className="relative inline-flex items-center gap-1">
-                        <span>
-                          ${(price + 2000).toLocaleString("en-CA")}.00
-                        </span>
+                        <PriceDrop
+                          price={hit.selling_price}
+                          specialPrice={hit.special_price}
+                          adjustment={2000}
+                        />
 
                         {/* Cash Info */}
                         <div className="relative group shrink-0">
