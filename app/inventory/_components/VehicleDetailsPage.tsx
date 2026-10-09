@@ -37,6 +37,7 @@ import CoverageModal from "@/components/inventory/CoverageModal";
 import TradeInLink from "@/components/inventory/TradeInLink";
 import RecentlyViewedTracker from "@/components/inventory/RecentlyViewedTracker";
 import { getEffectivePrice } from "@/utils/pricing";
+import VehicleFeatures from "@/components/inventory/VehicleFeatures";
 
 // Force dynamic rendering — vehicle data changes frequently
 export const dynamic = "force-dynamic";
@@ -309,6 +310,7 @@ export default async function VehicleDetailsPage({
 
                     {/* Finance Calculator - Now spans full responsive width within the centralized container bounds */}
                     <div className="mt-12 w-full">
+                        <VehicleFeatures bodyType={vehicle.body_type} />
                         <FinanceCalculator
                             vehiclePrice={getEffectivePrice(vehicle.selling_price, vehicle.special_price) ?? undefined}
                             inventoryId={id}
