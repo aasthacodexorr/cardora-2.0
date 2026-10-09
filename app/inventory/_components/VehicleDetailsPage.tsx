@@ -35,6 +35,7 @@ import AboutVehicle from "@/components/inventory/AboutVehicle";
 import { PriceAndCTA, VehicleHeader } from "@/components/inventory/VehicleInfo";
 import CoverageModal from "@/components/inventory/CoverageModal";
 import TradeInLink from "@/components/inventory/TradeInLink";
+import RecentlyViewedTracker from "@/components/inventory/RecentlyViewedTracker";
 import { getEffectivePrice } from "@/utils/pricing";
 
 // Force dynamic rendering — vehicle data changes frequently
@@ -178,7 +179,8 @@ export default async function VehicleDetailsPage({
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(carSchema) }}
             />
-            
+            <RecentlyViewedTracker inventoryId={id} />
+
             {/* Facebook Pixel ViewContent Event */}
             <Script id="fb-view-content" strategy="afterInteractive">
                 {`

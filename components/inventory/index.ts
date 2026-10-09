@@ -5,6 +5,7 @@
 ========================= */
 
 export { HitCard } from "./HitCard";
+export { RecentlyViewedTag } from "./RecentlyViewedTag";
 export { ImageGallery } from "./ImageGallery";
 export { default as AboutVehicle } from "./AboutVehicle";
 export { default as Faq }  from "./Faq";

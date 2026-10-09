@@ -10,12 +10,32 @@ import { useAppConfig } from "@/app/providers";
 import { useWishlist } from "@/context/WishlistContext";
 import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
 import { MessageModal } from "./VehicleInfo";
+import { RecentlyViewedTag } from "@/components/inventory/RecentlyViewedTag";
+import { useRecentlyViewed } from "@/lib/recentlyViewed";
 
 /* =========================
    HitCard Component (Inventory)
 ========================= */
 
-export const HitCard = ({ hit }: { hit: any }) => {
+type HitCardHit = {
+  inventory_id?: string | number;
+  year?: number | string;
+  make?: string;
+  model?: string;
+  trim?: string;
+  selling_price?: number | string;
+  special_price?: number | string;
+  odometer?: number | string;
+  drivetrain?: string;
+  stock_no?: string;
+  status?: string;
+  sub_status?: string;
+  image_urls?: string;
+  vehicle_type?: string;
+  [key: string]: unknown;
+};
+
+export const HitCard = ({ hit }: { hit: HitCardHit }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<
     "finance" | "cash" | null
@@ -37,6 +57,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
     removeFromWishlist,
     isHydrated,
   } = useWishlist();
+
+  const { isRecentlyViewed } = useRecentlyViewed();
+  const inventoryId = String(hit.inventory_id ?? "");
+  const isRecentlyViewedVehicle = isRecentlyViewed(inventoryId);
 
   /* =========================
      Close tooltip on outside click
@@ -96,7 +120,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
       : firstUrl;
   }
 
-  const getVehicleUrl = (hitDoc: any) => {
+  const getVehicleUrl = (hitDoc: HitCardHit) => {
     const slug = [
       hitDoc.inventory_id,
       hitDoc.year,
@@ -137,9 +161,9 @@ export const HitCard = ({ hit }: { hit: any }) => {
               }`}
             />
 
-            {!isSold && hasPriceDrop && (
-              <div className="absolute top-5 left-5 z-10 rounded-lg bg-brand px-2.5 py-2.5 text-[14px] font-medium leading-none text-white">
-                Price drop
+            {isRecentlyViewedVehicle && (
+              <div className="">
+                <RecentlyViewedTag />
               </div>
             )}
 
@@ -165,35 +189,35 @@ export const HitCard = ({ hit }: { hit: any }) => {
                   e.preventDefault();
                   e.stopPropagation();
 
-                  if (isInWishlist(hit.inventory_id)) {
-                    removeFromWishlist(hit.inventory_id);
+                  if (isInWishlist(inventoryId)) {
+                    removeFromWishlist(inventoryId);
                   } else {
                     addToWishlist({
-                      inventory_id: hit.inventory_id,
+                      inventory_id: inventoryId,
                       title,
                       price,
                       odometer: km,
                       image_url: imageSrc,
-                      year: hit.year,
-                      make: hit.make,
-                      model: hit.model,
-                      trim: hit.trim || "",
+                      year: Number(hit.year ?? 0),
+                      make: String(hit.make ?? ""),
+                      model: String(hit.model ?? ""),
+                      trim: String(hit.trim ?? ""),
                       stock_no: stock,
                       drivetrain,
-                      status: hit.status,
+                      status: String(hit.status ?? "instock"),
                     });
                   }
                 }}
                 className="absolute top-[14px] right-[14px] p-1 cursor-pointer rounded-full bg-white/90 hover:bg-white transition-colors shadow-md z-20"
                 aria-label={
-                  isInWishlist(hit.inventory_id)
+                  isInWishlist(inventoryId)
                     ? "Remove from wishlist"
                     : "Add to wishlist"
                 }
               >
                 <Heart
                   className={`w-5 h-5 ${
-                    isInWishlist(hit.inventory_id)
+                    isInWishlist(inventoryId)
                       ? "fill-brand-green stroke-none"
                       : "stroke-gray-600"
                   } transition-colors`}
@@ -202,8 +226,14 @@ export const HitCard = ({ hit }: { hit: any }) => {
             )}
           </div>
 
+          {!isSold && hasPriceDrop && (
+              <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2.5 py-2 -mt-1 text-[14px] font-medium leading-none text-white">
+                Price drop
+              </div>
+            )}
+
           {/* Card body */}
-          <div className="flex flex-col flex-1 px-[15px] pt-3 pb-0 text-start">
+          <div className="flex flex-col flex-1 px-[15px] pt-2 pb-0 text-start">
             <h3 className="text-[16px] font-[600] text-foreground leading-[22px] overflow-hidden text-ellipsis line-clamp-2 min-h-[44px]">
               {title}
             </h3>
