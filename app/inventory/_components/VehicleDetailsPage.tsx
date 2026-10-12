@@ -28,13 +28,13 @@ import { headers } from "next/headers";
 import doller from "@/assets/icons/doller-1.png";
 import protectShield from "@/assets/icons/trade-shield.png";
 import Image from "next/image";
-import Script from "next/script";
 import VehicleSpecificationsAccordion from "@/components/inventory/Faq";
 import Terms from "@/components/inventory/Terms";
 import AboutVehicle from "@/components/inventory/AboutVehicle";
 import { PriceAndCTA, VehicleHeader } from "@/components/inventory/VehicleInfo";
 import CoverageModal from "@/components/inventory/CoverageModal";
 import TradeInLink from "@/components/inventory/TradeInLink";
+import MetaVehicleViewContent from "@/components/MetaVehicleViewContent";
 
 // Force dynamic rendering — vehicle data changes frequently
 export const dynamic = "force-dynamic";
@@ -178,15 +178,7 @@ export default async function VehicleDetailsPage({
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(carSchema) }}
             />
             
-            {/* Facebook Pixel ViewContent Event */}
-            <Script id="fb-view-content" strategy="afterInteractive">
-                {`
-                    fbq('track', 'ViewContent', {
-                        content_ids: ['${vehicle.stock_no || vehicle.id}'],
-                        content_type: 'vehicle'
-                    });
-                `}
-            </Script>
+            <MetaVehicleViewContent catalogItemId={vehicle.stock_no} />
             {/* Header spanning 100% viewport, inside contents are usually centered natively */}
             <div className="w-full bg-hero-bg">
                 {/* <Header /> */}
