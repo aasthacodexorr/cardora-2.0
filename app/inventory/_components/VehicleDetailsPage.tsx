@@ -34,6 +34,9 @@ import AboutVehicle from "@/components/inventory/AboutVehicle";
 import { PriceAndCTA, VehicleHeader } from "@/components/inventory/VehicleInfo";
 import CoverageModal from "@/components/inventory/CoverageModal";
 import TradeInLink from "@/components/inventory/TradeInLink";
+import RecentlyViewedTracker from "@/components/inventory/RecentlyViewedTracker";
+import { getEffectivePrice } from "@/utils/pricing";
+import VehicleFeatures from "@/components/inventory/VehicleFeatures";
 import MetaVehicleViewContent from "@/components/MetaVehicleViewContent";
 
 // Force dynamic rendering — vehicle data changes frequently
@@ -177,7 +180,8 @@ export default async function VehicleDetailsPage({
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(carSchema) }}
             />
-            
+            <RecentlyViewedTracker inventoryId={id} />
+
             <MetaVehicleViewContent catalogItemId={vehicle.stock_no} />
             {/* Header spanning 100% viewport, inside contents are usually centered natively */}
             <div className="w-full bg-hero-bg">
@@ -298,7 +302,11 @@ export default async function VehicleDetailsPage({
 
                     {/* Finance Calculator - Now spans full responsive width within the centralized container bounds */}
                     <div className="mt-12 w-full">
-                        <FinanceCalculator vehiclePrice={vehicle.selling_price} inventoryId={id} />
+                        {/* <VehicleFeatures bodyType={vehicle.body_type} /> */}
+                        <FinanceCalculator
+                            vehiclePrice={getEffectivePrice(vehicle.selling_price, vehicle.special_price) ?? undefined}
+                            inventoryId={id}
+                        />
                     </div>
 
                 </div>

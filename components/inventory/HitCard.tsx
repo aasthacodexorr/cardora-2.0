@@ -4,16 +4,38 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 
+import { PriceDrop } from "@/components/common/PriceDrop";
 import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { useWishlist } from "@/context/WishlistContext";
+import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
 import { MessageModal } from "./VehicleInfo";
+import { RecentlyViewedTag } from "@/components/inventory/RecentlyViewedTag";
+import { useRecentlyViewed } from "@/lib/recentlyViewed";
 
 /* =========================
    HitCard Component (Inventory)
 ========================= */
 
-export const HitCard = ({ hit }: { hit: any }) => {
+type HitCardHit = {
+  inventory_id?: string | number;
+  year?: number | string;
+  make?: string;
+  model?: string;
+  trim?: string;
+  selling_price?: number | string;
+  special_price?: number | string;
+  odometer?: number | string;
+  drivetrain?: string;
+  stock_no?: string;
+  status?: string;
+  sub_status?: string;
+  image_urls?: string;
+  vehicle_type?: string;
+  [key: string]: unknown;
+};
+
+export const HitCard = ({ hit }: { hit: HitCardHit }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<
     "finance" | "cash" | null
@@ -35,6 +57,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
     removeFromWishlist,
     isHydrated,
   } = useWishlist();
+
+  const { isRecentlyViewed } = useRecentlyViewed();
+  const inventoryId = String(hit.inventory_id ?? "");
+  const isRecentlyViewedVehicle = isRecentlyViewed(inventoryId);
 
   /* =========================
      Close tooltip on outside click
@@ -64,7 +90,22 @@ export const HitCard = ({ hit }: { hit: any }) => {
     hit.trim || ""
   }`.trim();
 
-  const price = Number(hit.selling_price) || 0;
+
+const isTestPriceDrop = String(hit.inventory_id) === "3314";
+
+const testSpecialPrice = isTestPriceDrop
+  ? Math.max(1, Number(hit.selling_price || 0) - 1000)
+  : hit.special_price;
+
+const price = getEffectivePrice(
+  hit.selling_price,
+  testSpecialPrice,
+) ?? 0;
+
+const hasPriceDrop =
+  isValidPriceDrop(hit.selling_price, testSpecialPrice) ||
+  (isTestPriceDrop && Number(hit.selling_price) > 0);
+
   const km = Number(hit.odometer) || 0;
   const drivetrain = hit.drivetrain || "N/A";
   const stock = hit.stock_no || "N/A";
@@ -90,7 +131,7 @@ export const HitCard = ({ hit }: { hit: any }) => {
       : firstUrl;
   }
 
-  const getVehicleUrl = (hitDoc: any) => {
+  const getVehicleUrl = (hitDoc: HitCardHit) => {
     const slug = [
       hitDoc.inventory_id,
       hitDoc.year,
@@ -131,6 +172,12 @@ export const HitCard = ({ hit }: { hit: any }) => {
               }`}
             />
 
+            {isRecentlyViewedVehicle && (
+              <div className="">
+                <RecentlyViewedTag />
+              </div>
+            )}
+
             {/* SOLD Ribbon */}
             {isSold && (
               <div className="absolute top-4 -left-10 rotate-[-45deg] text-white text-[14px] font-bold uppercase tracking-[3px] shadow-lg w-[160px] text-center py-[6px] z-10 bg-sold-overlay">
@@ -153,35 +200,35 @@ export const HitCard = ({ hit }: { hit: any }) => {
                   e.preventDefault();
                   e.stopPropagation();
 
-                  if (isInWishlist(hit.inventory_id)) {
-                    removeFromWishlist(hit.inventory_id);
+                  if (isInWishlist(inventoryId)) {
+                    removeFromWishlist(inventoryId);
                   } else {
                     addToWishlist({
-                      inventory_id: hit.inventory_id,
+                      inventory_id: inventoryId,
                       title,
                       price,
                       odometer: km,
                       image_url: imageSrc,
-                      year: hit.year,
-                      make: hit.make,
-                      model: hit.model,
-                      trim: hit.trim || "",
+                      year: Number(hit.year ?? 0),
+                      make: String(hit.make ?? ""),
+                      model: String(hit.model ?? ""),
+                      trim: String(hit.trim ?? ""),
                       stock_no: stock,
                       drivetrain,
-                      status: hit.status,
+                      status: String(hit.status ?? "instock"),
                     });
                   }
                 }}
                 className="absolute top-[14px] right-[14px] p-1 cursor-pointer rounded-full bg-white/90 hover:bg-white transition-colors shadow-md z-20"
                 aria-label={
-                  isInWishlist(hit.inventory_id)
+                  isInWishlist(inventoryId)
                     ? "Remove from wishlist"
                     : "Add to wishlist"
                 }
               >
                 <Heart
                   className={`w-5 h-5 ${
-                    isInWishlist(hit.inventory_id)
+                    isInWishlist(inventoryId)
                       ? "fill-brand-green stroke-none"
                       : "stroke-gray-600"
                   } transition-colors`}
@@ -190,8 +237,14 @@ export const HitCard = ({ hit }: { hit: any }) => {
             )}
           </div>
 
+          {!isSold && hasPriceDrop && (
+              <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2.5 py-2 -mt-1 text-[14px] font-medium leading-none text-white">
+                Price drop
+              </div>
+            )}
+
           {/* Card body */}
-          <div className="flex flex-col flex-1 px-[15px] pt-3 pb-0 text-start">
+          <div className="flex flex-col flex-1 px-[15px] pt-2 pb-0 text-start">
             <h3 className="text-[16px] font-[600] text-foreground leading-[22px] overflow-hidden text-ellipsis line-clamp-2 min-h-[44px]">
               {title}
             </h3>
@@ -208,9 +261,10 @@ export const HitCard = ({ hit }: { hit: any }) => {
                   <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px]">
                     <div className="flex justify-between items-center w-full">
                       {price > 0 ? (
-                        <span>
-                          ${price.toLocaleString("en-CA")}.00
-                        </span>
+                        <PriceDrop
+                          price={hit.selling_price}
+                          specialPrice={testSpecialPrice}
+                        />
                       ) : (
                         /* Single Call for price */
                         <span className="flex items-center gap-1 text-price-green">
@@ -239,16 +293,17 @@ export const HitCard = ({ hit }: { hit: any }) => {
                      ========================= */
                   <div
                     ref={tooltipRef}
-                    className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1"
+                    className="text-[15px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1"
                   >
                     {/* Finance Price */}
                     <div className="flex justify-between items-center w-full">
                       <span>Finance Price</span>
 
                       <div className="relative inline-flex items-center gap-1">
-                        <span>
-                          ${price.toLocaleString("en-CA")}.00
-                        </span>
+                        <PriceDrop
+                          price={hit.selling_price}
+                          specialPrice={testSpecialPrice}
+                        />
 
                         {/* Finance Info */}
                         <div className="relative group shrink-0">
@@ -301,9 +356,11 @@ export const HitCard = ({ hit }: { hit: any }) => {
                       <span>Cash Price</span>
 
                       <div className="relative inline-flex items-center gap-1">
-                        <span>
-                          ${(price + 2000).toLocaleString("en-CA")}.00
-                        </span>
+                        <PriceDrop
+                          price={hit.selling_price}
+                          specialPrice={testSpecialPrice}
+                          adjustment={2000}
+                        />
 
                         {/* Cash Info */}
                         <div className="relative group shrink-0">
