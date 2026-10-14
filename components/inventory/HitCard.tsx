@@ -90,11 +90,22 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
     hit.trim || ""
   }`.trim();
 
-  const price = getEffectivePrice(hit.selling_price, hit.special_price) ?? 0;
-  const hasPriceDrop = isValidPriceDrop(
-    hit.selling_price,
-    hit.special_price,
-  );
+
+const isTestPriceDrop = String(hit.inventory_id) === "3314";
+
+const testSpecialPrice = isTestPriceDrop
+  ? Math.max(1, Number(hit.selling_price || 0) - 1000)
+  : hit.special_price;
+
+const price = getEffectivePrice(
+  hit.selling_price,
+  testSpecialPrice,
+) ?? 0;
+
+const hasPriceDrop =
+  isValidPriceDrop(hit.selling_price, testSpecialPrice) ||
+  (isTestPriceDrop && Number(hit.selling_price) > 0);
+
   const km = Number(hit.odometer) || 0;
   const drivetrain = hit.drivetrain || "N/A";
   const stock = hit.stock_no || "N/A";
@@ -252,7 +263,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                       {price > 0 ? (
                         <PriceDrop
                           price={hit.selling_price}
-                          specialPrice={hit.special_price}
+                          specialPrice={testSpecialPrice}
                         />
                       ) : (
                         /* Single Call for price */
@@ -282,7 +293,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                      ========================= */
                   <div
                     ref={tooltipRef}
-                    className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1"
+                    className="text-[15px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1"
                   >
                     {/* Finance Price */}
                     <div className="flex justify-between items-center w-full">
@@ -291,7 +302,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                       <div className="relative inline-flex items-center gap-1">
                         <PriceDrop
                           price={hit.selling_price}
-                          specialPrice={hit.special_price}
+                          specialPrice={testSpecialPrice}
                         />
 
                         {/* Finance Info */}
@@ -347,7 +358,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                       <div className="relative inline-flex items-center gap-1">
                         <PriceDrop
                           price={hit.selling_price}
-                          specialPrice={hit.special_price}
+                          specialPrice={testSpecialPrice}
                           adjustment={2000}
                         />
 

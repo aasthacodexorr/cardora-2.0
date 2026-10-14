@@ -23,8 +23,17 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   const inlineContainerRef = useRef<HTMLDivElement>(null);
 
 
+  const isTestPriceDrop =
+    String(vehicle?.id || vehicle?.inventory_id || "") ===
+    "3314";
+
+  const testSpecialPrice = isTestPriceDrop
+    ? Math.max(1, Number(vehicle?.selling_price || 0) - 1000)
+    : vehicle?.special_price;
+
   const sellingPrice =
-    getEffectivePrice(vehicle?.selling_price, vehicle?.special_price) ?? 0;
+    getEffectivePrice(vehicle?.selling_price, testSpecialPrice) ?? 0;
+
 
   const isSold =
     vehicle?.status?.toLowerCase() !== "instock";
@@ -103,7 +112,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                     <p className="text-[32px] font-extrabold leading-none text-price-green">
                       <PriceDrop
                         price={vehicle?.selling_price}
-                        specialPrice={vehicle?.special_price}
+                        specialPrice={testSpecialPrice}
                         className="text-[32px] font-extrabold leading-none text-price-green"
                       />
                     </p>
@@ -178,7 +187,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                     >
                       <PriceDrop
                         price={vehicle?.selling_price}
-                        specialPrice={vehicle?.special_price}
+                        specialPrice={testSpecialPrice}
                         className="text-[24px] font-bold text-price-green cursor-pointer"
                       />
                     </span>
@@ -230,7 +239,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                     >
                       <PriceDrop
                         price={vehicle?.selling_price}
-                        specialPrice={vehicle?.special_price}
+                        specialPrice={testSpecialPrice}
                         adjustment={2000}
                         className="text-[24px] font-bold text-price-green cursor-pointer"
                       />
