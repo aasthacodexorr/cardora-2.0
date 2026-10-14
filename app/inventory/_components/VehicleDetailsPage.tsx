@@ -302,7 +302,7 @@ export default async function VehicleDetailsPage({
 
                     {/* Finance Calculator - Now spans full responsive width within the centralized container bounds */}
                     <div className="mt-12 w-full">
-                        <VehicleFeatures bodyType={vehicle.body_type} />
+                        {/* <VehicleFeatures bodyType={vehicle.body_type} /> */}
                         <FinanceCalculator
                             vehiclePrice={getEffectivePrice(vehicle.selling_price, vehicle.special_price) ?? undefined}
                             inventoryId={id}
