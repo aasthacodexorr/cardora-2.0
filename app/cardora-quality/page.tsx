@@ -63,6 +63,16 @@ function getFrameUrl(index: number, portrait = false) {
   return `${IMAGEKIT}/${folder}/seq_${seqNum}.webp?v=${FRAME_VERSION}`;
 }
 
+
+// Define your video sources:
+const QUALITY_VIDEOS = {
+  section1: "https://phaeton.b-cdn.net/videos/DJI_20261014132017_0056_D.mp4",
+  section2: "https://phaeton.b-cdn.net/videos/DJI_20261014132017_0056_D_1.mp4",
+  section3: "https://phaeton.b-cdn.net/videos/DJI_20261014132017_0056_D_2.mp4",
+  section4: "https://phaeton.b-cdn.net/videos/C2985_2.mp4",
+  section5: "https://phaeton.b-cdn.net/videos/C2985.mp4",
+};
+
 const CONTENT_BREAKPOINTS = [
   { id: 0, label: "A Tailored Process", displayPct: 0, targetFrame: 1, scrollPct: 0 },
   { id: 1, label: "Handpicked Quality", displayPct: 20, targetFrame: 98, scrollPct: (98 / 750) * 100 },
@@ -788,7 +798,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                     <div className="relative rounded-[clamp(1rem,1.5vw,1.5rem)] bg-white p-[clamp(5px,0.5vw,8px)] shadow-[0_2px_14px_rgba(14,11,31,0.08)] ring-1 ring-[#0e0b1f]/[0.06] w-[clamp(280px,27.6vw,520px)] max-md:w-full!">
                       <div className="relative rounded-2xl   md:rounded-3xl overflow-hidden aspect-[16/10] lg:aspect-[16/9] max-md:rounded-2xl!">
                         <video
-                          src={CARDORA_VIDEO_CDN}
+                          src={QUALITY_VIDEOS.section3}
                           autoPlay
                           loop
                           muted
@@ -859,7 +869,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 {/* Video Card */}
                 <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl  max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
-                    src={CARDORA_VIDEO_CDN}
+                    src={QUALITY_VIDEOS.section1}
                     autoPlay
                     loop
                     muted
@@ -897,7 +907,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 {/* Video Card */}
                 <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
-                    src={CARDORA_VIDEO_CDN}
+                    src={QUALITY_VIDEOS.section2}
                     autoPlay
                     loop
                     muted
@@ -934,7 +944,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 {/* Video Card */}
                 <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl  max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
-                    src={CARDORA_VIDEO_CDN}
+                    src={QUALITY_VIDEOS.section4}
                     autoPlay
                     loop
                     muted
@@ -972,7 +982,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 {/* Video Card */}
                 <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
                   <video
-                    src={CARDORA_VIDEO_CDN}
+                    src={QUALITY_VIDEOS.section5}
                     autoPlay
                     loop
                     muted
@@ -1015,7 +1025,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 autoPlay
                 controls
                 playsInline
-                className="w-full h-full object-cover object-center scale-[1.5]"
+                className="w-full h-full object-cover object-center scale-[1.2]"
               />
             </motion.div>
           </motion.div>
@@ -1034,7 +1044,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
             <div className="relative rounded-3xl overflow-hidden flex flex-col justify-end md:justify-start p-8 md:p-0 md:min-h-full min-h-[500px]">
               <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[16/12] lg:aspect-[16/6] w-full ">
                 <video
-                  src={CARDORA_VIDEO_CDN}
+                  src={QUALITY_VIDEOS?.section3}
                   autoPlay
                   loop
                   muted
