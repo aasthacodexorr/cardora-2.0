@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { preconnect } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -64,14 +65,60 @@ function getFrameUrl(index: number, portrait = false) {
 }
 
 
-// Define your video sources:
+// Web encodes of the raw camera clips (1080p30, ~5 Mbps, faststart) + first-frame posters.
+// The originals in /videos/ are 4K at 87-169 Mbps and stutter when several play at once.
+const QUALITY_VIDEO_BASE =
+  process.env.NEXT_PUBLIC_QUALITY_VIDEO_BASE || "https://phaeton.b-cdn.net/videos/web";
+const qualityVideo = (name: string) => ({
+  src: `${QUALITY_VIDEO_BASE}/${name}_web.mp4`,
+  poster: `${QUALITY_VIDEO_BASE}/${name}_poster.jpg`,
+});
 const QUALITY_VIDEOS = {
-  section1: "https://phaeton.b-cdn.net/videos/DJI_20261014132017_0056_D.mp4",
-  section2: "https://phaeton.b-cdn.net/videos/DJI_20261014132017_0056_D_1.mp4",
-  section3: "https://phaeton.b-cdn.net/videos/DJI_20261014132017_0056_D_2.mp4",
-  section4: "https://phaeton.b-cdn.net/videos/C2985_2.mp4",
-  section5: "https://phaeton.b-cdn.net/videos/C2985.mp4",
+  section1: qualityVideo("DJI_20261014132017_0056_D"),
+  section2: qualityVideo("DJI_20261014132017_0056_D_1"),
+  section3: qualityVideo("DJI_20261014132017_0056_D_2"),
+  section4: qualityVideo("C2985_2"),
+  section5: qualityVideo("C2985"),
 };
+
+// Muted looping video that only decodes while near the viewport, so the off-screen clips
+// don't compete with the scroll-driven frame canvas for CPU/bandwidth.
+function LoopVideo({ src, poster, className }: { src: string; poster: string; className?: string }) {
+  const ref = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      src={src}
+      poster={poster}
+      autoPlay
+      loop
+      muted
+      playsInline
+      preload="auto"
+      // Fallback for browsers that occasionally stall at the end instead of looping
+      onEnded={(e) => {
+        e.currentTarget.currentTime = 0;
+        e.currentTarget.play().catch(() => {});
+      }}
+      className={className}
+    />
+  );
+}
 
 const CONTENT_BREAKPOINTS = [
   { id: 0, label: "A Tailored Process", displayPct: 0, targetFrame: 1, scrollPct: 0 },
@@ -91,6 +138,14 @@ const BREAKPOINT_WAYPOINTS = [
   { rawProgress: 1.0, uiProgress: 1.0 },
 ];
 
+// The track's last 100vh is where the Cardora Quality sheet slides up over the pinned frame,
+// so the frame sequence must finish one viewport before the track ends.
+function getFrameScrollDistance(track: HTMLDivElement | null) {
+  return track
+    ? Math.max(1, track.offsetHeight - 2 * window.innerHeight)
+    : window.innerHeight * 7.5;
+}
+
 function getUiProgress(rawProgress: number): number {
   if (rawProgress <= 0) return 0;
   if (rawProgress >= 1) return 1;
@@ -107,6 +162,8 @@ function getUiProgress(rawProgress: number): number {
 }
 
 export default function CardoraQualityPage() {
+  // Open the Bunny connection early so the first video bytes arrive without a TLS handshake delay
+  preconnect("https://phaeton.b-cdn.net");
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -124,7 +181,6 @@ export default function CardoraQualityPage() {
   const [showReconditioned, setShowReconditioned] = useState(false);
   const [showFinishingTouches, setShowFinishingTouches] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [showQualitySection, setShowQualitySection] = useState(false);
 
   // Master frame cache & dynamic top boundary colors
   const framesRef = useRef<(HTMLImageElement | null)[]>([]);
@@ -335,8 +391,6 @@ export default function CardoraQualityPage() {
     let lastShowReconditioned = false;
     let lastShowFinishingTouches = false;
     let lastStep = 0;
-    let qualityRevealTimer: ReturnType<typeof setTimeout> | null = null;
-    let qualityRevealStarted = false;
 
     // Track previously drawn frame, canvas dimensions and topColor to prevent unnecessary canvas repainting
     let lastDrawnImg: HTMLImageElement | null = null;
@@ -355,10 +409,7 @@ export default function CardoraQualityPage() {
 
 
       // Calculate scroll progress relative to the animation track
-      const track = trackRef.current;
-      const scrollDistance = track
-        ? Math.max(1, track.offsetHeight - window.innerHeight)
-        : window.innerHeight * 8;
+      const scrollDistance = getFrameScrollDistance(trackRef.current);
       const currentScroll = Math.max(0, window.scrollY);
       targetProgress = Math.min(1, Math.max(0, currentScroll / scrollDistance));
 
@@ -415,25 +466,6 @@ export default function CardoraQualityPage() {
       if (step !== lastStep) {
         lastStep = step;
         setCurrentStep(step);
-      }
-
-      // Wait until final breakpoint is reached, then reveal Cardora Quality section smoothly
-      if (step >= 5 && !qualityRevealStarted && !qualityRevealTimer) {
-        qualityRevealTimer = setTimeout(() => {
-          qualityRevealStarted = true;
-          setShowQualitySection(true);
-          qualityRevealTimer = null;
-        }, 1000);
-      } else if (step < 5) {
-        if (qualityRevealTimer) {
-          clearTimeout(qualityRevealTimer);
-          qualityRevealTimer = null;
-        }
-
-        if (qualityRevealStarted) {
-          qualityRevealStarted = false;
-          setShowQualitySection(false);
-        }
       }
 
       if (isHeroActive !== lastShowHero) {
@@ -628,9 +660,6 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
 
     return () => {
       cancelAnimationFrame(animFrameId);
-      if (qualityRevealTimer) {
-        clearTimeout(qualityRevealTimer);
-      }
     };
   }, []);
 
@@ -640,7 +669,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
       className="relative bg-black text-white font-sans selection:bg-[#01A969] selection:text-white"
     >
       {/* STICKY CANVAS HERO WRAPPER FOR VIDEO TIMELINE */}
-      <div ref={trackRef} className="relative h-[850vh]">
+      <div ref={trackRef} className="relative h-[950vh]">
         {/* STICKY VIEWPORT CONTAINER */}
         <div className="sticky top-0 h-screen w-full overflow-hidden">
           {/* GPU CANVAS DISPLAY */}
@@ -694,10 +723,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                   <div
                     key={bp.id}
                     onClick={() => {
-                      const track = trackRef.current;
-                      const scrollDistance = track
-                        ? track.offsetHeight - window.innerHeight
-                        : window.innerHeight * 8;
+                      const scrollDistance = getFrameScrollDistance(trackRef.current);
                       const targetScroll = (bp.scrollPct / 100) * scrollDistance;
                       window.scrollTo({ top: targetScroll, behavior: "smooth" });
                     }}
@@ -797,14 +823,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                   <div className="pointer-events-auto flex-shrink-0 self-start lg:mt-[0.5vw] max-md:self-stretch!">
                     <div className="relative rounded-[clamp(1rem,1.5vw,1.5rem)] bg-white p-[clamp(5px,0.5vw,8px)] shadow-[0_2px_14px_rgba(14,11,31,0.08)] ring-1 ring-[#0e0b1f]/[0.06] w-[clamp(280px,27.6vw,520px)] max-md:w-full!">
                       <div className="relative rounded-2xl   md:rounded-3xl overflow-hidden aspect-[16/10] lg:aspect-[16/9] max-md:rounded-2xl!">
-                        <video
-                          src={QUALITY_VIDEOS.section3}
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          className="w-full h-full object-cover object-center scale-[1.5]"
-                        />
+                        <LoopVideo {...QUALITY_VIDEOS.section3} className="w-full h-full object-cover object-center scale-[1.5]" />
                         <button
                           onClick={() => setIsTourModalOpen(true)}
                           className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#01A969] to-[#018f59] hover:from-[#02b874] hover:to-[#01A969] text-white text-lg lg:text-[clamp(0.7rem,0.85vw,0.95rem)] font-semibold px-[clamp(0.7rem,1vw,1.1rem)] py-2 lg:py-[clamp(0.4rem,0.6vw,0.65rem)] rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-[#01A969]/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
@@ -868,14 +887,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
 
                 {/* Video Card */}
                 <div className="pointer-events-auto w-[240px] sm:w-[280px] md:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl  max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
-                  <video
-                    src={QUALITY_VIDEOS.section1}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover object-center rounded-3xl scale-[1.5]"
-                  />
+                  <LoopVideo {...QUALITY_VIDEOS.section1} className="w-full h-full object-cover object-center rounded-3xl scale-[1.5]" />
                 </div>
               </motion.div>
             )}
@@ -906,14 +918,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
 
                 {/* Video Card */}
                 <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
-                  <video
-                    src={QUALITY_VIDEOS.section2}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover object-center scale-[1.5]"
-                  />
+                  <LoopVideo {...QUALITY_VIDEOS.section2} className="w-full h-full object-cover object-center scale-[1.5]" />
                 </div>
               </motion.div>
             )}
@@ -943,14 +948,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
 
                 {/* Video Card */}
                 <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl  max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
-                  <video
-                    src={QUALITY_VIDEOS.section4}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover object-center scale-[1.5]"
-                  />
+                  <LoopVideo {...QUALITY_VIDEOS.section4} className="w-full h-full object-cover object-center scale-[1.5]" />
                 </div>
               </motion.div>
             )}
@@ -981,14 +979,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
 
                 {/* Video Card */}
                 <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
-                  <video
-                    src={QUALITY_VIDEOS.section5}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover object-center scale-[1.5]"
-                  />
+                  <LoopVideo {...QUALITY_VIDEOS.section5} className="w-full h-full object-cover object-center scale-[1.5]" />
                 </div>
               </motion.div>
             )}
@@ -1033,9 +1024,9 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
       </AnimatePresence>
 
       {/* ── CARDORA QUALITY SECTION (FINAL SECTION BEFORE SITE FOOTER) ── */}
-      {/* Reveal only after reaching the final breakpoint and waiting 1 second. */}
+      {/* Pulled up 100vh so it slides over the still-pinned frame during the track's last viewport */}
       <section
-        className={`relative z-40 bg-[#FAFAF8] text-[#161616] py-10 shadow-[0_-18px_50px_rgba(0,0,0,0.12)] transition-[margin] duration-700 ease-out ${showQualitySection ? "-mt-[100vh]" : "mt-0"}`}
+        className="relative z-40 -mt-[100vh] bg-[#FAFAF8] text-[#161616] py-10 shadow-[0_-18px_50px_rgba(0,0,0,0.12)]"
       >
         <div className="max-w-[1600px] mx-auto px-6 md:px-10 ">
           {/* Row 1 */}
@@ -1043,14 +1034,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
             {/* Top Left: Video / Large Hero Card */}
             <div className="relative rounded-3xl overflow-hidden flex flex-col justify-end md:justify-start p-8 md:p-0 md:min-h-full min-h-[500px]">
               <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[16/12] lg:aspect-[16/6] w-full ">
-                <video
-                  src={QUALITY_VIDEOS?.section3}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover absolute  inset-0 md:inset-block rounded-3xl scale-[1.5]"
-                />
+                <LoopVideo {...QUALITY_VIDEOS.section3} className="w-full h-full object-cover absolute  inset-0 md:inset-block rounded-3xl scale-[1.5]" />
               </div>
               <div className="absolute z-10 flex flex-col items-start gap-4 bottom-3 lg:left-18 lg:bottom-5">
                 <h2 className="text-3xl md:text-5xl font-bold text-white leading-[1.1] max-w-sm">
