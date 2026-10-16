@@ -35,6 +35,7 @@ import { PriceAndCTA, VehicleHeader } from "@/components/inventory/VehicleInfo";
 import CoverageModal from "@/components/inventory/CoverageModal";
 import TradeInLink from "@/components/inventory/TradeInLink";
 import RecentlyViewedTracker from "@/components/inventory/RecentlyViewedTracker";
+import RecentlyViewedIndicator from "./RecentlyViewedIndicator";
 import { getEffectivePrice } from "@/utils/pricing";
 import VehicleFeatures from "@/components/inventory/VehicleFeatures";
 import MetaVehicleViewContent from "@/components/MetaVehicleViewContent";
@@ -173,7 +174,6 @@ export default async function VehicleDetailsPage({
             },
         },
     };
-
     return (
         <main className="min-h-screen bg-background flex flex-col items-center">
             <script
@@ -194,7 +194,8 @@ export default async function VehicleDetailsPage({
       */}
             <section className="w-full bg-background lg:mt-24">
                 <div className="w-full pt-[2px] flex-1  mx-auto">
-                    <div className="flex justify-end mb-2 mr-6">
+                    <div className="flex items-center justify-between gap-2 mb-2 mr-6 ml-10">
+                        <RecentlyViewedIndicator inventoryId={id} />
                         <VDPWishlistButton vehicle={vehicle} />
                     </div>
                     {/* SECTION ROW: Controls the boundaries of the sticky sidebar */}
@@ -203,7 +204,12 @@ export default async function VehicleDetailsPage({
                         {/* Left column: gallery + specs + description */}
                         <div className={`flex flex-col gap-8 items-start flex-1 w-full ${showSidebar ? "lg:flex-1" : "mx-auto"}`}>
                             {/* Image gallery */}
-                            <ImageGallery images={images} title={titleText} isSold={isSold} centered={!showSidebar} />
+                            <ImageGallery
+                                images={images}
+                                title={titleText}
+                                isSold={isSold}
+                                centered={!showSidebar}
+                            />
 
                             <div className="text-[12px] font-light border-b border-gray-200">
                                 <p><strong className="font-medium">STOCK #</strong>: {vehicle?.stock_no}</p>
