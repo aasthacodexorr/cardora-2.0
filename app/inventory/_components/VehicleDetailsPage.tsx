@@ -194,7 +194,7 @@ export default async function VehicleDetailsPage({
       */}
             <section className="w-full bg-background lg:mt-24">
                 <div className="w-full pt-[2px] flex-1  mx-auto">
-                    <div className="flex items-center justify-between gap-2 mb-2 mr-6 ml-10">
+                    <div className="flex items-center justify-between gap-2 mr-6 ml-10">
                         <RecentlyViewedIndicator inventoryId={id} />
                         <VDPWishlistButton vehicle={vehicle} />
                     </div>
