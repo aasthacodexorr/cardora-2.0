@@ -12,7 +12,7 @@ import { createPortal } from "react-dom";
 import { setQueryParams } from "@/utils/queryParams";
 import QueryParamIframe from "@/components/common/QueryParamIframe";
 import QueryParamLink from "@/components/common/QueryParamLink";
-import { getEffectivePrice } from "@/utils/pricing";
+import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
 
 
 export const PriceAndCTA = ({ vehicle }: any) => {
@@ -33,6 +33,10 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
   const sellingPrice =
     getEffectivePrice(vehicle?.selling_price, testSpecialPrice) ?? 0;
+
+  const hasPriceDrop =
+    isValidPriceDrop(vehicle.selling_price, testSpecialPrice) ||
+    (isTestPriceDrop && Number(vehicle.selling_price) > 0);
 
 
   const isSold =
@@ -99,6 +103,13 @@ export const PriceAndCTA = ({ vehicle }: any) => {
             ${vehicle?.price?.toLocaleString()}.00
           </p>
         )} */}
+
+
+        {!isSold && hasPriceDrop && (
+              <div className="w-fit z-10 rounded-lg bg-brand px-2 py-1.5 mt-3 text-[13px] font-medium leading-none text-white">
+                Price drop
+              </div>
+            )}
 
         {!isSold && (
           <>
@@ -170,9 +181,9 @@ export const PriceAndCTA = ({ vehicle }: any) => {
               /* =========================
                  NORMAL VEHICLE - HAS PRICE
                  ========================= */
-              <div className="my-3">
+              <div className="my-2">
                 {/* Finance Price */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-start justify-between">
                   <span
                     className="text-[24px] font-semibold cursor-pointer"
                     onClick={() => setActiveTooltip(null)}
@@ -224,7 +235,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                 </div>
 
                 {/* Cash Price */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-start justify-between">
                   <span
                     className="text-[24px] font-semibold cursor-pointer"
                     onClick={() => setActiveTooltip(null)}
@@ -242,6 +253,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         specialPrice={testSpecialPrice}
                         adjustment={2000}
                         className="text-[24px] font-bold text-price-green cursor-pointer"
+                        showArrow={false}
                       />
                     </span>
 
