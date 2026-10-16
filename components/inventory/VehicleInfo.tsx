@@ -97,7 +97,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   return (
     <>
       {/* Primary Inline Container (Observed) */}
-      <div ref={inlineContainerRef} className="bg-white rounded-2xl px-5 pb-2 text-center tracking-wide">
+      <div ref={inlineContainerRef} className="bg-white rounded-2xl px-5 pb-2 text-start tracking-wide">
         {/* {vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString() ? null : (
           <p className="text-[12px] font-extrabold text-black line-through leading-none my-3">
             ${vehicle?.price?.toLocaleString()}.00
