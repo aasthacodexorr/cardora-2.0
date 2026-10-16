@@ -7,6 +7,7 @@ export type PriceDropProps = {
   adjustment?: number;
   className?: string;
   formatPrice?: (price: number) => string;
+  showArrow?: boolean;
 };
 
 const defaultFormatPrice = (price: number) =>
@@ -21,6 +22,7 @@ export const PriceDrop = ({
   adjustment = 0,
   className,
   formatPrice = defaultFormatPrice,
+  showArrow = true,
 }: PriceDropProps) => {
   const originalPrice = getEffectivePrice(price);
 
@@ -44,27 +46,28 @@ export const PriceDrop = ({
 
   return (
     <span className="inline-flex flex-nowrap items-center justify-end gap-1">
-      <span
-        aria-hidden="true"
-        className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#00a650]"
-      >
-        <svg
-          width="10"
-          height="10"
-          viewBox="0 0 10 10"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+      {showArrow && (
+        <span
           aria-hidden="true"
+          className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#00a650]"
         >
-          <path
-            d="M2 2L8 8M8 8V3.8M8 8H3.8"
-            stroke="white"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </span>
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 8 9"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M2 2L8 8M8 8V3.8M8 8H3.8"
+              stroke="white"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+      )}
 
       <span className={className}>
         {formatPrice(currentPrice + safeAdjustment)}

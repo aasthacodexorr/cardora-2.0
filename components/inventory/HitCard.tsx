@@ -238,7 +238,7 @@ const hasPriceDrop =
           </div>
 
           {!isSold && hasPriceDrop && (
-              <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2.5 py-2 -mt-1 text-[14px] font-medium leading-none text-white">
+              <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2 py-1.5 -mt-1 text-[13px] font-medium leading-none text-white">
                 Price drop
               </div>
             )}
@@ -360,6 +360,7 @@ const hasPriceDrop =
                           price={hit.selling_price}
                           specialPrice={testSpecialPrice}
                           adjustment={2000}
+                          showArrow={false}
                         />
 
                         {/* Cash Info */}
