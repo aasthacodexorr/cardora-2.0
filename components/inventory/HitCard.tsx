@@ -425,7 +425,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
 
               {/* finance bi weekly payment and $0 cash down */}
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
-                $421/mo estimated <span className="relative group shrink-0">
+                $179.78/Bi-weekly estimated <span className="relative group shrink-0">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -461,7 +461,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                         : "opacity-0 invisible"
                       } group-hover:opacity-100 group-hover:visible`}
                   >
-                    Finance bi weekly payment does not include taxes and licensing fees.
+                    Finance bi-weekly payment does not include taxes and licensing fees.
 
                     <span className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
                   </span>
