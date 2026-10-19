@@ -425,11 +425,13 @@ export function resyncInventoryUrl() {
 }
 
 export const RANGE_KEYS: Record<string, readonly [string, string]> = {
+  price: ["priceLow", "priceHigh"],
   selling_price: ["priceLow", "priceHigh"],
   odometer: ["odometerLow", "odometerHigh"],
 };
 
 export const DYNAMIC_RANGE_BOUNDS: Record<string, { min?: number; max?: number }> = {
+  price: { min: 0, max: 100000 },
   selling_price: { min: 0, max: 100000 },
   odometer: { min: 0, max: 200000 },
 };
@@ -996,7 +998,7 @@ export function serializePublicUrl(route: PlainObject) {
   });
 
   // 3. Ranges (price, odometer) -> query params
-  const [rawPriceLow, rawPriceHigh] = getRangeBounds(route.range?.selling_price);
+  const [rawPriceLow, rawPriceHigh] = getRangeBounds(route.range?.price);
   if (rawPriceLow !== undefined && rawPriceLow !== "") {
     queryParams.push(`priceLow=${encodeURIComponent(String(rawPriceLow))}`);
   }
@@ -1110,13 +1112,13 @@ export function readRouteState(): PlainObject {
 
       // Check ranges
       if (key === "priceLow") {
-        const currentHigh = getRangeBounds(range.selling_price)[1] || "";
-        range.selling_price = `${decodeURIComponent(value)}:${currentHigh}`;
+        const currentHigh = getRangeBounds(range.price)[1] || "";
+        range.price = `${decodeURIComponent(value)}:${currentHigh}`;
         return;
       }
       if (key === "priceHigh") {
-        const currentLow = getRangeBounds(range.selling_price)[0] || "";
-        range.selling_price = `${currentLow}:${decodeURIComponent(value)}`;
+        const currentLow = getRangeBounds(range.price)[0] || "";
+        range.price = `${currentLow}:${decodeURIComponent(value)}`;
         return;
       }
       if (key === "odometerLow") {
@@ -1130,7 +1132,7 @@ export function readRouteState(): PlainObject {
         return;
       }
       if (key === "price") {
-        range.selling_price = value.includes(":") ? value : `${value}:`;
+        range.price = value.includes(":") ? value : `${value}:`;
         return;
       }
       if (key === "odometer") {

@@ -23,20 +23,11 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   const inlineContainerRef = useRef<HTMLDivElement>(null);
 
 
-  const isTestPriceDrop =
-    String(vehicle?.id || vehicle?.inventory_id || "") ===
-    "3314";
-
-  const testSpecialPrice = isTestPriceDrop
-    ? Math.max(1, Number(vehicle?.selling_price || 0) - 1000)
-    : vehicle?.special_price;
-
-  const sellingPrice =
-    getEffectivePrice(vehicle?.selling_price, testSpecialPrice) ?? 0;
+  const effectivePrice =
+    getEffectivePrice(vehicle?.price, vehicle?.special_price) ?? 0;
 
   const hasPriceDrop =
-    isValidPriceDrop(vehicle.selling_price, testSpecialPrice) ||
-    (isTestPriceDrop && Number(vehicle.selling_price) > 0);
+    isValidPriceDrop(vehicle?.price, vehicle?.special_price);
 
 
   const isSold =
@@ -45,7 +36,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   const isAsIs =
     vehicle?.vehicle_type?.toLowerCase() === "as-is";
 
-  const hasPrice = sellingPrice > 0;
+  const hasPrice = effectivePrice > 0;
 
   const vehicleId = String(vehicle?.id || vehicle?.inventory_id || "");
   const financeHref = `/finance?inventory_id=${vehicleId}`;
@@ -98,13 +89,6 @@ export const PriceAndCTA = ({ vehicle }: any) => {
     <>
       {/* Primary Inline Container (Observed) */}
       <div ref={inlineContainerRef} className="bg-white rounded-2xl px-5 pb-2 text-start tracking-wide">
-        {/* {vehicle?.selling_price?.toLocaleString() === vehicle?.price?.toLocaleString() ? null : (
-          <p className="text-[12px] font-extrabold text-black line-through leading-none my-3">
-            ${vehicle?.price?.toLocaleString()}.00
-          </p>
-        )} */}
-
-
         {!isSold && hasPriceDrop && (
               <div className="w-fit z-10 rounded-lg bg-brand px-2 py-1.5 mt-3 text-[13px] font-medium leading-none text-white">
                 Price drop
@@ -122,8 +106,8 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                   <>
                     <p className="text-[32px] font-extrabold leading-none text-price-green">
                       <PriceDrop
-                        price={vehicle?.selling_price}
-                        specialPrice={testSpecialPrice}
+                        price={vehicle?.price}
+                        specialPrice={vehicle?.special_price}
                         className="text-[32px] font-extrabold leading-none text-price-green"
                       />
                     </p>
@@ -197,8 +181,8 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                       onClick={() => setActiveTooltip(null)}
                     >
                       <PriceDrop
-                        price={vehicle?.selling_price}
-                        specialPrice={testSpecialPrice}
+                        price={vehicle?.price}
+                        specialPrice={vehicle?.special_price}
                         className="text-[24px] font-bold text-price-green cursor-pointer"
                       />
                     </span>
@@ -249,8 +233,8 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                       onClick={() => setActiveTooltip(null)}
                     >
                       <PriceDrop
-                        price={vehicle?.selling_price}
-                        specialPrice={testSpecialPrice}
+                        price={vehicle?.price}
+                        specialPrice={vehicle?.special_price}
                         adjustment={2000}
                         className="text-[24px] font-bold text-price-green cursor-pointer"
                         showArrow={false}

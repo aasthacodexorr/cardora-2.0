@@ -156,7 +156,14 @@ export function useRecentlyViewed() {
     [serializedItems]
   );
 
-  const isRecentlyViewed = (inventoryId: string | number) => {
+  const hasBeenViewed = (inventoryId: string | number) => {
+    const normalizedId = String(inventoryId).trim();
+    return normalizedId !== "" && recentlyViewed.some(
+      (item) => item.inventoryId === normalizedId && item.visitCount >= 1
+    );
+  };
+
+  const wasViewedBeforeCurrentVisit = (inventoryId: string | number) => {
     const normalizedId = String(inventoryId).trim();
     return normalizedId !== "" && recentlyViewed.some(
       (item) => item.inventoryId === normalizedId && item.visitCount >= 2
@@ -165,7 +172,8 @@ export function useRecentlyViewed() {
 
   return {
     recentlyViewedIds: recentlyViewed.map((item) => item.inventoryId),
-    isRecentlyViewed,
+    hasBeenViewed,
+    wasViewedBeforeCurrentVisit,
     addRecentlyViewed,
     clearRecentlyViewed,
   };

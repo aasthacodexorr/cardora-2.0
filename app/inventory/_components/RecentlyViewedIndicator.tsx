@@ -10,9 +10,9 @@ interface RecentlyViewedIndicatorProps {
 export default function RecentlyViewedIndicator({
   inventoryId,
 }: RecentlyViewedIndicatorProps) {
-  const { isRecentlyViewed } = useRecentlyViewed();
+  const { wasViewedBeforeCurrentVisit } = useRecentlyViewed();
 
-  if (!isRecentlyViewed(inventoryId)) {
+  if (!wasViewedBeforeCurrentVisit(inventoryId)) {
     return null;
   }
 

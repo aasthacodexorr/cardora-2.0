@@ -3,6 +3,7 @@ import { getAppConfig, getSafeDealershipConfig } from "@/lib/appConfig";
 import { getVehicleBySlug, isVehicleDetailSlug } from "@/lib/inventoryUrls";
 import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper";
 import { parseImageUrls } from "@/utils/formatters";
+import { getEffectivePrice } from "@/utils/pricing";
 
 export async function generateMetadata({
   params,
@@ -38,7 +39,7 @@ export async function generateMetadata({
       make: vehicle.make,
       model: vehicle.model,
       trim: vehicle.trim || "",
-      dynamic_price_placeholder: "$" + (vehicle.selling_price ? Number(vehicle.selling_price).toLocaleString("en-CA") : "0"),
+      dynamic_price_placeholder: "$" + (getEffectivePrice(vehicle.price, vehicle.special_price) ?? 0).toLocaleString("en-CA"),
     },
     canonicalPath: `/inventory/${slug[0]}`,
     images: images,

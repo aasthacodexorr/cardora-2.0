@@ -23,7 +23,7 @@ type HitCardHit = {
   make?: string;
   model?: string;
   trim?: string;
-  selling_price?: number | string;
+  price?: number | string;
   special_price?: number | string;
   odometer?: number | string;
   drivetrain?: string;
@@ -58,9 +58,9 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
     isHydrated,
   } = useWishlist();
 
-  const { isRecentlyViewed } = useRecentlyViewed();
+  const { hasBeenViewed } = useRecentlyViewed();
   const inventoryId = String(hit.inventory_id ?? "");
-  const isRecentlyViewedVehicle = isRecentlyViewed(inventoryId);
+  const isRecentlyViewedVehicle = hasBeenViewed(inventoryId);
 
   /* =========================
      Close tooltip on outside click
@@ -90,20 +90,12 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
     }`.trim();
 
 
-  const isTestPriceDrop = String(hit.inventory_id) === "3314";
-
-  const testSpecialPrice = isTestPriceDrop
-    ? Math.max(1, Number(hit.selling_price || 0) - 1000)
-    : hit.special_price;
-
   const price = getEffectivePrice(
-    hit.selling_price,
-    testSpecialPrice,
+    hit.price,
+    hit.special_price,
   ) ?? 0;
 
-  const hasPriceDrop =
-    isValidPriceDrop(hit.selling_price, testSpecialPrice) ||
-    (isTestPriceDrop && Number(hit.selling_price) > 0);
+  const hasPriceDrop = isValidPriceDrop(hit.price, hit.special_price);
 
   const km = Number(hit.odometer) || 0;
   const drivetrain = hit.drivetrain || "N/A";
@@ -259,8 +251,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                     <div className="flex justify-between items-center w-full">
                       {price > 0 ? (
                         <PriceDrop
-                          price={hit.selling_price}
-                          specialPrice={testSpecialPrice}
+                          price={hit.price}
+                          specialPrice={hit.special_price}
                         />
                       ) : (
                         /* Single Call for price */
@@ -298,8 +290,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
 
                       <div className="relative inline-flex items-center gap-1">
                         <PriceDrop
-                          price={hit.selling_price}
-                          specialPrice={testSpecialPrice}
+                          price={hit.price}
+                          specialPrice={hit.special_price}
                         />
 
                         {/* Finance Info */}
@@ -353,8 +345,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
 
                       <div className="relative inline-flex items-center gap-1">
                         <PriceDrop
-                          price={hit.selling_price}
-                          specialPrice={testSpecialPrice}
+                          price={hit.price}
+                          specialPrice={hit.special_price}
                           adjustment={2000}
                           showArrow={false}
                         />
@@ -433,7 +425,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
 
               {/* finance bi weekly payment and $0 cash down */}
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
-                $421/mo estimated <div className="relative group shrink-0">
+                $179.78/Bi-weekly estimated <span className="relative group shrink-0">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -463,17 +455,17 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                     </svg>
                   </button>
 
-                  <div
+                  <span
                     className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "finance"
                         ? "opacity-100 visible"
                         : "opacity-0 invisible"
                       } group-hover:opacity-100 group-hover:visible`}
                   >
-                    finance bi weekly payment does not include taxes and licensing fees.
+                    Finance bi-weekly payment does not include taxes and licensing fees.
 
-                    <div className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
-                  </div>
-                </div>
+                    <span className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
+                  </span>
+                </span>
               </p>
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[4px] flex-1">
                 $0 cash down

@@ -75,7 +75,7 @@ export async function generateMetadata({
                 make: vehicle.make,
                 model: vehicle.model,
                 trim: vehicle.trim || "",
-                dynamic_price_placeholder: "$" + (vehicle.selling_price ? vehicle.selling_price.toLocaleString() : "0"),
+                dynamic_price_placeholder: "$" + ((getEffectivePrice(vehicle.price, vehicle.special_price) ?? 0).toLocaleString()),
             },
         });
     } catch (error) {
@@ -153,7 +153,7 @@ export default async function VehicleDetailsPage({
         } : undefined,
         "offers": {
             "@type": "Offer",
-            "price": vehicle.selling_price || vehicle.price || "0",
+            "price": getEffectivePrice(vehicle.price, vehicle.special_price) ?? "0",
             "priceCurrency": appConfig.schema_org?.currencies_accepted || "CAD",
             "availability": isSold ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
             "itemCondition": "https://schema.org/UsedCondition",
@@ -306,7 +306,7 @@ export default async function VehicleDetailsPage({
                     <div className="mt-12 w-full">
                         {/* <VehicleFeatures bodyType={vehicle.body_type} /> */}
                         <FinanceCalculator
-                            vehiclePrice={getEffectivePrice(vehicle.selling_price, vehicle.special_price) ?? undefined}
+                            vehiclePrice={getEffectivePrice(vehicle.price, vehicle.special_price) ?? undefined}
                             inventoryId={id}
                         />
                     </div>

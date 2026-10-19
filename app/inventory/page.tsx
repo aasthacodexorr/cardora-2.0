@@ -107,11 +107,11 @@ const getSortItems = (collectionName: string) => [
   },
   {
     label: "Price (Low to High)",
-    value: `${collectionName}/sort/status_rank:asc,selling_price:asc`,
+    value: `${collectionName}/sort/status_rank:asc,price:asc`,
   },
   {
     label: "Price (High to Low)",
-    value: `${collectionName}/sort/status_rank:asc,selling_price:desc`,
+    value: `${collectionName}/sort/status_rank:asc,price:desc`,
   },
   {
     label: "Odometer (Low to High)",
@@ -1400,13 +1400,13 @@ const CustomSortBy = ({ sortItems }: { sortItems: { label: string, value: string
 
 
 const PriceRangeFilter = () => {
-  const { start, range, refine } = useRange({ attribute: "selling_price" });
+  const { start, range, refine } = useRange({ attribute: "price" });
   const { hits } = useHits();
 
   // Cache price calculations so they don't block the UI threads
   const currentPrices = useMemo(() => {
     return hits
-      .map((hit: any) => Number(hit.selling_price))
+      .map((hit: any) => Number(hit.price))
       .filter((price) => !isNaN(price) && price > 0)
       .sort((a, b) => a - b);
   }, [hits]);
