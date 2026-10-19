@@ -19,7 +19,7 @@ export const NAV_ITEMS = [
   { label: "Finance", to: "/financing" },
   { label: "Protection Plans", to: "/protection-plans" },
   { label: "Service", to: "/service" },
-  { label: "Why Cardora?", to: "/about-us" },
+  { label: "Certified", to: "/certified" },
 ] as const;
 
 

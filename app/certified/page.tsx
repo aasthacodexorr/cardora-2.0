@@ -1114,7 +1114,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                     Find your own Cardora car
                   </h3>
                   <p className="text-sm md:text-base text-[#161616]/75 leading-relaxed font-normal">
-                    With unbeatable quality and the peace of mind of 7-days exchange, there’s simply no better way to buy a used car. Start your search today.
+                    With unbeatable quality and the peace of mind of 10-days exchange, there’s simply no better way to buy a used car. Start your search today.
                   </p>
                 </div>
 
