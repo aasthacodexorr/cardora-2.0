@@ -5,6 +5,8 @@ import { preconnect } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+
+import q1 from "@/assets/cars/quality-1.png";
 import q2 from "@/assets/cars/quality-2.png";
 import q3 from "@/assets/cars/quality-3.png";
 
@@ -1091,7 +1093,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
             <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[380px] flex items-end md:items-stretch p-3 md:p-4">
               {/* Mobile Background Image */}
               <Image
-                src={FIND_CAR_IMAGE}
+                src={q1}
                 alt="Find your own Cardora car"
                 fill
                 priority
@@ -1101,7 +1103,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
 
               {/* Desktop Background Image */}
               <Image
-                src={FIND_CAR_IMAGE}
+                src={q1}
                 alt="Find your own Cardora car"
                 fill
                 priority
