@@ -425,7 +425,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
 
               {/* finance bi weekly payment and $0 cash down */}
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
-                $421/mo estimated <div className="relative group shrink-0">
+                $421/mo estimated <span className="relative group shrink-0">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -455,17 +455,17 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                     </svg>
                   </button>
 
-                  <div
+                  <span
                     className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "finance"
                         ? "opacity-100 visible"
                         : "opacity-0 invisible"
                       } group-hover:opacity-100 group-hover:visible`}
                   >
-                    finance bi weekly payment does not include taxes and licensing fees.
+                    Finance bi weekly payment does not include taxes and licensing fees.
 
-                    <div className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
-                  </div>
-                </div>
+                    <span className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
+                  </span>
+                </span>
               </p>
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[4px] flex-1">
                 $0 cash down
