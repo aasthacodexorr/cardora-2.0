@@ -76,8 +76,8 @@ const qualityVideo = (name: string) => ({
 const QUALITY_VIDEOS = {
   section1: qualityVideo("DJI_20261014132017_0056_D"),
   section2: qualityVideo("DJI_20261014132017_0056_D_1"),
-  // First breakpoint card + closing Cardora Quality hero card
-  section3: qualityVideo("quality_hero"),
+  // First breakpoint card + closing Cardora Quality hero card. Native 24fps, no letterbox, so no scale-up
+  section3: qualityVideo("quality_hero_v2"),
   section4: qualityVideo("C2985_2"),
   section5: qualityVideo("C2985"),
 };
@@ -824,7 +824,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                   <div className="pointer-events-auto flex-shrink-0 self-start lg:mt-[0.5vw] max-md:self-stretch!">
                     <div className="relative rounded-[clamp(1rem,1.5vw,1.5rem)] bg-white p-[clamp(5px,0.5vw,8px)] shadow-[0_2px_14px_rgba(14,11,31,0.08)] ring-1 ring-[#0e0b1f]/[0.06] w-[clamp(280px,27.6vw,520px)] max-md:w-full!">
                       <div className="relative rounded-2xl   md:rounded-3xl overflow-hidden aspect-[16/10] lg:aspect-[16/9] max-md:rounded-2xl!">
-                        <LoopVideo {...QUALITY_VIDEOS.section3} className="w-full h-full object-cover object-center scale-[1.5]" />
+                        <LoopVideo {...QUALITY_VIDEOS.section3} className="w-full h-full object-cover object-center" />
                         <button
                           onClick={() => setIsTourModalOpen(true)}
                           className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#01A969] to-[#018f59] hover:from-[#02b874] hover:to-[#01A969] text-white text-lg lg:text-[clamp(0.7rem,0.85vw,0.95rem)] font-semibold px-[clamp(0.7rem,1vw,1.1rem)] py-2 lg:py-[clamp(0.4rem,0.6vw,0.65rem)] rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-[#01A969]/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
@@ -1035,7 +1035,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
             {/* Top Left: Video / Large Hero Card */}
             <div className="relative rounded-3xl overflow-hidden flex flex-col justify-end md:justify-start p-8 md:p-0 md:min-h-full min-h-[500px]">
               <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[16/12] lg:aspect-[16/6] w-full ">
-                <LoopVideo {...QUALITY_VIDEOS.section3} className="w-full h-full object-cover absolute  inset-0 md:inset-block rounded-3xl scale-[1.5]" />
+                <LoopVideo {...QUALITY_VIDEOS.section3} className="w-full h-full object-cover absolute  inset-0 md:inset-block rounded-3xl" />
               </div>
               <div className="absolute z-10 flex flex-col items-start gap-4 bottom-3 lg:left-18 lg:bottom-5">
                 <h2 className="text-3xl md:text-5xl font-bold text-white leading-[1.1] max-w-sm">
@@ -1115,7 +1115,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                     Find your own Cardora car
                   </h3>
                   <p className="text-sm md:text-base text-[#161616]/75 leading-relaxed font-normal">
-                    With unbeatable quality and the peace of mind of 7-days exchange, there’s simply no better way to buy a used car. Start your search today.
+                    With unbeatable quality and the peace of mind of 10-days exchange, there’s simply no better way to buy a used car. Start your search today.
                   </p>
                 </div>
 
