@@ -86,25 +86,24 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
   /* Phone number fallback strategy */
   const phoneNumber = PHONE_NUMBER || "";
 
-  const title = `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${
-    hit.trim || ""
-  }`.trim();
+  const title = `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${hit.trim || ""
+    }`.trim();
 
 
-const isTestPriceDrop = String(hit.inventory_id) === "3314";
+  const isTestPriceDrop = String(hit.inventory_id) === "3314";
 
-const testSpecialPrice = isTestPriceDrop
-  ? Math.max(1, Number(hit.selling_price || 0) - 1000)
-  : hit.special_price;
+  const testSpecialPrice = isTestPriceDrop
+    ? Math.max(1, Number(hit.selling_price || 0) - 1000)
+    : hit.special_price;
 
-const price = getEffectivePrice(
-  hit.selling_price,
-  testSpecialPrice,
-) ?? 0;
+  const price = getEffectivePrice(
+    hit.selling_price,
+    testSpecialPrice,
+  ) ?? 0;
 
-const hasPriceDrop =
-  isValidPriceDrop(hit.selling_price, testSpecialPrice) ||
-  (isTestPriceDrop && Number(hit.selling_price) > 0);
+  const hasPriceDrop =
+    isValidPriceDrop(hit.selling_price, testSpecialPrice) ||
+    (isTestPriceDrop && Number(hit.selling_price) > 0);
 
   const km = Number(hit.odometer) || 0;
   const drivetrain = hit.drivetrain || "N/A";
@@ -165,11 +164,10 @@ const hasPriceDrop =
               alt={title}
               width={600}
               height={400}
-              className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${
-                isSold || isDealPending
+              className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${isSold || isDealPending
                   ? "grayscale opacity-80"
                   : ""
-              }`}
+                }`}
             />
 
             {isRecentlyViewedVehicle && (
@@ -227,21 +225,20 @@ const hasPriceDrop =
                 }
               >
                 <Heart
-                  className={`w-5 h-5 ${
-                    isInWishlist(inventoryId)
+                  className={`w-5 h-5 ${isInWishlist(inventoryId)
                       ? "fill-brand-green stroke-none"
                       : "stroke-gray-600"
-                  } transition-colors`}
+                    } transition-colors`}
                 />
               </button>
             )}
           </div>
 
           {!isSold && hasPriceDrop && (
-              <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2 py-1.5 -mt-1 text-[13px] font-medium leading-none text-white">
-                Price drop
-              </div>
-            )}
+            <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2 py-1.5 -mt-1 text-[13px] font-medium leading-none text-white">
+              Price drop
+            </div>
+          )}
 
           {/* Card body */}
           <div className="flex flex-col flex-1 px-[15px] pt-2 pb-0 text-start">
@@ -337,11 +334,10 @@ const hasPriceDrop =
                           </button>
 
                           <div
-                            className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${
-                              activeTooltip === "finance"
+                            className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "finance"
                                 ? "opacity-100 visible"
                                 : "opacity-0 invisible"
-                            } group-hover:opacity-100 group-hover:visible`}
+                              } group-hover:opacity-100 group-hover:visible`}
                           >
                             Finance price does not include taxes and licensing fees.
 
@@ -393,11 +389,10 @@ const hasPriceDrop =
                           </button>
 
                           <div
-                            className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${
-                              activeTooltip === "cash"
+                            className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "cash"
                                 ? "opacity-100 visible"
                                 : "opacity-0 invisible"
-                            } group-hover:opacity-100 group-hover:visible`}
+                              } group-hover:opacity-100 group-hover:visible`}
                           >
                             Cash price does not include taxes and licensing
                             fees.
@@ -433,6 +428,57 @@ const hasPriceDrop =
                   </div>
                 )
               ) : null}
+
+
+
+              {/* finance bi weekly payment and $0 cash down */}
+              <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
+                $421/mo estimated <div className="relative group shrink-0">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+
+                      setActiveTooltip((prev) =>
+                        prev === "finance"
+                          ? null
+                          : "finance"
+                      );
+                    }}
+                    aria-label="Finance price information"
+                    className="flex items-center justify-center p-0.5"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4 text-gray-400 cursor-pointer"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+
+                  <div
+                    className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "finance"
+                        ? "opacity-100 visible"
+                        : "opacity-0 invisible"
+                      } group-hover:opacity-100 group-hover:visible`}
+                  >
+                    finance bi weekly payment does not include taxes and licensing fees.
+
+                    <div className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
+                  </div>
+                </div>
+              </p>
+              <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[4px] flex-1">
+                $0 cash down
+              </p>
+
 
               {/* Mileage + Drivetrain */}
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">

@@ -12,7 +12,6 @@ import { Header, Footer } from "@/components/layout";
 // Inventory components
 import { ImageGallery } from "@/components/inventory";
 import FinanceCalculator from "@/components/inventory/FinanceCalculator";
-import VDPWishlistButton from "@/components/inventory/VDPWishlistButton";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
@@ -35,7 +34,7 @@ import { PriceAndCTA, VehicleHeader } from "@/components/inventory/VehicleInfo";
 import CoverageModal from "@/components/inventory/CoverageModal";
 import TradeInLink from "@/components/inventory/TradeInLink";
 import RecentlyViewedTracker from "@/components/inventory/RecentlyViewedTracker";
-import RecentlyViewedIndicator from "./RecentlyViewedIndicator";
+import VDPHeaderActions from "./VDPHeaderActions";
 import { getEffectivePrice } from "@/utils/pricing";
 import VehicleFeatures from "@/components/inventory/VehicleFeatures";
 import MetaVehicleViewContent from "@/components/MetaVehicleViewContent";
@@ -194,10 +193,7 @@ export default async function VehicleDetailsPage({
       */}
             <section className="w-full bg-background lg:mt-24">
                 <div className="w-full pt-[2px] flex-1  mx-auto">
-                    <div className="flex items-center justify-between gap-2 mr-6 ml-10">
-                        <RecentlyViewedIndicator inventoryId={id} />
-                        <VDPWishlistButton vehicle={vehicle} />
-                    </div>
+                    <VDPHeaderActions inventoryId={id} vehicle={vehicle} />
                     {/* SECTION ROW: Controls the boundaries of the sticky sidebar */}
                     <div className="flex flex-col gap-8 max-w-[1440px] xl:max-w-[1600px] mx-auto lg:flex-row items-stretch px-4 md:px-8 lg:px-10 2xl:px-0 relative w-full">
 
