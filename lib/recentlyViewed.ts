@@ -8,6 +8,7 @@ export const MAX_RECENTLY_VIEWED = 100;
 export interface RecentlyViewedItem {
   inventoryId: string;
   viewedAt: number;
+  visitCount: number;
 }
 
 const EMPTY_SNAPSHOT = "[]";
@@ -35,13 +36,23 @@ function parseItems(value: string): RecentlyViewedItem[] {
       return [];
     }
 
-    return parsed.filter(
-      (item): item is RecentlyViewedItem =>
-        !!item &&
-        typeof item === "object" &&
-        typeof item.inventoryId === "string" &&
-        typeof item.viewedAt === "number"
-    );
+    return parsed.flatMap((item): RecentlyViewedItem[] => {
+      if (
+        !item ||
+        typeof item !== "object" ||
+        typeof item.inventoryId !== "string" ||
+        typeof item.viewedAt !== "number"
+      ) {
+        return [];
+      }
+
+      const visitCount =
+        "visitCount" in item && typeof item.visitCount === "number"
+          ? item.visitCount
+          : 1;
+
+      return [{ inventoryId: item.inventoryId, viewedAt: item.viewedAt, visitCount }];
+    });
   } catch (error) {
     console.error("Failed to parse recently viewed vehicles:", error);
     return [];
@@ -115,13 +126,16 @@ export function addRecentlyViewed(inventoryId: string | number) {
     return;
   }
 
-  const next = parseItems(readSnapshot()).filter(
-    (item) => item.inventoryId !== normalizedId
+  const currentItems = parseItems(readSnapshot());
+  const previousItem = currentItems.find(
+    (item) => item.inventoryId === normalizedId
   );
+  const next = currentItems.filter((item) => item.inventoryId !== normalizedId);
 
   next.unshift({
     inventoryId: normalizedId,
     viewedAt: Date.now(),
+    visitCount: (previousItem?.visitCount ?? 0) + 1,
   });
 
   saveItems(next.slice(0, MAX_RECENTLY_VIEWED));
@@ -145,7 +159,7 @@ export function useRecentlyViewed() {
   const isRecentlyViewed = (inventoryId: string | number) => {
     const normalizedId = String(inventoryId).trim();
     return normalizedId !== "" && recentlyViewed.some(
-      (item) => item.inventoryId === normalizedId
+      (item) => item.inventoryId === normalizedId && item.visitCount >= 2
     );
   };
 
