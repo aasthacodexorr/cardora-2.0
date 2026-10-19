@@ -40,7 +40,7 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
     make: item.make,
     model: item.model,
     trim: item.trim,
-    selling_price: item.price,
+    price: item.price,
     odometer: item.odometer,
     drivetrain: item.drivetrain,
     stock_no: item.stock_no,

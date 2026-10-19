@@ -23,7 +23,7 @@ type HitCardHit = {
   make?: string;
   model?: string;
   trim?: string;
-  selling_price?: number | string;
+  price?: number | string;
   special_price?: number | string;
   odometer?: number | string;
   drivetrain?: string;
@@ -90,20 +90,12 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
     }`.trim();
 
 
-  const isTestPriceDrop = String(hit.inventory_id) === "3314";
-
-  const testSpecialPrice = isTestPriceDrop
-    ? Math.max(1, Number(hit.selling_price || 0) - 1000)
-    : hit.special_price;
-
   const price = getEffectivePrice(
-    hit.selling_price,
-    testSpecialPrice,
+    hit.price,
+    hit.special_price,
   ) ?? 0;
 
-  const hasPriceDrop =
-    isValidPriceDrop(hit.selling_price, testSpecialPrice) ||
-    (isTestPriceDrop && Number(hit.selling_price) > 0);
+  const hasPriceDrop = isValidPriceDrop(hit.price, hit.special_price);
 
   const km = Number(hit.odometer) || 0;
   const drivetrain = hit.drivetrain || "N/A";
@@ -259,8 +251,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                     <div className="flex justify-between items-center w-full">
                       {price > 0 ? (
                         <PriceDrop
-                          price={hit.selling_price}
-                          specialPrice={testSpecialPrice}
+                          price={hit.price}
+                          specialPrice={hit.special_price}
                         />
                       ) : (
                         /* Single Call for price */
@@ -298,8 +290,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
 
                       <div className="relative inline-flex items-center gap-1">
                         <PriceDrop
-                          price={hit.selling_price}
-                          specialPrice={testSpecialPrice}
+                          price={hit.price}
+                          specialPrice={hit.special_price}
                         />
 
                         {/* Finance Info */}
@@ -353,8 +345,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
 
                       <div className="relative inline-flex items-center gap-1">
                         <PriceDrop
-                          price={hit.selling_price}
-                          specialPrice={testSpecialPrice}
+                          price={hit.price}
+                          specialPrice={hit.special_price}
                           adjustment={2000}
                           showArrow={false}
                         />
