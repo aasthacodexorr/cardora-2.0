@@ -15,8 +15,8 @@ export default function VDPHeaderActions({
   inventoryId,
   vehicle,
 }: VDPHeaderActionsProps) {
-  const { isRecentlyViewed } = useRecentlyViewed();
-  const showRecentlyViewed = isRecentlyViewed(inventoryId);
+  const { wasViewedBeforeCurrentVisit } = useRecentlyViewed();
+  const showRecentlyViewed = wasViewedBeforeCurrentVisit(inventoryId);
 
   return (
     <div

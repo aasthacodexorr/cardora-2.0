@@ -58,9 +58,9 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
     isHydrated,
   } = useWishlist();
 
-  const { isRecentlyViewed } = useRecentlyViewed();
+  const { hasBeenViewed } = useRecentlyViewed();
   const inventoryId = String(hit.inventory_id ?? "");
-  const isRecentlyViewedVehicle = isRecentlyViewed(inventoryId);
+  const isRecentlyViewedVehicle = hasBeenViewed(inventoryId);
 
   /* =========================
      Close tooltip on outside click
