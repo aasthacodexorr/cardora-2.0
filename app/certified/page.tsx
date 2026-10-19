@@ -5,10 +5,8 @@ import { preconnect } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import q1 from "@/assets/cars/quality-1.png";
 import q2 from "@/assets/cars/quality-2.png";
 import q3 from "@/assets/cars/quality-3.png";
-import q1Mobile from "@/assets/cars/quality-mobile.png";
 
 const SCENES = [
   { id: 1, name: "SCENE 01 // SHOWROOM QUALITY STANDARD" },
@@ -52,6 +50,9 @@ const CARDORA_VIDEO_CDN = USE_BUNNY_CDN
   ? `${BUNNY_CDN}/video/video_asset_cardora.mp4`
   : `${IMAGEKIT}/Video_assets/video_asset_cardora.mp4`;
 
+// "Find your own Cardora car" card background (car carrier on a mountain road, truck on the right)
+const FIND_CAR_IMAGE = `${BUNNY_CDN}/images/quality_2_final.png`;
+
 function getFrameUrl(index: number, portrait = false) {
   // Frames exist up to seq_00749, safely clamp so frame 750 resolves without 404
   const frameNumber = Math.min(749, Math.max(1, index + 1));
@@ -76,7 +77,8 @@ const qualityVideo = (name: string) => ({
 const QUALITY_VIDEOS = {
   section1: qualityVideo("DJI_20261014132017_0056_D"),
   section2: qualityVideo("DJI_20261014132017_0056_D_1"),
-  section3: qualityVideo("DJI_20261014132017_0056_D_2"),
+  // First breakpoint card + closing Cardora Quality hero card. Native 24fps, no letterbox, so no scale-up
+  section3: qualityVideo("quality_hero_v2"),
   section4: qualityVideo("C2985_2"),
   section5: qualityVideo("C2985"),
 };
@@ -823,7 +825,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                   <div className="pointer-events-auto flex-shrink-0 self-start lg:mt-[0.5vw] max-md:self-stretch!">
                     <div className="relative rounded-[clamp(1rem,1.5vw,1.5rem)] bg-white p-[clamp(5px,0.5vw,8px)] shadow-[0_2px_14px_rgba(14,11,31,0.08)] ring-1 ring-[#0e0b1f]/[0.06] w-[clamp(280px,27.6vw,520px)] max-md:w-full!">
                       <div className="relative rounded-2xl   md:rounded-3xl overflow-hidden aspect-[16/10] lg:aspect-[16/9] max-md:rounded-2xl!">
-                        <LoopVideo {...QUALITY_VIDEOS.section3} className="w-full h-full object-cover object-center scale-[1.5]" />
+                        <LoopVideo {...QUALITY_VIDEOS.section3} className="w-full h-full object-cover object-center" />
                         <button
                           onClick={() => setIsTourModalOpen(true)}
                           className="absolute bottom-[6%] right-[3.5%] bg-gradient-to-r from-[#01A969] to-[#018f59] hover:from-[#02b874] hover:to-[#01A969] text-white text-lg lg:text-[clamp(0.7rem,0.85vw,0.95rem)] font-semibold px-[clamp(0.7rem,1vw,1.1rem)] py-2 lg:py-[clamp(0.4rem,0.6vw,0.65rem)] rounded-[clamp(0.5rem,0.7vw,0.75rem)] flex items-center gap-[clamp(0.4rem,0.6vw,0.65rem)] shadow-md shadow-[#01A969]/25 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer pointer-events-auto"
@@ -1034,7 +1036,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
             {/* Top Left: Video / Large Hero Card */}
             <div className="relative rounded-3xl overflow-hidden flex flex-col justify-end md:justify-start p-8 md:p-0 md:min-h-full min-h-[500px]">
               <div className="pointer-events-auto flex-shrink-0 self-start lg:self-center aspect-[16/12] lg:aspect-[16/6] w-full ">
-                <LoopVideo {...QUALITY_VIDEOS.section3} className="w-full h-full object-cover absolute  inset-0 md:inset-block rounded-3xl scale-[1.5]" />
+                <LoopVideo {...QUALITY_VIDEOS.section3} className="w-full h-full object-cover absolute  inset-0 md:inset-block rounded-3xl" />
               </div>
               <div className="absolute z-10 flex flex-col items-start gap-4 bottom-3 lg:left-18 lg:bottom-5">
                 <h2 className="text-3xl md:text-5xl font-bold text-white leading-[1.1] max-w-sm">
@@ -1087,9 +1089,9 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6 lg:mt-32">
             {/* Card 1: Find your own Cardora car */}
             <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[380px] flex items-end md:items-stretch p-3 md:p-4">
-              {/* Mobile Background Image (q1) */}
+              {/* Mobile Background Image */}
               <Image
-                src={q1Mobile}
+                src={FIND_CAR_IMAGE}
                 alt="Find your own Cardora car"
                 fill
                 priority
@@ -1097,9 +1099,9 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 sizes="100vw"
               />
 
-              {/* Desktop Background Image (q2) */}
+              {/* Desktop Background Image */}
               <Image
-                src={q1}
+                src={FIND_CAR_IMAGE}
                 alt="Find your own Cardora car"
                 fill
                 priority
