@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "phaeton.b-cdn.net",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "zopsoftware-asset.b-cdn.net",
         pathname: "/**",
       },

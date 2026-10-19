@@ -5,10 +5,8 @@ import { preconnect } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import q1 from "@/assets/cars/quality-1.png";
 import q2 from "@/assets/cars/quality-2.png";
 import q3 from "@/assets/cars/quality-3.png";
-import q1Mobile from "@/assets/cars/quality-mobile.png";
 
 const SCENES = [
   { id: 1, name: "SCENE 01 // SHOWROOM QUALITY STANDARD" },
@@ -51,6 +49,9 @@ const ICON_BASE = USE_BUNNY_CDN ? `${BUNNY_MEDIA}/icons` : "/icons";
 const CARDORA_VIDEO_CDN = USE_BUNNY_CDN
   ? `${BUNNY_CDN}/video/video_asset_cardora.mp4`
   : `${IMAGEKIT}/Video_assets/video_asset_cardora.mp4`;
+
+// "Find your own Cardora car" card background (car carrier on a mountain road, truck on the right)
+const FIND_CAR_IMAGE = `${BUNNY_CDN}/images/quality_2_final.png`;
 
 function getFrameUrl(index: number, portrait = false) {
   // Frames exist up to seq_00749, safely clamp so frame 750 resolves without 404
@@ -1088,9 +1089,9 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6 lg:mt-32">
             {/* Card 1: Find your own Cardora car */}
             <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[380px] flex items-end md:items-stretch p-3 md:p-4">
-              {/* Mobile Background Image (q1) */}
+              {/* Mobile Background Image */}
               <Image
-                src={q1Mobile}
+                src={FIND_CAR_IMAGE}
                 alt="Find your own Cardora car"
                 fill
                 priority
@@ -1098,9 +1099,9 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 sizes="100vw"
               />
 
-              {/* Desktop Background Image (q2) */}
+              {/* Desktop Background Image */}
               <Image
-                src={q1}
+                src={FIND_CAR_IMAGE}
                 alt="Find your own Cardora car"
                 fill
                 priority
