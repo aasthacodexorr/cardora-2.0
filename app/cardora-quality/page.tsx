@@ -76,7 +76,8 @@ const qualityVideo = (name: string) => ({
 const QUALITY_VIDEOS = {
   section1: qualityVideo("DJI_20261014132017_0056_D"),
   section2: qualityVideo("DJI_20261014132017_0056_D_1"),
-  section3: qualityVideo("DJI_20261014132017_0056_D_2"),
+  // First breakpoint card + closing Cardora Quality hero card
+  section3: qualityVideo("quality_hero"),
   section4: qualityVideo("C2985_2"),
   section5: qualityVideo("C2985"),
 };
