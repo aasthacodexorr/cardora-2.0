@@ -424,7 +424,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
 
 
               {/* finance bi weekly payment and $0 cash down */}
-              <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
+              {/* <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
                 $179.78/Bi-weekly estimated <span className="relative group shrink-0">
                   <button
                     type="button"
@@ -469,7 +469,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               </p>
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[4px] flex-1">
                 $0 cash down
-              </p>
+              </p> */}
 
 
               {/* Mileage + Drivetrain */}

@@ -7,6 +7,7 @@ import { generateMetadata as generateMetadataHelper } from "@/lib/metadataHelper
 import { CSS_VARIABLES } from "@/lib/colors";
 import { headers } from "next/headers";
 import { Footer, Header } from "@/components/layout";
+import { MainContent } from "@/components/layout/MainContent";
 
 export async function generateMetadata(): Promise<Metadata> {
   const appConfig = await getAppConfig();
@@ -97,9 +98,7 @@ fbq('track', 'PageView');`,
       <body className="min-h-full flex flex-col">
         <Providers config={appConfig}>
           <Header />
-          <div className="flex-1 flex flex-col min-h-screen mt-10 lg:mt-0">
-            {children}
-          </div>
+          <MainContent>{children}</MainContent>
           <Footer />
         </Providers>
       </body>

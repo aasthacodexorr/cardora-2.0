@@ -121,7 +121,7 @@ const Header = () => {
       <div className="lg:hidden h-[86px]" aria-hidden="true" />
 
       <header className="lg:hidden fixed top-0 left-0 w-full shadow-none z-50 bg-neutral-offWhite">
-        {pathname === "/cardora-quality" ? (
+        {pathname === "/certified" ? (
           <>
             {/* Cardora Quality - Compact mobile header */}
             <div className="flex items-center justify-between pl-[12px] pr-[20px] py-[8px]">
