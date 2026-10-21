@@ -18,6 +18,7 @@ import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
 export const PriceAndCTA = ({ vehicle }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<"asIs" | "finance" | "cash" | null>(null);
+  const [activePriceTab, setActivePriceTab] = useState<"finance" | "cash">("finance");
   const [showSticky, setShowSticky] = useState(false);
 
   const inlineContainerRef = useRef<HTMLDivElement>(null);
@@ -89,11 +90,6 @@ export const PriceAndCTA = ({ vehicle }: any) => {
     <>
       {/* Primary Inline Container (Observed) */}
       <div ref={inlineContainerRef} className="bg-white rounded-2xl px-5 pb-2 text-start tracking-wide">
-        {!isSold && hasPriceDrop && (
-              <div className="w-fit z-10 rounded-lg bg-brand px-2 py-1.5 mt-3 text-[13px] font-medium leading-none text-white">
-                Price drop
-              </div>
-            )}
 
         {!isSold && (
           <>
@@ -163,41 +159,96 @@ export const PriceAndCTA = ({ vehicle }: any) => {
               </div>
             ) : hasPrice ? (
               /* =========================
-                 NORMAL VEHICLE - HAS PRICE
-                 ========================= */
+               NORMAL VEHICLE - HAS PRICE
+               ========================= */
               <div className="my-2">
-                {/* Finance Price */}
-                <div className="flex items-start justify-between">
-                  <span
-                    className="text-[24px] font-semibold cursor-pointer"
-                    onClick={() => setActiveTooltip(null)}
-                  >
-                    Finance Price
-                  </span>
-
-                  <div className="flex items-center gap-1">
-                    <span
-                      className="text-[24px] font-bold text-price-green cursor-pointer"
-                      onClick={() => setActiveTooltip(null)}
+                <div
+                  role="tablist"
+                  aria-label="Vehicle pricing"
+                  className="mb-3 flex rounded-xl border border-gray-200 bg-white p-0.5"
+                >
+                  {(["finance", "cash"] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      id={`${tab}-price-tab`}
+                      type="button"
+                      role="tab"
+                      aria-selected={activePriceTab === tab}
+                      aria-controls="vehicle-price-panel"
+                      onClick={() => {
+                        setActivePriceTab(tab);
+                        setActiveTooltip(null);
+                      }}
+                      className={`flex-1 rounded-[10px] cursor-pointer px-3 py-2.5 text-[16px] font-semibold transition-colors ${activePriceTab === tab
+                        ? "bg-brand text-white shadow-sm"
+                        : "text-gray-800 hover:bg-gray-50"
+                        }`}
                     >
-                      <PriceDrop
-                        price={vehicle?.price}
-                        specialPrice={vehicle?.special_price}
-                        className="text-[24px] font-bold text-price-green cursor-pointer"
-                      />
-                    </span>
+                      {tab === "finance" ? "Finance" : "Cash"}
+                    </button>
+                  ))}
+                </div>
 
-                    {/* Info icon */}
+
+
+
+                <div
+                  id="vehicle-price-panel"
+                  role="tabpanel"
+                  aria-labelledby={`${activePriceTab}-price-tab`}
+                  className="relative rounded-xl bg-[#f1f8f5] px-4 py-4"
+                >
+                  {!isSold && hasPriceDrop && (
+                    <div className="mb-1 w-fit rounded-lg bg-brand px-2 py-1.5 text-[13px] font-medium leading-none text-white">
+                      Price drop
+                    </div>
+                  )}
+
+
+
+
+
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-[13px] font-semibold uppercase text-gray-500">
+                        {activePriceTab === "finance" ? "Finance from" : "Cash price"}
+                      </p>
+
+                      <div className="mt-1 flex flex-row items-center gap-x-2 gap-y-1">
+                        <PriceDrop
+                          price={vehicle?.price}
+                          specialPrice={vehicle?.special_price}
+                          adjustment={activePriceTab === "cash" ? 2000 : 0}
+                          className="text-[26px] font-extrabold leading-none text-price-green"
+                          showArrow={false}
+                        />
+
+                        {
+                          hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-2 py-1.5 text-sm font-bold flex justify-center items-center text-price-green">
+                            Save $2,000
+                          </div> : <p className="text-sm font-medium text-gray-500">
+                            + HST &amp; licensing | O.A.C
+                          </p>
+                        }
+                      </div>
+
+                      {
+                        hasPriceDrop ? <p className="mt-2 text-xs font-medium text-gray-500">
+                          + HST &amp; licensing | O.A.C
+                        </p> : null
+                      }
+                    </div>
+
                     <div data-price-tooltip className="relative inline-flex items-center group">
                       <button
                         type="button"
-                        onClick={() => toggleTooltip("finance")}
-                        aria-label="Price information"
-                        className="flex items-center justify-center cursor-pointer"
+                        onClick={() => toggleTooltip(activePriceTab)}
+                        aria-label={`${activePriceTab === "finance" ? "Finance" : "Cash"} price information`}
+                        className="flex items-center justify-center"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="w-4 h-4 text-gray-400"
+                          className="h-5 w-5 text-gray-500"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -209,68 +260,19 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         </svg>
                       </button>
 
-                      <div className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${activeTooltip === "finance" ? "opacity-100 visible" : "opacity-0 invisible"} lg:group-hover:opacity-100 lg:group-hover:visible`}>
-                        Listed price does not include taxes and licensing fees.
-
-                        <div className="absolute right-2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Cash Price */}
-                <div className="flex items-start justify-between">
-                  <span
-                    className="text-[24px] font-semibold cursor-pointer"
-                    onClick={() => setActiveTooltip(null)}
-                  >
-                    Cash Price
-                  </span>
-
-                  <div className="flex items-center gap-1">
-                    <span
-                      className="text-[24px] font-bold text-price-green cursor-pointer"
-                      onClick={() => setActiveTooltip(null)}
-                    >
-                      <PriceDrop
-                        price={vehicle?.price}
-                        specialPrice={vehicle?.special_price}
-                        adjustment={2000}
-                        className="text-[24px] font-bold text-price-green cursor-pointer"
-                        showArrow={false}
-                      />
-                    </span>
-
-                    {/* Info icon */}
-                    <div data-price-tooltip className="relative inline-flex items-center group">
-                      <button
-                        type="button"
-                        onClick={() => toggleTooltip("cash")}
-                        aria-label="Price information"
-                        className="flex items-center justify-center cursor-pointer"
+                      <div
+                        className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black px-3 py-2 text-xs text-white shadow-lg z-50 rounded-md transition-all duration-200 ${activeTooltip === activePriceTab
+                          ? "opacity-100 visible"
+                          : "opacity-0 invisible"
+                          } lg:group-hover:opacity-100 lg:group-hover:visible`}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-4 h-4 text-gray-400"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
-
-                      <div className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm px-3 py-2 rounded-md shadow-lg z-50 transition-all duration-200 ${activeTooltip === "cash" ? "opacity-100 visible" : "opacity-0 invisible"} lg:group-hover:opacity-100 lg:group-hover:visible`}>
                         Listed price does not include taxes and licensing fees.
-
-                        <div className="absolute right-2 bottom-[-6px] w-3 h-3 bg-black rotate-45" />
+                        <div className="absolute right-2 bottom-[-6px] h-3 w-3 rotate-45 bg-black" />
                       </div>
                     </div>
                   </div>
                 </div>
+
               </div>
             ) : (
               /* =========================
