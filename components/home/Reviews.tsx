@@ -26,25 +26,36 @@ type Review = {
 };
 
 const reviews: Review[] = [
+
   {
-    initial: "J",
-    name: "It's Jerry",
-    text: "So, I recently bought a 2021 Jetta High line from Dealership, and I can confidently say the experience was nothing short of amazing—thanks to Sam! From the very beginning, Sam went above and beyond to make sure everything went smoothly.",
+    initial: "A",
+    name: "Avinash Ramlal",
+    text: "I was in the market for a new truck. I recently purchased my GMC Sierra 1500 from Cardora. I had the pleasure of dealing with Derik. Derik was informative, patient and was so helpful when it came to the whole process. Even though I had a few setbacks, he made sure everything went smoothly and helped me throughout the process. I really appreciate his support and would highly recommend Cardora!",
+  },
+  {
+    initial: "N",
+    name: "Nicola Harrison",
+    text: "I recently purchased my Toyota RAV4 from Cardora. I had the pleasure of dealing with Derik. This was such an amazing experience. Derik was informative, patient and was so helpful. I had a bit of a set back during the process but Derik was understanding, supportive, and helped me work through everything. He made the experience much easier, and I truly appreciate his help. I would definitely recommend Cardora!",
+  },
+  {
+    initial: "C",
+    name: "Chantié M",
+    text: "Firstly, this is such an amazing place, 10/10 would come back to purchase a vehicle. The customer service is great. Sania is amazing! both representatives at the front were super easy to talk to, everyone has an amazing personality, such a warm and welcoming environment.",
   },
   {
     initial: "S",
-    name: "Shimul Rajput",
-    text: "Just bought my first car and Sam was amazing! He was so supportive, quick to respond, and made the whole process feel easy and stress-free. Couldn't have asked for a better experience! Highly recommended! ✨",
+    name: "Sebastian Palacios",
+    text: "Amazing experience at Cardora Dealership! The staff was professional, honest, and very helpful throughout the entire process. They made buying a vehicle smooth and stress free, answered all my questions, and went above and beyond to make sure everything went smoothly. I highly recommend Cardora to anyone looking to purchase a vehicle!",
+  },
+  {
+    initial: "C",
+    name: "Ciera",
+    text: "If you’re ever looking for a car and need everything done with professionalism. Ask for Andy he is the best! The team is amazing you will not be disappointed!",
   },
   {
     initial: "K",
-    name: "Katie McWade",
-    text: "My husband and I recently went through Sam for the purchase of our new family vehicle. He worked very hard for us for the best rate possible and turned what had been a stressful and frustrating process, into something absolutely seamless and enjoyable.",
-  },
-  {
-    initial: "A",
-    name: "Alex Brown",
-    text: "Amazing experience dealing with Sam and his team at Gedi Route (GR Cars). I highly recommend them for any vehicle purchase. I will definitely be using them for my next vehicle upgrade.",
+    name: "kudus rasheed",
+    text: "Nice doing business with you, I have a very smooth deal with him ✅ thank you once again",
   },
 ];
 
@@ -80,12 +91,12 @@ const Reviews = () => {
 
     const container = scrollRef.current;
     const scrollAmount = getScrollAmount();
-    
+
     isScrolling.current = true;
 
     // Use absolute coordinates instead of scrollBy to prevent multi-click calculation stacking
-    const targetScrollLeft = dir === "left" 
-      ? container.scrollLeft - scrollAmount 
+    const targetScrollLeft = dir === "left"
+      ? container.scrollLeft - scrollAmount
       : container.scrollLeft + scrollAmount;
 
     container.scrollTo({
@@ -100,7 +111,7 @@ const Reviews = () => {
 
     const scrollAmount = getScrollAmount();
     const singleSetWidth = scrollAmount * reviews.length;
-    
+
     // Initial jump to the middle track setup
     container.scrollLeft = singleSetWidth;
 
@@ -119,7 +130,7 @@ const Reviews = () => {
         container.scrollLeft = container.scrollLeft + currentSetWidth;
         container.style.scrollBehavior = "smooth";
       }
-      
+
       // Unblock click interaction
       isScrolling.current = false;
     };
@@ -149,7 +160,7 @@ const Reviews = () => {
                   <Star key={i} className="h-4 w-4 fill-star text-star" />
                 ))}
               </div>
-              <span className="text-[15px] font-medium text-foreground">5.0 (80)</span>
+              <span className="text-[15px] font-medium text-foreground">5.0 (120)</span>
               <span className="underline font-md">View all</span>
             </div>
           </a>
@@ -174,9 +185,8 @@ const Reviews = () => {
                 <div
                   key={`${r.name}-${index}`}
                   data-slide
-                  className={`snap-center shrink-0 lg:flex-shrink-0 px-2 min-h-[470px] lg:min-h-[450px] md:px-3 ${
-                    slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
-                  }`}
+                  className={`snap-center shrink-0 lg:flex-shrink-0 px-2 min-h-[470px] lg:min-h-[450px] md:px-3 ${slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
+                    }`}
                 >
                   <article className="rounded-2xl bg-card p-5 md:p-6 shadow-md flex flex-col h-full border border-border transition-shadow duration-300 hover:shadow-lg">
                     <div className="flex items-center gap-4">
