@@ -44,11 +44,8 @@ const FRAME_VERSION = "final2";
 // Hero badge icons
 const ICON_BASE = USE_BUNNY_CDN ? `${BUNNY_MEDIA}/icons` : "/icons";
 
-// 1920x1080 file with the picture letterboxed to 1920x820: every video box uses aspect-[16/12] lg:aspect-[16/9]
-// with object-cover, so exactly the black bars are cropped and none of the picture
-const CARDORA_VIDEO_CDN = USE_BUNNY_CDN
-  ? `${BUNNY_CDN}/video/video_asset_cardora.mp4`
-  : `${IMAGEKIT}/Video_assets/video_asset_cardora.mp4`;
+// "Take the Cardora tour" player: same clip as the section3 cards, but with its audio track kept
+const CARDORA_TOUR_VIDEO = "https://phaeton.b-cdn.net/videos/web/C7937_3_v2_tour.mp4";
 
 // "Find your own Cardora car" card background (car carrier on a mountain road, truck on the right)
 const FIND_CAR_IMAGE = `${BUNNY_CDN}/images/quality_2_final.png`;
@@ -77,8 +74,8 @@ const qualityVideo = (name: string) => ({
 const QUALITY_VIDEOS = {
   section1: qualityVideo("DJI_20261014132017_0056_D"),
   section2: qualityVideo("DJI_20261014132017_0056_D_1"),
-  // First breakpoint card + closing Cardora Quality hero card. Native 24fps, no letterbox, so no scale-up
-  section3: qualityVideo("quality_hero_v2"),
+  // First breakpoint card + closing Cardora Quality hero card. 59.94fps source halved to 29.97, no letterbox, so no scale-up
+  section3: qualityVideo("C7937_3_v2"),
   section4: qualityVideo("C2985_2"),
   section5: qualityVideo("C2985"),
 };
@@ -1004,7 +1001,8 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-4xl bg-black rounded-3xl overflow-hidden border border-white/20 shadow-2xl aspect-[16/12] lg:aspect-[16/9]"
+              // Box matches the 16:9 tour clip. No scale-up on the video: it would also enlarge and crop the native controls
+              className="relative w-full max-w-5xl bg-black rounded-3xl overflow-hidden border border-white/20 shadow-2xl aspect-video"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -1014,11 +1012,12 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 ✕
               </button>
               <video
-                src={CARDORA_VIDEO_CDN}
+                src={CARDORA_TOUR_VIDEO}
+                poster={QUALITY_VIDEOS.section3.poster}
                 autoPlay
                 controls
                 playsInline
-                className="w-full h-full object-cover object-center scale-[1.2]"
+                className="w-full h-full object-cover object-center"
               />
             </motion.div>
           </motion.div>
