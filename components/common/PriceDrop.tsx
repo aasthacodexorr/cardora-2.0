@@ -73,7 +73,7 @@ export const PriceDrop = ({
         {formatPrice(currentPrice + safeAdjustment)}
       </span>
 
-      <span className="text-[11px] font-normal text-gray-500 line-through">
+      <span className="text-[12px] font-normal text-gray-500 line-through">
         {formatPrice(originalPrice + safeAdjustment)}
       </span>
     </span>
