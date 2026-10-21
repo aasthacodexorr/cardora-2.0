@@ -520,7 +520,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               ) : null}
 
               {/* Financing payment and cash down */}
-              {!isSold && hasFinancingDetails && (
+              {/* {!isSold && hasFinancingDetails && (
                 <>
                   <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
                     {formatCurrency(biWeeklyPayment!)}
@@ -559,7 +559,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                     {formatCashDown(downPayment)} cash down
                   </p>
                 </>
-              )}
+              )} */}
 
               {/* Mileage + Drivetrain */}
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
