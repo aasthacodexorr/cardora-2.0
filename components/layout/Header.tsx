@@ -37,6 +37,8 @@ const Header = () => {
   const { wishlist, isHydrated } = useWishlist();
   const { openWishlistDrawer } = useDrawer();
   const wishlistCount = isHydrated ? wishlist?.length : 0;
+  // Certified page gets a single-row mobile header so its scroll scenes aren't covered
+  const isCertifiedPage = pathname === "/certified";
 
   // Close mobile menu whenever the route changes
   useEffect(() => {
@@ -118,25 +120,24 @@ const Header = () => {
       </header>
 
       {/*  Mobile Header */}
-      <div className="lg:hidden h-[86px]" aria-hidden="true" />
+      {/* Spacer + layout's mt-10 equals the mobile header height (63px single-row header on the certified page) */}
+      <div className={`lg:hidden ${isCertifiedPage ? "h-[23px]" : "h-[86px]"}`} aria-hidden="true" />
 
       <header className="lg:hidden fixed top-0 left-0 w-full shadow-none z-50 bg-neutral-offWhite">
-        {pathname === "/cardora-quality" ? (
           <>
-            {/* Cardora Quality - Compact mobile header */}
-            <div className="flex items-center justify-between pl-[12px] pr-[20px] py-[8px]">
+          {isCertifiedPage ? (
+            <div className="flex items-center justify-between gap-2 pl-[12px] pr-[16px] py-[8px] border-b border-neutral-mediumGray">
               {/* Logo */}
               <Link
                 href="/"
                 aria-label="Cardora home"
-                className="[&_img]:max-w-[125px] [&_img]:h-auto shrink-0"
+                className="[&_img]:max-w-[110px] [&_img]:h-auto shrink-0"
               >
                 <Logo />
               </Link>
 
-              {/* Social + Wishlist + Menu */}
-              <div className="flex items-center gap-5">
-                {/* Facebook */}
+              {/* Social + Call + Directions + Wishlist + Menu */}
+              <div className="flex items-center gap-[10px] max-[374px]:gap-[7px]">
                 <a
                   href={
                     SITE_CONFIG.social?.facebook ??
@@ -145,22 +146,11 @@ const Header = () => {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Facebook"
-                  className="flex items-center justify-center"
+                  className="shrink-0"
                 >
-                  <Image
-                    src={facebook}
-                    alt="Facebook"
-                    width={23}
-                    height={23}
-                    style={{
-                      width: "auto",
-                      height: "auto",
-                      maxWidth: "100%",
-                    }}
-                  />
+                  <Image src={facebook} alt="Facebook" width={22} height={22} />
                 </a>
 
-                {/* Instagram */}
                 <a
                   href={
                     SITE_CONFIG.social?.instagram ??
@@ -169,25 +159,45 @@ const Header = () => {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Instagram"
-                  className="flex items-center justify-center"
+                  className="shrink-0"
                 >
-                  <Image
-                    src={instagram}
-                    alt="Instagram"
-                    width={23}
-                    height={23}
-                    style={{
-                      width: "auto",
-                      height: "auto",
-                      maxWidth: "100%",
-                    }}
-                  />
+                  <Image src={instagram} alt="Instagram" width={22} height={22} />
+                </a>
+
+                {/* Call */}
+                <a
+                  href={PHONE_HREF}
+                  aria-label="Call us"
+                  className="flex items-center justify-center shrink-0 w-[34px] h-[34px] rounded-[5px] bg-brand-green"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    className="h-[14px] w-[14px] fill-white"
+                  >
+                    <path d="M160.2 25C152.3 6.1 131.7-3.9 112.1 1.4l-5.5 1.5c-64.6 17.6-119.8 80.2-103.7 156.4 37.1 175 174.8 312.7 349.8 349.8 76.3 16.2 138.8-39.1 156.4-103.7l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2C233.9 335.4 177.3 277 144.8 205.3L189 169.3c13.9-11.3 18.6-30.4 11.8-47L160.2 25z" />
+                  </svg>
+                </a>
+
+                {/* Directions */}
+                <a
+                  href="/contact-us"
+                  aria-label="Directions"
+                  className="flex items-center justify-center shrink-0 w-[34px] h-[34px] rounded-[5px] bg-brand-green"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 384 512"
+                    className="h-[14px] w-[14px] fill-white"
+                  >
+                    <path d="M0 188.6C0 84.4 86 0 192 0S384 84.4 384 188.6c0 119.3-120.2 262.3-170.4 316.8-11.8 12.8-31.5 12.8-43.3 0C120.2 450.9 0 307.9 0 188.6zM192 256a64 64 0 1 0 0-128 64 64 0 1 0 0 128z" />
+                  </svg>
                 </a>
 
                 {/* Wishlist */}
                 <button
                   onClick={openWishlistDrawer}
-                  className="flex items-center justify-center relative"
+                  className="flex items-center justify-center shrink-0"
                   aria-label="Wishlist"
                 >
                   <svg
@@ -208,10 +218,8 @@ const Header = () => {
                 {/* Menu */}
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="flex items-center justify-center"
-                  aria-label={
-                    isMobileMenuOpen ? "Close menu" : "Open menu"
-                  }
+                  className="flex items-center justify-center shrink-0"
+                  aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                 >
                   {isMobileMenuOpen ? (
                     <X className="h-[24px] w-[24px] text-black fill-black" />
@@ -221,38 +229,7 @@ const Header = () => {
                 </button>
               </div>
             </div>
-
-            {/* Slide-down nav drawer */}
-            <div
-              className={`absolute top-full left-0 w-full bg-white overflow-hidden transition-all duration-300 z-50 ${isMobileMenuOpen
-                  ? "max-h-[100vh] opacity-100 shadow-[0_15px_30px_rgba(0,0,0,0.12)] border-b border-gray-100"
-                  : "max-h-0 opacity-0 pointer-events-none shadow-none"
-                }`}
-            >
-              <nav className="flex flex-col px-6 pt-4 pb-6">
-                {NAV_ITEMS.map((item) => {
-                  const itemTo = item.to as string;
-                  const isActive =
-                    pathname === itemTo ||
-                    pathname?.startsWith(itemTo + "/");
-
-                  return (
-                    <Link
-                      key={item.label}
-                      href={item.to}
-                      className={`py-4 border-b border-gray-100 text-[17px] capitalize flex items-center justify-between transition-colors ${isActive
-                          ? "text-brand-green font-medium"
-                          : "text-gray-900"
-                        }`}
-                    >
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </nav>
-            </div>
-          </>
-        ) : (
+          ) : (
           <>
             {/* Existing mobile header */}
             <div className="flex items-center justify-between pl-[12px] pr-[29px] py-[5px]">
@@ -390,6 +367,9 @@ const Header = () => {
               </div>
             </div>
 
+          </>
+          )}
+
             {/* Slide-down nav drawer */}
             <div
               className={`absolute top-full left-0 w-full bg-white overflow-hidden transition-all duration-300 z-50 ${isMobileMenuOpen
@@ -420,7 +400,6 @@ const Header = () => {
               </nav>
             </div>
           </>
-        )}
       </header>
     </>
   );

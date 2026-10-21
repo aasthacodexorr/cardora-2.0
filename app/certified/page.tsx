@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import q2 from "@/assets/cars/quality-2.png";
 import q3 from "@/assets/cars/quality-3.png";
+import findCarMobile from "@/assets/cars/find-car-mobile.png";
 
 const SCENES = [
   { id: 1, name: "SCENE 01 // SHOWROOM QUALITY STANDARD" },
@@ -19,7 +20,7 @@ const SCENES = [
 
 const TOTAL_FRAMES = 750;
 // Fraction of viewport height to push portrait (mobile) frames upward, on the hero screen only
-const PORTRAIT_SHIFT_UP = 0.06;
+const PORTRAIT_SHIFT_UP = 0;
 // Shift is held in full until this frame, then eases to 0 by the end frame (next scene starts at 74)
 const PORTRAIT_SHIFT_HOLD_FRAME = 25;
 const PORTRAIT_SHIFT_END_FRAME = 45;
@@ -173,6 +174,7 @@ export default function CardoraQualityPage() {
   // Imperative refs for 0 React re-render scroll performance
   const scrollBarRef = useRef<HTMLDivElement | null>(null);
   const timelineHudRef = useRef<HTMLDivElement | null>(null);
+  const stickyFrameRef = useRef<HTMLDivElement | null>(null);
 
   const [, setActiveSceneIndex] = useState(0);
   const [isTourModalOpen, setIsTourModalOpen] = useState(false);
@@ -400,6 +402,7 @@ export default function CardoraQualityPage() {
     let lastDrawnH = -1;
     let lastDrawnTopColor = "";
     let lastDrawnShift = -1;
+    let lastFrameTop = "";
     let lastTime = performance.now();
 
 
@@ -414,6 +417,15 @@ export default function CardoraQualityPage() {
       const scrollDistance = getFrameScrollDistance(trackRef.current);
       const currentScroll = Math.max(0, window.scrollY);
       targetProgress = Math.min(1, Math.max(0, currentScroll / scrollDistance));
+
+      // Until the frame pins, it sits below the fixed mobile header; overlays use this to clear the header
+      if (stickyFrameRef.current && trackRef.current) {
+        const frameTop = `${Math.max(0, Math.round(trackRef.current.getBoundingClientRect().top))}px`;
+        if (frameTop !== lastFrameTop) {
+          lastFrameTop = frameTop;
+          stickyFrameRef.current.style.setProperty("--frame-top", frameTop);
+        }
+      }
 
       // Time-based exponential easing: glides smoothly across 60Hz and 120Hz screens
       const now = performance.now();
@@ -673,7 +685,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
       {/* STICKY CANVAS HERO WRAPPER FOR VIDEO TIMELINE */}
       <div ref={trackRef} className="relative h-[950vh]">
         {/* STICKY VIEWPORT CONTAINER */}
-        <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <div ref={stickyFrameRef} className="sticky top-0 h-screen w-full overflow-hidden">
           {/* GPU CANVAS DISPLAY */}
           <canvas
             ref={canvasRef}
@@ -760,7 +772,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute top-1 sm:top-14 lg:top-[18.5vh] left-6 sm:left-10 lg:left-[10vw] right-6 sm:right-10 lg:right-[7.4vw] z-30 pointer-events-none max-md:left-5! max-md:right-5!"
+                className="absolute top-[calc(99px-var(--frame-top,63px))] lg:top-[18.5vh] left-6 sm:left-10 lg:left-[10vw] right-6 sm:right-10 lg:right-[7.4vw] z-30 pointer-events-none max-md:left-5! max-md:right-5!"
               >
                 <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 max-md:gap-5!">
                   {/* LEFT COLUMN: TITLE + BADGES */}
@@ -850,7 +862,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none text-left top-28 sm:top-32 md:top-1/2 md:-translate-y-1/2 right-6 sm:right-10 md:right-16 lg:right-24 xl:right-32 max-w-[320px] sm:max-w-md md:max-w-lg lg:max-w-xl max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-[99px] md:top-1/2 md:-translate-y-1/2 right-6 sm:right-10 md:right-16 lg:right-24 xl:right-32 max-w-[320px] sm:max-w-md md:max-w-lg lg:max-w-xl max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-3 md:space-y-4">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.06] text-neutral-950 max-md:text-[32px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -875,7 +887,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none text-left top-28 sm:top-24 md:top-1/2 md:-translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-24 max-w-[320px] sm:max-w-md md:max-w-lg space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-[99px] md:top-1/2 md:-translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-24 max-w-[320px] sm:max-w-md md:max-w-lg space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.06] text-neutral-950 max-md:text-[28px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -904,7 +916,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none text-left top-28 md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[440px] space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-[99px] md:top-1/2 -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[440px] space-y-4 md:space-y-5 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3 lg:mt-6">
                   <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-white max-md:text-[28px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -935,7 +947,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none text-left top-28 md:top-1/2 -translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-[99px] md:top-1/2 -translate-y-1/2 left-6 sm:left-10 md:left-14 lg:left-20 xl:left-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3 lg:mt-6">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-neutral-950 max-md:text-[26px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -949,7 +961,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 </div>
 
                 {/* Video Card */}
-                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl  max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4!">
+                <div className="pointer-events-auto w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[16/8] lg:aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl  max-md:w-full! max-md:rounded-2xl! max-md:border-0! max-md:shadow-none! max-md:mt-4! max-md:aspect-auto! max-md:h-[max(80px,min(calc((100vw-40px)/2),calc(53vh-225px)))]!">
                   <LoopVideo {...QUALITY_VIDEOS.section4} className="w-full h-full object-cover object-center scale-[1.5]" />
                 </div>
               </motion.div>
@@ -965,7 +977,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, scale: 0.98 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-30 pointer-events-none text-left top-28 md:top-[370px] -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
+                className="absolute z-30 pointer-events-none text-left top-[99px] md:top-[370px] -translate-y-1/2 right-6 sm:right-10 md:right-14 lg:right-20 xl:right-28 max-w-[320px] sm:max-w-md md:max-w-[460px] space-y-4 md:space-y-6 max-md:left-5! max-md:right-5! max-md:translate-y-0! max-md:max-w-none!"
               >
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-neutral-950 max-md:text-[28px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
@@ -1093,11 +1105,11 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
             <div className="relative rounded-[20px] overflow-hidden min-h-[450px] md:min-h-[380px] flex items-end md:items-stretch p-3 md:p-4">
               {/* Mobile Background Image */}
               <Image
-                src={FIND_CAR_IMAGE}
+                src={findCarMobile}
                 alt="Find your own Cardora car"
                 fill
                 priority
-                className="object-cover object-right block md:hidden"
+                className="object-cover object-bottom block md:hidden"
                 sizes="100vw"
               />
 
