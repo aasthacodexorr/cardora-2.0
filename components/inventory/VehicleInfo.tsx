@@ -15,6 +15,8 @@ import QueryParamLink from "@/components/common/QueryParamLink";
 import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
 
 
+
+
 export const PriceAndCTA = ({ vehicle }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<"asIs" | "finance" | "cash" | null>(null);
@@ -189,9 +191,6 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                   ))}
                 </div>
 
-
-
-
                 <div
                   id="vehicle-price-panel"
                   role="tabpanel"
@@ -204,17 +203,49 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                     </div>
                   )}
 
-
-
-
-
-                  <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-start justify-between gap-2 mt-2">
                     <div>
-                      <p className="text-[13px] font-semibold uppercase text-gray-500">
-                        {activePriceTab === "finance" ? "Finance from" : "Cash price"}
+                      <p className="text-[13px] font-semibold uppercase text-gray-500 flex items-center gap-x-2">
+                        {activePriceTab === "finance" ? "Finance Price" : "Cash price"}
+
+
+
+                        <div data-price-tooltip className="relative inline-flex items-center group">
+                          <button
+                            type="button"
+                            onClick={() => toggleTooltip(activePriceTab)}
+                            aria-label={`${activePriceTab === "finance" ? "Finance" : "Cash"} price information`}
+                            className="flex items-center justify-center"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 text-gray-500 cursor-pointer"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </button>
+
+                          <div
+                            className={`absolute bottom-full left-1/2  -translate-x-1/2 mb-2 normal-case font-normal tracking-normal w-[240px] max-w-[calc(100vw-32px)] bg-black px-3 py-2 text-xs text-white shadow-lg z-[100] rounded-md transition-opacity duration-200 ${activeTooltip === activePriceTab
+                                ? "opacity-100 visible"
+                                : "opacity-0 invisible"
+                              } group-hover:opacity-100 group-hover:visible`}
+                          >
+                            Listed price does not include taxes and licensing fees.
+                            <div className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] h-3 w-3 rotate-45 bg-black" />
+                          </div>
+                        </div>
+
+
                       </p>
 
-                      <div className="mt-1 flex flex-row items-center gap-x-2 gap-y-1">
+                      <div className="mt-0 flex flex-row items-center gap-x-2 gap-y-0">
                         <PriceDrop
                           price={vehicle?.price}
                           specialPrice={vehicle?.special_price}
@@ -224,7 +255,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         />
 
                         {
-                          hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-2 py-1.5 text-sm font-bold flex justify-center items-center text-price-green">
+                          hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-1 py-1.5 text-[11px] font-bold flex justify-center items-center text-price-green">
                             Save $2,000
                           </div> : <p className="text-sm font-medium text-gray-500">
                             + HST &amp; licensing | O.A.C
@@ -233,43 +264,13 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                       </div>
 
                       {
-                        hasPriceDrop ? <p className="mt-2 text-xs font-medium text-gray-500">
+                        hasPriceDrop ? <p className="mt-1 text-xs font-medium text-gray-500">
                           + HST &amp; licensing | O.A.C
                         </p> : null
                       }
                     </div>
 
-                    <div data-price-tooltip className="relative inline-flex items-center group">
-                      <button
-                        type="button"
-                        onClick={() => toggleTooltip(activePriceTab)}
-                        aria-label={`${activePriceTab === "finance" ? "Finance" : "Cash"} price information`}
-                        className="flex items-center justify-center"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-gray-500"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
 
-                      <div
-                        className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black px-3 py-2 text-xs text-white shadow-lg z-50 rounded-md transition-all duration-200 ${activeTooltip === activePriceTab
-                          ? "opacity-100 visible"
-                          : "opacity-0 invisible"
-                          } lg:group-hover:opacity-100 lg:group-hover:visible`}
-                      >
-                        Listed price does not include taxes and licensing fees.
-                        <div className="absolute right-2 bottom-[-6px] h-3 w-3 rotate-45 bg-black" />
-                      </div>
-                    </div>
                   </div>
                 </div>
 
