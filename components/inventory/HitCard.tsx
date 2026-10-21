@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -32,13 +33,110 @@ type HitCardHit = {
   sub_status?: string;
   image_urls?: string;
   vehicle_type?: string;
+  financing_on?: number | string;
+  financing_special?: number | string;
+  emi_amount?: number | string;
+  downpayment?: number | string;
+  payment_frequency?: string;
+  interest_rate?: number | string;
+  term?: number | string;
   [key: string]: unknown;
 };
 
+/* =========================
+   Bi-weekly payment calculation
+
+   Uses:
+   - Effective finance price
+   - Down payment
+   - Annual interest rate
+   - Loan term in months
+
+   Assumes 26 payments per year.
+========================= */
+
+const calculateBiWeeklyPayment = (
+  price: number,
+  downPayment: number,
+  annualInterestRate: number,
+  termMonths: number
+): number | null => {
+  const principal = price - downPayment;
+
+  if (
+    !Number.isFinite(principal) ||
+    !Number.isFinite(annualInterestRate) ||
+    !Number.isFinite(termMonths) ||
+    principal <= 0 ||
+    downPayment < 0 ||
+    annualInterestRate < 0 ||
+    termMonths <= 0 ||
+    downPayment > price
+  ) {
+    return null;
+  }
+
+  const numberOfPayments = (termMonths / 12) * 26;
+  const periodicRate = annualInterestRate / 100 / 26;
+
+  if (numberOfPayments <= 0) {
+    return null;
+  }
+
+  if (periodicRate === 0) {
+    return principal / numberOfPayments;
+  }
+
+  const payment =
+    (principal * periodicRate) /
+    (1 - Math.pow(1 + periodicRate, -numberOfPayments));
+
+  return Number.isFinite(payment) && payment > 0 ? payment : null;
+};
+
+/* =========================
+   Currency formatter
+========================= */
+
+const formatCurrency = (amount: number): string =>
+  amount.toLocaleString("en-CA", {
+    style: "currency",
+    currency: "CAD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+const formatCashDown = (amount: number): string =>
+  amount.toLocaleString("en-CA", {
+    style: "currency",
+    currency: "CAD",
+    maximumFractionDigits: 0,
+  });
+
+/* =========================
+   Reusable information icon
+========================= */
+
+const InfoIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="w-4 h-4 text-gray-400 cursor-pointer"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+  >
+    <path
+      fillRule="evenodd"
+      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
 export const HitCard = ({ hit }: { hit: HitCardHit }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [activeTooltip, setActiveTooltip] = useState<
-    "finance" | "cash" | null
+    "finance" | "cash" | "payment" | null
   >(null);
 
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -59,6 +157,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
   } = useWishlist();
 
   const { hasBeenViewed } = useRecentlyViewed();
+
   const inventoryId = String(hit.inventory_id ?? "");
   const isRecentlyViewedVehicle = hasBeenViewed(inventoryId);
 
@@ -83,28 +182,60 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
     };
   }, []);
 
-  /* Phone number fallback strategy */
+  /* =========================
+     Vehicle information
+  ========================= */
+
   const phoneNumber = PHONE_NUMBER || "";
 
-  const title = `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${hit.trim || ""
-    }`.trim();
+  const title = `${hit.year || ""} ${hit.make || ""} ${hit.model || ""
+    } ${hit.trim || ""}`.trim();
 
+  const price =
+    getEffectivePrice(hit.price, hit.special_price) ?? 0;
 
-  const price = getEffectivePrice(
+  const hasPriceDrop = isValidPriceDrop(
     hit.price,
-    hit.special_price,
-  ) ?? 0;
-
-  const hasPriceDrop = isValidPriceDrop(hit.price, hit.special_price);
+    hit.special_price
+  );
 
   const km = Number(hit.odometer) || 0;
   const drivetrain = hit.drivetrain || "N/A";
   const stock = hit.stock_no || "N/A";
 
   const isSold =
-    hit.status && hit.status.toLowerCase() !== "instock";
+    Boolean(hit.status) &&
+    String(hit.status).toLowerCase() !== "instock";
 
   const isDealPending = hit.sub_status === "Deal Pending";
+
+  // Read the financing settings from the API.
+  const downPayment = Number(hit.downpayment ?? 0);
+  const interestRate = Number(hit.interest_rate);
+  const termMonths = Number(hit.term);
+
+  // Calculate using the effective finance price and API settings.
+  const biWeeklyPayment = calculateBiWeeklyPayment(
+    price,
+    downPayment,
+    interestRate,
+    termMonths
+  );
+
+  // The API's emi_amount is not used for the displayed payment.
+  const isFinancingEnabled = Number(hit.financing_on) === 1;
+  const isSpecialFinancingEnabled = Number(hit.financing_special) === 1;
+
+  const hasFinancingDetails =
+    isFinancingEnabled &&
+    isSpecialFinancingEnabled &&
+    biWeeklyPayment !== null &&
+    Number.isFinite(downPayment) &&
+    downPayment >= 0;
+
+  /* =========================
+     Vehicle images
+  ========================= */
 
   const imageUrls = hit.image_urls
     ? hit.image_urls.split(";")
@@ -121,6 +252,10 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
       ? `${SITE_CONFIG?.urls?.assetBaseUrl}${firstUrl}`
       : firstUrl;
   }
+
+  /* =========================
+     Vehicle URL
+  ========================= */
 
   const getVehicleUrl = (hitDoc: HitCardHit) => {
     const slug = [
@@ -163,7 +298,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
             />
 
             {isRecentlyViewedVehicle && (
-              <div className="">
+              <div>
                 <RecentlyViewedTag />
               </div>
             )}
@@ -226,6 +361,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
             )}
           </div>
 
+          {/* Price drop badge */}
           {!isSold && hasPriceDrop && (
             <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2 py-1.5 -mt-1 text-[13px] font-medium leading-none text-white">
               Price drop
@@ -244,9 +380,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
             <div>
               {!isSold ? (
                 hit?.vehicle_type?.toLowerCase() === "as-is" ? (
-                  /* =========================
-                     AS-IS VEHICLE
-                     ========================= */
+                  /* AS-IS VEHICLE */
                   <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px]">
                     <div className="flex justify-between items-center w-full">
                       {price > 0 ? (
@@ -255,7 +389,6 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           specialPrice={hit.special_price}
                         />
                       ) : (
-                        /* Single Call for price */
                         <span className="flex items-center gap-1 text-price-green">
                           <svg
                             className="w-4 h-4"
@@ -267,19 +400,16 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth={2}
-                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 01.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                              d="M3 5a2 2 0 012-2h3.28a2 2 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a11.042 11.042 0 01.502-1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a11.042 11.042 0 011.21-.502l4.493 1.498a11.042 11.042 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                             />
                           </svg>
-
                           <span>Call for price</span>
                         </span>
                       )}
                     </div>
                   </div>
                 ) : price > 0 ? (
-                  /* =========================
-                     NORMAL VEHICLE - HAS PRICE
-                     ========================= */
+                  /* NORMAL VEHICLE - HAS PRICE */
                   <div
                     ref={tooltipRef}
                     className="text-[15px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1"
@@ -294,7 +424,6 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           specialPrice={hit.special_price}
                         />
 
-                        {/* Finance Info */}
                         <div className="relative group shrink-0">
                           <button
                             type="button"
@@ -303,26 +432,13 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                               e.stopPropagation();
 
                               setActiveTooltip((prev) =>
-                                prev === "finance"
-                                  ? null
-                                  : "finance"
+                                prev === "finance" ? null : "finance"
                               );
                             }}
                             aria-label="Finance price information"
                             className="flex items-center justify-center p-0.5"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="w-4 h-4 text-gray-400 cursor-pointer"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
+                            <InfoIcon />
                           </button>
 
                           <div
@@ -332,7 +448,6 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                               } group-hover:opacity-100 group-hover:visible`}
                           >
                             Finance price does not include taxes and licensing fees.
-
                             <div className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
                           </div>
                         </div>
@@ -351,7 +466,6 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           showArrow={false}
                         />
 
-                        {/* Cash Info */}
                         <div className="relative group shrink-0">
                           <button
                             type="button"
@@ -366,18 +480,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                             aria-label="Cash price information"
                             className="flex items-center justify-center p-0.5"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="w-4 h-4 text-gray-400 cursor-pointer"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
+                            <InfoIcon />
                           </button>
 
                           <div
@@ -386,9 +489,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                                 : "opacity-0 invisible"
                               } group-hover:opacity-100 group-hover:visible`}
                           >
-                            Cash price does not include taxes and licensing
-                            fees.
-
+                            Cash price does not include taxes and licensing fees.
                             <div className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
                           </div>
                         </div>
@@ -396,9 +497,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                     </div>
                   </div>
                 ) : (
-                  /* =========================
-                     NORMAL VEHICLE - NO PRICE
-                     ========================= */
+                  /* NORMAL VEHICLE - NO PRICE */
                   <div className="text-[17px] w-full font-semibold leading-6 mt-2 py-[3px]">
                     <div className="flex items-center gap-1 text-price-green">
                       <svg
@@ -411,66 +510,56 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                          d="M3 5a2 2 0 012-2h3.28a2 2 0 01.948.684l1.498 4.493a2 2 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a2 2 0 01.502-1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a11.042 11.042 0 011.21-.502l4.493 1.498a2 2 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 19 3 14.284 3 6V5z"
                         />
                       </svg>
-
                       <span>Call for price</span>
                     </div>
                   </div>
                 )
               ) : null}
 
+              {/* Financing payment and cash down */}
+              {!isSold && hasFinancingDetails && (
+                <>
+                  <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
+                    {formatCurrency(biWeeklyPayment!)}
+                    /Bi-Weekly
 
+                    <span className="relative group shrink-0">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
 
-              {/* finance bi weekly payment and $0 cash down */}
-              {/* <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
-                $179.78/Bi-weekly estimated <span className="relative group shrink-0">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                          setActiveTooltip((prev) =>
+                            prev === "payment" ? null : "payment"
+                          );
+                        }}
+                        aria-label="Financing payment information"
+                        className="flex items-center justify-center p-0.5"
+                      >
+                        <InfoIcon />
+                      </button>
 
-                      setActiveTooltip((prev) =>
-                        prev === "finance"
-                          ? null
-                          : "finance"
-                      );
-                    }}
-                    aria-label="Finance price information"
-                    className="flex items-center justify-center p-0.5"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-4 h-4 text-gray-400 cursor-pointer"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
+                      <span
+                        className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "payment"
+                            ? "opacity-100 visible"
+                            : "opacity-0 invisible"
+                          } group-hover:opacity-100 group-hover:visible`}
+                      >
+                        Estimated bi-weekly financing payment. Taxes and licensing fees are not included.
+                        <span className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
+                      </span>
+                    </span>
+                  </p>
 
-                  <span
-                    className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "finance"
-                        ? "opacity-100 visible"
-                        : "opacity-0 invisible"
-                      } group-hover:opacity-100 group-hover:visible`}
-                  >
-                    Finance bi-weekly payment does not include taxes and licensing fees.
-
-                    <span className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
-                  </span>
-                </span>
-              </p>
-              <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[4px] flex-1">
-                $0 cash down
-              </p> */}
-
+                  <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[4px] flex-1">
+                    {formatCashDown(downPayment)} cash down
+                  </p>
+                </>
+              )}
 
               {/* Mileage + Drivetrain */}
               <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px] flex-1">
@@ -508,7 +597,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  d="M3 5a2 2 0 012-2h3.28a2 2 0 01.948.684l1.498 4.493a2 2 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a2 2 0 011.21-.502l4.493 1.498a2 2 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 9.716 3 14.284 3 6V5z"
                 />
               </svg>
 
