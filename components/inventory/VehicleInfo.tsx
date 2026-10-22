@@ -203,9 +203,9 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                     </div>
                   )}
 
-                  <div className="flex items-start justify-between gap-2 mt-2">
+                  <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="text-[13px] font-semibold uppercase text-gray-500 flex items-center gap-x-2">
+                      <div className="text-[13px] font-semibold uppercase text-gray-500 flex items-center gap-x-2 mb-1.5">
                         {activePriceTab === "finance" ? "Finance Price" : "Cash price"}
 
 
@@ -245,25 +245,31 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
                       </div>
 
-                      <div className="mt-0 flex flex-row items-center gap-x-2 gap-y-0">
+                      <div className="mt-0 flex flex-row items-center gap-x-1 gap-y-0">
                         <PriceDrop
                           price={vehicle?.price}
                           specialPrice={vehicle?.special_price}
                           adjustment={activePriceTab === "cash" ? 2000 : 0}
-                          className="text-[26px] font-extrabold leading-none text-price-green"
+                          className="text-[25px] font-extrabold leading-none text-price-green"
                           showArrow={false}
                         />
 
                         {
-                          hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-1 py-1.5 text-[11px] font-bold flex justify-center items-center text-price-green">
+                          hasPriceDrop ? <div className=" w-fit mx-1 rounded-md bg-brand/10 px-1 py-1.5 text-[11px] font-bold flex justify-center items-center text-price-green">
                             Save $2,000
-                          </div> : null
+                          </div> : <p className="mt-1 text-xs font-medium text-gray-500">
+                            + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""}
+                          </p>
                         }
                       </div>
 
-                      <p className="mt-1 text-xs font-medium text-gray-500">
-                        + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""}
-                      </p>
+                      {
+                        hasPriceDrop && (
+                          <p className="mt-1 text-xs font-medium text-gray-500">
+                            + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""}
+                          </p>
+                        )
+                      }
 
                     </div>
 
