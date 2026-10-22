@@ -43,15 +43,52 @@ export type HitCardHit = {
   [key: string]: unknown;
 };
 
+
+
+const getPaymentFrequencyDetails = (frequency?: string) => {
+  const normalizedFrequency = frequency?.trim().toLowerCase();
+
+  switch (normalizedFrequency) {
+    case "bi-weekly":
+    case "biweekly":
+    case "bi weekly":
+      return {
+        label: "Bi-Weekly",
+        paymentsPerYear: 26,
+      };
+
+    case "monthly":
+      return {
+        label: "Monthly",
+        paymentsPerYear: 12,
+      };
+
+    case "yearly":
+    case "annually":
+    case "annual":
+      return {
+        label: "Yearly",
+        paymentsPerYear: 1,
+      };
+
+    default:
+      return {
+        label: "Bi-Weekly",
+        paymentsPerYear: 26,
+      };
+  }
+};
+
 /* =========================
    Bi-weekly payment calculation
 ========================= */
 
-const calculateBiWeeklyPayment = (
+const calculatePayment = (
   price: number,
   downPayment: number,
   annualInterestRate: number,
-  termMonths: number
+  termMonths: number,
+  paymentsPerYear: number
 ): number | null => {
   const principal = price - downPayment;
 
@@ -63,13 +100,14 @@ const calculateBiWeeklyPayment = (
     downPayment < 0 ||
     annualInterestRate < 0 ||
     termMonths <= 0 ||
-    downPayment > price
+    downPayment > price ||
+    paymentsPerYear <= 0
   ) {
     return null;
   }
 
-  const numberOfPayments = (termMonths / 12) * 26;
-  const periodicRate = annualInterestRate / 100 / 26;
+  const numberOfPayments = (termMonths / 12) * paymentsPerYear;
+  const periodicRate = annualInterestRate / 100 / paymentsPerYear;
 
   if (numberOfPayments <= 0) {
     return null;
@@ -164,9 +202,21 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
   const interestRate = Number(hit.interest_rate);
   const termMonths = Number(hit.term);
 
-  const biWeeklyPayment = calculateBiWeeklyPayment(price, downPayment, interestRate, termMonths);
+  const paymentFrequency = getPaymentFrequencyDetails(hit.payment_frequency);
+
+  const paymentAmount = calculatePayment(
+    price,
+    downPayment,
+    interestRate,
+    termMonths,
+    paymentFrequency.paymentsPerYear
+  );
   const isFinancingEnabled = Number(hit.financing_on) === 1;
-  const hasFinancingDetails = isFinancingEnabled && biWeeklyPayment !== null && Number.isFinite(downPayment) && downPayment >= 0;
+  const hasFinancingDetails =
+    isFinancingEnabled &&
+    paymentAmount !== null &&
+    Number.isFinite(downPayment) &&
+    downPayment >= 0;
 
   const imageUrls = hit.image_urls ? hit.image_urls.split(";") : [];
   let imageSrc = DEFAULT_PLACEHOLDER_IMAGE || `${SITE_CONFIG?.urls?.assetBaseUrl}/image/default-placeholder.jpg`;
@@ -197,9 +247,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               alt={title}
               width={600}
               height={400}
-              className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${
-                isSold || isDealPending ? "grayscale opacity-80" : ""
-              }`}
+              className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${isSold || isDealPending ? "grayscale opacity-80" : ""
+                }`}
             />
 
             {isRecentlyViewedVehicle && (
@@ -251,9 +300,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                 aria-label={isInWishlist(inventoryId) ? "Remove from wishlist" : "Add to wishlist"}
               >
                 <Heart
-                  className={`w-5 h-5 ${
-                    isInWishlist(inventoryId) ? "fill-brand-green stroke-none" : "stroke-gray-600"
-                  } transition-colors`}
+                  className={`w-5 h-5 ${isInWishlist(inventoryId) ? "fill-brand-green stroke-none" : "stroke-gray-600"
+                    } transition-colors`}
                 />
               </button>
             )}
@@ -307,9 +355,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           setActivePriceTab("finance");
                           setActiveTooltip(null);
                         }}
-                        className={`relative py-2 cursor-pointer text-[16px] font-semibold transition-colors ${
-                          activePriceTab === "finance" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
-                        }`}
+                        className={`relative py-2 cursor-pointer text-[16px] font-semibold transition-colors ${activePriceTab === "finance" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
+                          }`}
                       >
                         Finance
                         {activePriceTab === "finance" && (
@@ -325,9 +372,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           setActivePriceTab("cash");
                           setActiveTooltip(null);
                         }}
-                        className={`relative py-2 cursor-pointer text-[16px] font-semibold transition-colors ${
-                          activePriceTab === "cash" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
-                        }`}
+                        className={`relative py-2 cursor-pointer text-[16px] font-semibold transition-colors ${activePriceTab === "cash" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
+                          }`}
                       >
                         Cash
                         {activePriceTab === "cash" && (
@@ -370,9 +416,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           </button>
 
                           <div
-                            className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 pointer-events-none ${
-                              activeTooltip === activePriceTab ? "opacity-100 visible" : "opacity-0 invisible"
-                            } group-hover:opacity-100 group-hover:visible`}
+                            className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 pointer-events-none ${activeTooltip === activePriceTab ? "opacity-100 visible" : "opacity-0 invisible"
+                              } group-hover:opacity-100 group-hover:visible`}
                           >
                             {activePriceTab === "finance"
                               ? "Finance price does not include taxes and licensing fees."
@@ -404,7 +449,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               {!isSold && hasFinancingDetails && (
                 <>
                   <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
-                    {formatCurrency(biWeeklyPayment!)} /Bi-Weekly
+                    {formatCurrency(paymentAmount!)} /{paymentFrequency.label}
                     <span className="relative group shrink-0">
                       <button
                         type="button"
@@ -420,9 +465,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                       </button>
 
                       <span
-                        className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${
-                          activeTooltip === "payment" ? "opacity-100 visible" : "opacity-0 invisible"
-                        } group-hover:opacity-100 group-hover:visible`}
+                        className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "payment" ? "opacity-100 visible" : "opacity-0 invisible"
+                          } group-hover:opacity-100 group-hover:visible`}
                       >
                         Estimated bi-weekly financing payment. Taxes and licensing fees are not included.
                         <span className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
