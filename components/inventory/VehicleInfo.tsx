@@ -91,7 +91,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   return (
     <>
       {/* Primary Inline Container (Observed) */}
-      <div ref={inlineContainerRef} className="bg-white rounded-2xl px-5 pb-2 text-start tracking-wide">
+      <div ref={inlineContainerRef} className="bg-white rounded-2xl px-3 pb-2 text-start tracking-wide">
 
         {!isSold && (
           <>
@@ -106,7 +106,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                       <PriceDrop
                         price={vehicle?.price}
                         specialPrice={vehicle?.special_price}
-                        className="text-[32px] font-extrabold leading-none text-price-green"
+                        className="text-[28px] font-extrabold leading-none text-price-green"
                       />
                     </p>
 
@@ -195,17 +195,17 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                   id="vehicle-price-panel"
                   role="tabpanel"
                   aria-labelledby={`${activePriceTab}-price-tab`}
-                  className="relative rounded-xl bg-[#f1f8f5] px-4 py-4"
+                  className="relative rounded-xl bg-[#f1f8f5] px-3 py-4"
                 >
                   {!isSold && hasPriceDrop && (
-                    <div className="mb-1 w-fit rounded-lg bg-brand px-2 py-1.5 text-[13px] font-medium leading-none text-white">
+                    <div className="mb-1.5 w-fit rounded-lg bg-brand px-2 py-1.5 text-[13px] font-medium leading-none text-white">
                       Price drop
                     </div>
                   )}
 
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="text-[13px] font-semibold uppercase text-gray-500 flex items-center gap-x-2 mb-1.5">
+                      <div className="text-[13px] font-semibold uppercase text-gray-500 flex items-center gap-x-2 my-0.5">
                         {activePriceTab === "finance" ? "Finance Price" : "Cash price"}
 
 
@@ -250,14 +250,14 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                           price={vehicle?.price}
                           specialPrice={vehicle?.special_price}
                           adjustment={activePriceTab === "cash" ? 2000 : 0}
-                          className="text-[25px] font-extrabold leading-none text-price-green"
+                          className="text-[18px] font-extrabold leading-none text-price-green"
                           showArrow={false}
                         />
 
                         {
-                          hasPriceDrop ? <div className=" w-fit mx-1 rounded-md bg-brand/10 px-1 py-1.5 text-[11px] font-bold flex justify-center items-center text-price-green">
+                          hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-1 py-1.5 text-[10px] font-semibold flex justify-center items-center text-price-green">
                             Save $2,000
-                          </div> : <p className="mt-1 text-xs font-medium text-gray-500">
+                          </div> : <p className="mt-1 text-[10px] font-medium text-gray-500">
                             + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""}
                           </p>
                         }
