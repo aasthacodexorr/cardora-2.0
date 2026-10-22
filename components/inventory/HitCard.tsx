@@ -83,6 +83,7 @@ const getPaymentFrequencyDetails = (frequency?: string) => {
    Bi-weekly payment calculation
 ========================= */
 
+
 const calculatePayment = (
   price: number,
   downPayment: number,
@@ -90,39 +91,47 @@ const calculatePayment = (
   termMonths: number,
   paymentsPerYear: number
 ): number | null => {
-  const principal = price - downPayment;
+  const loanAmount = price - downPayment;
 
   if (
-    !Number.isFinite(principal) ||
+    !Number.isFinite(loanAmount) ||
     !Number.isFinite(annualInterestRate) ||
     !Number.isFinite(termMonths) ||
-    principal <= 0 ||
+    loanAmount <= 0 ||
     downPayment < 0 ||
+    downPayment > price ||
     annualInterestRate < 0 ||
     termMonths <= 0 ||
-    downPayment > price ||
     paymentsPerYear <= 0
   ) {
     return null;
   }
 
-  const numberOfPayments = (termMonths / 12) * paymentsPerYear;
-  const periodicRate = annualInterestRate / 100 / paymentsPerYear;
+  const monthlyRate = annualInterestRate / 100 / 12;
+  const numberOfPayments = termMonths;
 
-  if (numberOfPayments <= 0) {
-    return null;
+  let monthlyPayment: number;
+
+  if (monthlyRate === 0) {
+    monthlyPayment = loanAmount / numberOfPayments;
+  } else {
+    const rateFactor = Math.pow(1 + monthlyRate, numberOfPayments);
+
+    monthlyPayment =
+      (loanAmount * monthlyRate * rateFactor) / (rateFactor - 1);
   }
 
-  if (periodicRate === 0) {
-    return principal / numberOfPayments;
-  }
-
+  // Match FinanceCalculator's monthly-to-bi-weekly conversion.
   const payment =
-    (principal * periodicRate) /
-    (1 - Math.pow(1 + periodicRate, -numberOfPayments));
+    paymentsPerYear === 26
+      ? (monthlyPayment * 12) / 26
+      : paymentsPerYear === 12
+        ? monthlyPayment
+        : monthlyPayment * 12;
 
   return Number.isFinite(payment) && payment > 0 ? payment : null;
 };
+
 
 /* =========================
    Currency formatters
