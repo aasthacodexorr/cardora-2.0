@@ -195,7 +195,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                   id="vehicle-price-panel"
                   role="tabpanel"
                   aria-labelledby={`${activePriceTab}-price-tab`}
-                  className="relative rounded-xl bg-[#f1f8f5] px-3 py-4"
+                  className="relative rounded-xl bg-[#f1f8f5] px-4 lg:px-3 py-4"
                 >
                   {!isSold && hasPriceDrop && (
                     <div className="mb-1.5 w-fit rounded-lg bg-brand px-2 py-1.5 text-[13px] font-medium leading-none text-white">
@@ -250,7 +250,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                           price={vehicle?.price}
                           specialPrice={vehicle?.special_price}
                           adjustment={activePriceTab === "cash" ? 2000 : 0}
-                          className="text-[18px] font-extrabold leading-none text-price-green"
+                          className="lg:text-[18px] text-[24px] font-extrabold leading-none text-price-green"
                           showArrow={false}
                         />
 
