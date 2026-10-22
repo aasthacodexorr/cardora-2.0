@@ -134,7 +134,7 @@ const InfoIcon = () => (
 
 export const HitCard = ({ hit }: { hit: HitCardHit }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [activePriceTab, setActivePriceTab] = useState<"finance" | "cash">("finance");
   const [activeTooltip, setActiveTooltip] = useState<
     "finance" | "cash" | "payment" | null
   >(null);
@@ -223,12 +223,10 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
   );
 
   // The API's emi_amount is not used for the displayed payment.
-  const isFinancingEnabled = Number(hit.financing_on) === 1;
-  const isSpecialFinancingEnabled = Number(hit.financing_special) === 1;
+  const isFinancingEnabled = Number(hit.financing_on) != 1;
 
   const hasFinancingDetails =
     isFinancingEnabled &&
-    isSpecialFinancingEnabled &&
     biWeeklyPayment !== null &&
     Number.isFinite(downPayment) &&
     downPayment >= 0;
@@ -292,8 +290,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               width={600}
               height={400}
               className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${isSold || isDealPending
-                  ? "grayscale opacity-80"
-                  : ""
+                ? "grayscale opacity-80"
+                : ""
                 }`}
             />
 
@@ -353,8 +351,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               >
                 <Heart
                   className={`w-5 h-5 ${isInWishlist(inventoryId)
-                      ? "fill-brand-green stroke-none"
-                      : "stroke-gray-600"
+                    ? "fill-brand-green stroke-none"
+                    : "stroke-gray-600"
                     } transition-colors`}
                 />
               </button>
@@ -410,61 +408,65 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                   </div>
                 ) : price > 0 ? (
                   /* NORMAL VEHICLE - HAS PRICE */
-                  <div
-                    ref={tooltipRef}
-                    className="text-[15px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px] flex flex-col gap-1"
-                  >
-                    {/* Finance Price */}
-                    <div className="flex justify-between items-center w-full">
-                      <span>Finance Price</span>
+                  <div className="w-full">
+                    <div className="grid grid-cols-2 border-b border-gray-200">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setActivePriceTab("finance");
+                          setActiveTooltip(null);
+                        }}
+                        className={`relative py-2 text-[13px] font-medium transition-colors ${activePriceTab === "finance"
+                          ? "text-brand-green"
+                          : "text-gray-500 hover:text-gray-700"
+                          }`}
+                      >
+                        Finance
+                        {activePriceTab === "finance" && (
+                          <span className="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-brand-green" />
+                        )}
+                      </button>
 
-                      <div className="relative inline-flex items-center gap-1">
-                        <PriceDrop
-                          price={hit.price}
-                          specialPrice={hit.special_price}
-                        />
-
-                        <div className="relative group shrink-0">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-
-                              setActiveTooltip((prev) =>
-                                prev === "finance" ? null : "finance"
-                              );
-                            }}
-                            aria-label="Finance price information"
-                            className="flex items-center justify-center p-0.5"
-                          >
-                            <InfoIcon />
-                          </button>
-
-                          <div
-                            className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "finance"
-                                ? "opacity-100 visible"
-                                : "opacity-0 invisible"
-                              } group-hover:opacity-100 group-hover:visible`}
-                          >
-                            Finance price does not include taxes and licensing fees.
-                            <div className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
-                          </div>
-                        </div>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setActivePriceTab("cash");
+                          setActiveTooltip(null);
+                        }}
+                        className={`relative py-2 text-[13px] font-medium transition-colors ${activePriceTab === "cash"
+                          ? "text-brand-green"
+                          : "text-gray-500 hover:text-gray-700"
+                          }`}
+                      >
+                        Cash
+                        {activePriceTab === "cash" && (
+                          <span className="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-brand-green" />
+                        )}
+                      </button>
                     </div>
 
-                    {/* Cash Price */}
-                    <div className="flex justify-between items-center w-full">
-                      <span>Cash Price</span>
-
-                      <div className="relative inline-flex items-center gap-1">
-                        <PriceDrop
-                          price={hit.price}
-                          specialPrice={hit.special_price}
-                          adjustment={2000}
-                          showArrow={false}
-                        />
+                    {/* Selected Price */}
+                    <div className="flex items-center justify-between gap-2 pt-2">
+                      <div className="flex items-center gap-1 min-w-0">
+                        {activePriceTab === "finance" ? (
+                          <PriceDrop
+                            price={hit.price}
+                            specialPrice={hit.special_price}
+                            className='text-[22px] font-extrabold leading-none text-price-green'
+                          />
+                        ) : (
+                          <PriceDrop
+                            price={hit.price}
+                            specialPrice={hit.special_price}
+                            adjustment={2000}
+                            showArrow={false}
+                            className='text-[22px] font-extrabold leading-none text-price-green'
+                          />
+                        )}
 
                         <div className="relative group shrink-0">
                           <button
@@ -472,24 +474,25 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-
                               setActiveTooltip((prev) =>
-                                prev === "cash" ? null : "cash"
+                                prev === activePriceTab ? null : activePriceTab
                               );
                             }}
-                            aria-label="Cash price information"
+                            aria-label={`${activePriceTab === "finance" ? "Finance" : "Cash"} price information`}
                             className="flex items-center justify-center p-0.5"
                           >
                             <InfoIcon />
                           </button>
 
                           <div
-                            className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "cash"
-                                ? "opacity-100 visible"
-                                : "opacity-0 invisible"
+                            className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === activePriceTab
+                              ? "opacity-100 visible"
+                              : "opacity-0 invisible"
                               } group-hover:opacity-100 group-hover:visible`}
                           >
-                            Cash price does not include taxes and licensing fees.
+                            {activePriceTab === "finance"
+                              ? "Finance price does not include taxes and licensing fees."
+                              : "Cash price does not include taxes and licensing fees."}
                             <div className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
                           </div>
                         </div>
@@ -545,8 +548,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
 
                       <span
                         className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "payment"
-                            ? "opacity-100 visible"
-                            : "opacity-0 invisible"
+                          ? "opacity-100 visible"
+                          : "opacity-0 invisible"
                           } group-hover:opacity-100 group-hover:visible`}
                       >
                         Estimated bi-weekly financing payment. Taxes and licensing fees are not included.
