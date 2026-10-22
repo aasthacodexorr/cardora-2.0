@@ -223,7 +223,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
   );
 
   // The API's emi_amount is not used for the displayed payment.
-  const isFinancingEnabled = Number(hit.financing_on) != 1;
+  const isFinancingEnabled = Number(hit.financing_on) === 1;
 
   const hasFinancingDetails =
     isFinancingEnabled &&
