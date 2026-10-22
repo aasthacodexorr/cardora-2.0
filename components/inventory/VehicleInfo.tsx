@@ -167,7 +167,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                 <div
                   role="tablist"
                   aria-label="Vehicle pricing"
-                  className="mb-3 flex rounded-xl border border-gray-200 bg-white p-0.5"
+                  className="mb-3 flex border-t-2 border-gray-300 p-0.5"
                 >
                   {(["finance", "cash"] as const).map((tab) => (
                     <button
@@ -181,9 +181,9 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         setActivePriceTab(tab);
                         setActiveTooltip(null);
                       }}
-                      className={`flex-1 rounded-[10px] cursor-pointer px-3 py-2.5 text-[16px] font-semibold transition-colors ${activePriceTab === tab
-                        ? "bg-brand text-white shadow-sm"
-                        : "text-gray-800 hover:bg-gray-50"
+                      className={`flex-1 cursor-pointer px-3 py-2.5 text-[16px] font-semibold transition-colors ${activePriceTab === tab
+                        ? "text-brand border-b-3 border-brand-green"
+                        : "text-gray-800 hover:bg-gray-50 border-b-2 border-gray-300"
                         }`}
                     >
                       {tab === "finance" ? "Finance" : "Cash"}
@@ -233,8 +233,8 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
                           <div
                             className={`absolute bottom-full left-1/2  -translate-x-1/2 mb-2 normal-case font-normal tracking-normal w-[240px] max-w-[calc(100vw-32px)] bg-black px-3 py-2 text-xs text-white shadow-lg z-[100] rounded-md transition-opacity duration-200 ${activeTooltip === activePriceTab
-                                ? "opacity-100 visible"
-                                : "opacity-0 invisible"
+                              ? "opacity-100 visible"
+                              : "opacity-0 invisible"
                               } group-hover:opacity-100 group-hover:visible`}
                           >
                             Listed price does not include taxes and licensing fees.
@@ -257,14 +257,14 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         {
                           hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-1 py-1.5 text-[11px] font-bold flex justify-center items-center text-price-green">
                             Save $2,000
-                          </div> :  null
+                          </div> : null
                         }
                       </div>
 
-                          <p className="mt-1 text-xs font-medium text-gray-500">
-                          + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""}
-                        </p>  
-                     
+                      <p className="mt-1 text-xs font-medium text-gray-500">
+                        + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""}
+                      </p>
+
                     </div>
 
 

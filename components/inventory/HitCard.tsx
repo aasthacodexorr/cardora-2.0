@@ -372,7 +372,6 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               {title}
             </h3>
 
-            <hr className="border-gray-200 mt-[4px]" />
 
             {/* Price and mileage */}
             <div>
@@ -387,9 +386,9 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           specialPrice={hit.special_price}
                         />
                       ) : (
-                        <span className="flex items-center gap-1 text-price-green">
+                        <span className="flex items-center gap-1 text-price-green border">
                           <svg
-                            className="w-4 h-4"
+                            className="w-4 h-4 shrink-0"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -398,7 +397,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth={2}
-                              d="M3 5a2 2 0 012-2h3.28a2 2 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a11.042 11.042 0 01.502-1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a11.042 11.042 0 011.21-.502l4.493 1.498a11.042 11.042 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                             />
                           </svg>
                           <span>Call for price</span>
@@ -409,7 +408,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                 ) : price > 0 ? (
                   /* NORMAL VEHICLE - HAS PRICE */
                   <div className="w-full">
-                    <div className="grid grid-cols-2 border-b border-gray-200">
+                    <div className="grid grid-cols-2 border-b border-t mt-1.5 border-gray-300">
                       <button
                         type="button"
                         onClick={(e) => {
@@ -418,7 +417,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           setActivePriceTab("finance");
                           setActiveTooltip(null);
                         }}
-                        className={`relative py-2 text-[13px] font-medium transition-colors ${activePriceTab === "finance"
+                        className={`relative py-2 cursor-pointer text-[16px] font-semibold transition-colors ${activePriceTab === "finance"
                           ? "text-brand-green"
                           : "text-gray-500 hover:text-gray-700"
                           }`}
@@ -437,7 +436,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           setActivePriceTab("cash");
                           setActiveTooltip(null);
                         }}
-                        className={`relative py-2 text-[13px] font-medium transition-colors ${activePriceTab === "cash"
+                        className={`relative py-2 cursor-pointer text-[16px] font-semibold transition-colors ${activePriceTab === "cash"
                           ? "text-brand-green"
                           : "text-gray-500 hover:text-gray-700"
                           }`}
@@ -484,19 +483,19 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                             <InfoIcon />
                           </button>
 
-                            {/* Tooltip Popup */}
-                            <div
-                              className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 pointer-events-none ${activeTooltip === activePriceTab
-                                  ? "opacity-100 visible"
-                                  : "opacity-0 invisible"
-                                } group-hover:opacity-100 group-hover:visible`}
-                            >
-                              {activePriceTab === "finance"
-                                ? "Finance price does not include taxes and licensing fees."
-                                : "Cash price does not include taxes and licensing fees."}
-                              {/* Centered Arrow */}
-                              <div className="absolute left-1/2 -translate-x-1/2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
-                            </div>
+                          {/* Tooltip Popup */}
+                          <div
+                            className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 pointer-events-none ${activeTooltip === activePriceTab
+                              ? "opacity-100 visible"
+                              : "opacity-0 invisible"
+                              } group-hover:opacity-100 group-hover:visible`}
+                          >
+                            {activePriceTab === "finance"
+                              ? "Finance price does not include taxes and licensing fees."
+                              : "Cash price does not include taxes and licensing fees."}
+                            {/* Centered Arrow */}
+                            <div className="absolute left-1/2 -translate-x-1/2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -504,9 +503,9 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                 ) : (
                   /* NORMAL VEHICLE - NO PRICE */
                   <div className="text-[17px] w-full font-semibold leading-6 mt-2 py-[3px]">
-                    <div className="flex items-center gap-1 text-price-green">
+                    <div className="flex items-center gap-1 text-price-green border-t border-gray-300   px-2 py-1">
                       <svg
-                        className="w-4 h-4"
+                        className="w-4 h-4 shrink-0"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -515,7 +514,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M3 5a2 2 0 012-2h3.28a2 2 0 01.948.684l1.498 4.493a2 2 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a2 2 0 01.502-1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a11.042 11.042 0 011.21-.502l4.493 1.498a2 2 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 19 3 14.284 3 6V5z"
+                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                         />
                       </svg>
                       <span>Call for price</span>
@@ -575,7 +574,6 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               </p>
             </div>
 
-            <hr className="border-gray-200 my-2" />
 
             <p className="text-[12px] mb-2 font-light">
               Stock #: {stock}
@@ -593,7 +591,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               className="cursor-pointer flex-1 text-center rounded-[10px] sm:rounded-[12px] text-gray-800 bg-white hover:bg-gray-100 py-[10px] text-[14px] sm:text-[15px] font-medium transition-colors border border-gray-300 flex items-center justify-center gap-1"
             >
               <svg
-                className="w-4 h-4 shrink-0 overflow-visible"
+                className="w-4 h-4 shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -602,7 +600,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M3 5a2 2 0 012-2h3.28a2 2 0 01.948.684l1.498 4.493a2 2 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a2 2 0 011.21-.502l4.493 1.498a2 2 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 9.716 3 14.284 3 6V5z"
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                 />
               </svg>
 
