@@ -205,7 +205,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
                   <div className="flex items-start justify-between gap-2 mt-2">
                     <div>
-                      <p className="text-[13px] font-semibold uppercase text-gray-500 flex items-center gap-x-2">
+                      <div className="text-[13px] font-semibold uppercase text-gray-500 flex items-center gap-x-2">
                         {activePriceTab === "finance" ? "Finance Price" : "Cash price"}
 
 
@@ -243,7 +243,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         </div>
 
 
-                      </p>
+                      </div>
 
                       <div className="mt-0 flex flex-row items-center gap-x-2 gap-y-0">
                         <PriceDrop
