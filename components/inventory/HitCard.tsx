@@ -438,8 +438,8 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-[17px] w-full font-semibold leading-6 mt-2 py-[3px]">
-                    <div className="flex items-center gap-1 text-price-green border-t border-gray-300 px-2 py-1">
+                  <div className="text-[17px] w-full font-semibold leading-6 mt-1.5">
+                    <div className="flex items-center gap-1 text-price-green border-t border-gray-300 py-2">
                       <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path
                           strokeLinecap="round"
