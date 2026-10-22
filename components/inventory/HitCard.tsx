@@ -458,7 +458,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               {!isSold && hasFinancingDetails && (
                 <>
                   <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
-                    {formatCurrency(paymentAmount!)} /{paymentFrequency.label}
+                    {formatCurrency(paymentAmount!)}/{paymentFrequency.label}
                     <span className="relative group shrink-0">
                       <button
                         type="button"
