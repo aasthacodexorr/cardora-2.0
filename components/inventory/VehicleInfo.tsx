@@ -257,7 +257,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         {
                           hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-1 py-1.5 text-[11px] font-bold flex justify-center items-center text-price-green">
                             Save $2,000
-                          </div> : <p className="text-sm font-medium text-gray-500">
+                          </div> : <p className="mt-1 text-sm font-medium text-gray-500">
                             + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""}
                           </p>
                         }

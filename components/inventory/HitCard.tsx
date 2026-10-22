@@ -484,17 +484,19 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                             <InfoIcon />
                           </button>
 
-                          <div
-                            className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === activePriceTab
-                              ? "opacity-100 visible"
-                              : "opacity-0 invisible"
-                              } group-hover:opacity-100 group-hover:visible`}
-                          >
-                            {activePriceTab === "finance"
-                              ? "Finance price does not include taxes and licensing fees."
-                              : "Cash price does not include taxes and licensing fees."}
-                            <div className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
-                          </div>
+                            {/* Tooltip Popup */}
+                            <div
+                              className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 pointer-events-none ${activeTooltip === activePriceTab
+                                  ? "opacity-100 visible"
+                                  : "opacity-0 invisible"
+                                } group-hover:opacity-100 group-hover:visible`}
+                            >
+                              {activePriceTab === "finance"
+                                ? "Finance price does not include taxes and licensing fees."
+                                : "Cash price does not include taxes and licensing fees."}
+                              {/* Centered Arrow */}
+                              <div className="absolute left-1/2 -translate-x-1/2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
+                            </div>
                         </div>
                       </div>
                     </div>
