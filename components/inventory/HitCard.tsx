@@ -84,6 +84,7 @@ const getPaymentFrequencyDetails = (frequency?: string) => {
 ========================= */
 
 
+
 const calculatePayment = (
   price: number,
   downPayment: number,
@@ -94,10 +95,14 @@ const calculatePayment = (
   const loanAmount = price - downPayment;
 
   if (
+    !Number.isFinite(price) ||
+    !Number.isFinite(downPayment) ||
     !Number.isFinite(loanAmount) ||
     !Number.isFinite(annualInterestRate) ||
     !Number.isFinite(termMonths) ||
+    !Number.isFinite(paymentsPerYear) ||
     loanAmount <= 0 ||
+    price <= 0 ||
     downPayment < 0 ||
     downPayment > price ||
     annualInterestRate < 0 ||
@@ -107,30 +112,33 @@ const calculatePayment = (
     return null;
   }
 
-  const monthlyRate = annualInterestRate / 100 / 12;
-  const numberOfPayments = termMonths;
+  // Calculate the number of payments for the selected loan term.
+  const numberOfPayments = (termMonths / 12) * paymentsPerYear;
 
-  let monthlyPayment: number;
+  // Calculate the interest rate per payment period.
+  const periodicRate =
+    annualInterestRate / 100 / paymentsPerYear;
 
-  if (monthlyRate === 0) {
-    monthlyPayment = loanAmount / numberOfPayments;
+  let payment: number;
+
+  if (periodicRate === 0) {
+    payment = loanAmount / numberOfPayments;
   } else {
-    const rateFactor = Math.pow(1 + monthlyRate, numberOfPayments);
+    const rateFactor = Math.pow(
+      1 + periodicRate,
+      numberOfPayments
+    );
 
-    monthlyPayment =
-      (loanAmount * monthlyRate * rateFactor) / (rateFactor - 1);
+    payment =
+      (loanAmount * periodicRate * rateFactor) /
+      (rateFactor - 1);
   }
 
-  // Match FinanceCalculator's monthly-to-bi-weekly conversion.
-  const payment =
-    paymentsPerYear === 26
-      ? (monthlyPayment * 12) / 26
-      : paymentsPerYear === 12
-        ? monthlyPayment
-        : monthlyPayment * 12;
-
-  return Number.isFinite(payment) && payment > 0 ? payment : null;
+  return Number.isFinite(payment) && payment > 0
+    ? payment
+    : null;
 };
+
 
 
 /* =========================

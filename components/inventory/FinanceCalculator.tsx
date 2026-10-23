@@ -170,20 +170,26 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851", vehicle }: Fina
   }, [interestRate]);
 
   // Calculation logic
+ 
+  // Calculation logic
   const loanAmount = Math.max(0, purchasePrice - depositAmount);
-  const monthlyRate = interestRate / 100 / 12;
-  const numberOfPayments = loanTerm * 12;
 
-  // Calculate monthly payment using amortization formula
-  let monthlyPayment = 0;
-  if (loanAmount > 0 && monthlyRate > 0) {
-    monthlyPayment =
-      (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
-      (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+  // Bi-weekly payment calculation (26 payments per year)
+  const biWeeklyRate = interestRate / 100 / 26;
+  const numberOfBiWeeklyPayments = loanTerm * 26;
+
+  let biWeeklyPayment = 0;
+
+  if (loanAmount > 0 && numberOfBiWeeklyPayments > 0) {
+    if (biWeeklyRate > 0) {
+      biWeeklyPayment =
+        (loanAmount * biWeeklyRate) /
+        (1 - Math.pow(1 + biWeeklyRate, -numberOfBiWeeklyPayments));
+    } else {
+      biWeeklyPayment = loanAmount / numberOfBiWeeklyPayments;
+    }
   }
 
-  // Convert to bi-weekly (26 periods per year)
-  const biWeeklyPayment = (monthlyPayment * 12) / 26;
 
   const handleTermClick = (years: number) => {
     setLoanTerm(years);
