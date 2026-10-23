@@ -333,7 +333,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
 
           {/* Details Body */}
           <div className="flex flex-col flex-1 px-[15px] pt-2 pb-0 text-start">
-            <h3 className="text-[16px] font-[600] text-foreground leading-[22px] overflow-hidden text-ellipsis line-clamp-2 min-h-[44px]">
+            <h3 className="text-[16px] font-[600] text-foreground leading-[22px] line-clamp-2">
               {title}
             </h3>
 
@@ -377,7 +377,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           setActivePriceTab("finance");
                           setActiveTooltip(null);
                         }}
-                        className={`relative py-2 cursor-pointer text-[14px] font-semibold transition-colors ${activePriceTab === "finance" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
+                        className={`relative py-1 cursor-pointer text-[12px] font-semibold transition-colors ${activePriceTab === "finance" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
                           }`}
                       >
                         Finance
@@ -394,7 +394,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           setActivePriceTab("cash");
                           setActiveTooltip(null);
                         }}
-                        className={`relative py-2 cursor-pointer text-[14px] font-semibold transition-colors ${activePriceTab === "cash" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
+                        className={`relative py-1 cursor-pointer text-[12px] font-semibold transition-colors ${activePriceTab === "cash" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
                           }`}
                       >
                         Cash

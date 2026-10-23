@@ -181,7 +181,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         setActivePriceTab(tab);
                         setActiveTooltip(null);
                       }}
-                      className={`flex-1 cursor-pointer px-3 py-2.5 text-[16px] font-semibold transition-colors ${activePriceTab === tab
+                      className={`flex-1 cursor-pointer px-3 py-1 text-[12px] font-semibold transition-colors ${activePriceTab === tab
                         ? "text-brand border-b-3 border-brand-green"
                         : "text-gray-800 hover:bg-gray-50"
                         }`}
@@ -210,16 +210,16 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                           price={vehicle?.price}
                           specialPrice={vehicle?.special_price}
                           adjustment={activePriceTab === "cash" ? 2000 : 0}
-                          className="lg:text-[18px] text-[24px] font-extrabold leading-none text-price-black"
+                          className="lg:text-[24px] text-[24px] font-extrabold leading-none text-price-black"
                           showArrow={false}
                         />
+                      </div>
 
-                        {
-                          hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-1 py-1.5 text-[10px] font-semibold flex justify-center items-center text-price-green">
+                      {
+                          hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-2 mt-1.5 py-1.5 text-[12px] font-semibold flex justify-center items-center text-price-green">
                             Save $2,000
                           </div> : null
                         }
-                      </div>
 
                       <div className="mt-1 text-xs font-medium text-gray-500 flex items-center gap-1">
                         + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""} <p data-price-tooltip className="relative inline-flex items-center group">
@@ -227,7 +227,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                             type="button"
                             onClick={() => toggleTooltip(activePriceTab)}
                             aria-label={`${activePriceTab === "finance" ? "Finance" : "Cash"} price information`}
-                            className="flex items-center justify-center mb-1"
+                            className="flex items-center justify-center"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
