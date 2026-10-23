@@ -205,21 +205,23 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="mt-0 flex flex-row items-center gap-x-1 gap-y-0">
-                        <PriceDrop
-                          price={vehicle?.price}
-                          specialPrice={vehicle?.special_price}
-                          adjustment={activePriceTab === "cash" ? 2000 : 0}
-                          className="lg:text-[24px] text-[24px] font-extrabold leading-none text-price-black"
-                          showArrow={false}
-                        />
-                      </div>
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                          <div className="flex flex-wrap items-baseline gap-x-1 gap-y-1">
+                            <PriceDrop
+                              price={vehicle?.price}
+                              specialPrice={vehicle?.special_price}
+                              adjustment={activePriceTab === "cash" ? 2000 : 0}
+                              className="text-[24px] font-extrabold leading-none text-price-black"
+                              showArrow={false}
+                            />
+                          </div>
 
-                      {
-                          hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-2 mt-1.5 py-1.5 text-[12px] font-semibold flex justify-center items-center text-price-green">
-                            Save $2,000
-                          </div> : null
-                        }
+                          {hasPriceDrop && (
+                            <div className="w-fit shrink-0 rounded-md bg-brand/10 px-2 py-1.5 text-[12px] font-semibold leading-none text-price-green">
+                              Save $2,000
+                            </div>
+                          )}
+                        </div>
 
                       <div className="mt-1 text-xs font-medium text-gray-500 flex items-center gap-1">
                         + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""} <p data-price-tooltip className="relative inline-flex items-center group">
