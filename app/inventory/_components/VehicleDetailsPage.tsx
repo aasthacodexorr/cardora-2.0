@@ -308,6 +308,7 @@ export default async function VehicleDetailsPage({
                         <FinanceCalculator
                             vehiclePrice={getEffectivePrice(vehicle.price, vehicle.special_price) ?? undefined}
                             inventoryId={id}
+                            vehicle={vehicle}
                         />
                     </div>
 

@@ -138,11 +138,11 @@ const calculatePayment = (
 ========================= */
 
 const formatCurrency = (amount: number): string =>
-  amount.toLocaleString("en-CA", {
+  Math.floor(amount).toLocaleString("en-CA", {
     style: "currency",
     currency: "CAD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   });
 
 const formatCashDown = (amount: number): string =>
@@ -329,6 +329,11 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               {title}
             </h3>
 
+            {/* Mileage & Stock */}
+            <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px]">
+              {km.toLocaleString()} KM {drivetrain && drivetrain !== "N/A" && <>&bull; {drivetrain}</>}
+            </p>
+
             {/* Price Selection / Call for price */}
             <div ref={tooltipRef}>
               {!isSold ? (
@@ -355,7 +360,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                 ) : price > 0 ? (
                   <div className="w-full">
                     {/* Finance vs Cash Tabs */}
-                    <div className="grid grid-cols-2 border-b border-t mt-1.5 border-gray-300">
+                    <div className="grid grid-cols-2 mt-1.5">
                       <button
                         type="button"
                         onClick={(e) => {
@@ -364,7 +369,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           setActivePriceTab("finance");
                           setActiveTooltip(null);
                         }}
-                        className={`relative py-2 cursor-pointer text-[16px] font-semibold transition-colors ${activePriceTab === "finance" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
+                        className={`relative py-2 cursor-pointer text-[14px] font-semibold transition-colors ${activePriceTab === "finance" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
                           }`}
                       >
                         Finance
@@ -381,7 +386,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           setActivePriceTab("cash");
                           setActiveTooltip(null);
                         }}
-                        className={`relative py-2 cursor-pointer text-[16px] font-semibold transition-colors ${activePriceTab === "cash" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
+                        className={`relative py-2 cursor-pointer text-[14px] font-semibold transition-colors ${activePriceTab === "cash" ? "text-brand-green" : "text-gray-500 hover:text-gray-700"
                           }`}
                       >
                         Cash
@@ -398,7 +403,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           <PriceDrop
                             price={hit.price}
                             specialPrice={hit.special_price}
-                            className="text-[22px] font-extrabold leading-none text-price-green"
+                            className="text-[30px] font-extrabold leading-none text-price-black"
                           />
                         ) : (
                           <PriceDrop
@@ -406,7 +411,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                             specialPrice={hit.special_price}
                             adjustment={2000}
                             showArrow={false}
-                            className="text-[22px] font-extrabold leading-none text-price-green"
+                            className="text-[30px] font-extrabold leading-none text-price-black"
                           />
                         )}
 
@@ -458,7 +463,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
               {!isSold && hasFinancingDetails && (
                 <>
                   <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[5px] flex justify-start items-center gap-1">
-                    {formatCurrency(paymentAmount!)}/{paymentFrequency.label}
+                    {formatCurrency(paymentAmount!)}/{paymentFrequency.label} estimated
                     <span className="relative group shrink-0">
                       <button
                         type="button"
@@ -474,11 +479,11 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                       </button>
 
                       <span
-                        className={`absolute bottom-full right-0 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 ${activeTooltip === "payment" ? "opacity-100 visible" : "opacity-0 invisible"
+                        className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 pointer-events-none ${activeTooltip === "payment" ? "opacity-100 visible" : "opacity-0 invisible"
                           } group-hover:opacity-100 group-hover:visible`}
                       >
                         Estimated bi-weekly financing payment. Taxes and licensing fees are not included.
-                        <span className="absolute right-2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
+                        <span className="absolute left-1/2 -translate-x-1/2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
                       </span>
                     </span>
                   </p>
@@ -488,11 +493,6 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                   </p>
                 </>
               )}
-
-              {/* Mileage & Stock */}
-              <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px]">
-                {km.toLocaleString()} KM {drivetrain && drivetrain !== "N/A" && <>&bull; {drivetrain}</>}
-              </p>
             </div>
 
             <p className="text-[12px] mb-2 font-light text-gray-500 mt-1">Stock #: {stock}</p>

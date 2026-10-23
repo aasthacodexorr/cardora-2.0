@@ -167,7 +167,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                 <div
                   role="tablist"
                   aria-label="Vehicle pricing"
-                  className="mb-3 flex border-t-2 border-gray-300 p-0.5"
+                  className="mb-3 flex border-gray-300 p-0.5"
                 >
                   {(["finance", "cash"] as const).map((tab) => (
                     <button
@@ -183,7 +183,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                       }}
                       className={`flex-1 cursor-pointer px-3 py-2.5 text-[16px] font-semibold transition-colors ${activePriceTab === tab
                         ? "text-brand border-b-3 border-brand-green"
-                        : "text-gray-800 hover:bg-gray-50 border-b-2 border-gray-300"
+                        : "text-gray-800 hover:bg-gray-50"
                         }`}
                     >
                       {tab === "finance" ? "Finance" : "Cash"}
@@ -205,17 +205,29 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="text-[13px] font-semibold uppercase text-gray-500 flex items-center gap-x-2 my-0.5">
-                        {activePriceTab === "finance" ? "Finance Price" : "Cash price"}
+                      <div className="mt-0 flex flex-row items-center gap-x-1 gap-y-0">
+                        <PriceDrop
+                          price={vehicle?.price}
+                          specialPrice={vehicle?.special_price}
+                          adjustment={activePriceTab === "cash" ? 2000 : 0}
+                          className="lg:text-[18px] text-[24px] font-extrabold leading-none text-price-black"
+                          showArrow={false}
+                        />
 
+                        {
+                          hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-1 py-1.5 text-[10px] font-semibold flex justify-center items-center text-price-green">
+                            Save $2,000
+                          </div> : null
+                        }
+                      </div>
 
-
-                        <div data-price-tooltip className="relative inline-flex items-center group">
+                      <div className="mt-1 text-xs font-medium text-gray-500 flex items-center gap-1">
+                        + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""} <p data-price-tooltip className="relative inline-flex items-center group">
                           <button
                             type="button"
                             onClick={() => toggleTooltip(activePriceTab)}
                             aria-label={`${activePriceTab === "finance" ? "Finance" : "Cash"} price information`}
-                            className="flex items-center justify-center"
+                            className="flex items-center justify-center mb-1"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -231,49 +243,18 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                             </svg>
                           </button>
 
-                          <div
+                          <span
                             className={`absolute bottom-full left-1/2  -translate-x-1/2 mb-2 normal-case font-normal tracking-normal w-[240px] max-w-[calc(100vw-32px)] bg-black px-3 py-2 text-xs text-white shadow-lg z-[100] rounded-md transition-opacity duration-200 ${activeTooltip === activePriceTab
                               ? "opacity-100 visible"
                               : "opacity-0 invisible"
                               } group-hover:opacity-100 group-hover:visible`}
                           >
                             Listed price does not include taxes and licensing fees.
-                            <div className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] h-3 w-3 rotate-45 bg-black" />
-                          </div>
-                        </div>
-
-
+                            <span className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] h-3 w-3 rotate-45 bg-black" />
+                          </span>
+                        </p>
                       </div>
-
-                      <div className="mt-0 flex flex-row items-center gap-x-1 gap-y-0">
-                        <PriceDrop
-                          price={vehicle?.price}
-                          specialPrice={vehicle?.special_price}
-                          adjustment={activePriceTab === "cash" ? 2000 : 0}
-                          className="lg:text-[18px] text-[24px] font-extrabold leading-none text-price-green"
-                          showArrow={false}
-                        />
-
-                        {
-                          hasPriceDrop ? <div className=" w-fit rounded-md bg-brand/10 px-1 py-1.5 text-[10px] font-semibold flex justify-center items-center text-price-green">
-                            Save $2,000
-                          </div> : <p className="mt-1 text-[10px] font-medium text-gray-500">
-                            + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""}
-                          </p>
-                        }
-                      </div>
-
-                      {
-                        hasPriceDrop && (
-                          <p className="mt-1 text-xs font-medium text-gray-500">
-                            + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""}
-                          </p>
-                        )
-                      }
-
                     </div>
-
-
                   </div>
                 </div>
 
