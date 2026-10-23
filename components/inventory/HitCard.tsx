@@ -155,7 +155,7 @@ const formatCashDown = (amount: number): string =>
 const InfoIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="w-4 h-4 text-gray-400 cursor-pointer"
+    className="w-4.5 h-4.5 text-gray-400 cursor-pointer"
     viewBox="0 0 20 20"
     fill="currentColor"
     aria-hidden="true"
@@ -403,7 +403,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           <PriceDrop
                             price={hit.price}
                             specialPrice={hit.special_price}
-                            className="text-[30px] font-extrabold leading-none text-price-black"
+                            className="text-[23px] font-extrabold leading-none text-price-black"
                           />
                         ) : (
                           <PriceDrop
@@ -411,7 +411,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                             specialPrice={hit.special_price}
                             adjustment={2000}
                             showArrow={false}
-                            className="text-[30px] font-extrabold leading-none text-price-black"
+                            className="text-[23px] font-extrabold leading-none text-price-black"
                           />
                         )}
 
