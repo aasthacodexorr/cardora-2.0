@@ -12,9 +12,20 @@ import { useAppConfig } from "@/app/providers";
 import { setQueryParams } from "@/utils/queryParams";
 import { useRouter } from "next/navigation";
 
+interface VehicleFinanceData {
+  inventory_id?: string | number;
+  price?: number | string;
+  special_price?: number | string;
+  downpayment?: number | string;
+  interest_rate?: number | string;
+  term?: number | string;
+  payment_frequency?: string;
+}
+
 interface FinanceCalculatorProps {
   vehiclePrice?: number;
   inventoryId?: string;
+  vehicle: VehicleFinanceData;
 }
 
 // Simple internal component to animate price counting numbers smoothly
@@ -29,7 +40,7 @@ const AnimatedCounter = ({ value }: { value: number }) => {
 
   useEffect(() => {
     if (!mounted) return;
-    
+
     const start = displayValue;
     const end = value;
     if (start === end) return;
@@ -40,10 +51,10 @@ const AnimatedCounter = ({ value }: { value: number }) => {
     const animate = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // Ease out quad formula
       const easeProgress = progress * (2 - progress);
-      
+
       const current = start + (end - start) * easeProgress;
       setDisplayValue(current);
 
@@ -61,7 +72,7 @@ const AnimatedCounter = ({ value }: { value: number }) => {
   return <span>{displayValue.toFixed(2)}</span>;
 };
 
-const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalculatorProps) => {
+const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851", vehicle }: FinanceCalculatorProps) => {
   const appConfig = useAppConfig();
   const router = useRouter();
   const [financeHref, setFinanceHref] = useState(`/finance?inventory_id=${inventoryId}`);
@@ -69,19 +80,90 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
   useEffect(() => {
     setFinanceHref(setQueryParams(`/finance?inventory_id=${inventoryId}`));
   }, [inventoryId]);
-  
+
   // State management
-  const [purchasePrice, setPurchasePrice] = useState<number>(vehiclePrice || appConfig.payment_calculator.vehicle_price);
-  const [depositAmount, setDepositAmount] = useState<number>(appConfig.payment_calculator.downpayment);
-  const [loanTerm, setLoanTerm] = useState<number>(appConfig.payment_calculator.duration / 12); // in years
-  const [interestRate, setInterestRate] = useState<number>(appConfig.payment_calculator.interest_rate); // percentage
+  const getVehicleNumber = (value?: number | string): number => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  const getVehiclePrice = () => {
+    const specialPrice = getVehicleNumber(vehicle?.special_price);
+    const regularPrice = getVehicleNumber(vehicle?.price);
+
+    return specialPrice > 0
+      ? specialPrice
+      : regularPrice > 0
+        ? regularPrice
+        : vehiclePrice != null && vehiclePrice > 0
+          ? vehiclePrice
+          : appConfig.payment_calculator.vehicle_price;
+  };
+
+  const [purchasePrice, setPurchasePrice] = useState<number>(getVehiclePrice());
+
+  const [depositAmount, setDepositAmount] = useState<number>(
+    getVehicleNumber(vehicle?.downpayment)
+  );
+
+  const [loanTerm, setLoanTerm] = useState<number>(
+    getVehicleNumber(vehicle?.term) > 0
+      ? getVehicleNumber(vehicle.term) / 12
+      : appConfig.payment_calculator.duration > 0
+        ? appConfig.payment_calculator.duration / 12
+        : 7
+  );
+
+  const [interestRate, setInterestRate] = useState<number>(
+    getVehicleNumber(vehicle?.interest_rate) > 0
+      ? getVehicleNumber(vehicle.interest_rate)
+      : appConfig.payment_calculator.interest_rate > 0
+        ? appConfig.payment_calculator.interest_rate
+        : 8.99
+  );
+
+  const [interestRateInput, setInterestRateInput] = useState<string | number>(
+    getVehicleNumber(vehicle?.interest_rate) > 0
+      ? getVehicleNumber(vehicle.interest_rate)
+      : interestRate
+  );
+
+  // Update calculator values when a different vehicle is passed in.
+  useEffect(() => {
+    const nextPrice = getVehiclePrice();
+    const nextDeposit = getVehicleNumber(vehicle?.downpayment);
+    const nextTerm = getVehicleNumber(vehicle?.term);
+    const nextRate = getVehicleNumber(vehicle?.interest_rate);
+
+    setPurchasePrice(nextPrice);
+    setDepositAmount(nextDeposit);
+
+    setLoanTerm(
+      nextTerm > 0
+        ? nextTerm / 12
+        : appConfig.payment_calculator.duration > 0
+          ? appConfig.payment_calculator.duration / 12
+          : 7
+    );
+
+    const resolvedRate =
+      nextRate > 0
+        ? nextRate
+        : appConfig.payment_calculator.interest_rate > 0
+          ? appConfig.payment_calculator.interest_rate
+          : 8.99;
+
+    setInterestRate(resolvedRate);
+    setInterestRateInput(resolvedRate);
+  }, [
+    vehicle,
+    vehiclePrice,
+    appConfig.payment_calculator.duration,
+    appConfig.payment_calculator.interest_rate,
+  ]);
 
   const min = 6;
   const max = 15;
-
-  // Local text buffer for the interest rate input
-  const [interestRateInput, setInterestRateInput] = useState<string | number>(interestRate);
-
   // Keep the text input in sync when the rate changes from the slider
   useEffect(() => {
     setInterestRateInput(interestRate);
@@ -188,9 +270,9 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
     <div className="md:py-14 py-6 mt-10 font-sans px-2 md:px-10 overflow-hidden w-full bg-background-lightBeige">
       <div className="w-full mx-auto max-w-[1620px]">
         <div className="flex flex-col lg:flex-row pl-2 lg:gap-10">
-          
+
           {/* Left column: Content section */}
-          <motion.div 
+          <motion.div
             className="flex flex-col gap-3 max-w-[1300px] 2xl:max-w-full"
             initial="hidden"
             whileInView="visible"
@@ -204,7 +286,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
               We support you at every step, offering multiple finance options to help you make an informed decision.
             </p>
 
-            <motion.ul 
+            <motion.ul
               className="flex flex-col md:flex-row gap-4 my-8 max-w-[680px]"
               variants={staggerContainer}
             >
@@ -213,8 +295,8 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                 { icon: onlineIcon, text: "Quick and simple paperless process" },
                 { icon: yearIcon, text: "Fast approvals typically by the same business day" }
               ].map((item, index) => (
-                <motion.li 
-                  key={index} 
+                <motion.li
+                  key={index}
                   variants={fadeInUp}
                   className="flex items-center lg:items-start gap-1 text-[14px] text-gray-700 font-medium leading-tight"
                 >
@@ -224,7 +306,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
               ))}
             </motion.ul>
 
-            <motion.div 
+            <motion.div
               className="mt-4"
               initial={{ scale: 0.95, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
@@ -236,7 +318,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
           </motion.div>
 
           {/* Right column: Calculator form */}
-          <motion.div 
+          <motion.div
             className="bg-white lg:rounded-2xl 2xl:max-w-[1200px] p-6 sm:p-10 flex flex-col gap-7 shadow-sm w-full"
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -284,7 +366,7 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                       className="relative flex items-center justify-center rounded-xl py-4 px-4 font-semibold cursor-pointer text-center text-xl sm:text-base transition-colors border border-brand-green/25 hover:bg-brand-green/25 bg-transparent overflow-hidden"
                     >
                       {isActive && (
-                        <motion.div 
+                        <motion.div
                           className="absolute inset-0 border-2 border-emerald-500 bg-emerald-50/20 rounded-xl pointer-events-none"
                           transition={{ type: "spring" }}
                         />
@@ -357,26 +439,26 @@ const FinanceCalculator = ({ vehiclePrice, inventoryId = "2851" }: FinanceCalcul
                     onChange={handleSliderChange}
                     className="finance-slider absolute inset-0 z-20 w-full h-9 opacity-0 cursor-pointer appearance-none webkit-appearance-none"
                   />
-                </div>  
+                </div>
               </div>
             </div>
 
             {/* Bi-weekly Repayment Result Box */}
-            <motion.div 
+            <motion.div
               className="rounded-2xl p-5 text-center flex flex-col gap-2 bg-background-lightBeige"
               layout
             >
               <h4 className="text-base font-semibold tracking-wide text-neutral-darkGray/40">Your estimated Bi-weekly repayment</h4>
-              
+
               <h2 className="text-5xl sm:text-5xl font-semibold tracking-tight my-1 text-neutral-darkGray2">
                 $<AnimatedCounter value={biWeeklyPayment} />
                 <span className="text-5xl sm:text-5xl font-semibold">/Bi-weekly*</span>
               </h2>
-              
+
               <div className="text-base tracking-wide font-light">
                 <span className="text-grey-200 font-light">O.A.C + HST + licensing</span>
               </div>
-              
+
               <motion.a
                 href={financeHref}
                 onClick={(e) => {
