@@ -24,6 +24,8 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   const [showSticky, setShowSticky] = useState(false);
 
   const inlineContainerRef = useRef<HTMLDivElement>(null);
+  const savingsAmount =
+  Number(vehicle?.price || 0) - Number(vehicle?.special_price || 0);
 
 
   const effectivePrice =
@@ -216,9 +218,9 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                             />
                           </div>
 
-                          {hasPriceDrop && (
+                          {hasPriceDrop && savingsAmount > 0 && (
                             <div className="w-fit shrink-0 rounded-md bg-brand/10 px-2 py-1.5 text-[12px] font-semibold leading-none text-price-green">
-                              Save $2,000
+                              Save ${savingsAmount.toLocaleString("en-CA")}
                             </div>
                           )}
                         </div>
