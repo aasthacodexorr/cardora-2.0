@@ -923,13 +923,10 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
               >
                 <div className="space-y-2 md:space-y-3 lg:mt-6">
                   <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.05] text-white max-md:text-[28px]! max-md:leading-[1]! max-md:tracking-[-0.02em]!">
-                    90+ minutes, <br className="max-md:hidden" />
-                    10 experts and <br className="max-md:hidden" />
-                    a mechanical <br className="max-md:hidden" />
-                    hoist.
+                    A Higher Standard of Inspection.
                   </h2>
                   <p className="text-xs sm:text-sm md:text-base font-normal leading-relaxed text-white/90 max-w-sm sm:max-w-md max-md:text-[15px]! max-md:font-normal! max-md:leading-[1.4]! max-md:max-w-none! max-md:mt-2!">
-                    Nothing escapes our forensic inspection process.
+                   Every Cardora Certified vehicle undergoes a comprehensive 150-point quality check, from what's under the hood to what matters on the road.
                   </p>
                 </div>
 
