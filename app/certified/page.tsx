@@ -790,7 +790,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                         {
                           icon: (
                             <img
-                              src={`${ICON_BASE}/illustration-inspections.svg`}
+                              src={`${ICON_BASE}/A_150_point_check_icon.svg`}
                               alt=""
                               className="w-full h-full"
                             />
@@ -800,7 +800,7 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                         {
                           icon: (
                             <img
-                              src={`${ICON_BASE}/illustration-experts.svg`}
+                              src={`${ICON_BASE}/A_expert_vehicle_re.svg`}
                               alt=""
                               className="w-full h-full"
                             />
@@ -810,9 +810,10 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                         {
                           icon: (
                             <img
-                              src={`${ICON_BASE}/illustration-certified.svg`}
+                              src={`${ICON_BASE}/cardora_certified.svg`}
                               alt=""
-                              className="w-full h-full"
+                              // The circle fills less of its canvas than the other two icons, scale it up to match
+                              className="w-full h-full scale-[1.13]"
                             />
                           ),
                           label: "Cardora Certified",
