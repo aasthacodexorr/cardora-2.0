@@ -8,6 +8,7 @@ import { CSS_VARIABLES } from "@/lib/colors";
 import { headers } from "next/headers";
 import { Footer, Header } from "@/components/layout";
 import { MainContent } from "@/components/layout/MainContent";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 export async function generateMetadata(): Promise<Metadata> {
   const appConfig = await getAppConfig();
@@ -101,6 +102,8 @@ fbq('track', 'PageView');`,
           <MainContent>{children}</MainContent>
           <Footer />
         </Providers>
+
+        <GoogleAnalytics gaId="G-VCP4JG16RP" />
       </body>
     </html>
   );
