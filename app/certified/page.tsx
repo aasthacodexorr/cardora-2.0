@@ -829,19 +829,25 @@ portraitFadeTop = drawY + drawH; // where the frame's bottom edge now sits
                               className="w-full h-full scale-[1.13]"
                             />
                           ),
-                          label: "Cardora Certified",
+                          label: (
+                            <>
+                              Cardora
+                              <br />
+                              Certified
+                            </>
+                          ),
                         },
                       ].map(({ icon, label },index) => (
                         <div
                         key={index}
-                          className="flex items-start gap-[clamp(0.6rem,1vw,1rem)] max-md:flex-1 max-md:flex-col! max-md:gap-2!"
+                          className="flex items-center gap-[clamp(0.6rem,1vw,1rem)] max-md:flex-1 max-md:flex-col! max-md:gap-2!"
                         >
                           <div className="w-[clamp(2.75rem,3.8vw,3.75rem)] max-md:w-10! aspect-square rounded-full bg-[#0e0b1f]/[0.045] flex items-center justify-center flex-shrink-0">
                             <div className="w-[82%] h-[82%] flex items-center justify-center">
                               {icon}
                             </div>
                           </div>
-                          <span className="text-[clamp(0.85rem,1.1vw,1.1rem)] font-normal text-[#1b1a2a] whitespace-nowrap max-md:whitespace-normal! max-md:text-[14px]! max-md:leading-[1.3] max-md:text-start">
+                          <span className="text-[clamp(0.85rem,1.1vw,1.1rem)] font-normal text-[#1b1a2a] whitespace-nowrap max-md:whitespace-normal! max-md:text-[14px]! max-md:leading-[1.3] max-md:text-center">
                             {label}
                           </span>
                         </div>
