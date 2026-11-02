@@ -325,7 +325,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
           </div>
 
           {/* Price drop tag */}
-          {!isSold && hasPriceDrop && (
+          {!isSold && hasPriceDrop && hit?.vehicle_type?.toLowerCase() != "as-is" && (
             <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2 py-1.5 -mt-1 text-[13px] font-medium leading-none text-white">
               Price drop
             </div>
@@ -348,9 +348,6 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                 hit?.vehicle_type?.toLowerCase() === "as-is" ? (
                   <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px]">
                     <div className="flex justify-between items-center w-full">
-                      {price > 0 ? (
-                        <PriceDrop price={hit.price} specialPrice={hit.special_price} />
-                      ) : (
                         <span className="flex items-center gap-1 text-price-green">
                           <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path
@@ -362,7 +359,6 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                           </svg>
                           <span>Call for price</span>
                         </span>
-                      )}
                     </div>
                   </div>
                 ) : price > 0 ? (
