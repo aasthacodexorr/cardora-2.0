@@ -355,6 +355,7 @@ export function getTypesenseClient(config: AppConfig) {
       query_by: "make,model,year_search,trim,vin,stock_no,exterior_color,body_type,vehicle_type,transmission,fuel_type",
       num_typos: "0",
       facet_by: "year,make,model,exterior_color,body_type,vehicle_type,transmission,fuel_type,location,price,odometer",
+      sort_by: "_text_match:desc,created_at:desc",
     },
   });
 

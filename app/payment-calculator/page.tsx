@@ -11,6 +11,8 @@ const ESSENTIAL_PACKAGE_PRICES: Record<'A' | 'B', number> = {
     B: 2499,
 };
 
+const SALES_TAX_RATE = 0.13; // 13% tax rate
+
 export default function PaymentCalculator() {
     const appConfig = useAppConfig();
     // Input States
@@ -29,6 +31,8 @@ export default function PaymentCalculator() {
     // Output State
     const [biWeeklyPayment, setBiWeeklyPayment] = useState<string>('0.00');
     const [desiredPayment, setDesiredPayment] = useState<string>('');
+    const [adjustmentMessage, setAdjustmentMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    const [isAdjusting, setIsAdjusting] = useState<boolean>(false);
 
     // Loan Calculation Logic
     useEffect(() => {
@@ -46,7 +50,7 @@ export default function PaymentCalculator() {
             tradeInValue;
 
         // Simulate simple 13% tax add-on if checked (adjust rate as per your specific region)
-        const totalPrincipal = includeTax ? basePrincipal * 1.13 : basePrincipal;
+        const totalPrincipal = includeTax ? basePrincipal * (1 + SALES_TAX_RATE) : basePrincipal;
 
         if (totalPrincipal <= 0 || term <= 0) {
             setBiWeeklyPayment('0.00');
@@ -74,6 +78,121 @@ export default function PaymentCalculator() {
 
         setBiWeeklyPayment(payment.toFixed(2));
     }, [vehiclePrice, downPayment, additionalFees, packageClass, gapFee, warrantyCost, term, tradeInValue, loanBalance, apr, includeTax]);
+
+    /**
+     * Reverse calculation: Calculates the maximum affordable vehicle price based on desired bi-weekly payment
+     * Using the inverse of the loan amortization formula
+     */
+    const handleAdjustBiWeekly = () => {
+        setAdjustmentMessage(null);
+        setIsAdjusting(true);
+
+        try {
+            // Validation
+            const desiredPaymentNum = parseFloat(desiredPayment);
+
+            if (!desiredPayment || isNaN(desiredPaymentNum)) {
+                setAdjustmentMessage({
+                    type: 'error',
+                    text: 'Please enter a desired bi-weekly payment amount.',
+                });
+                setIsAdjusting(false);
+                return;
+            }
+
+            if (desiredPaymentNum <= 0) {
+                setAdjustmentMessage({
+                    type: 'error',
+                    text: 'Desired bi-weekly payment must be greater than zero.',
+                });
+                setIsAdjusting(false);
+                return;
+            }
+
+            if (term <= 0) {
+                setAdjustmentMessage({
+                    type: 'error',
+                    text: 'Invalid loan term.',
+                });
+                setIsAdjusting(false);
+                return;
+            }
+
+            // Calculate non-vehicle costs
+            const essentialPackageCost = (packageClass ? ESSENTIAL_PACKAGE_PRICES[packageClass] : 0) + additionalFees;
+            const nonVehicleCosts = essentialPackageCost + gapFee + warrantyCost + loanBalance - downPayment - tradeInValue;
+
+            // Convert APR to bi-weekly rate and calculate total payments
+            const annualRate = apr / 100;
+            const biWeeklyRate = annualRate / 26;
+            const totalPayments = (term / 12) * 26;
+
+            // Reverse Amortization Formula: Solve for Principal (P)
+            // Original: Payment = P * (r(1+r)^n) / ((1+r)^n - 1)
+            // Reverse: P = Payment * ((1+r)^n - 1) / (r(1+r)^n)
+
+            let maxFinanceable = 0;
+
+            if (biWeeklyRate === 0) {
+                // For 0% APR: P = Payment * n
+                maxFinanceable = desiredPaymentNum * totalPayments;
+            } else {
+                const raisedTerm = Math.pow(1 + biWeeklyRate, totalPayments);
+                const denominator = biWeeklyRate * raisedTerm;
+                const numerator = raisedTerm - 1;
+
+                if (denominator === 0) {
+                    setAdjustmentMessage({
+                        type: 'error',
+                        text: 'Unable to calculate due to invalid interest rate or term.',
+                    });
+                    setIsAdjusting(false);
+                    return;
+                }
+
+                maxFinanceable = desiredPaymentNum * (numerator / denominator);
+            }
+
+            // Account for sales tax if enabled
+            // If tax is included: totalPrincipal = (vehiclePrice + nonVehicleCosts) * (1 + taxRate)
+            // Solve for vehiclePrice: vehiclePrice = (maxFinanceable / (1 + taxRate)) - nonVehicleCosts
+
+            let affordableVehiclePrice = 0;
+
+            if (includeTax) {
+                affordableVehiclePrice = maxFinanceable / (1 + SALES_TAX_RATE) - nonVehicleCosts;
+            } else {
+                affordableVehiclePrice = maxFinanceable - nonVehicleCosts;
+            }
+
+            // Validation: Ensure calculated price is valid
+            if (affordableVehiclePrice < 0) {
+                setAdjustmentMessage({
+                    type: 'error',
+                    text: 'Your desired payment is too low to finance a vehicle with the current settings. Please increase the desired payment amount.',
+                });
+                setIsAdjusting(false);
+                return;
+            }
+
+            // Update vehicle price and clear adjustment message after success
+            setVehiclePrice(Math.round(affordableVehiclePrice * 100) / 100); // Round to 2 decimal places
+            setAdjustmentMessage({
+                type: 'success',
+                text: `Vehicle price adjusted to $${(Math.round(affordableVehiclePrice * 100) / 100).toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })}. Your estimated bi-weekly payment will update automatically.`,
+            });
+        } catch (error) {
+            setAdjustmentMessage({
+                type: 'error',
+                text: 'An error occurred during calculation. Please check your inputs.',
+            });
+        } finally {
+            setIsAdjusting(false);
+        }
+    };
 
     return (
         <>
@@ -290,10 +409,23 @@ export default function PaymentCalculator() {
                                     </div>
                                     <button
                                         type="button"
-                                        className=" bg-black hover:bg-gray-800 text-white text-xs font-bold py-4 px-4 rounded-xl cursor-pointer uppercase tracking-wider transition-colors"
+                                        onClick={handleAdjustBiWeekly}
+                                        disabled={isAdjusting}
+                                        className=" bg-black hover:bg-gray-800 disabled:bg-gray-500 text-white text-xs font-bold py-4 px-4 rounded-xl cursor-pointer uppercase tracking-wider transition-colors w-full"
                                     >
-                                        Adjust Bi-Weekly
+                                        {isAdjusting ? 'Adjusting...' : 'Adjust Bi-Weekly'}
                                     </button>
+                                    
+                                    {/* Adjustment Message */}
+                                    {adjustmentMessage && (
+                                        <div className={`mt-4 p-3 rounded-md text-sm font-medium ${
+                                            adjustmentMessage.type === 'success'
+                                                ? 'bg-green-50 text-green-800 border border-green-200'
+                                                : 'bg-red-50 text-red-800 border border-red-200'
+                                        }`}>
+                                            {adjustmentMessage.text}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

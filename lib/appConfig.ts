@@ -296,9 +296,19 @@ export async function getAppConfig(): Promise<AppConfig> {
     const res = await fetch("https://cardora.zopsoftware.com/api/website/configuration", {
       next: { revalidate: 60 }
     });
+    
     if (!res.ok) {
+      console.warn(`App configuration API returned status ${res.status}, using defaults`);
       return defaultAppConfig;
     }
+
+    // Verify response has JSON content type before parsing
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.warn(`App configuration API returned non-JSON content type: ${contentType}, using defaults`);
+      return defaultAppConfig;
+    }
+
     const apiConfig = await res.json();
     const mergedConfig = deepMerge(defaultAppConfig, apiConfig);
     
