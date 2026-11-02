@@ -107,11 +107,11 @@ const getSortItems = (collectionName: string) => [
   },
   {
     label: "Price (Low to High)",
-    value: `${collectionName}/sort/status_rank:asc,price:asc`,
+    value: `${collectionName}/sort/status_rank:asc,selling_price:asc`,
   },
   {
     label: "Price (High to Low)",
-    value: `${collectionName}/sort/status_rank:asc,price:desc`,
+    value: `${collectionName}/sort/status_rank:asc,selling_price:desc`,
   },
   {
     label: "Odometer (Low to High)",
