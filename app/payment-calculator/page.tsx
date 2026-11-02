@@ -35,49 +35,75 @@ export default function PaymentCalculator() {
     const [isAdjusting, setIsAdjusting] = useState<boolean>(false);
 
     // Loan Calculation Logic
-    useEffect(() => {
-        // Essential Package = Class A or Class B (if selected) + any manually entered additional fee
-        const essentialPackageCost = (packageClass ? ESSENTIAL_PACKAGE_PRICES[packageClass] : 0) + additionalFees;
 
-        // Total Principal = Vehicle Price + Essential Package + Gap Protection + Extended Warranty + Existing Loan Balance - Down Payment - Trade-in
-        const basePrincipal =
+    useEffect(() => {
+        // Package and additional costs
+        const essentialPackageCost =
+            (packageClass ? ESSENTIAL_PACKAGE_PRICES[packageClass] : 0) +
+            additionalFees;
+
+        // Taxable subtotal (vehicle + taxable extras)
+        const taxableSubtotal =
             vehiclePrice +
             essentialPackageCost +
             gapFee +
-            warrantyCost +
-            loanBalance -
-            downPayment -
-            tradeInValue;
+            warrantyCost;
 
-        // Simulate simple 13% tax add-on if checked (adjust rate as per your specific region)
-        const totalPrincipal = includeTax ? basePrincipal * (1 + SALES_TAX_RATE) : basePrincipal;
+        // Ontario trade-in tax credit: trade-in reduces taxable amount
+        const taxableAmount = Math.max(0, taxableSubtotal - tradeInValue);
+
+        // Calculate tax BEFORE deducting down payment
+        const salesTax = includeTax
+            ? taxableAmount * SALES_TAX_RATE
+            : 0;
+
+        // Final amount financed
+        const totalPrincipal =
+            taxableSubtotal +
+            loanBalance -
+            tradeInValue -
+            downPayment +
+            salesTax;
 
         if (totalPrincipal <= 0 || term <= 0) {
             setBiWeeklyPayment('0.00');
             return;
         }
 
-        // Convert Annual APR to a Bi-Weekly Interest Rate
-        // There are 26 bi-weekly periods in a year
+        // Bi-weekly interest rate
         const annualRate = apr / 100;
         const biWeeklyRate = annualRate / 26;
 
-        // Convert Month term to total number of bi-weekly payments
-        // Approximation: (Months * 12) / 26 periods a year -> or roughly Months * 2.166
+        // Number of bi-weekly payments
         const totalPayments = (term / 12) * 26;
 
         let payment = 0;
+
         if (biWeeklyRate === 0) {
             payment = totalPrincipal / totalPayments;
         } else {
-            // Standard Amortization Formula: P * (r(1+r)^n) / ((1+r)^n - 1)
+            const factor = Math.pow(1 + biWeeklyRate, totalPayments);
+
             payment =
-                (totalPrincipal * biWeeklyRate * Math.pow(1 + biWeeklyRate, totalPayments)) /
-                (Math.pow(1 + biWeeklyRate, totalPayments) - 1);
+                (totalPrincipal * biWeeklyRate * factor) /
+                (factor - 1);
         }
 
         setBiWeeklyPayment(payment.toFixed(2));
-    }, [vehiclePrice, downPayment, additionalFees, packageClass, gapFee, warrantyCost, term, tradeInValue, loanBalance, apr, includeTax]);
+
+    }, [
+        vehiclePrice,
+        downPayment,
+        additionalFees,
+        packageClass,
+        gapFee,
+        warrantyCost,
+        term,
+        tradeInValue,
+        loanBalance,
+        apr,
+        includeTax
+    ]);
 
     /**
      * Reverse calculation: Calculates the maximum affordable vehicle price based on desired bi-weekly payment
@@ -119,51 +145,50 @@ export default function PaymentCalculator() {
             }
 
             // Calculate non-vehicle costs
-            const essentialPackageCost = (packageClass ? ESSENTIAL_PACKAGE_PRICES[packageClass] : 0) + additionalFees;
-            const nonVehicleCosts = essentialPackageCost + gapFee + warrantyCost + loanBalance - downPayment - tradeInValue;
 
-            // Convert APR to bi-weekly rate and calculate total payments
+            // Calculate additional costs
+            const essentialPackageCost =
+                (packageClass ? ESSENTIAL_PACKAGE_PRICES[packageClass] : 0) +
+                additionalFees;
+
+            const taxableExtras =
+                essentialPackageCost + gapFee + warrantyCost;
+
+            // Calculate maximum financeable amount
             const annualRate = apr / 100;
             const biWeeklyRate = annualRate / 26;
             const totalPayments = (term / 12) * 26;
 
-            // Reverse Amortization Formula: Solve for Principal (P)
-            // Original: Payment = P * (r(1+r)^n) / ((1+r)^n - 1)
-            // Reverse: P = Payment * ((1+r)^n - 1) / (r(1+r)^n)
-
             let maxFinanceable = 0;
 
             if (biWeeklyRate === 0) {
-                // For 0% APR: P = Payment * n
                 maxFinanceable = desiredPaymentNum * totalPayments;
             } else {
-                const raisedTerm = Math.pow(1 + biWeeklyRate, totalPayments);
-                const denominator = biWeeklyRate * raisedTerm;
-                const numerator = raisedTerm - 1;
+                const factor = Math.pow(1 + biWeeklyRate, totalPayments);
 
-                if (denominator === 0) {
-                    setAdjustmentMessage({
-                        type: 'error',
-                        text: 'Unable to calculate due to invalid interest rate or term.',
-                    });
-                    setIsAdjusting(false);
-                    return;
-                }
-
-                maxFinanceable = desiredPaymentNum * (numerator / denominator);
+                maxFinanceable =
+                    desiredPaymentNum *
+                    ((factor - 1) / (biWeeklyRate * factor));
             }
 
-            // Account for sales tax if enabled
-            // If tax is included: totalPrincipal = (vehiclePrice + nonVehicleCosts) * (1 + taxRate)
-            // Solve for vehiclePrice: vehiclePrice = (maxFinanceable / (1 + taxRate)) - nonVehicleCosts
-
+            // Reverse calculation using the same tax logic
             let affordableVehiclePrice = 0;
 
             if (includeTax) {
-                affordableVehiclePrice = maxFinanceable / (1 + SALES_TAX_RATE) - nonVehicleCosts;
+                affordableVehiclePrice =
+                    (maxFinanceable - loanBalance + downPayment) /
+                    (1 + SALES_TAX_RATE) -
+                    taxableExtras +
+                    tradeInValue;
             } else {
-                affordableVehiclePrice = maxFinanceable - nonVehicleCosts;
+                affordableVehiclePrice =
+                    maxFinanceable -
+                    loanBalance +
+                    downPayment -
+                    taxableExtras +
+                    tradeInValue;
             }
+
 
             // Validation: Ensure calculated price is valid
             if (affordableVehiclePrice < 0) {
@@ -415,14 +440,13 @@ export default function PaymentCalculator() {
                                     >
                                         {isAdjusting ? 'Adjusting...' : 'Adjust Bi-Weekly'}
                                     </button>
-                                    
+
                                     {/* Adjustment Message */}
                                     {adjustmentMessage && (
-                                        <div className={`mt-4 p-3 rounded-md text-sm font-medium ${
-                                            adjustmentMessage.type === 'success'
+                                        <div className={`mt-4 p-3 rounded-md text-sm font-medium ${adjustmentMessage.type === 'success'
                                                 ? 'bg-green-50 text-green-800 border border-green-200'
                                                 : 'bg-red-50 text-red-800 border border-red-200'
-                                        }`}>
+                                            }`}>
                                             {adjustmentMessage.text}
                                         </div>
                                     )}
