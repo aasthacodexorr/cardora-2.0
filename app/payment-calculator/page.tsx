@@ -36,10 +36,20 @@ export default function PaymentCalculator() {
 
     // Loan Calculation Logic
 
-    // Clear adjustment message when any input changes (except vehiclePrice which is adjusted by the button)
     useEffect(() => {
         setAdjustmentMessage(null);
-    }, [vehiclePrice]);
+    }, [
+        downPayment,
+        additionalFees,
+        packageClass,
+        gapFee,
+        warrantyCost,
+        term,
+        tradeInValue,
+        loanBalance,
+        apr,
+        includeTax
+    ]);
 
     // Calculate bi-weekly payment
     useEffect(() => {
@@ -245,8 +255,11 @@ export default function PaymentCalculator() {
                                         <input
                                             type="number"
                                             value={vehiclePrice || ''}
-                                            onChange={(e) => setVehiclePrice(Number(e.target.value))}
-                                            className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray transition-all duration-200 outline-none  focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                            onChange={(e) => {
+                                                setVehiclePrice(Number(e.target.value));
+                                                setAdjustmentMessage(null);
+                                            }}
+                                            className="w-full pl-8 pr-3 py-3 rounded-xl border border-border-lightGray transition-all duration-200 outline-none focus:ring-4 focus:ring-blue-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                         />
                                     </div>
                                 </div>
