@@ -36,6 +36,12 @@ export default function PaymentCalculator() {
 
     // Loan Calculation Logic
 
+    // Clear adjustment message when any input changes (except vehiclePrice which is adjusted by the button)
+    useEffect(() => {
+        setAdjustmentMessage(null);
+    }, [vehiclePrice]);
+
+    // Calculate bi-weekly payment
     useEffect(() => {
         // Package and additional costs
         const essentialPackageCost =
