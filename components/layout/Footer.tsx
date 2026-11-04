@@ -78,6 +78,17 @@ const Footer = () => {
       ],
     },
     {
+      title: "Browse by Location",
+      links: [
+        { label: "Used Cars in Toronto", href: "/used-cars-toronto/", external: true },
+        { label: "Used Cars in Brampton", href: /used-cars-brampton/, external: true },
+        { label: "Used Cars in Mississauga", href: /used-cars-mississauga/, external: true },
+        { label: "Used Cars in Kitchener", href: /used-cars-kitchener/, external: true },
+        { label: "Used Cars in Barrie", href: /used-cars-barrie/, external: true },
+        { label: "Used Cars in Hamilton", href: /used-cars-hamilton/, external: true },
+      ],
+    },
+    {
       title: "Follow Us",
       links: [
         { label: "Facebook", href: safeD.social_media_facebook, external: true },
@@ -99,7 +110,7 @@ const Footer = () => {
       <div className="mx-auto max-w-[1600px] px-5 lg:px-10 pb-5">
 
         {/* Link columns grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10">
           {columns.map((col) => (
             <div key={col.title}>
               <h3 className="text-[18px] font-bold tracking-[1px] uppercase mb-5 text-white">
