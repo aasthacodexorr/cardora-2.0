@@ -21,6 +21,12 @@ export const SITEMAP_INDEX: SitemapIndexItem[] = [
 ];
 
 export const SITE_PAGES = [
+  '/used-cars-brampton/',
+  '/used-cars-mississauga/',
+  '/used-cars-toronto/',
+  '/used-cars-kitchener/',
+  '/used-cars-barrie/',
+  '/used-cars-hamilton/',
   '/service/wheel-service/',
   '/service/tire-service/',
   '/service/brakes/',
