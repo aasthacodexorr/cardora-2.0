@@ -30,7 +30,6 @@ import {
   useInstantSearch,
   useCurrentRefinements,
   useRefinementList,
-  usePagination,
 } from "react-instantsearch";
 
 import { getTypesenseClient } from "@/lib/typesense";
@@ -547,173 +546,6 @@ const LocationResultsCount = () => {
   const { results } = useHits();
   const count = results?.nbHits || 0;
   return <span>{count.toLocaleString()} results</span>;
-};
-
-const CustomPagination = () => {
-  const { currentRefinement, nbPages, isFirstPage, isLastPage, refine } = usePagination();
-
-  if (nbPages <= 1) return null;
-
-  const handlePageClick = (page: number) => {
-    refine(page);
-    const target = document.getElementById("results-column");
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
-  const renderPageItems = () => {
-    const items: (number | "ellipsis")[] = [];
-    const total = nbPages;
-    const current = currentRefinement;
-
-    if (total <= 7) {
-      for (let i = 0; i < total; i++) items.push(i);
-    } else {
-      items.push(0);
-
-      if (current > 3) {
-        items.push("ellipsis");
-      }
-
-      const start = Math.max(1, current - 1);
-      const end = Math.min(total - 2, current + 1);
-
-      for (let i = start; i <= end; i++) {
-        if (i > 0 && i < total - 1) {
-          items.push(i);
-        }
-      }
-
-      if (current < total - 4) {
-        items.push("ellipsis");
-      }
-
-      items.push(total - 1);
-    }
-
-    return items;
-  };
-
-  return (
-    <nav className="flex items-center gap-1.5 sm:gap-2 select-none" aria-label="Inventory pagination">
-      <button
-        type="button"
-        disabled={isFirstPage}
-        onClick={() => handlePageClick(currentRefinement - 1)}
-        aria-label="Previous page"
-        className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-gray-500 hover:text-black hover:bg-gray-200/60 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer text-sm font-semibold"
-      >
-        ‹
-      </button>
-
-      {renderPageItems().map((item, idx) => {
-        if (item === "ellipsis") {
-          return (
-            <span
-              key={`ellipsis-${idx}`}
-              className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-gray-400 text-sm"
-            >
-              …
-            </span>
-          );
-        }
-
-        const pageNum = item + 1;
-        const isActive = item === currentRefinement;
-
-        return (
-          <button
-            key={item}
-            type="button"
-            onClick={() => handlePageClick(item)}
-            aria-label={`Page ${pageNum}`}
-            aria-current={isActive ? "page" : undefined}
-            className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-              isActive
-                ? "bg-black text-white shadow-sm font-bold"
-                : "text-gray-600 hover:text-black hover:bg-gray-200/60"
-            }`}
-          >
-            {pageNum}
-          </button>
-        );
-      })}
-
-      <button
-        type="button"
-        disabled={isLastPage}
-        onClick={() => handlePageClick(currentRefinement + 1)}
-        aria-label="Next page"
-        className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-gray-500 hover:text-black hover:bg-gray-200/60 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer text-sm font-semibold"
-      >
-        ›
-      </button>
-    </nav>
-  );
-};
-
-const CustomHitsWithPagination = ({ hitComponent: HitComponent }: any) => {
-  const { hits: rawHits } = useHits();
-  const { status } = useInstantSearch();
-
-  // Sort hits client-side to ensure sold vehicles appear at the end
-  const sortHitsBySoldStatus = (hitsToSort: any[]) => {
-    return [...hitsToSort].sort((a, b) => {
-      const aIsSold = Boolean(a.status) && String(a.status).toLowerCase() !== "instock";
-      const bIsSold = Boolean(b.status) && String(b.status).toLowerCase() !== "instock";
-      
-      // If statuses are different, active vehicles come first
-      if (aIsSold !== bIsSold) {
-        return aIsSold ? 1 : -1;
-      }
-      
-      // If both have same status, maintain original order by created_at (newer first)
-      const aCreated = new Date(a.created_at).getTime() || 0;
-      const bCreated = new Date(b.created_at).getTime() || 0;
-      return bCreated - aCreated;
-    });
-  };
-  
-  const hits = sortHitsBySoldStatus(rawHits);
-
-  if (status === "stalled" && hits.length === 0) {
-    return <InventoryGridSkeleton />;
-  }
-
-  const displayItems = buildDisplayItems(hits);
-
-  return (
-    <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 lg:gap-0 lg:gap-y-[1px]">
-        {displayItems.map((item) => {
-          if (item.kind === "hit") {
-            return (
-              <div
-                key={item.hit.objectID}
-                className="flex flex-col h-full px-0 lg:px-[9px] py-[9px]"
-              >
-                <HitComponent hit={item.hit} />
-              </div>
-            );
-          }
-
-          const AdComponent = AD_CARDS[item.adIndex];
-          return (
-            <div key={item.key} className="flex flex-col h-full p-[9px]">
-              <AdComponent />
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="mt-10 mb-6 flex justify-center">
-        <CustomPagination />
-      </div>
-    </div>
-  );
 };
 
 const ClearFiltersButton = ({ mobile = false }: { mobile?: boolean }) => {
@@ -2512,11 +2344,7 @@ const InventoryContent = ({
                   <div className="mb-4">
                     <SearchResultsWrapper>
                       <NoResultsHandler>
-                        {isLocationPage ? (
-                          <CustomHitsWithPagination hitComponent={HitCard} />
-                        ) : (
-                          <CustomInfiniteHits hitComponent={HitCard} />
-                        )}
+                        <CustomInfiniteHits hitComponent={HitCard} />
                       </NoResultsHandler>
                     </SearchResultsWrapper>
                   </div>
