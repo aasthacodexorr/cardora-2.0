@@ -378,7 +378,27 @@ const LOAD_MORE_SHIMMER_MIN_MS = 450;
 
 const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
   const { status } = useInstantSearch();
-  const { hits, isLastPage, showMore } = useInfiniteHits();
+  const { hits: rawHits, isLastPage, showMore } = useInfiniteHits();
+  
+  // Sort hits client-side to ensure sold vehicles appear at the end
+  const sortHitsBySoldStatus = (hitsToSort: any[]) => {
+    return [...hitsToSort].sort((a, b) => {
+      const aIsSold = Boolean(a.status) && String(a.status).toLowerCase() !== "instock";
+      const bIsSold = Boolean(b.status) && String(b.status).toLowerCase() !== "instock";
+      
+      // If statuses are different, active vehicles come first
+      if (aIsSold !== bIsSold) {
+        return aIsSold ? 1 : -1;
+      }
+      
+      // If both have same status, maintain original order by created_at (newer first)
+      const aCreated = new Date(a.created_at).getTime() || 0;
+      const bCreated = new Date(b.created_at).getTime() || 0;
+      return bCreated - aCreated;
+    });
+  };
+  
+  const hits = sortHitsBySoldStatus(rawHits);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const loadingMoreRef = useRef(false);
   const preservedScrollYRef = useRef<number | null>(null);
@@ -636,8 +656,28 @@ const CustomPagination = () => {
 };
 
 const CustomHitsWithPagination = ({ hitComponent: HitComponent }: any) => {
-  const { hits } = useHits();
+  const { hits: rawHits } = useHits();
   const { status } = useInstantSearch();
+
+  // Sort hits client-side to ensure sold vehicles appear at the end
+  const sortHitsBySoldStatus = (hitsToSort: any[]) => {
+    return [...hitsToSort].sort((a, b) => {
+      const aIsSold = Boolean(a.status) && String(a.status).toLowerCase() !== "instock";
+      const bIsSold = Boolean(b.status) && String(b.status).toLowerCase() !== "instock";
+      
+      // If statuses are different, active vehicles come first
+      if (aIsSold !== bIsSold) {
+        return aIsSold ? 1 : -1;
+      }
+      
+      // If both have same status, maintain original order by created_at (newer first)
+      const aCreated = new Date(a.created_at).getTime() || 0;
+      const bCreated = new Date(b.created_at).getTime() || 0;
+      return bCreated - aCreated;
+    });
+  };
+  
+  const hits = sortHitsBySoldStatus(rawHits);
 
   if (status === "stalled" && hits.length === 0) {
     return <InventoryGridSkeleton />;
@@ -2213,7 +2253,11 @@ const InventoryContent = ({
       <SyncOrphanedModels />
       <ScrollToTopOnSearch />
       <TabSwitchSortReset isAISearchActive={isAISearchActive} collectionName={TYPESENSE_COLLECTION_NAME} />
-      <Configure hitsPerPage={21} />
+      <Configure 
+        hitsPerPage={21}
+        filters={isLocationPage && locationCity ? `location:"${locationCity}"` : undefined}
+        sortBy={`${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`}
+      />
 
       {/* Put the layout wrapper here, safe inside InstantSearch context! */}
       <MainLayoutWrapper>

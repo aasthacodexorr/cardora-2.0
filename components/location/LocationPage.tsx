@@ -99,10 +99,8 @@ export default async function LocationPage({ cityKey }: LocationPageProps) {
       <LocationInventory
         city={data.city}
         heading={data.heading}
+        seoData={data}
       />
-
-      {/* SEO Editorial Content Section (Rendered in SSR for search crawlers) */}
-      <LocationSEOContent data={data} />
     </div>
   );
 }
