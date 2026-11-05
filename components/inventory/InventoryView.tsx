@@ -695,7 +695,7 @@ const GroupedCurrentRefinements = () => {
   };
 
   return (
-    <div className="w-full flex flex-wrap gap-y-2 gap-x-2">
+    <div className="w-full flex flex-wrap gap-y-2 gap-x-2 pt-2">
       {orderedItems.map((category) => {
         const seenNorms = new Set<string>();
         const uniqueRefinements = category.refinements.filter((refinement) => {
@@ -2323,7 +2323,7 @@ const InventoryContent = ({
                   
                   {/* Location Page Wireframe Heading */}
                   {isLocationPage && (
-                    <div className="lg:px-3 pt-3 pb-1">
+                    <div className="lg:px-3 pt-3">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="flex items-baseline gap-2 flex-wrap">
                           <h1 className="text-md text-gray-500 tracking-tight">
@@ -2337,7 +2337,7 @@ const InventoryContent = ({
                     </div>
                   )}
 
-                  <div className="lg:px-3 pt-2">
+                  <div className="lg:px-3">
                     <GroupedCurrentRefinements />
                   </div>
 

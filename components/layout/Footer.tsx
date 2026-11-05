@@ -113,7 +113,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10">
           {columns.map((col) => (
             <div key={col.title}>
-              <h3 className="text-[18px] font-bold tracking-[1px] uppercase mb-5 text-white">
+              <h3 className="text-[13px] font-bold tracking-[1px] uppercase mb-5 text-white">
                 {col.title}
               </h3>
               <ul className="space-y-3">
@@ -124,14 +124,14 @@ const Footer = () => {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[15px] uppercase text-white transition-colors"
+                        className="text-[12px] uppercase text-white transition-colors"
                       >
                         {link.label}
                       </a>
                     ) : (
                       <Link
                         href={link.href}
-                        className="text-[15px] uppercase text-white transition-colors"
+                        className="text-[12px] uppercase text-white transition-colors"
                         onClick={(e) => {
                           if (
                             pathname.startsWith("/inventory") &&
@@ -153,7 +153,7 @@ const Footer = () => {
 
           {/* Contact / address column */}
           <div>
-            <h3 className="text-[18px] font-bold tracking-[1px] uppercase mb-5 text-white">
+            <h3 className="text-[13px] font-bold tracking-[1px] uppercase mb-5 text-white">
               Contact Us
             </h3>
             <div className="flex items-start gap-3">
