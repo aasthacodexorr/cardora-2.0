@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
-import { Check, ChevronDown, ChevronUp, Search, Settings2, X } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Search, Settings2, X, Car } from "lucide-react";
 import { AIChatSidebar, AIResultsPanel, useAISearch } from "@/components/inventory/AISearch/AISearchPanel";
 
 
@@ -292,7 +294,13 @@ const MobileControlsBar = ({
   );
 };
 
-const SearchResultsWrapper = ({ children }: { children: React.ReactNode }) => {
+const SearchResultsWrapper = ({
+  children,
+  isLocationPage = false,
+}: {
+  children: React.ReactNode;
+  isLocationPage?: boolean;
+}) => {
   const { status } = useInstantSearch();
   const { results } = useHits();
 
@@ -357,10 +365,45 @@ const ScrollToTopOnSearch = () => {
   return null;
 };
 
-const NoResultsHandler = ({ children }: { children: React.ReactNode }) => {
+interface NoResultsHandlerProps {
+  children: React.ReactNode;
+  isLocationPage?: boolean;
+  locationCity?: string;
+}
+
+const NoResultsHandler = ({
+  children,
+  isLocationPage = false,
+  locationCity,
+}: NoResultsHandlerProps) => {
   const { results } = useInstantSearch();
 
   if (!results?.__isArtificial && results?.nbHits === 0) {
+    if (isLocationPage) {
+      return (
+        <div className="flex flex-col items-center justify-center flex-1 py-14 px-4 text-center w-full min-h-[320px] bg-white rounded-2xl border border-border-standard my-4 shadow-2xs">
+          <div className="w-14 h-14 rounded-full bg-brand/10 text-brand flex items-center justify-center mb-4">
+            <Car className="w-7 h-7" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 tracking-tight">
+            No vehicles currently located in {locationCity || "this location"}
+          </h3>
+          <p className="mt-2.5 max-w-lg text-gray-600 text-sm sm:text-base leading-relaxed">
+            We don’t currently have vehicles physically parked at our {locationCity || "city"} lot,
+            but all our certified Ontario vehicles can be delivered directly to your door with upfront pricing and safety inspection.
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/inventory"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand text-white font-semibold text-sm hover:opacity-90 transition-opacity shadow-sm"
+            >
+              Browse All Ontario Inventory
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="flex flex-col items-center justify-center flex-1 py-32 text-center w-full min-h-[350px]">
         <p className="mt-3 max-w-md text-gray-500 font-medium">
@@ -1743,10 +1786,11 @@ const MainLayoutWrapper = ({
 }) => {
   const { results } = useInstantSearch();
   const hasNoResults = !results?.__isArtificial && results?.nbHits === 0;
+  const hasFewResults = !results?.__isArtificial && results?.nbHits && results.nbHits <= 3;
 
   return (
     <main
-      className={`bg-background ${hasNoResults ? "overflow-hidden h-screen" : "min-h-screen"}`}
+      className="bg-background w-full"
     >
       {children}
     </main>
@@ -2087,7 +2131,7 @@ const InventoryContent = ({
       <TabSwitchSortReset isAISearchActive={isAISearchActive} collectionName={TYPESENSE_COLLECTION_NAME} />
       <Configure 
         hitsPerPage={21}
-        filters={isLocationPage && locationCity ? `location:"${locationCity}"` : undefined}
+        filters={isLocationPage && locationCity ? `location:${locationCity}` : undefined}
         sortBy={`${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`}
       />
 
@@ -2100,7 +2144,8 @@ const InventoryContent = ({
         </div>
 
         {/* ── Two-column layout ── */}
-        <div className="bg-light-gray lg:-mt-4 min-h-screen lg:px-14 px-3 py-[20px] overflow-visible">
+        <div className="bg-light-gray lg:-mt-4 lg:px-14 px-3 py-[20px] overflow-visible">
+
 
           {/* Mobile-only Search / AI Search toggle & conditional Clear button */}
           <div className="flex lg:hidden items-center gap-1.5 max-w-[1550px] mx-auto mb-3 p-[6px]">
@@ -2232,7 +2277,7 @@ const InventoryContent = ({
             </aside>
 
             {/* ── Results Column ── */}
-            <div id="results-column" className="w-full flex-1 mt-0 lg:mt-3 min-w-0 min-h-screen">
+            <div id="results-column" className="w-full flex-1 mt-0 lg:mt-3 min-w-0">
 
               {/* Scroll to top */}
               <div className="fixed inset-x-0 z-50 pointer-events-none" style={{ top: sidebarTop + 26 }}>
@@ -2342,8 +2387,8 @@ const InventoryContent = ({
                   </div>
 
                   <div className="mb-4">
-                    <SearchResultsWrapper>
-                      <NoResultsHandler>
+                    <SearchResultsWrapper isLocationPage={isLocationPage}>
+                      <NoResultsHandler isLocationPage={isLocationPage} locationCity={locationCity}>
                         <CustomInfiniteHits hitComponent={HitCard} />
                       </NoResultsHandler>
                     </SearchResultsWrapper>

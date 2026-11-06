@@ -7,20 +7,20 @@ import type { LocationPageConfig } from "@/lib/locationPages";
 export interface LocationInventoryProps {
   city: string;
   heading: string;
-  seoData?: LocationPageConfig;
+  locationData: LocationPageConfig;
 }
 
 export default function LocationInventory({
   city,
   heading,
-  seoData,
+  locationData,
 }: LocationInventoryProps) {
   return (
     <InventoryView
       isLocationPage={true}
       locationCity={city}
       locationHeading={heading}
-      bottomSlot={seoData ? <LocationSEOContent data={seoData} /> : undefined}
+      bottomSlot={<LocationSEOContent data={locationData} />}
     />
   );
 }

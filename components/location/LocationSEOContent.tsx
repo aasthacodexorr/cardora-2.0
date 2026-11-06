@@ -15,7 +15,7 @@ export default function LocationSEOContent({ data }: LocationSEOContentProps) {
   return (
     <section
       aria-labelledby="location-guide-heading"
-      className="max-w-[1550px] mx-auto px-3 lg:px-14 py-8"
+      className="w-full bg-light-gray border-t border-gray-200/50 max-w-[1550px] mx-auto px-3 lg:px-14 py-8"
     >
       <div className="bg-white rounded-2xl border border-border-standard p-6 sm:p-8 lg:p-12 shadow-2xs">
         {/* Guide Heading */}
