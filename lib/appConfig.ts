@@ -294,7 +294,7 @@ function deepMerge<T extends Record<string, any>>(target: T, source: Record<stri
 export async function getAppConfig(): Promise<AppConfig> {
   try {
     const res = await fetch("https://cardora.zopsoftware.com/api/website/configuration", {
-      next: { revalidate: 60 }
+      next: { revalidate: 60 }, signal: AbortSignal.timeout(3000)
     });
     
     if (!res.ok) {

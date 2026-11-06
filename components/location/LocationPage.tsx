@@ -1,15 +1,25 @@
-import { getAppConfig, getSafeDealershipConfig } from "@/lib/appConfig";
+import { Suspense } from "react";
+import { getAppConfig, getSafeDealershipConfig, defaultAppConfig } from "@/lib/appConfig";
 import { getLocationPage } from "@/lib/locationPages";
 import LocationInventory from "./LocationInventory";
 import LocationSEOContent from "./LocationSEOContent";
+import LocationInventorySkeleton from "./LocationInventorySkeleton";
 
 export interface LocationPageProps {
   cityKey: string;
 }
 
 export default async function LocationPage({ cityKey }: LocationPageProps) {
-  const appConfig = await getAppConfig();
-  const safeD = getSafeDealershipConfig(appConfig?.dealership);
+  let safeD = getSafeDealershipConfig(defaultAppConfig.dealership);
+  try {
+    const appConfig = await getAppConfig();
+    if (appConfig?.dealership) {
+      safeD = getSafeDealershipConfig(appConfig.dealership);
+    }
+  } catch (err) {
+    // Graceful fallback to defaultAppConfig
+  }
+
   const data = getLocationPage(cityKey);
 
   if (!data) {
@@ -95,12 +105,15 @@ export default async function LocationPage({ cityKey }: LocationPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(autoDealerSchema) }}
       />
 
-      {/* Main Location Inventory Section (Connected to live Typesense inventory) */}
-      <LocationInventory
-        city={data.city}
-        heading={data.heading}
-        seoData={data}
-      />
+      {/* Main Location Inventory Section with Suspense loading skeleton */}
+      {/* Content guide will render inside LocationInventory after inventory loads */}
+      <Suspense fallback={<LocationInventorySkeleton heading={data.heading} city={data.city} />}>
+        <LocationInventory
+          city={data.city}
+          heading={data.heading}
+          locationData={data}
+        />
+      </Suspense>
     </div>
   );
 }
