@@ -381,7 +381,7 @@ const NoResultsHandler = ({
   if (!results?.__isArtificial && results?.nbHits === 0) {
     if (isLocationPage) {
       return (
-        <div className="flex flex-col items-center justify-center flex-1 py-14 px-4 text-center w-full min-h-[320px] bg-white rounded-2xl border border-border-standard my-4 shadow-2xs">
+        <div className="flex flex-col items-center justify-center flex-1 mx-3 py-14 px-4 text-center w-full min-h-[320px] bg-white rounded-2xl border border-border-standard mt-3 mb-4 shadow-2xs">
           <div className="w-14 h-14 rounded-full bg-brand/10 text-brand flex items-center justify-center mb-4">
             <Car className="w-7 h-7" />
           </div>
@@ -1966,7 +1966,7 @@ const InventoryContent = ({
     }
   }, [ai.loading, ai.hasSearched, ai.results.length]);
 
-  const sidebarTop = headerHeight + 21;
+  const sidebarTop = headerHeight + 20;
   const sidebarMaxHeight = `calc(100vh - ${headerHeight + 50}px)`;
 
   // ── Scroll Management State ──
@@ -2144,7 +2144,7 @@ const InventoryContent = ({
         </div>
 
         {/* ── Two-column layout ── */}
-        <div className="bg-light-gray lg:-mt-4 lg:px-14 px-3 py-[20px] overflow-visible">
+        <div className="bg-light-gray lg:px-14 px-3 py-[20px] overflow-visible">
 
 
           {/* Mobile-only Search / AI Search toggle & conditional Clear button */}
@@ -2277,7 +2277,7 @@ const InventoryContent = ({
             </aside>
 
             {/* ── Results Column ── */}
-            <div id="results-column" className="w-full flex-1 mt-0 lg:mt-3 min-w-0">
+            <div id="results-column" className="w-full flex-1 -mt-2 min-w-0">
 
               {/* Scroll to top */}
               <div className="fixed inset-x-0 z-50 pointer-events-none" style={{ top: sidebarTop + 26 }}>

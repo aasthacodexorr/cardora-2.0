@@ -14,7 +14,7 @@ export default function LocationInventorySkeleton({
   return (
     <div className="w-full bg-light-gray">
       {/* Top spacing / layout match */}
-      <div className="lg:-mt-4 lg:px-14 px-3 py-[20px] max-w-[1550px] mx-auto">
+      <div className="lg:px-14  px-3 py-[20px] max-w-[1550px] mx-auto">
         {/* Mobile search bar shimmer */}
         <div className="flex lg:hidden items-center gap-1.5 mb-3 p-[6px]">
           <div className="h-10 w-full bg-gray-200 animate-pulse rounded-[12px]" />
