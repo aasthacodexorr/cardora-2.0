@@ -8,18 +8,21 @@ export interface LocationInventoryProps {
   city: string;
   heading: string;
   locationData: LocationPageConfig;
+  hasLocationVehicles?: boolean;
 }
 
 export default function LocationInventory({
   city,
   heading,
   locationData,
+  hasLocationVehicles,
 }: LocationInventoryProps) {
   return (
     <InventoryView
       isLocationPage={true}
       locationCity={city}
       locationHeading={heading}
+      hasLocationVehicles={hasLocationVehicles}
       bottomSlot={<LocationSEOContent data={locationData} />}
     />
   );

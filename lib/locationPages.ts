@@ -1,3 +1,5 @@
+import { defaultAppConfig, type AppConfig } from "./appConfig";
+
 export interface LocationBenefit {
   title: string;
   description: string;
@@ -489,3 +491,40 @@ export function getLocationPage(cityKey: string): LocationPageConfig | undefined
 export function getAllLocationSlugs(): string[] {
   return Object.values(locationPages).map((loc) => loc.slug);
 }
+
+export async function checkLocationHasVehicles(
+  city: string,
+  config?: AppConfig
+): Promise<boolean> {
+  try {
+    const appConfig = config || defaultAppConfig;
+    const protocol = appConfig.site?.typesense_protocol || "https";
+    const host = appConfig.site?.typesense_host;
+    const port = appConfig.site?.typesense_port || "443";
+    const collection = appConfig.site?.collection;
+    const apiKey = appConfig.site?.inventory_search_only_key;
+
+    if (!host || !collection || !apiKey) {
+      return false;
+    }
+
+    const url = `${protocol}://${host}:${port}/collections/${collection}/documents/search?q=*&filter_by=${encodeURIComponent(`location:${city}`)}&per_page=0`;
+    const res = await fetch(url, {
+      headers: {
+        "x-typesense-api-key": apiKey,
+      },
+      next: { revalidate: 300 },
+    });
+
+    if (!res.ok) {
+      return false;
+    }
+
+    const data = await res.json();
+    return typeof data.found === "number" && data.found > 0;
+  } catch (err) {
+    console.error("[checkLocationHasVehicles] error:", err);
+    return false;
+  }
+}
+
