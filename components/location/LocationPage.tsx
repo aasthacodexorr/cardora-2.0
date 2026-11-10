@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { getAppConfig, getSafeDealershipConfig, defaultAppConfig } from "@/lib/appConfig";
-import { getLocationPage } from "@/lib/locationPages";
+import { getLocationPage, checkLocationHasVehicles } from "@/lib/locationPages";
 import LocationInventory from "./LocationInventory";
 import LocationSEOContent from "./LocationSEOContent";
 import LocationInventorySkeleton from "./LocationInventorySkeleton";
@@ -11,10 +11,14 @@ export interface LocationPageProps {
 
 export default async function LocationPage({ cityKey }: LocationPageProps) {
   let safeD = getSafeDealershipConfig(defaultAppConfig.dealership);
+  let resolvedAppConfig = defaultAppConfig;
   try {
     const appConfig = await getAppConfig();
-    if (appConfig?.dealership) {
-      safeD = getSafeDealershipConfig(appConfig.dealership);
+    if (appConfig) {
+      resolvedAppConfig = appConfig;
+      if (appConfig.dealership) {
+        safeD = getSafeDealershipConfig(appConfig.dealership);
+      }
     }
   } catch (err) {
     // Graceful fallback to defaultAppConfig
@@ -32,6 +36,8 @@ export default async function LocationPage({ cityKey }: LocationPageProps) {
       </div>
     );
   }
+
+  const hasVehicles = await checkLocationHasVehicles(data.city, resolvedAppConfig);
 
   const baseUrl = "https://cardora.ca";
   const canonicalUrl = `${baseUrl}${data.slug}`;
@@ -112,6 +118,7 @@ export default async function LocationPage({ cityKey }: LocationPageProps) {
           city={data.city}
           heading={data.heading}
           locationData={data}
+          hasLocationVehicles={hasVehicles}
         />
       </Suspense>
     </div>

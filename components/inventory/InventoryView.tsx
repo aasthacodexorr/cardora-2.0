@@ -365,45 +365,51 @@ const ScrollToTopOnSearch = () => {
   return null;
 };
 
+const LocationInventoryFallbackDetector = ({
+  isLocationPage,
+  hasVehiclesInLocation,
+  onFallback,
+}: {
+  isLocationPage?: boolean;
+  hasVehiclesInLocation: boolean;
+  onFallback: () => void;
+}) => {
+  const { results, status, indexUiState } = useInstantSearch();
+  const hasTriggeredRef = useRef(false);
+
+  useEffect(() => {
+    if (!isLocationPage || !hasVehiclesInLocation || hasTriggeredRef.current) return;
+    if (status !== "idle" || !results || results.__isArtificial) return;
+
+    // Check if user has applied any refinements
+    const uiState = indexUiState || {};
+    const hasUserRefinements = Boolean(
+      uiState.query ||
+      (uiState.refinementList && Object.values(uiState.refinementList).some((arr: any) => Array.isArray(arr) && arr.length > 0)) ||
+      (uiState.range && Object.keys(uiState.range).some((key) => (uiState.range as Record<string, any>)[key] !== undefined))
+    );
+
+    // If initial location query returns 0 hits with no user refinements, location has no vehicles:
+    // fallback to default inventory
+    if (results.nbHits === 0 && !hasUserRefinements) {
+      hasTriggeredRef.current = true;
+      onFallback();
+    }
+  }, [isLocationPage, hasVehiclesInLocation, results, status, indexUiState, onFallback]);
+
+  return null;
+};
+
 interface NoResultsHandlerProps {
   children: React.ReactNode;
-  isLocationPage?: boolean;
-  locationCity?: string;
 }
 
 const NoResultsHandler = ({
   children,
-  isLocationPage = false,
-  locationCity,
 }: NoResultsHandlerProps) => {
   const { results } = useInstantSearch();
 
   if (!results?.__isArtificial && results?.nbHits === 0) {
-    if (isLocationPage) {
-      return (
-        <div className="flex flex-col items-center justify-center flex-1 mx-3 py-14 px-4 text-center w-full min-h-[320px] bg-white rounded-2xl border border-border-standard mt-3 mb-4 shadow-2xs">
-          <div className="w-14 h-14 rounded-full bg-brand/10 text-brand flex items-center justify-center mb-4">
-            <Car className="w-7 h-7" />
-          </div>
-          <h3 className="text-xl font-bold text-gray-900 tracking-tight">
-            No vehicles currently located in {locationCity || "this location"}
-          </h3>
-          <p className="mt-2.5 max-w-lg text-gray-600 text-sm sm:text-base leading-relaxed">
-            We don’t currently have vehicles physically parked at our {locationCity || "city"} lot,
-            but all our certified Ontario vehicles can be delivered directly to your door with upfront pricing and safety inspection.
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/inventory"
-              className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand text-white font-semibold text-sm hover:opacity-90 transition-opacity shadow-sm"
-            >
-              Browse All Ontario Inventory
-            </Link>
-          </div>
-        </div>
-      );
-    }
-
     return (
       <div className="flex flex-col items-center justify-center flex-1 py-32 text-center w-full min-h-[350px]">
         <p className="mt-3 max-w-md text-gray-500 font-medium">
@@ -1916,6 +1922,7 @@ export interface InventoryViewProps {
   isLocationPage?: boolean;
   locationCity?: string;
   locationHeading?: string;
+  hasLocationVehicles?: boolean;
   bottomSlot?: React.ReactNode;
 }
 
@@ -1923,6 +1930,7 @@ const InventoryContent = ({
   isLocationPage = false,
   locationCity,
   locationHeading,
+  hasLocationVehicles,
   bottomSlot,
 }: InventoryViewProps) => {
 
@@ -1931,6 +1939,18 @@ const InventoryContent = ({
   const { searchClient, TYPESENSE_COLLECTION_NAME } = useMemo(() => getTypesenseClient(config), [config]);
   const router = useMemo(() => createInventoryRouter(config), [config]);
   const stateMapping = useMemo(() => createInventoryStateMapping(config), [config]);
+
+  const [hasVehiclesInLocation, setHasVehiclesInLocation] = useState<boolean>(
+    hasLocationVehicles ?? true
+  );
+
+  useEffect(() => {
+    if (typeof hasLocationVehicles === "boolean") {
+      setHasVehiclesInLocation(hasLocationVehicles);
+    }
+  }, [hasLocationVehicles]);
+
+  const isLocationFilterActive = isLocationPage && Boolean(locationCity) && hasVehiclesInLocation;
 
   const [openFilter, setOpenFilter] = useState<string | null>("");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -2129,9 +2149,14 @@ const InventoryContent = ({
       <SyncOrphanedModels />
       <ScrollToTopOnSearch />
       <TabSwitchSortReset isAISearchActive={isAISearchActive} collectionName={TYPESENSE_COLLECTION_NAME} />
+      <LocationInventoryFallbackDetector
+        isLocationPage={isLocationPage}
+        hasVehiclesInLocation={hasVehiclesInLocation}
+        onFallback={() => setHasVehiclesInLocation(false)}
+      />
       <Configure 
         hitsPerPage={21}
-        filters={isLocationPage && locationCity ? `location:${locationCity}` : undefined}
+        filters={isLocationFilterActive ? `location:${locationCity}` : undefined}
         sortBy={`${TYPESENSE_COLLECTION_NAME}/sort/status_rank:asc,created_at:desc`}
       />
 
@@ -2388,7 +2413,7 @@ const InventoryContent = ({
 
                   <div className="mb-4">
                     <SearchResultsWrapper isLocationPage={isLocationPage}>
-                      <NoResultsHandler isLocationPage={isLocationPage} locationCity={locationCity}>
+                      <NoResultsHandler>
                         <CustomInfiniteHits hitComponent={HitCard} />
                       </NoResultsHandler>
                     </SearchResultsWrapper>
