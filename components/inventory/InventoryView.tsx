@@ -2396,9 +2396,9 @@ const InventoryContent = ({
                     <div className="lg:px-3 pt-3">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="flex items-baseline gap-2 flex-wrap">
-                          <h1 className="text-md text-gray-500 tracking-tight">
+                          <p className="text-md text-gray-500 tracking-tight">
                             {locationHeading || `Used Cars for Sale in ${locationCity || "Ontario"}`}
-                          </h1>
+                          </p>
                           <span className="text-sm sm:text-base font-normal text-gray-500">
                             · <LocationResultsCount />
                           </span>

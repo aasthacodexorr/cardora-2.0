@@ -41,6 +41,7 @@ export default async function LocationPage({ cityKey }: LocationPageProps) {
 
   const baseUrl = "https://cardora.ca";
   const canonicalUrl = `${baseUrl}${data.slug}`;
+  const exactCanonicalUrl = `https://www.cardora.ca${data.slug}/`;
 
   // Structured Data 1: BreadcrumbList
   const breadcrumbSchema = {
@@ -102,17 +103,25 @@ export default async function LocationPage({ cityKey }: LocationPageProps) {
   return (
     <div className="w-full bg-light-gray">
       {/* Schema.org Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(autoDealerSchema) }}
-      />
+      {data.schemaMarkup ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(data.schemaMarkup) }}
+        />
+      ) : (
+        <>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(autoDealerSchema) }}
+          />
+        </>
+      )}
 
       {/* Main Location Inventory Section with Suspense loading skeleton */}
-      {/* Content guide will render inside LocationInventory after inventory loads */}
       <Suspense fallback={<LocationInventorySkeleton heading={data.heading} city={data.city} />}>
         <LocationInventory
           city={data.city}
@@ -121,6 +130,9 @@ export default async function LocationPage({ cityKey }: LocationPageProps) {
           hasLocationVehicles={hasVehicles}
         />
       </Suspense>
+
+      {/* Location Editorial Content (rendered server-side with H1 & H2) */}
+      <LocationSEOContent data={data} />
     </div>
   );
 }
