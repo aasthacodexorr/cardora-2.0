@@ -223,7 +223,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
     secondaryKeywords: ["used cars in Mississauga", "pre-owned cars in Mississauga", "trade in my car in Mississauga"],
     title: "Used Cars in Mississauga | Cardora",
     description: "Looking for used cars in Mississauga? Shop quality pre-owned SUVs, sedans and more at Cardora. Financing for all credit, 10-day exchange.",
-    heading: "Used Cars for Mississauga Drivers",
+    heading: "Used Cars for Mississauga",
     ogImage: "https://www.cardora.ca/wp-content/uploads/2026/03/Cardora-n.png",
     seoContent: {
       guideHeading: "Used Cars for Sale in Mississauga: Buyer's Guide",
@@ -393,7 +393,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
     secondaryKeywords: ["used cars in Toronto", "certified pre-owned cars in Toronto", "trade in my car in Toronto"],
     title: "Used Cars in Toronto | Quality Pre-Owned Vehicles | Cardora",
     description: "Looking for used cars in Toronto? Shop quality pre-owned SUVs, sedans and more at Cardora. Financing for all credit, 10-day exchange.",
-    heading: "Used Cars for Toronto Drivers",
+    heading: "Used Cars for Toronto",
     ogImage: "https://www.cardora.ca/wp-content/uploads/2026/03/Cardora-n.png",
     seoContent: {
       guideHeading: "Used Cars for Sale Toronto Drivers Can Trust: Buyer's Guide",
@@ -563,7 +563,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
     secondaryKeywords: ["used cars in Kitchener", "certified used cars in Kitchener", "used car dealer Kitchener"],
     title: "Used Cars in Kitchener | Cardora",
     description: "Looking for used cars in Kitchener? Shop certified Toyota RAV4 and Honda Civic models at Cardora. Financing for all credit, 10-day exchange.",
-    heading: "Used Cars for Kitchener Drivers",
+    heading: "Used Cars for Kitchener",
     ogImage: "https://www.cardora.ca/wp-content/uploads/2026/03/Cardora-n.png",
     seoContent: {
       guideHeading: "Used Cars for Sale in Kitchener: What to Know Before You Buy",
@@ -733,7 +733,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
     secondaryKeywords: ["used cars Barrie", "pre-owned cars in Barrie", "used car dealership Barrie"],
     title: "Used Cars Barrie | Quality Pre-Owned Vehicles | Cardora",
     description: "Looking for used cars in Barrie? Shop quality pre-owned SUVs, sedans and more at Cardora. Financing for all credit, 10-day exchange.",
-    heading: "Used Cars for Barrie Drivers",
+    heading: "Used Cars for Barrie",
     ogImage: "https://www.cardora.ca/wp-content/uploads/2026/03/Cardora-n.png",
     seoContent: {
       guideHeading: "Used Cars for Sale in Barrie: A Practical Guide for Buyers",
@@ -903,7 +903,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
     secondaryKeywords: ["used cars in Hamilton", "certified used cars in Hamilton", "sell my car in Hamilton"],
     title: "Used Cars in Hamilton | Cardora",
     description: "Looking for used cars in Hamilton? Shop quality pre-owned SUVs, sedans and more at Cardora. Financing for all credit, 10-day exchange.",
-    heading: "Used Cars for Hamilton Drivers",
+    heading: "Used Cars for Hamilton",
     ogImage: "https://www.cardora.ca/wp-content/uploads/2026/03/Cardora-n.png",
     seoContent: {
       guideHeading: "Used Cars for Sale in Hamilton: Your Buying Guide",
