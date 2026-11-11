@@ -7,7 +7,14 @@ interface MetadataGeneratorOptions {
   description: string;
   additionalReplacements?: Record<string, string>;
   canonicalPath?: string;
+  canonicalUrl?: string;
   images?: string[];
+  locale?: string;
+  siteName?: string;
+  robots?: {
+    index?: boolean;
+    follow?: boolean;
+  };
 }
 
 /**
@@ -60,23 +67,30 @@ export async function generateMetadata(
 
   const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
   const baseUrl = `${protocol}://${host}`;
-  const canonicalUrl = `${baseUrl}${options.canonicalPath || ""}`;
+  const canonicalUrl = options.canonicalUrl || `${baseUrl}${options.canonicalPath || ""}`;
   const resolvedImages = options.images && options.images.length > 0
     ? options.images
     : [safeD.dealership_logo];
 
+  const resolvedBaseUrl = options.canonicalUrl ? "https://www.cardora.ca" : baseUrl;
+
   return {
     title,
     description,
-    metadataBase: new URL(baseUrl),
+    metadataBase: new URL(resolvedBaseUrl),
     alternates: {
       canonical: canonicalUrl,
+    },
+    robots: options.robots ?? {
+      index: true,
+      follow: true,
     },
     openGraph: {
       title,
       description,
       url: canonicalUrl,
-      siteName: safeD.dealership_name,
+      siteName: options.siteName || safeD.dealership_name || "Cardora",
+      locale: options.locale || "en_CA",
       images: resolvedImages,
       type: "website",
     },

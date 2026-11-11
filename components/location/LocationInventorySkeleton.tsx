@@ -57,9 +57,9 @@ export default function LocationInventorySkeleton({
             {/* Location Wireframe Heading */}
             <div className="lg:px-3 pt-1">
               <div className="flex items-baseline gap-2 flex-wrap">
-                <h1 className="text-md text-gray-700 font-medium tracking-tight">
+                <p className="text-md text-gray-700 font-medium tracking-tight">
                   {displayHeading}
-                </h1>
+                </p>
                 <span className="text-sm font-normal text-gray-400">
                   · Loading inventory...
                 </span>
