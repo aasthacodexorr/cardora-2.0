@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { getAppConfig, getSafeDealershipConfig, defaultAppConfig } from "@/lib/appConfig";
 import { getLocationPage, checkLocationHasVehicles } from "@/lib/locationPages";
 import LocationInventory from "./LocationInventory";
-import LocationSEOContent from "./LocationSEOContent";
 import LocationInventorySkeleton from "./LocationInventorySkeleton";
 
 export interface LocationPageProps {
@@ -131,8 +130,7 @@ export default async function LocationPage({ cityKey }: LocationPageProps) {
         />
       </Suspense>
 
-      {/* Location Editorial Content (rendered server-side with H1 & H2) */}
-      <LocationSEOContent data={data} />
+
     </div>
   );
 }

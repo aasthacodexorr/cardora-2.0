@@ -80,12 +80,12 @@ const Footer = () => {
     {
       title: "Browse by Location",
       links: [
-        { label: "Used Cars in Toronto", href: "/used-cars-toronto/", external: true },
-        { label: "Used Cars in Brampton", href: /used-cars-brampton/, external: true },
-        { label: "Used Cars in Mississauga", href: /used-cars-mississauga/, external: true },
-        { label: "Used Cars in Kitchener", href: /used-cars-kitchener/, external: true },
-        { label: "Used Cars in Barrie", href: /used-cars-barrie/, external: true },
-        { label: "Used Cars in Hamilton", href: /used-cars-hamilton/, external: true },
+        { label: "Used Cars in Toronto", href: "/used-cars-toronto", external: false },
+        { label: "Used Cars in Brampton", href: "/used-cars-brampton", external: false },
+        { label: "Used Cars in Mississauga", href: "/used-cars-mississauga", external: false },
+        { label: "Used Cars in Kitchener", href: "/used-cars-kitchener", external: false },
+        { label: "Used Cars in Barrie", href: "/used-cars-barrie", external: false },
+        { label: "Used Cars in Hamilton", href: "/used-cars-hamilton", external: false },
       ],
     },
     {
@@ -139,6 +139,8 @@ const Footer = () => {
                           ) {
                             e.preventDefault();
                             window.location.href = link.href;
+                          } else if (pathname === link.href || pathname === `${link.href}/`) {
+                            window.scrollTo({ top: 0, behavior: "smooth" });
                           }
                         }}
                       >

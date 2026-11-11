@@ -330,6 +330,35 @@ const SearchResultsWrapper = ({
 
   return <>{children}</>;
 };
+const BottomSlotWrapper = ({
+  children,
+  isLocationPage = false,
+}: {
+  children: React.ReactNode;
+  isLocationPage?: boolean;
+}) => {
+  const { status } = useInstantSearch();
+  const { results } = useHits();
+
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    if (!isHydrated && status === "idle" && results && !results.__isArtificial) {
+      setIsHydrated(true);
+    }
+  }, [status, results, isHydrated]);
+
+  // If this is a location page, only show bottomSlot once initial inventory has finished loading
+  if (isLocationPage && !isHydrated) {
+    return null;
+  }
+
+  return (
+    <div className="w-full bg-light-gray">
+      {children}
+    </div>
+  );
+};
+
 
 const CustomHitsCount = () => {
   const { results } = useHits();
@@ -593,6 +622,10 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
 
 const LocationResultsCount = () => {
   const { results } = useHits();
+  const { status } = useInstantSearch();
+  if (!results || results.__isArtificial || status === "loading") {
+    return <span className="text-gray-400">· Loading inventory...</span>;
+  }
   const count = results?.nbHits || 0;
   return <span>{count.toLocaleString()} results</span>;
 };
@@ -2400,7 +2433,7 @@ const InventoryContent = ({
                             {locationHeading || `Used Cars for Sale in ${locationCity || "Ontario"}`}
                           </p>
                           <span className="text-sm sm:text-base font-normal text-gray-500">
-                            · <LocationResultsCount />
+                          <LocationResultsCount />
                           </span>
                         </div>
                       </div>
@@ -2425,9 +2458,9 @@ const InventoryContent = ({
         </div>
 
         {bottomSlot && (
-          <div className="w-full bg-light-gray">
+          <BottomSlotWrapper isLocationPage={isLocationPage}>
             {bottomSlot}
-          </div>
+          </BottomSlotWrapper>
         )}
 
         {/* ── Mobile filter slide-in overlay ── */}

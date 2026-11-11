@@ -23,6 +23,7 @@ export default function LocationInventory({
       locationCity={city}
       locationHeading={heading}
       hasLocationVehicles={hasLocationVehicles}
+      bottomSlot={<LocationSEOContent data={locationData} />}
     />
   );
 }
