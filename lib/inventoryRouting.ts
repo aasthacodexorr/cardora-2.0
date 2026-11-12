@@ -1,4 +1,5 @@
 import { AppConfig } from "@/lib/appConfig";
+import { extractLocationFromSlug } from "@/lib/locationPages";
 import type { UiState } from "instantsearch.js";
 
 type PlainObject = Record<string, any>;
@@ -133,22 +134,27 @@ export const BASELINE_MODEL_TO_MAKE: Record<string, string> = {
   "Explorer": "Ford",
   "Transit 150": "Ford",
   "CR-V Hybrid": "Honda",
+  "ADX": "Acura",
+  "MDX": "Acura",
+  "RDX": "Acura",
+  "ILX": "Acura",
+  "NSX": "Acura",
 };
 
 const MODEL_TO_MAKE = new Map<string, string>(Object.entries(BASELINE_MODEL_TO_MAKE));
 
 const BASELINE_KNOWN_MODELS = [
   "1500", "1500 Classic", "200", "3-Series", "300", "4-Series", "4Runner", "911",
-  "A-Class", "A4", "Acadia", "Accord", "Accord Hybrid", "Altima", "Atlas", "Aviator",
+  "A-Class", "A4", "ADX", "Acadia", "Accord", "Accord Hybrid", "Altima", "Atlas", "Aviator",
   "C-Class", "CLA-Class", "CR-V", "CR-V Hybrid", "CX-5", "CX-70 MHEV", "Camry", "Camry Hybrid",
   "Canyon", "Carnival", "Cayenne", "Challenger", "Charger", "Civic", "Civic Hatchback", "Compass",
   "Corolla", "Corolla Hybrid", "Corsair", "Corvette", "Defender", "Durango", "E-Class", "ES",
   "Edge", "Elantra", "Enclave", "Encore", "Encore GX", "Envision", "Envista", "Escape", "Explorer",
   "Express Cargo Van", "F-150", "Forte", "Fusion Energi", "G70", "GLC-Class", "GLE-Class",
   "GOLF SPORTWAGEN", "GR COROLLA", "Gladiator", "GranTurismo", "Grand Caravan", "Grand Cherokee",
-  "Grand Cherokee L", "Grand Cherokee WK", "Grecale", "Highlander", "IS 300", "Impreza", "Jetta",
-  "Jetta GLI", "Journey", "K4", "KONA", "LaCrosse", "MKX", "Malibu", "Model 3", "Model Y", "Mustang",
-  "Odyssey", "Outlander", "Passat", "Q3", "Q5", "Q50", "Q7", "Qashqai", "RAV4", "RX", "RX 350",
+  "Grand Cherokee L", "Grand Cherokee WK", "Grecale", "Highlander", "ILX", "IS 300", "Impreza", "Jetta",
+  "Jetta GLI", "Journey", "K4", "KONA", "LaCrosse", "MDX", "MKX", "Malibu", "Model 3", "Model Y", "Mustang",
+  "NSX", "Odyssey", "Outlander", "Passat", "Q3", "Q5", "Q50", "Q7", "Qashqai", "RAV4", "RDX", "RX", "RX 350",
   "Ram 1500", "Range Rover", "Range Rover Sport", "Range Rover Velar", "Rogue", "S-Class",
   "SIERRA 2500HD", "SILVERADO 2500HD", "SUPER DUTY F-250 SRW", "SUPER DUTY F-450 DRW", "Santa Fe",
   "Seltos", "Sentra", "Sierra 1500", "Silverado 1500", "Sonata", "Sorento", "Sportage", "Stinger",
@@ -233,7 +239,7 @@ export function getModelVariants(model: string): string[] {
 const PRESERVE_UPPERCASE_TOKENS = new Set([
   "BMW", "GMC", "SUV", "CVT", "EV", "HEV", "PHEV", "BEV", "AWD", "4WD", "4X4",
   "SRW", "DRW", "HD", "GR", "TT", "ZDX", "GLI", "WK", "MKX", "TLX", "WRX", "MHEV",
-  "CR", "CX", "CLA", "GLC", "GLE", "ES", "IS", "RX"
+  "CR", "CX", "CLA", "GLC", "GLE", "ES", "IS", "RX", "ADX", "MDX", "RDX", "ILX", "NSX"
 ]);
 
 /**
@@ -266,7 +272,7 @@ export function formatFacetLabel(label: string): string {
  */
 export function modelToQueryValue(model: string): string {
   if (!model || typeof model !== "string") return "";
-  return encodeURIComponent(model.trim().replace(/\s+/g, "-"));
+  return encodeURIComponent(model.trim().toLowerCase().replace(/\s+/g, "-"));
 }
 
 /**
@@ -648,7 +654,7 @@ export function registerFacetValues(attribute: string, values: Iterable<string>)
 
 export function queryValue(value: string) {
   if (!value || typeof value !== "string") return "";
-  return encodeURIComponent(value.trim().replace(/\s+/g, "-"));
+  return encodeURIComponent(value.trim().toLowerCase().replace(/\s+/g, "-"));
 }
 
 function parseQueryValue(value: string) {
@@ -864,7 +870,22 @@ function getPathFilters(route: PlainObject): PathFilters {
   return filters;
 }
 
-export function serializePublicUrl(route: PlainObject) {
+function getActiveLocationSlugFromUrl(): string | null {
+  if (typeof window === "undefined") return null;
+  const segments = window.location.pathname.replace(/^\/inventory\/?/, "").split("/").filter(Boolean);
+  for (const segment of segments) {
+    const loc = extractLocationFromSlug(segment);
+    if (loc) return loc.locationSlug;
+  }
+  return null;
+}
+
+export function serializePublicUrl(route: PlainObject, locationSlugOverride?: string | null) {
+  const activeLocationSlug =
+    locationSlugOverride !== undefined
+      ? locationSlugOverride
+      : (route.locationSlug || getActiveLocationSlugFromUrl());
+
   const sourceRefinementList = route.refinementList || {};
   const refinementList: PlainObject = {};
 
@@ -984,6 +1005,7 @@ export function serializePublicUrl(route: PlainObject) {
   ] as const;
 
   otherFacetAttributes.forEach((attr) => {
+    if (attr === "location" && activeLocationSlug) return;
     const values: string[] = refinementList[attr] || [];
     if (!values.length) return;
     const formattedValues = values.map((v) => (attr === "year" ? v : formatFacetLabel(v)));
@@ -1025,7 +1047,11 @@ export function serializePublicUrl(route: PlainObject) {
     queryParams.push(`sortBy=status_rank:asc,${sort.field}:${sort.direction.toLowerCase()}`);
   }
 
-  const basePath = pathSegments.length ? `/inventory/${pathSegments.join("/")}` : "/inventory";
+  const basePathSegments = activeLocationSlug
+    ? [...pathSegments, activeLocationSlug]
+    : pathSegments;
+
+  const basePath = basePathSegments.length ? `/inventory/${basePathSegments.join("/")}` : "/inventory";
   const queryString = queryParams.length ? `?${queryParams.join("&")}` : "";
 
   return `${basePath}${queryString}`;
@@ -1205,12 +1231,21 @@ export function readRouteState(): PlainObject {
     resolveUnkeyedQueryToken(decoded, refinementList);
   };
 
+  let locationSlug: string | undefined;
+  let locationCity: string | undefined;
+
   // 1. Process Pathname tokens (e.g. /inventory/Ram:1500&colors=Blue,BRILLIANT-RED or /inventory/Ram/1500/Blue)
   if (isInventoryListingPath(window.location.pathname)) {
     const pathContent = window.location.pathname.replace(/^\/inventory\/?/, "").trim();
     if (pathContent) {
       const segments = pathContent.split("/").filter(Boolean);
       for (const segment of segments) {
+        const loc = extractLocationFromSlug(segment);
+        if (loc) {
+          locationSlug = loc.locationSlug;
+          locationCity = loc.city;
+          continue;
+        }
         const tokens = segment.split("&").filter(Boolean);
         for (const token of tokens) {
           const eqIdx = token.indexOf("=");
@@ -1282,6 +1317,8 @@ export function readRouteState(): PlainObject {
   }
 
   const route: PlainObject = { refinementList, range };
+  if (locationSlug) route.locationSlug = locationSlug;
+  if (locationCity) route.locationCity = locationCity;
   if (query) route.query = query;
   if (sortField) route.sortField = sortField;
   if (sortDirection) route.sortDirection = sortDirection;
@@ -1362,10 +1399,12 @@ export const createInventoryStateMapping = (config: AppConfig) => {
   };
 };
 
-export function createInventoryRouter(_config: AppConfig) {
+export function createInventoryRouter(_config: AppConfig, locationSlugOverride?: string | null) {
   watchExternalUrlChanges();
   let callback: ((route: PlainObject) => void) | null = null;
   const initialRoute = readRouteState();
+  let currentLocationSlug: string | null =
+    locationSlugOverride || initialRoute.locationSlug || null;
   let previousRoute = initialRoute;
   let pathFilters: PathFilters =
     typeof window !== "undefined"
@@ -1377,9 +1416,9 @@ export function createInventoryRouter(_config: AppConfig) {
   let lastWrittenUrl: string | null = null;
 
   if (typeof window !== "undefined" && Object.keys(pathFilters).length && window.location.pathname === "/inventory") {
-    const bootstrapUrl = serializePublicUrl(initialRoute);
+    const bootstrapUrl = serializePublicUrl(initialRoute, currentLocationSlug);
     isInternalUrlWrite = true;
-    window.history.replaceState({ ...initialRoute, __inventoryPathFilters: pathFilters }, "", bootstrapUrl);
+    window.history.replaceState({ ...initialRoute, __inventoryPathFilters: pathFilters, locationSlug: currentLocationSlug }, "", bootstrapUrl);
     isInternalUrlWrite = false;
     lastWrittenUrl = bootstrapUrl;
   }
@@ -1388,12 +1427,13 @@ export function createInventoryRouter(_config: AppConfig) {
     if (typeof window === "undefined") return;
     if (!isInventoryListingPath(window.location.pathname)) return;
 
-    const url = serializePublicUrl(route);
+    const locSlug = route.locationSlug || currentLocationSlug;
+    const url = serializePublicUrl(route, locSlug);
 
     if (url === lastWrittenUrl) return;
     lastWrittenUrl = url;
 
-    const state = { ...route, __inventoryPathFilters: filters };
+    const state = { ...route, __inventoryPathFilters: filters, locationSlug: locSlug };
 
     // Safari often jumps scroll UP on history.replaceState. Only correct
     // upward jumps so bottom infinite-scroll growth is not fought.
@@ -1412,6 +1452,9 @@ export function createInventoryRouter(_config: AppConfig) {
   const notify = () => {
     if (!isInventoryListingPath(window.location.pathname)) return;
     const route = readRouteState();
+    if (route.locationSlug) {
+      currentLocationSlug = route.locationSlug;
+    }
     previousRoute = route;
     if (window.location.pathname.startsWith("/inventory")) {
       pathFilters = getPathFilters(route);
@@ -1433,7 +1476,8 @@ export function createInventoryRouter(_config: AppConfig) {
 
     createURL(routeState: PlainObject) {
       // InstantSearch only uses this for links; write() is the canonical serializer.
-      const url = serializePublicUrl(routeState);
+      const locSlug = routeState.locationSlug || currentLocationSlug;
+      const url = serializePublicUrl(routeState, locSlug);
       return typeof window !== "undefined" ? `${window.location.origin}${url}` : url;
     },
 

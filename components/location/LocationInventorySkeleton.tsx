@@ -9,7 +9,7 @@ export default function LocationInventorySkeleton({
   heading,
   city,
 }: LocationInventorySkeletonProps) {
-  const displayHeading = heading || `Used Cars for Sale in ${city || "Ontario"}`;
+  const displayHeading = heading || `Used Cars for Sale in ${city || "Toronto"}, Ontario`;
 
   return (
     <div className="w-full bg-light-gray">
