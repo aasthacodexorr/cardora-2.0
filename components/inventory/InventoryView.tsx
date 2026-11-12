@@ -49,6 +49,7 @@ import {
   registerRangeBounds,
 } from "@/lib/inventoryRouting";
 import { useAppConfig } from "@/app/providers";
+import { getDynamicLocationHeading } from "@/lib/locationPages";
 import { InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "@/components/inventory/HitCardSkeleton";
 import { AD_CARDS } from "@/components/inventory/AdCard";
 import { useDrawer } from "@/context/DrawerContext";
@@ -619,6 +620,18 @@ const CustomInfiniteHits = ({ hitComponent: HitComponent }: any) => {
 };
 
 
+
+const LocationDynamicHeading = ({ locationCity }: { locationCity?: string }) => {
+  const { indexUiState } = useInstantSearch();
+  const refinementList = (indexUiState?.refinementList || {}) as Record<string, string[] | undefined>;
+  const headingText = getDynamicLocationHeading(refinementList, locationCity);
+
+  return (
+    <h1 className="text-md text-gray-700 font-medium tracking-tight">
+      {headingText}
+    </h1>
+  );
+};
 
 const LocationResultsCount = () => {
   const { results } = useHits();
@@ -1970,7 +1983,8 @@ const InventoryContent = ({
   const config = useAppConfig();
   const { isWishlistDrawerOpen } = useDrawer();
   const { searchClient, TYPESENSE_COLLECTION_NAME } = useMemo(() => getTypesenseClient(config), [config]);
-  const router = useMemo(() => createInventoryRouter(config), [config]);
+  const locationSlug = isLocationPage && locationCity ? `used-car-${locationCity.toLowerCase()}` : undefined;
+  const router = useMemo(() => createInventoryRouter(config, locationSlug), [config, locationSlug]);
   const stateMapping = useMemo(() => createInventoryStateMapping(config), [config]);
 
   const [hasVehiclesInLocation, setHasVehiclesInLocation] = useState<boolean>(
@@ -2175,7 +2189,7 @@ const InventoryContent = ({
     <InstantSearch
       searchClient={searchClient}
       indexName={TYPESENSE_COLLECTION_NAME}
-      routing={isLocationPage ? undefined : { router, stateMapping }}
+      routing={{ router, stateMapping }}
       stalledSearchDelay={300}
     >
       <SyncModelMakeMap />
@@ -2424,16 +2438,14 @@ const InventoryContent = ({
                   </div>
 
                   
-                  {/* Location Page Wireframe Heading */}
+                  {/* Location Page Dynamic Heading */}
                   {isLocationPage && (
                     <div className="lg:px-3 pt-3">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="flex items-baseline gap-2 flex-wrap">
-                          <p className="text-md text-gray-500 tracking-tight">
-                            {locationHeading || `Used Cars for Sale in ${locationCity || "Ontario"}`}
-                          </p>
+                          <LocationDynamicHeading locationCity={locationCity} />
                           <span className="text-sm sm:text-base font-normal text-gray-500">
-                          <LocationResultsCount />
+                            <LocationResultsCount />
                           </span>
                         </div>
                       </div>
