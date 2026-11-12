@@ -21,7 +21,7 @@ export default function LocationSEOContent({ data }: LocationSEOContentProps) {
         {/* Main Guide Heading H2 */}
         <h2
           id="location-guide-heading"
-          className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight mb-6 sm:mb-8"
+          className="font-bold text-gray-900 tracking-tight mb-6 sm:mb-8"
         >
           {seo.guideHeading || `${data.city} Used Car Guide`}
         </h2>
