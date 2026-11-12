@@ -18,34 +18,30 @@ export default function LocationSEOContent({ data }: LocationSEOContentProps) {
       className="w-full bg-light-gray border-t border-gray-200/50 max-w-[1550px] mx-auto px-3 lg:px-14 py-8"
     >
       <div className="bg-white rounded-2xl border border-border-standard p-6 sm:p-8 lg:p-12 shadow-2xs">
-        {/* H1 Page Heading */}
-        <h1 className="font-bold text-gray-900 tracking-tight mb-3">
-          {data.heading}
-        </h1>
+        {/* Main Guide Heading H2 */}
+        <h2
+          id="location-guide-heading"
+          className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight mb-6 sm:mb-8"
+        >
+          {seo.guideHeading || `${data.city} Used Car Guide`}
+        </h2>
 
         {/* Two-Column Section: Overview & Key Benefits (Desktop 2 cols, stacks on mobile/tablet) */}
         {(hasOverview || hasBenefits) && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 mb-10 pt-5">
-            <div>
-              {/* H2 Guide Heading */}
-              <h2
-                id="location-guide-heading"
-                className="font-semibold text-gray-900 tracking-tight mb-4"
-              >
-                {seo.guideHeading || `${data.city} Used Car Guide`}
-              </h2>
-
-              {/* Overview */}
-              {hasOverview && (
-                <div>
-                  <div className="space-y-4 text-gray-700 leading-relaxed">
-                    {seo.overview?.paragraphs?.map((paragraph, index) => (
-                      <p key={index}>{paragraph}</p>
-                    ))}
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 mb-10">
+            {/* Overview */}
+            {hasOverview && (
+              <div>
+                <h3 className="font-bold text-gray-900 mb-4">
+                  {seo.overview?.heading || "Overview"}
+                </h3>
+                <div className="space-y-4 text-gray-700 leading-relaxed">
+                  {seo.overview?.paragraphs?.map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Key Benefits */}
             {hasBenefits && (

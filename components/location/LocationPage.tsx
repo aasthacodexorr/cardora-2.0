@@ -121,7 +121,7 @@ export default async function LocationPage({ cityKey }: LocationPageProps) {
       )}
 
       {/* Main Location Inventory Section with Suspense loading skeleton */}
-      <Suspense fallback={<LocationInventorySkeleton heading={data.heading} city={data.city} />}>
+      <Suspense fallback={<LocationInventorySkeleton city={data.city} />}>
         <LocationInventory
           city={data.city}
           heading={data.heading}
