@@ -1,5 +1,5 @@
 import { permanentRedirect } from "next/navigation";
 
 export default function UsedCarsTorontoPage() {
-  permanentRedirect("/inventory/used-car-toronto");
+  permanentRedirect("/inventory/used-cars-toronto");
 }

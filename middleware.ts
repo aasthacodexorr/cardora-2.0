@@ -15,12 +15,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(getBlogUrl(slug, host)), 308);
   }
 
-  // Redirect legacy /used-cars-{city} or /used-car-{city} to /inventory/used-car-{city}
+  // Redirect legacy /used-cars-{city} or /used-car-{city} to /inventory/used-cars-{city}
   const locationMatch = pathname.match(/^\/used-cars?-([a-z0-9-]+)\/?$/i);
   if (locationMatch) {
     const city = locationMatch[1].toLowerCase();
     const search = request.nextUrl.search || "";
-    return NextResponse.redirect(new URL(`/inventory/used-car-${city}${search}`, request.url), 308);
+    return NextResponse.redirect(new URL(`/inventory/used-cars-${city}${search}`, request.url), 308);
   }
 }
 
