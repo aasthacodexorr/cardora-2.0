@@ -16,12 +16,12 @@ import { Header, Footer } from "@/components/layout";
 import {
   Hero,
   CategoryPills,
-  RecentlyViewedVehicles,
   PreQualify,
   NextRide,
   FeaturedVehicles,
   Reviews,
   DealershipDifference,
+  RecentlyViewedVehicles
 } from "@/components/home";
 
 // Shared/reusable sections
@@ -37,8 +37,8 @@ const HomePage = () => {
       </div>
 
       {/* Homepage sections */}
+      <RecentlyViewedVehicles/>
       <CategoryPills />
-      <RecentlyViewedVehicles />
       <PreQualify />
       <NextRide />
       <FeaturedVehicles />
