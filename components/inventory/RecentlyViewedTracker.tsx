@@ -6,10 +6,12 @@ import { useRecentlyViewed } from "@/lib/recentlyViewed";
 
 interface RecentlyViewedTrackerProps {
   inventoryId: string | number;
+  vehicle?: Record<string, any> | null;
 }
 
 export default function RecentlyViewedTracker({
   inventoryId,
+  vehicle,
 }: RecentlyViewedTrackerProps) {
   const { addRecentlyViewed } = useRecentlyViewed();
   const lastTrackedInventoryId = useRef<string | null>(null);
@@ -22,8 +24,8 @@ export default function RecentlyViewedTracker({
     }
 
     lastTrackedInventoryId.current = normalizedId;
-    addRecentlyViewed(normalizedId);
-  }, [addRecentlyViewed, inventoryId]);
+    addRecentlyViewed(normalizedId, vehicle ?? undefined);
+  }, [addRecentlyViewed, inventoryId, vehicle]);
 
   return null;
 }

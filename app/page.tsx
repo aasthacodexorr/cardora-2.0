@@ -2,9 +2,9 @@
    Home Page
    Root page of the Cardora website.
    Composes all homepage sections in order:
-   Hero → CategoryPills → PreQualify → NextRide →
-   FeaturedVehicles → Reviews → CardoraDifference →
-   GetInTouch → Footer
+   Hero → CategoryPills → RecentlyViewedVehicles →
+   PreQualify → NextRide → FeaturedVehicles →
+   Reviews → CardoraDifference → GetInTouch → Footer
 ========================= */
 
 "use client";
@@ -16,6 +16,7 @@ import { Header, Footer } from "@/components/layout";
 import {
   Hero,
   CategoryPills,
+  RecentlyViewedVehicles,
   PreQualify,
   NextRide,
   FeaturedVehicles,
@@ -37,6 +38,7 @@ const HomePage = () => {
 
       {/* Homepage sections */}
       <CategoryPills />
+      <RecentlyViewedVehicles />
       <PreQualify />
       <NextRide />
       <FeaturedVehicles />
