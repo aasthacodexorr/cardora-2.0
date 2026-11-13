@@ -21,6 +21,7 @@ import {
   FeaturedVehicles,
   Reviews,
   DealershipDifference,
+  RecentlyViewedVehicles
 } from "@/components/home";
 
 // Shared/reusable sections
@@ -36,6 +37,7 @@ const HomePage = () => {
       </div>
 
       {/* Homepage sections */}
+      <RecentlyViewedVehicles/>
       <CategoryPills />
       <PreQualify />
       <NextRide />
