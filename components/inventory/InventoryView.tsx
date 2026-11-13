@@ -1983,7 +1983,7 @@ const InventoryContent = ({
   const config = useAppConfig();
   const { isWishlistDrawerOpen } = useDrawer();
   const { searchClient, TYPESENSE_COLLECTION_NAME } = useMemo(() => getTypesenseClient(config), [config]);
-  const locationSlug = isLocationPage && locationCity ? `used-car-${locationCity.toLowerCase()}` : undefined;
+  const locationSlug = isLocationPage && locationCity ? `used-cars-${locationCity.toLowerCase()}` : undefined;
   const router = useMemo(() => createInventoryRouter(config, locationSlug), [config, locationSlug]);
   const stateMapping = useMemo(() => createInventoryStateMapping(config), [config]);
 
