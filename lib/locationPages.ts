@@ -49,7 +49,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
   brampton: {
     city: "Brampton",
     province: "Ontario",
-    slug: "/inventory/used-car-brampton",
+    slug: "/inventory/used-cars-brampton",
     primaryKeyword: "used cars for sale in Brampton",
     secondaryKeywords: ["certified used cars Brampton", "pre-owned cars Brampton", "used car buying guide Ontario"],
     title: "Used Cars Brampton | Cardora",
@@ -183,8 +183,8 @@ export const locationPages: Record<string, LocationPageConfig> = {
             },
             {
                   "@type": "WebPage",
-                  "@id": "https://www.cardora.ca/inventory/used-car-brampton/#webpage",
-                  "url": "https://www.cardora.ca/inventory/used-car-brampton/",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-brampton/#webpage",
+                  "url": "https://www.cardora.ca/inventory/used-cars-brampton/",
                   "name": "Used Cars Brampton | Inspected Cars on Dixie Rd | Cardora",
                   "description": "Shop certified used cars in Brampton at Cardora, 8050 Dixie Rd. Inspected sedans and SUVs in stock. Financing for all credit.",
                   "inLanguage": "en-CA",
@@ -192,12 +192,12 @@ export const locationPages: Record<string, LocationPageConfig> = {
                         "@id": "https://www.cardora.ca/#dealer"
                   },
                   "breadcrumb": {
-                        "@id": "https://www.cardora.ca/inventory/used-car-brampton/#breadcrumb"
+                        "@id": "https://www.cardora.ca/inventory/used-cars-brampton/#breadcrumb"
                   }
             },
             {
                   "@type": "BreadcrumbList",
-                  "@id": "https://www.cardora.ca/inventory/used-car-brampton/#breadcrumb",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-brampton/#breadcrumb",
                   "itemListElement": [
                         {
                               "@type": "ListItem",
@@ -209,7 +209,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
                               "@type": "ListItem",
                               "position": 2,
                               "name": "Used Cars Brampton",
-                              "item": "https://www.cardora.ca/inventory/used-car-brampton/"
+                              "item": "https://www.cardora.ca/inventory/used-cars-brampton/"
                         }
                   ]
             }
@@ -219,7 +219,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
   mississauga: {
     city: "Mississauga",
     province: "Ontario",
-    slug: "/inventory/used-car-mississauga",
+    slug: "/inventory/used-cars-mississauga",
     primaryKeyword: "used cars for sale in Mississauga",
     secondaryKeywords: ["used cars in Mississauga", "pre-owned cars in Mississauga", "trade in my car in Mississauga"],
     title: "Used Cars in Mississauga | Cardora",
@@ -353,8 +353,8 @@ export const locationPages: Record<string, LocationPageConfig> = {
             },
             {
                   "@type": "WebPage",
-                  "@id": "https://www.cardora.ca/inventory/used-car-mississauga/#webpage",
-                  "url": "https://www.cardora.ca/inventory/used-car-mississauga/",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-mississauga/#webpage",
+                  "url": "https://www.cardora.ca/inventory/used-cars-mississauga/",
                   "name": "Used Cars Mississauga | Quality Pre-Owned Vehicles | Cardora",
                   "description": "Looking for used cars in Mississauga? Shop quality pre-owned SUVs, sedans and more at Cardora. Financing for all credit, 10-day exchange.",
                   "inLanguage": "en-CA",
@@ -362,12 +362,12 @@ export const locationPages: Record<string, LocationPageConfig> = {
                         "@id": "https://www.cardora.ca/#dealer"
                   },
                   "breadcrumb": {
-                        "@id": "https://www.cardora.ca/inventory/used-car-mississauga/#breadcrumb"
+                        "@id": "https://www.cardora.ca/inventory/used-cars-mississauga/#breadcrumb"
                   }
             },
             {
                   "@type": "BreadcrumbList",
-                  "@id": "https://www.cardora.ca/inventory/used-car-mississauga/#breadcrumb",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-mississauga/#breadcrumb",
                   "itemListElement": [
                         {
                               "@type": "ListItem",
@@ -379,7 +379,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
                               "@type": "ListItem",
                               "position": 2,
                               "name": "Used Cars Mississauga",
-                              "item": "https://www.cardora.ca/inventory/used-car-mississauga/"
+                              "item": "https://www.cardora.ca/inventory/used-cars-mississauga/"
                         }
                   ]
             }
@@ -389,7 +389,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
   toronto: {
     city: "Toronto",
     province: "Ontario",
-    slug: "/inventory/used-car-toronto",
+    slug: "/inventory/used-cars-toronto",
     primaryKeyword: "used cars for sale Toronto",
     secondaryKeywords: ["used cars in Toronto", "certified pre-owned cars in Toronto", "trade in my car in Toronto"],
     title: "Used Cars in Toronto | Quality Pre-Owned Vehicles | Cardora",
@@ -523,8 +523,8 @@ export const locationPages: Record<string, LocationPageConfig> = {
             },
             {
                   "@type": "WebPage",
-                  "@id": "https://www.cardora.ca/inventory/used-car-toronto/#webpage",
-                  "url": "https://www.cardora.ca/inventory/used-car-toronto/",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-toronto/#webpage",
+                  "url": "https://www.cardora.ca/inventory/used-cars-toronto/",
                   "name": "Used Cars Toronto | Quality Pre-Owned Vehicles | Cardora",
                   "description": "Looking for used cars in Toronto? Shop quality pre-owned SUVs, sedans and more at Cardora. Financing for all credit, 10-day exchange.",
                   "inLanguage": "en-CA",
@@ -532,12 +532,12 @@ export const locationPages: Record<string, LocationPageConfig> = {
                         "@id": "https://www.cardora.ca/#dealer"
                   },
                   "breadcrumb": {
-                        "@id": "https://www.cardora.ca/inventory/used-car-toronto/#breadcrumb"
+                        "@id": "https://www.cardora.ca/inventory/used-cars-toronto/#breadcrumb"
                   }
             },
             {
                   "@type": "BreadcrumbList",
-                  "@id": "https://www.cardora.ca/inventory/used-car-toronto/#breadcrumb",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-toronto/#breadcrumb",
                   "itemListElement": [
                         {
                               "@type": "ListItem",
@@ -549,7 +549,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
                               "@type": "ListItem",
                               "position": 2,
                               "name": "Used Cars Toronto",
-                              "item": "https://www.cardora.ca/inventory/used-car-toronto/"
+                              "item": "https://www.cardora.ca/inventory/used-cars-toronto/"
                         }
                   ]
             }
@@ -559,7 +559,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
   kitchener: {
     city: "Kitchener",
     province: "Ontario",
-    slug: "/inventory/used-car-kitchener",
+    slug: "/inventory/used-cars-kitchener",
     primaryKeyword: "used cars for sale in Kitchener",
     secondaryKeywords: ["used cars in Kitchener", "certified used cars in Kitchener", "used car dealer Kitchener"],
     title: "Used Cars in Kitchener | Cardora",
@@ -693,8 +693,8 @@ export const locationPages: Record<string, LocationPageConfig> = {
             },
             {
                   "@type": "WebPage",
-                  "@id": "https://www.cardora.ca/inventory/used-car-kitchener/#webpage",
-                  "url": "https://www.cardora.ca/inventory/used-car-kitchener/",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-kitchener/#webpage",
+                  "url": "https://www.cardora.ca/inventory/used-cars-kitchener/",
                   "name": "Used Cars Kitchener | Toyota RAV4 & Honda Civic | Cardora",
                   "description": "Looking for used cars in Kitchener? Shop certified Toyota RAV4 and Honda Civic models at Cardora. Financing for all credit, 10-day exchange.",
                   "inLanguage": "en-CA",
@@ -702,12 +702,12 @@ export const locationPages: Record<string, LocationPageConfig> = {
                         "@id": "https://www.cardora.ca/#dealer"
                   },
                   "breadcrumb": {
-                        "@id": "https://www.cardora.ca/inventory/used-car-kitchener/#breadcrumb"
+                        "@id": "https://www.cardora.ca/inventory/used-cars-kitchener/#breadcrumb"
                   }
             },
             {
                   "@type": "BreadcrumbList",
-                  "@id": "https://www.cardora.ca/inventory/used-car-kitchener/#breadcrumb",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-kitchener/#breadcrumb",
                   "itemListElement": [
                         {
                               "@type": "ListItem",
@@ -719,7 +719,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
                               "@type": "ListItem",
                               "position": 2,
                               "name": "Used Cars Kitchener",
-                              "item": "https://www.cardora.ca/inventory/used-car-kitchener/"
+                              "item": "https://www.cardora.ca/inventory/used-cars-kitchener/"
                         }
                   ]
             }
@@ -729,7 +729,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
   barrie: {
     city: "Barrie",
     province: "Ontario",
-    slug: "/inventory/used-car-barrie",
+    slug: "/inventory/used-cars-barrie",
     primaryKeyword: "used cars for sale in Barrie",
     secondaryKeywords: ["used cars Barrie", "pre-owned cars in Barrie", "used car dealership Barrie"],
     title: "Used Cars Barrie | Quality Pre-Owned Vehicles | Cardora",
@@ -863,8 +863,8 @@ export const locationPages: Record<string, LocationPageConfig> = {
             },
             {
                   "@type": "WebPage",
-                  "@id": "https://www.cardora.ca/inventory/used-car-barrie/#webpage",
-                  "url": "https://www.cardora.ca/inventory/used-car-barrie/",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-barrie/#webpage",
+                  "url": "https://www.cardora.ca/inventory/used-cars-barrie/",
                   "name": "Used Cars Barrie | Quality Pre-Owned Vehicles | Cardora",
                   "description": "Looking for used cars in Barrie? Shop quality pre-owned SUVs, sedans and more at Cardora. Financing for all credit, 10-day exchange.",
                   "inLanguage": "en-CA",
@@ -872,12 +872,12 @@ export const locationPages: Record<string, LocationPageConfig> = {
                         "@id": "https://www.cardora.ca/#dealer"
                   },
                   "breadcrumb": {
-                        "@id": "https://www.cardora.ca/inventory/used-car-barrie/#breadcrumb"
+                        "@id": "https://www.cardora.ca/inventory/used-cars-barrie/#breadcrumb"
                   }
             },
             {
                   "@type": "BreadcrumbList",
-                  "@id": "https://www.cardora.ca/inventory/used-car-barrie/#breadcrumb",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-barrie/#breadcrumb",
                   "itemListElement": [
                         {
                               "@type": "ListItem",
@@ -889,7 +889,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
                               "@type": "ListItem",
                               "position": 2,
                               "name": "Used Cars Barrie",
-                              "item": "https://www.cardora.ca/inventory/used-car-barrie/"
+                              "item": "https://www.cardora.ca/inventory/used-cars-barrie/"
                         }
                   ]
             }
@@ -899,7 +899,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
   hamilton: {
     city: "Hamilton",
     province: "Ontario",
-    slug: "/inventory/used-car-hamilton",
+    slug: "/inventory/used-cars-hamilton",
     primaryKeyword: "used cars for sale in Hamilton",
     secondaryKeywords: ["used cars in Hamilton", "certified used cars in Hamilton", "sell my car in Hamilton"],
     title: "Used Cars in Hamilton | Cardora",
@@ -1033,8 +1033,8 @@ export const locationPages: Record<string, LocationPageConfig> = {
             },
             {
                   "@type": "WebPage",
-                  "@id": "https://www.cardora.ca/inventory/used-car-hamilton/#webpage",
-                  "url": "https://www.cardora.ca/inventory/used-car-hamilton/",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-hamilton/#webpage",
+                  "url": "https://www.cardora.ca/inventory/used-cars-hamilton/",
                   "name": "Used Cars Hamilton | Quality Pre-Owned Vehicles | Cardora",
                   "description": "Looking for used cars in Hamilton? Shop quality pre-owned SUVs, sedans and more at Cardora. Financing for all credit, 10-day exchange.",
                   "inLanguage": "en-CA",
@@ -1042,12 +1042,12 @@ export const locationPages: Record<string, LocationPageConfig> = {
                         "@id": "https://www.cardora.ca/#dealer"
                   },
                   "breadcrumb": {
-                        "@id": "https://www.cardora.ca/inventory/used-car-hamilton/#breadcrumb"
+                        "@id": "https://www.cardora.ca/inventory/used-cars-hamilton/#breadcrumb"
                   }
             },
             {
                   "@type": "BreadcrumbList",
-                  "@id": "https://www.cardora.ca/inventory/used-car-hamilton/#breadcrumb",
+                  "@id": "https://www.cardora.ca/inventory/used-cars-hamilton/#breadcrumb",
                   "itemListElement": [
                         {
                               "@type": "ListItem",
@@ -1059,7 +1059,7 @@ export const locationPages: Record<string, LocationPageConfig> = {
                               "@type": "ListItem",
                               "position": 2,
                               "name": "Used Cars Hamilton",
-                              "item": "https://www.cardora.ca/inventory/used-car-hamilton/"
+                              "item": "https://www.cardora.ca/inventory/used-cars-hamilton/"
                         }
                   ]
             }
@@ -1088,7 +1088,7 @@ export function extractLocationFromSlug(slug: string): {
   return {
     cityKey,
     city,
-    locationSlug: `used-car-${cityKey}`,
+    locationSlug: `used-cars-${cityKey}`,
     config,
   };
 }

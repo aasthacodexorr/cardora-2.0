@@ -188,7 +188,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
   const { isInWishlist, addToWishlist, removeFromWishlist, isHydrated } = useWishlist();
   const { hasBeenViewed } = useRecentlyViewed();
 
-  const inventoryId = String(hit.inventory_id ?? "");
+  const inventoryId = String(hit.inventory_id ?? hit.id ?? "");
   const isRecentlyViewedVehicle = hasBeenViewed(inventoryId);
 
   useEffect(() => {
@@ -243,7 +243,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
     imageSrc = firstUrl.startsWith("/") ? `${SITE_CONFIG?.urls?.assetBaseUrl}${firstUrl}` : firstUrl;
   }
 
-  const slug = [hit.inventory_id, hit.year, hit.make, hit.model, hit.trim]
+  const slug = [hit.inventory_id ?? hit.id, hit.year, hit.make, hit.model, hit.trim]
     .filter(Boolean)
     .join("-")
     .toLowerCase()

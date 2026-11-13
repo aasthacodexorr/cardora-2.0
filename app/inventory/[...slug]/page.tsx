@@ -7,7 +7,7 @@ import LocationPage from "@/components/location/LocationPage";
 export const dynamic = "force-dynamic";
 
 // Supports shareable inventory filter paths, vehicle detail URLs,
-// and location-based inventory URLs (e.g. /inventory/used-car-brampton, /inventory/audi/used-car-brampton).
+// and location-based inventory URLs (e.g. /inventory/used-cars-brampton, /inventory/audi/used-cars-brampton).
 export default async function InventoryCatchAllPage({
   params,
 }: {
@@ -20,7 +20,7 @@ export default async function InventoryCatchAllPage({
     if (vehiclePage) return vehiclePage;
   }
 
-  // Check if any slug segment represents a location (e.g. used-car-brampton)
+  // Check if any slug segment represents a location (e.g. used-cars-brampton)
   const locationInfo = slug.map(extractLocationFromSlug).find(Boolean);
   if (locationInfo) {
     return <LocationPage cityKey={locationInfo.cityKey} />;

@@ -80,12 +80,12 @@ const Footer = () => {
     {
       title: "Browse by Location",
       links: [
-        { label: "Used Cars in Toronto", href: "/inventory/used-car-toronto", external: false },
-        { label: "Used Cars in Brampton", href: "/inventory/used-car-brampton", external: false },
-        { label: "Used Cars in Mississauga", href: "/inventory/used-car-mississauga", external: false },
-        { label: "Used Cars in Kitchener", href: "/inventory/used-car-kitchener", external: false },
-        { label: "Used Cars in Barrie", href: "/inventory/used-car-barrie", external: false },
-        { label: "Used Cars in Hamilton", href: "/inventory/used-car-hamilton", external: false },
+        { label: "Used Cars in Toronto", href: "/inventory/used-cars-toronto", external: false },
+        { label: "Used Cars in Brampton", href: "/inventory/used-cars-brampton", external: false },
+        { label: "Used Cars in Mississauga", href: "/inventory/used-cars-mississauga", external: false },
+        { label: "Used Cars in Kitchener", href: "/inventory/used-cars-kitchener", external: false },
+        { label: "Used Cars in Barrie", href: "/inventory/used-cars-barrie", external: false },
+        { label: "Used Cars in Hamilton", href: "/inventory/used-cars-hamilton", external: false },
       ],
     },
     {
