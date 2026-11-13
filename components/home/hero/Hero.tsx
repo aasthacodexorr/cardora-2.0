@@ -11,13 +11,9 @@
 "use client";
 
 import HeroHeadline from "./HeroHeadline";
-import HeroWelcomeBack from "./HeroWelcomeBack";
 import HeroSearchPanel from "./HeroSearchPanel";
-import { useVisitorTracking } from "@/lib/visitorTracking";
 
 const Hero = () => {
-  const { isReturningVisitor } = useVisitorTracking();
-
   return (
     <section className="w-full px-3.5 md:px-8 lg:mt-18 bg-hero-bg">
       <div className="mx-auto flex flex-col items-center gap-8 md:gap-12 max-w-[1600px]
@@ -25,7 +21,7 @@ const Hero = () => {
                       md:pt-[60px] md:pb-[60px]
                       pt-[40px] pb-[30px]">
 
-        {isReturningVisitor ? <HeroWelcomeBack /> : <HeroHeadline />}
+        <HeroHeadline />
         <HeroSearchPanel />
 
       </div>

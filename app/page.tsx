@@ -16,7 +16,6 @@ import { Header, Footer } from "@/components/layout";
 import {
   Hero,
   CategoryPills,
-  RecentlyViewedVehicles,
   PreQualify,
   NextRide,
   FeaturedVehicles,
@@ -38,7 +37,6 @@ const HomePage = () => {
 
       {/* Homepage sections */}
       <CategoryPills />
-      <RecentlyViewedVehicles />
       <PreQualify />
       <NextRide />
       <FeaturedVehicles />
