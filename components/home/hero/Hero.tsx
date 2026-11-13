@@ -23,7 +23,8 @@ const Hero = () => {
                       lg:flex-row lg:items-center lg:justify-center lg:pt-[87px] lg:pb-[75px]
                       md:pt-[60px] md:pb-[60px]
                       pt-[40px] pb-[30px]">
-        {isReturningVisitor ? <HeroWelcomeBack /> : <HeroHeadline />}
+        {/* {isReturningVisitor ? <HeroWelcomeBack /> : <HeroHeadline />} */}
+        <HeroHeadline />
         <HeroSearchPanel />
 
       </div>
