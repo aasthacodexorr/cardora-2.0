@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { HitCard } from "@/components/inventory";
-import { useRecentlyViewed } from "@/lib/recentlyViewed";
+import { useRecentlyViewed, MAX_RECENTLY_VIEWED_HOME } from "@/lib/recentlyViewed";
 
 export default function RecentlyViewedVehicles() {
   const [isMounted, setIsMounted] = useState(false);
@@ -18,8 +18,8 @@ export default function RecentlyViewedVehicles() {
     return null;
   }
 
-  // Display a maximum of 4 recently viewed vehicles
-  const displayVehicles = recentlyViewedVehicles.slice(0, 4);
+  // Display a maximum of 4 recently viewed vehicles on the home page
+  const displayVehicles = recentlyViewedVehicles.slice(0, MAX_RECENTLY_VIEWED_HOME);
 
   return (
     <section className="w-full bg-background mt-8 sm:mt-5 mb-8 sm:mb-1">

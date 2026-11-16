@@ -4,7 +4,10 @@ import { useMemo, useSyncExternalStore } from "react";
 import type { HitCardHit } from "@/components/inventory/HitCard";
 
 export const RECENTLY_VIEWED_STORAGE_KEY = "cardora_recently_viewed";
-export const MAX_RECENTLY_VIEWED = 4;
+export const MAX_RECENTLY_VIEWED_HOME = 4;
+export const MAX_STORED_RECENTLY_VIEWED = 100;
+// Retained for backwards compatibility if referenced elsewhere
+export const MAX_RECENTLY_VIEWED = MAX_RECENTLY_VIEWED_HOME;
 
 export interface RecentlyViewedItem {
   inventory_id: string | number;
@@ -301,7 +304,7 @@ export function addRecentlyViewed(
 
   next.unshift(nextItem);
 
-  saveItems(next.slice(0, MAX_RECENTLY_VIEWED));
+  saveItems(next.slice(0, MAX_STORED_RECENTLY_VIEWED));
 }
 
 export function clearRecentlyViewed() {
