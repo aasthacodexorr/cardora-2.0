@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { getFeaturedVehicles, type FeaturedVehicle } from "@/lib/featuredVehicles";
 import { useAppConfig } from "@/app/providers";
-import cardoraImg from "@/assets/icons/ad-card-3.jpg"
+import cardoraImg from "@/assets/brand/defaultImage.webp";
 
 type DisplayVehicle = {
   id: string;
@@ -141,19 +141,20 @@ export default function FeaturedVehicles() {
                 key={`${v.id}-${index}`}
                 className="snap-start shrink-0 w-full lg:w-[390px] rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
               >
-                <div className="aspect-square bg-muted">
-                  <Image
-                    src={v.image || defaultImg}
-                    alt={v.title}
-                    width={290}
-                    height={290}
-                    className="w-full h-full object-cover"
-                    priority={index < 3}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='290' height='290'%3E%3Crect fill='%23f0f0f0' width='290' height='290'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-family='sans-serif' font-size='14'%3EImage not available%3C/text%3E%3C/svg%3E";
-                    }}
-                  />
+                <div className="bg-muted p-4">
+                  <div className="overflow-hidden rounded-xl">
+                    <Image
+                      src={v.image || defaultImg}
+                      alt={v.title}
+                      width={290}
+                      height={290}
+                      className="block w-full h-auto object-cover"
+                      priority={index < 3}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = defaultImg;
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <div className="p-5">
