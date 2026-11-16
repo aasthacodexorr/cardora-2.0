@@ -10,9 +10,6 @@ const HeroWelcomeBack = ({ fullWidth = false }: HeroWelcomeBackProps) => {
   return (
     <div className={`w-full flex ${fullWidth ? "justify-start" : ""}`}>
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
         className={`flex flex-col items-start w-full font-semibold ${
           fullWidth ? "items-center text-center" : ""
         }`}
