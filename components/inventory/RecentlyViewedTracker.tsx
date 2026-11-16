@@ -14,16 +14,28 @@ export default function RecentlyViewedTracker({
   vehicle,
 }: RecentlyViewedTrackerProps) {
   const { addRecentlyViewed } = useRecentlyViewed();
-  const lastTrackedInventoryId = useRef<string | null>(null);
+  const lastTrackedKey = useRef<string | null>(null);
 
   useEffect(() => {
     const normalizedId = String(inventoryId).trim();
-
-    if (!normalizedId || lastTrackedInventoryId.current === normalizedId) {
+    if (!normalizedId) {
       return;
     }
 
-    lastTrackedInventoryId.current = normalizedId;
+    const hasVehicleData = Boolean(
+      vehicle && (vehicle.inventory_id || vehicle.id || vehicle.make || vehicle.model)
+    );
+    const trackingKey = `${normalizedId}-${hasVehicleData ? "with-vehicle" : "no-vehicle"}`;
+
+    if (lastTrackedKey.current === trackingKey) {
+      return;
+    }
+
+    if (lastTrackedKey.current === `${normalizedId}-with-vehicle` && !hasVehicleData) {
+      return;
+    }
+
+    lastTrackedKey.current = trackingKey;
     addRecentlyViewed(normalizedId, vehicle ?? undefined);
   }, [addRecentlyViewed, inventoryId, vehicle]);
 

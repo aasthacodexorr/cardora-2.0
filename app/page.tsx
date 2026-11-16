@@ -37,7 +37,7 @@ const HomePage = () => {
       </div>
 
       {/* Homepage sections */}
-      <RecentlyViewedVehicles/>
+      <RecentlyViewedVehicles />
       <CategoryPills />
       <PreQualify />
       <NextRide />

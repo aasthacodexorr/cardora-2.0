@@ -166,12 +166,11 @@ const Reviews = () => {
           </a>
         </div>
 
-        <div className="relative mt-5 lg:mt-0 px-4 md:px-10">
+        <div className="relative mt-5 lg:mt-0 px-4 md:px-0">
           <button
             onClick={() => scroll("left")}
             aria-label="Previous review"
-            className="flex absolute left-1 md:left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-card border border-border shadow-md items-center justify-center cursor-pointer hover:bg-accent transition-colors"
-          >
+            className="flex absolute left-0 md:-left-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center hover:bg-muted transition-colors"          >
             <ChevronLeft className="h-5 w-5 text-foreground" />
           </button>
 
@@ -220,7 +219,7 @@ const Reviews = () => {
           <button
             onClick={() => scroll("right")}
             aria-label="Next review"
-            className="flex absolute right-1 md:right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-card border border-border shadow-md items-center justify-center cursor-pointer hover:bg-accent transition-colors"
+            className="flex absolute right-0 md:-right-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center hover:bg-muted transition-colors"
           >
             <ChevronRight className="h-5 w-5 text-foreground" />
           </button>
