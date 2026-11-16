@@ -176,7 +176,15 @@ const InfoIcon = () => (
   </svg>
 );
 
-export const HitCard = ({ hit }: { hit: HitCardHit }) => {
+export interface HitCardProps {
+  hit: HitCardHit;
+  showRecentlyViewedBadge?: boolean;
+}
+
+export const HitCard = ({
+  hit,
+  showRecentlyViewedBadge = true,
+}: HitCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activePriceTab, setActivePriceTab] = useState<"finance" | "cash">("finance");
   const [activeTooltip, setActiveTooltip] = useState<"finance" | "cash" | "payment" | null>(null);
@@ -268,7 +276,7 @@ export const HitCard = ({ hit }: { hit: HitCardHit }) => {
                 }`}
             />
 
-            {isRecentlyViewedVehicle && (
+            {showRecentlyViewedBadge && isRecentlyViewedVehicle && (
               <div>
                 <RecentlyViewedTag />
               </div>

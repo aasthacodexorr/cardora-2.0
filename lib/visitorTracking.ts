@@ -19,7 +19,17 @@ export function hasViewedAnyVehicle(): boolean {
     const raw = window.localStorage.getItem(RECENTLY_VIEWED_STORAGE_KEY);
     if (!raw) return false;
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0;
+    if (!Array.isArray(parsed) || parsed.length === 0) return false;
+    return parsed.some(
+      (item) =>
+        Boolean(
+          item &&
+            ((item.vehicle && (item.vehicle.inventory_id || item.vehicle.id)) ||
+              item.inventory_id ||
+              item.inventoryId ||
+              item.id)
+        )
+    );
   } catch {
     return false;
   }
@@ -27,12 +37,12 @@ export function hasViewedAnyVehicle(): boolean {
 
 /**
  * Hook to determine if Welcome Back content should be shown on the homepage.
- * Returns true if the user has visited at least one vehicle from inventory (opened a VDP).
- * Stored in browser storage indefinitely until cache is removed.
+ * Returns true only if the user has visited at least one vehicle VDP and has
+ * available recently viewed cards to display.
  */
 export function useVisitorTracking() {
   const [isMounted, setIsMounted] = useState(false);
-  const { recentlyViewed } = useRecentlyViewed();
+  const { recentlyViewedVehicles } = useRecentlyViewed();
 
   useEffect(() => {
     setIsMounted(true);
@@ -48,12 +58,12 @@ export function useVisitorTracking() {
   }, []);
 
   // Show Welcome Back only if mounted on client (avoiding SSR hydration mismatch)
-  // and user has viewed at least one vehicle (has vehicle in recently viewed)
-  const isReturningVisitor = isMounted && recentlyViewed.length > 0;
+  // and user has viewed at least one VDP with available recently viewed vehicle cards
+  const hasRecentlyViewedCards = isMounted && recentlyViewedVehicles.length > 0;
 
   return {
-    isReturningVisitor,
-    hasViewedVehicles: isReturningVisitor,
+    isReturningVisitor: hasRecentlyViewedCards,
+    hasViewedVehicles: hasRecentlyViewedCards,
     isHydrated: isMounted,
   };
 }
