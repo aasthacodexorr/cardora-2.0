@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { HitCard } from "@/components/inventory";
 import { useRecentlyViewed, MAX_RECENTLY_VIEWED_HOME } from "@/lib/recentlyViewed";
 
@@ -35,6 +34,7 @@ export default function RecentlyViewedVehicles() {
             <HitCard
               key={String(vehicle.inventory_id ?? vehicle.id ?? index)}
               hit={vehicle}
+              showRecentlyViewedBadge={false}
             />
           ))}
         </div>

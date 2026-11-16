@@ -348,13 +348,19 @@ export function useRecentlyViewed() {
     );
   };
 
+  const recentlyViewedVehicles = useMemo(
+    () =>
+      recentlyViewed
+        .map((item) => item.vehicle)
+        .filter((v): v is HitCardHit => Boolean(v && (v.inventory_id || v.id))),
+    [recentlyViewed]
+  );
+
   return {
     recentlyViewed,
     recentlyViewedIds: recentlyViewed.map((item) => item.inventoryId),
-    recentlyViewedVehicles: recentlyViewed
-      .map((item) => item.vehicle)
-      .filter((v): v is HitCardHit => Boolean(v && (v.inventory_id || v.id))),
-    hasViewedVehicles: recentlyViewed.length > 0,
+    recentlyViewedVehicles,
+    hasViewedVehicles: recentlyViewedVehicles.length > 0,
     hasBeenViewed,
     wasViewedBeforeCurrentVisit,
     addRecentlyViewed,

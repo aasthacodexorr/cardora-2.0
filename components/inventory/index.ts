@@ -4,7 +4,7 @@
    directly from their source files in this folder.
 ========================= */
 
-export { HitCard } from "./HitCard";
+export { HitCard, type HitCardProps, type HitCardHit } from "./HitCard";
 export { RecentlyViewedTag } from "./RecentlyViewedTag";
 export { ImageGallery } from "./ImageGallery";
 export { default as AboutVehicle } from "./AboutVehicle";
