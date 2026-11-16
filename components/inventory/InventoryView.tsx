@@ -637,10 +637,10 @@ const LocationResultsCount = () => {
   const { results } = useHits();
   const { status } = useInstantSearch();
   if (!results || results.__isArtificial || status === "loading") {
-    return <span className="text-gray-400">· Loading inventory...</span>;
+    return <span className="text-gray-400">· &nbsp; results</span>;
   }
   const count = results?.nbHits || 0;
-  return <span>{count.toLocaleString()} results</span>;
+  return <span>· {count.toLocaleString()} results</span>;
 };
 
 const ClearFiltersButton = ({ mobile = false }: { mobile?: boolean }) => {
