@@ -63,7 +63,7 @@ const Reviews = () => {
   const appConfig = useAppConfig();
   const { SITE_CONFIG } = getConstants(appConfig);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const isScrolling = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [slidesToShow, setSlidesToShow] = useState(3);
 
   // Triple the array to provide buffer segments for infinite scrolling loops
@@ -82,27 +82,63 @@ const Reviews = () => {
 
   const getScrollAmount = () => {
     if (!scrollRef.current) return 0;
-    const firstChild = scrollRef.current.querySelector("[data-slide]");
-    return firstChild ? firstChild.clientWidth : scrollRef.current.clientWidth / slidesToShow;
+    const firstChild = scrollRef.current.querySelector("[data-slide]") as HTMLElement | null;
+    return firstChild ? firstChild.offsetWidth : scrollRef.current.clientWidth / slidesToShow;
+  };
+
+  const checkBoundary = () => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const scrollAmount = getScrollAmount();
+    const singleSetWidth = scrollAmount * reviews.length;
+    if (!singleSetWidth) return;
+
+    // Infinite loop boundary correction mechanics
+    if (container.scrollLeft >= singleSetWidth * 2 - 5) {
+      container.style.scrollBehavior = "auto";
+      container.scrollLeft -= singleSetWidth;
+      void container.offsetWidth;
+      container.style.scrollBehavior = "smooth";
+    } else if (container.scrollLeft <= singleSetWidth - scrollAmount) {
+      container.style.scrollBehavior = "auto";
+      container.scrollLeft += singleSetWidth;
+      void container.offsetWidth;
+      container.style.scrollBehavior = "smooth";
+    }
   };
 
   const scroll = (dir: "left" | "right") => {
-    if (!scrollRef.current || isScrolling.current) return;
-
     const container = scrollRef.current;
+    if (!container) return;
+
     const scrollAmount = getScrollAmount();
+    if (!scrollAmount) return;
 
-    isScrolling.current = true;
+    const singleSetWidth = scrollAmount * reviews.length;
 
-    // Use absolute coordinates instead of scrollBy to prevent multi-click calculation stacking
-    const targetScrollLeft = dir === "left"
-      ? container.scrollLeft - scrollAmount
-      : container.scrollLeft + scrollAmount;
+    // Pre-check boundary before scrolling to prevent hitting scroll boundaries
+    if (dir === "right" && container.scrollLeft >= singleSetWidth * 2 - scrollAmount) {
+      container.style.scrollBehavior = "auto";
+      container.scrollLeft -= singleSetWidth;
+      void container.offsetWidth;
+    } else if (dir === "left" && container.scrollLeft <= singleSetWidth) {
+      container.style.scrollBehavior = "auto";
+      container.scrollLeft += singleSetWidth;
+      void container.offsetWidth;
+    }
 
-    container.scrollTo({
-      left: targetScrollLeft,
+    container.style.scrollBehavior = "smooth";
+    container.scrollBy({
+      left: dir === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
     });
+
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    scrollTimeoutRef.current = setTimeout(() => {
+      checkBoundary();
+    }, 400);
   };
 
   useEffect(() => {
@@ -113,30 +149,29 @@ const Reviews = () => {
     const singleSetWidth = scrollAmount * reviews.length;
 
     // Initial jump to the middle track setup
-    container.scrollLeft = singleSetWidth;
+    if (container.scrollLeft === 0) {
+      container.scrollLeft = singleSetWidth;
+    }
 
-    const handleScrollEnd = () => {
-      if (!container) return;
-      const currentScrollAmount = getScrollAmount();
-      const currentSetWidth = currentScrollAmount * reviews.length;
-
-      // Infinite loop boundary correction mechanics
-      if (container.scrollLeft >= currentSetWidth * 2 - 10) {
-        container.style.scrollBehavior = "auto";
-        container.scrollLeft = container.scrollLeft - currentSetWidth;
-        container.style.scrollBehavior = "smooth";
-      } else if (container.scrollLeft <= currentScrollAmount) {
-        container.style.scrollBehavior = "auto";
-        container.scrollLeft = container.scrollLeft + currentSetWidth;
-        container.style.scrollBehavior = "smooth";
+    const handleScroll = () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
       }
-
-      // Unblock click interaction
-      isScrolling.current = false;
+      scrollTimeoutRef.current = setTimeout(() => {
+        checkBoundary();
+      }, 150);
     };
 
-    container.addEventListener("scrollend", handleScrollEnd);
-    return () => container.removeEventListener("scrollend", handleScrollEnd);
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    container.addEventListener("scrollend", checkBoundary);
+
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      container.removeEventListener("scroll", handleScroll);
+      container.removeEventListener("scrollend", checkBoundary);
+    };
   }, [slidesToShow]);
 
   return (
@@ -170,7 +205,7 @@ const Reviews = () => {
           <button
             onClick={() => scroll("left")}
             aria-label="Previous review"
-            className="flex absolute left-0 md:-left-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center hover:bg-muted transition-colors"          >
+            className="flex absolute cursor-pointer left-0 md:-left-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center hover:bg-muted transition-colors"          >
             <ChevronLeft className="h-5 w-5 text-foreground" />
           </button>
 
@@ -219,7 +254,7 @@ const Reviews = () => {
           <button
             onClick={() => scroll("right")}
             aria-label="Next review"
-            className="flex absolute right-0 md:-right-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center hover:bg-muted transition-colors"
+            className="flex absolute cursor-pointer right-0 md:-right-3 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center hover:bg-muted transition-colors"
           >
             <ChevronRight className="h-5 w-5 text-foreground" />
           </button>
