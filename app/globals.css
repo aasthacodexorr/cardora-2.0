@@ -271,3 +271,35 @@ html {
   height: 16px;
   display: block;
 }
+
+
+/* Hero Welcome Back vs Default Toggle (prevents flash of default text on load) */
+.hero-welcome-returning {
+  display: none;
+}
+.hero-welcome-default {
+  display: block;
+}
+html.is-returning-visitor .hero-welcome-returning {
+  display: block !important;
+}
+html.is-returning-visitor .hero-welcome-default {
+  display: none !important;
+}
+html:not(.is-returning-visitor) .hero-welcome-returning {
+  display: none !important;
+}
+html:not(.is-returning-visitor) .hero-welcome-default {
+  display: block !important;
+}
+
+/* Recently Viewed Placeholder Toggle (prevents category pills showing first then jumping) */
+.recently-viewed-placeholder {
+  display: none;
+}
+html.is-returning-visitor .recently-viewed-placeholder {
+  display: block !important;
+}
+html:not(.is-returning-visitor) .recently-viewed-placeholder {
+  display: none !important;
+}

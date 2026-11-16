@@ -76,6 +76,9 @@ export function resetVisitorTracking() {
   try {
     window.sessionStorage.removeItem(SESSION_VISIT_STORAGE_KEY);
     window.localStorage.removeItem(LAST_VISIT_STORAGE_KEY);
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.remove("is-returning-visitor");
+    }
   } catch {
     // Ignore storage errors
   }

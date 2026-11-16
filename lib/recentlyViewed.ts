@@ -181,6 +181,18 @@ function parseItems(value: string): RecentlyViewedItem[] {
   }
 }
 
+if (typeof window !== "undefined") {
+  try {
+    const initialRaw = window.localStorage.getItem(RECENTLY_VIEWED_STORAGE_KEY);
+    const initialItems = parseItems(initialRaw ?? EMPTY_SNAPSHOT);
+    if (initialItems.length > 0) {
+      document.documentElement.classList.add("is-returning-visitor");
+    }
+  } catch {
+    // Ignore storage check errors
+  }
+}
+
 function notifySubscribers() {
   for (const listener of listeners) {
     listener();
@@ -244,6 +256,11 @@ function saveItems(items: RecentlyViewedItem[]) {
   try {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(RECENTLY_VIEWED_STORAGE_KEY, nextSnapshot);
+      if (items.length > 0) {
+        document.documentElement.classList.add("is-returning-visitor");
+      } else {
+        document.documentElement.classList.remove("is-returning-visitor");
+      }
     }
   } catch (error) {
     console.error("Failed to save recently viewed vehicles:", error);
@@ -308,6 +325,9 @@ export function addRecentlyViewed(
 }
 
 export function clearRecentlyViewed() {
+  if (typeof document !== "undefined") {
+    document.documentElement.classList.remove("is-returning-visitor");
+  }
   saveItems([]);
 }
 
