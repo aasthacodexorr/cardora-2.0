@@ -1,11 +1,10 @@
 /* =========================
    FeaturedVehicles Component (Home)
    Auto-scrolling carousel of featured vehicles.
-   - Triples the data array for a seamless infinite loop
-   - Auto-advances every 3 seconds
-   - Manual left/right scroll buttons
-   - Resets scroll position when reaching either end
-     to create the illusion of infinite scrolling
+   - Responsive: shows 1 / 2 / 3 slides based on viewport like reviews
+   - Only shows navigation arrows if there are more than 3 vehicles
+   - Seamless infinite loop when more than 3 vehicles
+   - Native touch/swipe scrollable
 ========================= */
 
 "use client";
@@ -13,7 +12,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { getFeaturedVehicles, type FeaturedVehicle } from "@/lib/featuredVehicles";
+import { getFeaturedVehicles } from "@/lib/featuredVehicles";
 import { useAppConfig } from "@/app/providers";
 import cardoraImg from "@/assets/brand/defaultImage.webp";
 
@@ -25,16 +24,30 @@ type DisplayVehicle = {
   price: string;
 };
 
-const SCROLL_AMOUNT = 314; // Card width (290px) + Gap (24px)
-
-const defaultImg = cardoraImg?.src
+const defaultImg = cardoraImg?.src;
 
 export default function FeaturedVehicles() {
   const appConfig = useAppConfig();
   const [vehicles, setVehicles] = useState<DisplayVehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const isResetting = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [slidesToShow, setSlidesToShow] = useState(3);
+
+  const hasMoreThanThree = vehicles.length > 3;
+  // Only duplicate if we have more than 3 vehicles to support infinite carousel looping
+  const displayVehicles =  [...vehicles, ...vehicles, ...vehicles]
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 767) setSlidesToShow(1);
+      else if (window.innerWidth < 1024) setSlidesToShow(2);
+      else setSlidesToShow(3);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     getFeaturedVehicles(appConfig)
@@ -48,7 +61,9 @@ export default function FeaturedVehicles() {
           // Get image from static_images or fallback
           let imageUrl = "";
           if (vehicle.static_images?.length) {
-            imageUrl = vehicle.static_images.find((img) => img.active === "1")?.image_url || vehicle.static_images[0].image_url;
+            imageUrl =
+              vehicle.static_images.find((img) => img.active === "1")?.image_url ||
+              vehicle.static_images[0].image_url;
           }
 
           // Prepend CDN URL if relative path
@@ -64,7 +79,10 @@ export default function FeaturedVehicles() {
             image: imageUrl,
             title: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
             km: `${displayKm.toLocaleString()} ${vehicle.km_miles === "Miles" ? "Miles" : "KM"}`,
-            price: `$${displayPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+            price: `$${displayPrice.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
           };
         });
 
@@ -73,108 +91,186 @@ export default function FeaturedVehicles() {
       .finally(() => setLoading(false));
   }, []);
 
+  const getScrollAmount = () => {
+    if (!scrollRef.current) return 0;
+    const firstChild = scrollRef.current.querySelector("[data-slide]") as HTMLElement | null;
+    return firstChild ? firstChild.offsetWidth : scrollRef.current.clientWidth / slidesToShow;
+  };
+
+  const checkBoundary = () => {
+    if (!hasMoreThanThree) return;
+    const container = scrollRef.current;
+    if (!container) return;
+    const scrollAmount = getScrollAmount();
+    const singleSetWidth = scrollAmount * vehicles.length;
+    if (!singleSetWidth) return;
+
+    if (container.scrollLeft >= singleSetWidth * 2 - 5) {
+      container.style.scrollBehavior = "auto";
+      container.scrollLeft -= singleSetWidth;
+      void container.offsetWidth;
+      container.style.scrollBehavior = "smooth";
+    } else if (container.scrollLeft <= singleSetWidth - scrollAmount) {
+      container.style.scrollBehavior = "auto";
+      container.scrollLeft += singleSetWidth;
+      void container.offsetWidth;
+      container.style.scrollBehavior = "smooth";
+    }
+  };
+
   const scroll = (dir: "left" | "right") => {
-    if (!scrollRef.current || isResetting.current) return;
-    scrollRef.current.scrollBy({
-      left: dir === "left" ? -SCROLL_AMOUNT : SCROLL_AMOUNT,
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const scrollAmount = getScrollAmount();
+    if (!scrollAmount) return;
+
+    if (hasMoreThanThree) {
+      const singleSetWidth = scrollAmount * vehicles.length;
+
+      // Pre-check boundary before scrolling to wrap around seamlessly
+      if (dir === "right" && container.scrollLeft >= singleSetWidth * 2 - scrollAmount) {
+        container.style.scrollBehavior = "auto";
+        container.scrollLeft -= singleSetWidth;
+        void container.offsetWidth;
+      } else if (dir === "left" && container.scrollLeft <= singleSetWidth) {
+        container.style.scrollBehavior = "auto";
+        container.scrollLeft += singleSetWidth;
+        void container.offsetWidth;
+      }
+    }
+
+    container.style.scrollBehavior = "smooth";
+    container.scrollBy({
+      left: dir === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
     });
+
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    scrollTimeoutRef.current = setTimeout(() => {
+      checkBoundary();
+    }, 400);
   };
 
   useEffect(() => {
     const container = scrollRef.current;
     if (!container || vehicles.length === 0) return;
 
-    const singleSetWidth = SCROLL_AMOUNT * vehicles.length;
-    container.scrollLeft = singleSetWidth;
+    if (hasMoreThanThree) {
+      const scrollAmount = getScrollAmount();
+      const singleSetWidth = scrollAmount * vehicles.length;
 
-    const handleScrollEnd = () => {
-      if (!container) return;
-
-      if (container.scrollLeft >= singleSetWidth * 2) {
-        isResetting.current = true;
-        container.style.scrollBehavior = "auto";
-        container.scrollLeft = container.scrollLeft - singleSetWidth;
-        container.style.scrollBehavior = "smooth";
-        isResetting.current = false;
+      if (container.scrollLeft === 0) {
+        container.scrollLeft = singleSetWidth;
       }
 
-      if (container.scrollLeft <= SCROLL_AMOUNT) {
-        isResetting.current = true;
-        container.style.scrollBehavior = "auto";
-        container.scrollLeft = container.scrollLeft + singleSetWidth;
-        container.style.scrollBehavior = "smooth";
-        isResetting.current = false;
-      }
-    };
+      const handleScroll = () => {
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+        }
+        scrollTimeoutRef.current = setTimeout(() => {
+          checkBoundary();
+        }, 150);
+      };
 
-    container.addEventListener("scrollend", handleScrollEnd);
-    return () => container.removeEventListener("scrollend", handleScrollEnd);
-  }, [vehicles.length]);
+      container.addEventListener("scroll", handleScroll, { passive: true });
+      container.addEventListener("scrollend", checkBoundary);
+
+      return () => {
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+        }
+        container.removeEventListener("scroll", handleScroll);
+        container.removeEventListener("scrollend", checkBoundary);
+      };
+    } else {
+      container.scrollLeft = 0;
+    }
+  }, [vehicles.length, slidesToShow, hasMoreThanThree]);
 
   if (loading || vehicles.length === 0) return null;
 
-  const duplicatedVehicles = [...vehicles, ...vehicles, ...vehicles];  
-
   return (
     <section className="w-full bg-background mt-[36px] mb-[35px] overflow-hidden font-carmax">
-      <div className="max-w-[1280px] mx-auto px-[23px] lg:px-[20px] py-10 lg:py-12 relative">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-10 lg:py-12 relative">
         <h2 className="text-[28px] lg:text-[44px] lg:font-bold text-foreground tracking-tight text-center mb-12 lg:mb-8">
           Shop featured vehicles
         </h2>
 
-        <div className="relative">
-          <button
-            onClick={() => scroll("left")}
-            aria-label="Scroll left"
-            className="flex absolute left-0 md:-left-3 top-1/2 cursor-pointer -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center hover:bg-muted transition-colors"
-          >
-            <ChevronLeft className="h-5 w-5 text-foreground" />
-          </button>
+        <div className="relative mt-5 lg:mt-0 px-4 md:px-0">
+          {hasMoreThanThree && (
+            <button
+              onClick={() => scroll("left")}
+              aria-label="Scroll left"
+              className="flex absolute left-0 md:-left-3 top-1/2 cursor-pointer -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center hover:bg-muted transition-colors"
+            >
+              <ChevronLeft className="h-5 w-5 text-foreground" />
+            </button>
+          )}
 
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-full snap-x snap-mandatory"
           >
-            {duplicatedVehicles.map((v, index) => (
-              <article
-                key={`${v.id}-${index}`}
-                className="snap-start shrink-0 w-full lg:w-[390px] rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
-              >
-                <div className="bg-muted p-4">
-                  <div className="overflow-hidden rounded-xl">
-                    <Image
-                      src={v.image || defaultImg}
-                      alt={v.title}
-                      width={290}
-                      height={290}
-                      className="block w-full h-auto object-cover"
-                      priority={index < 3}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = defaultImg;
-                      }}
-                    />
-                  </div>
-                </div>
+            <div
+              className={`flex w-full py-2 ${
+                !hasMoreThanThree && vehicles.length === 1 ? "justify-center" : ""
+              }`}
+            >
+              {displayVehicles.map((v, index) => (
+                <div
+                  key={`${v.id}-${index}`}
+                  data-slide
+                  className={`snap-center shrink-0 lg:flex-shrink-0 px-2 md:px-3 ${
+                    slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
+                  }`}
+                >
+                  <article className="rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
+                    <div className="bg-muted p-4">
+                      <div className="overflow-hidden rounded-xl">
+                        <Image
+                          src={v.image || defaultImg}
+                          alt={v.title}
+                          width={380}
+                          height={250}
+                          className="block w-full h-full object-cover"
+                          priority={index < 3}
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = defaultImg;
+                          }}
+                        />
+                      </div>
+                    </div>
 
-                <div className="p-5">
-                  <h3 className="text-[18px] font-bold text-foreground">{v.title}</h3>
-                  <p className="text-[14px] text-foreground/70 mt-1">{v.km}</p>
-                  <div className="border-t border-border my-4" />
-                  <p className="text-[22px] font-bold text-price-green">{v.price}</p>
-                  {/* <p className="text-[13px] text-muted-foreground mt-1">Excl. HST &amp; licensing</p> */}
+                    <div className="p-5 flex flex-col flex-1 justify-between">
+                      <div>
+                        <h3 className="text-[18px] font-bold text-foreground line-clamp-1">
+                          {v.title}
+                        </h3>
+                        <p className="text-[14px] text-foreground/70 mt-1">{v.km}</p>
+                      </div>
+                      <div>
+                        <div className="border-t border-border my-4" />
+                        <p className="text-[22px] font-bold text-price-green">{v.price}</p>
+                      </div>
+                    </div>
+                  </article>
                 </div>
-              </article>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <button
-            onClick={() => scroll("right")}
-            aria-label="Scroll right"
-            className="flex absolute right-0 md:-right-3 top-1/2 cursor-pointer -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center hover:bg-muted transition-colors"
-          >
-            <ChevronRight className="h-5 w-5 text-foreground" />
-          </button>
+          {hasMoreThanThree && (
+            <button
+              onClick={() => scroll("right")}
+              aria-label="Scroll right"
+              className="flex absolute right-0 md:-right-3 top-1/2 cursor-pointer -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full bg-card border border-border shadow-md items-center justify-center hover:bg-muted transition-colors"
+            >
+              <ChevronRight className="h-5 w-5 text-foreground" />
+            </button>
+          )}
         </div>
       </div>
     </section>
