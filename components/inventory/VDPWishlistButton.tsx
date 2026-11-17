@@ -7,9 +7,13 @@ import { getEffectivePrice } from "@/utils/pricing";
 
 interface VDPWishlistButtonProps {
   vehicle: Record<string, any>;
+  className?: string;
 }
 
-export default function VDPWishlistButton({ vehicle }: VDPWishlistButtonProps) {
+export default function VDPWishlistButton({
+  vehicle,
+  className = "px-4 py-3",
+}: VDPWishlistButtonProps) {
   const { addToWishlist, removeFromWishlist, isInWishlist, isHydrated } = useWishlist();
   const [showToast, setShowToast] = useState(false);
 
@@ -47,8 +51,9 @@ export default function VDPWishlistButton({ vehicle }: VDPWishlistButtonProps) {
   return (
     <>
       <button
+        type="button"
         onClick={handleClick}
-        className={`flex items-center gap-2 px-4 cursor-pointer py-3 rounded-lg font-semibold transition-all duration-300`}
+        className={`flex items-center justify-between cursor-pointer rounded-lg font-semibold transition-all duration-300 ${className}`}
         aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
       >
         <svg

@@ -9,6 +9,8 @@ import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
+import { RecentlyViewedTag } from "./RecentlyViewedTag";
+import { useRecentlyViewed } from "@/lib/recentlyViewed";
 
 import LightGallery from "lightgallery/react";
 import type { LightGallery as LightGalleryInstance } from "lightgallery/lightgallery";
@@ -33,14 +35,16 @@ import lgShare from "lightgallery/plugins/share";
 type ImageGalleryProps = {
   images: string[];
   title: string;
+  inventoryId: string | number;
   isSold?: boolean;
   centered?: boolean;
 };
 
-export const ImageGallery = ({ images, title, isSold = false, centered }: ImageGalleryProps) => {
+export const ImageGallery = ({ images, title, inventoryId, isSold = false, centered }: ImageGalleryProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for left, 1 for right
   const [stripHeight, setStripHeight] = useState<number | null>(null);
+  const { wasViewedBeforeCurrentVisit } = useRecentlyViewed();
 
   const lightboxRef = useRef<LightGalleryInstance | null>(null);
   const desktopThumbsRef = useRef<HTMLDivElement | null>(null);
@@ -216,6 +220,10 @@ export const ImageGallery = ({ images, title, isSold = false, centered }: ImageG
           }}
           className="relative rounded-2xl xl:min-w-[775px] xl:max-w-[750px] 2xl:min-w-[850px] overflow-hidden bg-gray-100 shadow-sm cursor-zoom-in aspect-[4/3] w-full touch-pan-y"
         >
+          {wasViewedBeforeCurrentVisit(inventoryId) && (
+            <RecentlyViewedTag variant="overlay" />
+          )}
+
           {isSold && (
             <div className="absolute top-4 right-4 z-20 bg-red-600 text-white text-sm font-bold px-4 py-2 rounded-md shadow-lg uppercase">
               Sold

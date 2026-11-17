@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 import { setQueryParams } from "@/utils/queryParams";
 import QueryParamIframe from "@/components/common/QueryParamIframe";
 import QueryParamLink from "@/components/common/QueryParamLink";
+import VDPWishlistButton from "@/components/inventory/VDPWishlistButton";
 import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
 
 
@@ -337,8 +338,12 @@ export const PriceAndCTA = ({ vehicle }: any) => {
 
 // 2. This sub-component stays completely decoupled and lightweight
 export const VehicleHeader = ({ vehicle }: any) => (
-  <div className="rounded-t-xl px-5 py-6 text-center w-full bg-light-blue tracking-wide">
-    <h1 className="text-[30px] font-bold text-gray-900 leading-tight tracking-wide">
+  <div className="relative rounded-t-xl px-5 py-10 text-center w-full bg-light-blue tracking-wide">
+    <VDPWishlistButton
+      vehicle={vehicle}
+      className="absolute top-1 right-2 !p-2 "
+    />
+    <h1 className="px- text-[30px] font-bold text-gray-900 leading-tight tracking-wide">
       {vehicle?.year} {vehicle?.make} {vehicle?.model}
     </h1>
 
