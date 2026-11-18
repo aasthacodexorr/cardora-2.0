@@ -346,7 +346,7 @@ export default async function VehicleDetailsPage({
                     {/* Finance Calculator - Now spans full responsive width within the centralized container bounds */}
                     <div className="mt-12 w-full">
                         {/* CarMax-Style Vehicle Features Showcase */}
-                                <VehicleFeatures vehicle={vehicleForFeatures} />
+                                {/* <VehicleFeatures vehicle={vehicleForFeatures} /> */}
 
                         <FinanceCalculator
                             vehiclePrice={getEffectivePrice(vehicle.price, vehicle.special_price) ?? undefined}
