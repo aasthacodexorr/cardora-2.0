@@ -273,9 +273,6 @@ export default function WelcomeBackWidget() {
             className="relative w-11 h-11 sm:w-13 sm:h-13 bg-brand hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-xl shadow-brand/25 border border-brand-green2 hover:scale-105 active:scale-95 transition-all cursor-pointer animate-widget-pulse"
           >
             <BellIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white animate-bell-ring" />
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-brand font-bold text-[11px] rounded-full flex items-center justify-center shadow-md border border-brand/20">
-              1
-            </span>
           </button>
         </motion.div>
       )}
