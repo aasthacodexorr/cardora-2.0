@@ -7,14 +7,48 @@ import {
   useCurrentRefinements,
 } from "react-instantsearch";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useAppConfig } from "@/app/providers";
+import { PopularFeatureTag } from "@/types/vehicle";
 import {
-  POPULAR_FEATURE_LIST,
+  DEFAULT_POPULAR_FEATURE_TAGS,
   isFeatureMatch,
   getCanonicalFeatureName,
   PopularFeatureName,
 } from "@/constants/popularFeatures";
 
 export default function PopularFeatureSearchChips() {
+  const appConfig = useAppConfig();
+
+  // Initialize with appConfig or default popular feature tags
+  const [featureTags, setFeatureTags] = useState<PopularFeatureTag[]>(() => {
+    const fromConfig = appConfig?.vehicle_default_popular_tags;
+    return Array.isArray(fromConfig) && fromConfig.length > 0
+      ? fromConfig
+      : DEFAULT_POPULAR_FEATURE_TAGS;
+  });
+
+  // Keep synced with appConfig or fetch directly from inventory configurations endpoint
+  useEffect(() => {
+    const fromConfig = appConfig?.vehicle_default_popular_tags;
+    if (Array.isArray(fromConfig) && fromConfig.length > 0) {
+      setFeatureTags(fromConfig);
+      return;
+    }
+
+    fetch(
+      "https://demo.zopsoftware.com/api/website/inventory/configurations/default-popular-features"
+    )
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setFeatureTags(data);
+        }
+      })
+      .catch(() => {
+        // Fallback to DEFAULT_POPULAR_FEATURE_TAGS already present
+      });
+  }, [appConfig?.vehicle_default_popular_tags]);
+
   // Mount refinement list for popular_features so InstantSearch manages the facet attribute
   useRefinementList({
     attribute: "popular_features",
@@ -159,22 +193,36 @@ export default function PopularFeatureSearchChips() {
         className="w-full overflow-x-auto no-scrollbar scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
         <div className="inline-flex items-center gap-2 pr-2 py-0.5">
-          {POPULAR_FEATURE_LIST.map((featureName) => {
-            const active = isFeatureActive(featureName);
+          {featureTags.map((tag) => {
+            const featureName = (tag.label || tag.value || "") as PopularFeatureName;
+            const active =
+              isFeatureActive(featureName) ||
+              (tag.value ? isFeatureActive(tag.value as PopularFeatureName) : false);
 
             return (
               <button
-                key={featureName}
+                key={tag.label || tag.value}
                 type="button"
                 onClick={() => handleToggle(featureName)}
                 aria-pressed={active}
-                className={`shrink-0 inline-flex items-center justify-center whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs sm:text-[13px] font-medium leading-none cursor-pointer select-none transition-all duration-150 ${
+                className={`shrink-0 inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-full text-xs sm:text-[13px] font-medium leading-none cursor-pointer select-none transition-all duration-150 ${
                   active
                     ? "bg-[#111827] text-white border border-[#111827] shadow-xs hover:bg-black"
                     : "bg-white text-gray-800 border border-gray-300 hover:border-gray-400 hover:bg-gray-50 active:bg-gray-100"
                 }`}
               >
-                {featureName}
+                {tag.icon && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={tag.icon}
+                    alt=""
+                    className={`w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain transition-all shrink-0 ${
+                      active ? "brightness-0 invert" : "opacity-80"
+                    }`}
+                    loading="lazy"
+                  />
+                )}
+                <span>{tag.label || tag.value}</span>
               </button>
             );
           })}

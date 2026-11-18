@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Vehicle } from "@/types/vehicle";
 import {
-  parseWarrantyDetails,
+  getManufacturerWarranties,
   groupWarrantiesByType,
   formatWarrantyCoverageText,
 } from "@/utils/warranty";
@@ -20,20 +20,7 @@ export default function WarrantyStatus({ vehicle }: WarrantyStatusProps) {
     vehicle?.show_manufacturer_warranty_details === true ||
     vehicle?.show_manufacturer_warranty_details === "true";
 
-  if (!isEnabled) {
-    return null;
-  }
-
-  // 2. Parse warranty details (handles array, JSON string, empty string, null, etc.)
-  const details = parseWarrantyDetails(vehicle?.manufacturer_warranty_details);
-  if (details.length === 0) {
-    return null;
-  }
-
-  // 3. Group by warranty_type
-  const groups = groupWarrantiesByType(details);
-
-  // 4. Hydration-safe date calculation with periodic update on date change
+  // Hydration-safe date calculation with periodic update on date change
   const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
 
   useEffect(() => {
@@ -59,6 +46,19 @@ export default function WarrantyStatus({ vehicle }: WarrantyStatusProps) {
     return () => clearTimeout(timer);
   }, []);
 
+  // 2. Calculate manufacturer warranties using the exact platform formula
+  const calculatedWarranties = useMemo(() => {
+    if (!isEnabled) return [];
+    return getManufacturerWarranties(vehicle, currentDate);
+  }, [isEnabled, vehicle, currentDate]);
+
+  if (!isEnabled || calculatedWarranties.length === 0) {
+    return null;
+  }
+
+  // 3. Group by warranty_type
+  const groups = groupWarrantiesByType(calculatedWarranties);
+
   return (
     <section className="w-full mt-8 font-sans" aria-labelledby="warranty-status-heading">
       <h2
@@ -78,21 +78,21 @@ export default function WarrantyStatus({ vehicle }: WarrantyStatusProps) {
 
               <ul className="space-y-2.5">
                 {group.items.map((item, itemIdx) => {
-                  const { text } = formatWarrantyCoverageText(
-                    item,
-                    vehicle?.in_service_date,
-                    currentDate
-                  );
+                  const { text, isExpired } = formatWarrantyCoverageText(item);
 
                   return (
                     <li
                       key={itemIdx}
                       className="flex items-start gap-2.5 text-[14px] md:text-[15px] text-gray-700"
                     >
-                      <span className="flex-shrink-0 mt-0.5 text-emerald-600">
+                      <span
+                        className={`flex-shrink-0 mt-0.5 ${
+                          isExpired ? "text-gray-400" : "text-emerald-600"
+                        }`}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="w-4 h-4 text-emerald-600"
+                          className="w-4 h-4"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                           aria-hidden="true"

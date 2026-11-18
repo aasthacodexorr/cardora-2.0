@@ -27,7 +27,6 @@ function BellIcon({ className }: { className?: string }) {
 import { useRecentlyViewed } from "@/lib/recentlyViewed";
 import { useAppConfig } from "@/app/providers";
 import { getConstants } from "@/constants";
-import { isVehicleDetailSlug } from "@/lib/inventoryUrls";
 
 export default function WelcomeBackWidget() {
   const pathname = usePathname();
@@ -37,73 +36,49 @@ export default function WelcomeBackWidget() {
 
   const [isMounted, setIsMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Latest vehicle viewed
   const latestVehicle = recentlyViewedVehicles[0];
 
-  // Route calculations
-  const routeInfo = useMemo(() => {
-    if (!pathname) {
-      return { isVdp: false, isInventoryListing: false, isHomePage: false };
-    }
-
-    const isHome = pathname === "/";
-    const isInvPath = pathname === "/inventory" || pathname.startsWith("/inventory/");
-
-    if (!isInvPath) {
-      return { isVdp: false, isInventoryListing: false, isHomePage: isHome };
-    }
-
-    const segments = pathname.replace(/^\/inventory\/?/, "").split("/").filter(Boolean);
-    const isVehiclePage = isVehicleDetailSlug(segments);
-
-    return {
-      isVdp: isVehiclePage,
-      isInventoryListing: !isVehiclePage,
-      isHomePage: isHome,
-    };
-  }, [pathname]);
-
-  const { isVdp, isInventoryListing, isHomePage } = routeInfo;
+  // Route check
+  const isHomePage = pathname === "/" || pathname === "";
 
   // Mount detection for SSR safety
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Handle auto-open on Inventory listing page vs closed on Homepage
+  // Handle visibility timing and open-by-default behavior (same as Tabangi):
+  // - On all pages where a vehicle has been viewed (Home, VDP, Inventory, etc.), the widget appears after a delay (~2.5s)
+  // - On Home page (/), the popup is OPEN by default
+  // - On all other pages (including VDP, Inventory listing, Finance, About, etc.), the popup is NOT opened by default (only the bell icon is shown)
   useEffect(() => {
     if (!isMounted || !latestVehicle) return;
 
-    // Do nothing on VDP pages
-    if (isVdp) {
-      setIsOpen(false);
-      return;
-    }
+    // Reset visibility on route change so delay takes effect
+    setIsVisible(false);
+    setIsOpen(false);
 
-    if (isInventoryListing) {
-      // Check if user already dismissed for the current VDP visit
-      try {
-        const lastVdpTime = window.sessionStorage.getItem("cardora_last_vdp_view_time") || "initial";
-        const lastDismissedTime = window.sessionStorage.getItem("cardora_welcome_back_dismissed");
+    let openTimer: NodeJS.Timeout | null = null;
+    const delayTimer = setTimeout(() => {
+      setIsVisible(true);
 
-        if (lastDismissedTime !== lastVdpTime) {
-          // Auto-open with a brief delay for a polished entry transition
-          const timer = setTimeout(() => {
-            setIsOpen(true);
-          }, 350);
-          return () => clearTimeout(timer);
-        }
-      } catch {
-        // Fallback open if storage is unavailable
-        setIsOpen(true);
+      if (isHomePage) {
+        // On Home page: open popup by default
+        openTimer = setTimeout(() => {
+          setIsOpen(true);
+        }, 150);
       }
-    } else if (isHomePage) {
-      // On Home page, initial view is closed with bell icon shown
-      setIsOpen(false);
-    }
-  }, [pathname, isInventoryListing, isHomePage, isVdp, isMounted, latestVehicle?.inventory_id]);
+      // On all other pages (including VDP and /inventory), isOpen stays false by default
+    }, 2500);
+
+    return () => {
+      clearTimeout(delayTimer);
+      if (openTimer) clearTimeout(openTimer);
+    };
+  }, [pathname, isHomePage, isMounted, latestVehicle?.inventory_id]);
 
   // Click outside to dismiss popup
   useEffect(() => {
@@ -129,22 +104,14 @@ export default function WelcomeBackWidget() {
 
   const handleClose = () => {
     setIsOpen(false);
-    try {
-      if (typeof window !== "undefined") {
-        const lastVdpTime = window.sessionStorage.getItem("cardora_last_vdp_view_time") || "initial";
-        window.sessionStorage.setItem("cardora_welcome_back_dismissed", lastVdpTime);
-      }
-    } catch {
-      // Ignore storage errors
-    }
   };
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
   };
 
-  // Do not render anything during SSR, if on VDP page, or if no vehicle has been viewed
-  if (!isMounted || isVdp || !latestVehicle) {
+  // Do not render anything during SSR, if no vehicle has been viewed, or if not yet visible
+  if (!isMounted || !latestVehicle || !isVisible) {
     return null;
   }
 
@@ -179,122 +146,132 @@ export default function WelcomeBackWidget() {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[60] flex flex-col items-start select-none pointer-events-auto">
-      {/* Welcome Back Popup Card */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            ref={cardRef}
-            initial={{ opacity: 0, y: 16, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.96 }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
-            className="relative bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden w-[calc(100vw-32px)] max-w-[300px] sm:max-w-[325px] mb-2.5 sm:mb-3 text-left max-h-[calc(100dvh-90px)] flex flex-col"
-          >
-            {/* Top brand-colored arched cap */}
-            <div className="h-2.5 bg-brand w-full flex-shrink-0" />
-
-            {/* Close button */}
-            <button
-              type="button"
-              onClick={handleClose}
-              aria-label="Close"
-              className="absolute top-3.5 right-3 text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer z-20"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <div className="p-3.5 sm:p-4 pt-2.5 sm:pt-3.5 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-              {/* Header */}
-              <div className="text-center pr-6 pl-6">
-                <h3 className="text-brand font-bold text-lg sm:text-xl tracking-tight leading-tight">
-                  Welcome back!
-                </h3>
-                <p className="text-gray-500 text-[12px] sm:text-[13px] mt-0.5">
-                  Continue where you left off
-                </p>
-              </div>
-
-              {/* Clickable Vehicle Area (opens VDP in new tab) */}
-              <Link
-                href={vdpUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsOpen(false)}
-                className="group/item block focus:outline-none"
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.85, y: 20 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[60] flex flex-col items-start select-none pointer-events-auto"
+        >
+          {/* Welcome Back Popup Card - slides in from bottom to top like Tabangi */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                ref={cardRef}
+                initial={{ opacity: 0, y: 60, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 40, scale: 0.95 }}
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                className="relative bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden w-[calc(100vw-32px)] max-w-[300px] sm:max-w-[325px] mb-2.5 sm:mb-3 text-left max-h-[calc(100dvh-90px)] flex flex-col origin-bottom-left"
               >
-                {/* Vehicle Image */}
-                <div className="relative w-full h-[170px] rounded-xl overflow-hidden bg-gray-100 mt-2.5 sm:mt-3 border border-gray-100 flex-shrink-0">
-                  <Image
-                    src={imageSrc}
-                    alt={vehicleTitle}
-                    fill
-                    sizes="(max-width: 640px) 280px, 320px"
-                    className="object-cover group-hover/item:scale-105 transition-transform duration-300"
-                    unoptimized
-                  />
-                </div>
+                {/* Top brand-colored arched cap */}
+                <div className="h-2.5 bg-brand w-full flex-shrink-0" />
 
-                {/* Vehicle Title */}
-                <h4
-                  className="text-foreground group-hover/item:text-brand font-bold text-[14px] sm:text-[16px] text-center mt-2.5 sm:mt-3 truncate px-1 transition-colors"
-                  title={vehicleTitle}
-                >
-                  {vehicleTitle}
-                </h4>
-              </Link>
-
-              {/* Action Buttons Row 1: See More & Not Now */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mt-2.5 sm:mt-3">
-                <Link
-                  href={vdpUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setIsOpen(false)}
-                  className="bg-brand hover:opacity-90 text-white text-xs sm:text-[13px] font-semibold py-2 px-3 rounded-lg text-center transition-opacity shadow-sm border border-brand-green2 flex items-center justify-center"
-                >
-                  See More
-                </Link>
+                {/* Close button */}
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="border border-brand text-brand hover:bg-brand/10 text-xs sm:text-[13px] font-semibold py-2 px-3 rounded-lg text-center transition-colors flex items-center justify-center cursor-pointer"
+                  aria-label="Close"
+                  className="absolute top-3.5 right-3 text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer z-20"
                 >
-                  Not Now
+                  <X className="w-4 h-4" />
                 </button>
-              </div>
 
-              {/* Action Button Row 2: Book test drive (opens schedule-an-appointment-with-expert in new tab) */}
-              <div className="mt-2 sm:mt-2.5">
-                <Link
-                  href={scheduleAppointmentUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setIsOpen(false)}
-                  className="w-full bg-brand hover:opacity-90 text-white text-xs sm:text-[13px] font-semibold py-2.5 px-3 rounded-lg text-center flex items-center justify-center gap-1.5 transition-opacity shadow-sm border border-brand-green2"
-                >
-                  <span>Book test drive</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                <div className="p-3.5 sm:p-4 pt-2.5 sm:pt-3.5 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                  {/* Header */}
+                  <div className="text-center pr-6 pl-6">
+                    <h3 className="text-brand font-bold text-lg sm:text-xl tracking-tight leading-tight">
+                      Welcome back!
+                    </h3>
+                    <p className="text-gray-500 text-[12px] sm:text-[13px] mt-0.5">
+                      Continue where you left off
+                    </p>
+                  </div>
 
-      {/* Floating Bell Icon Trigger (Brand Colored) */}
-      <button
-        id="welcome-back-bell-trigger"
-        type="button"
-        onClick={handleToggle}
-        aria-label="Welcome Back - View recently viewed vehicle"
-        className="relative w-11 h-11 sm:w-13 sm:h-13 bg-brand hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-xl shadow-brand/25 border border-brand-green2 hover:scale-105 active:scale-95 transition-all cursor-pointer"
-      >
-        <BellIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white animate-bell-ring" />
-        <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-brand font-bold text-[11px] rounded-full flex items-center justify-center shadow-md border border-brand/20">
-          1
-        </span>
-      </button>
-    </div>
+                  {/* Clickable Vehicle Area (opens VDP in new tab) */}
+                  <Link
+                    href={vdpUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsOpen(false)}
+                    className="group/item block focus:outline-none"
+                  >
+                    {/* Vehicle Image */}
+                    <div className="relative w-full h-[170px] rounded-xl overflow-hidden bg-gray-100 mt-2.5 sm:mt-3 border border-gray-100 flex-shrink-0">
+                      <Image
+                        src={imageSrc}
+                        alt={vehicleTitle}
+                        fill
+                        sizes="(max-width: 640px) 280px, 320px"
+                        className="object-cover group-hover/item:scale-105 transition-transform duration-300"
+                        unoptimized
+                      />
+                    </div>
+
+                    {/* Vehicle Title */}
+                    <h4
+                      className="text-foreground group-hover/item:text-brand font-bold text-[14px] sm:text-[16px] text-center mt-2.5 sm:mt-3 truncate px-1 transition-colors"
+                      title={vehicleTitle}
+                    >
+                      {vehicleTitle}
+                    </h4>
+                  </Link>
+
+                  {/* Action Buttons Row 1: See More & Not Now */}
+                  <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mt-2.5 sm:mt-3">
+                    <Link
+                      href={vdpUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsOpen(false)}
+                      className="bg-brand hover:opacity-90 text-white text-xs sm:text-[13px] font-semibold py-2 px-3 rounded-lg text-center transition-opacity shadow-sm border border-brand-green2 flex items-center justify-center"
+                    >
+                      See More
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleClose}
+                      className="border border-brand text-brand hover:bg-brand/10 text-xs sm:text-[13px] font-semibold py-2 px-3 rounded-lg text-center transition-colors flex items-center justify-center cursor-pointer"
+                    >
+                      Not Now
+                    </button>
+                  </div>
+
+                  {/* Action Button Row 2: Book test drive (opens schedule-an-appointment-with-expert in new tab) */}
+                  <div className="mt-2 sm:mt-2.5">
+                    <Link
+                      href={scheduleAppointmentUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsOpen(false)}
+                      className="w-full bg-brand hover:opacity-90 text-white text-xs sm:text-[13px] font-semibold py-2.5 px-3 rounded-lg text-center flex items-center justify-center gap-1.5 transition-opacity shadow-sm border border-brand-green2"
+                    >
+                      <span>Book test drive</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Floating Bell Icon Trigger (Brand Colored with pulse animation) */}
+          <button
+            id="welcome-back-bell-trigger"
+            type="button"
+            onClick={handleToggle}
+            aria-label="Welcome Back - View recently viewed vehicle"
+            className="relative w-11 h-11 sm:w-13 sm:h-13 bg-brand hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-xl shadow-brand/25 border border-brand-green2 hover:scale-105 active:scale-95 transition-all cursor-pointer animate-widget-pulse"
+          >
+            <BellIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white animate-bell-ring" />
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-brand font-bold text-[11px] rounded-full flex items-center justify-center shadow-md border border-brand/20">
+              1
+            </span>
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

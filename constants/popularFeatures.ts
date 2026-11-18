@@ -1,3 +1,5 @@
+import { PopularFeatureTag } from "@/types/vehicle";
+
 /**
  * 23 Popular Vehicle Features Constants & Helpers
  * Used across Inventory Search Chips, URL Routing, and Typesense Filtering.
@@ -398,4 +400,141 @@ export function getFeatureQueryVariants(value: string): string[] {
   });
 
   return Array.from(variants).filter(Boolean);
+}
+
+/**
+ * 23 Default Popular Feature Tags fetched from the canonical backend configuration:
+ * https://demo.zopsoftware.com/api/website/inventory/configurations/default-popular-features
+ */
+export const DEFAULT_POPULAR_FEATURE_TAGS: PopularFeatureTag[] = [
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/apple-carplay-android-auto.svg",
+    label: "Apple CarPlay & Android Auto",
+    value: "Apple CarPlay and Android Auto",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/rear-parking-camera.svg",
+    label: "Rear parking camera",
+    value: "Rear parking camera",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/parking-sensors.svg",
+    label: "Parking sensors",
+    value: "Parking sensors",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/roof-rails.svg",
+    label: "Roof rails",
+    value: "Roof rails",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/alloy-wheels.svg",
+    label: "Alloy wheels",
+    value: "Alloy wheels",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/adaptive-cruise-control.svg",
+    label: "Adaptive cruise control",
+    value: "Adaptive cruise control",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/blind-spot-monitoring.svg",
+    label: "Blind spot monitoring",
+    value: "Blind spot monitoring",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/heated-steering-wheel.svg",
+    label: "Heated Steering Wheel",
+    value: "Heated Steering Wheel",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/remote-start.svg",
+    label: "Remote Start",
+    value: "Remote Start",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/front-seat-heaters.svg",
+    label: "Front Seat Heaters",
+    value: "Front Seat Heaters",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/navigation-system.svg",
+    label: "Navigation System",
+    value: "Navigation System",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/bluetooth-technology.svg",
+    label: "Bluetooth Technology",
+    value: "Bluetooth Technology",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/sunroof.svg",
+    label: "Sunroof",
+    value: "Sunroof",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/push-to-start.svg",
+    label: "Push to Start",
+    value: "Push to Start",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/leather-seats.svg",
+    label: "Leather Seats",
+    value: "Leather Seats",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/heads-up-display.svg",
+    label: "Heads up Display",
+    value: "Heads up Display",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/360-degree-camera.svg",
+    label: "360 Degree Camera",
+    value: "360 Degree Camera",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/tow-pack.svg",
+    label: "Tow Pack",
+    value: "Tow Pack",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/lane-departure-warning.svg",
+    label: "Land Departure Warning",
+    value: "Land Departure Warning",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/power-hatch-deck-lid.svg",
+    label: "Power Gach/ Deck Lid",
+    value: "Power Gach or Deck Lid",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/memory-seats.svg",
+    label: "Memory Seats",
+    value: "Memory Seats",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/power-seats.svg",
+    label: "Power Seats",
+    value: "Power Seats",
+  },
+  {
+    icon: "https://zopsoftware-asset.b-cdn.net/Feature_Icons_Web_Final/ac-seats.svg",
+    label: "A/C Seats",
+    value: "Air Conditioned Seats",
+  },
+];
+
+/**
+ * Returns the icon URL for a given feature name, label, or value.
+ */
+export function getFeatureIcon(featureNameOrValue: string): string | undefined {
+  if (!featureNameOrValue) return undefined;
+  const match = DEFAULT_POPULAR_FEATURE_TAGS.find(
+    (tag) =>
+      tag.label.toLowerCase() === featureNameOrValue.toLowerCase() ||
+      tag.value.toLowerCase() === featureNameOrValue.toLowerCase() ||
+      isFeatureMatch(tag.label, featureNameOrValue) ||
+      isFeatureMatch(tag.value, featureNameOrValue)
+  );
+  return match?.icon;
 }
