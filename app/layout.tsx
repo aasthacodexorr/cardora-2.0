@@ -71,6 +71,12 @@ export default async function RootLayout({
       style={CSS_VARIABLES as React.CSSProperties}
     >
       <head>
+        {/* Synchronously check returning visitor before paint to prevent flash of initial text */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var v=localStorage.getItem("cardora_recently_viewed");if(v){var p=JSON.parse(v);if(Array.isArray(p)&&p.length>0){document.documentElement.classList.add("is-returning-visitor");}}}catch(e){}})();`,
+          }}
+        />
         {/* Load form validation script before any interactive content */}
         <ScriptLoader />
         <script

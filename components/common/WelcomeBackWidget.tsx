@@ -45,10 +45,8 @@ export default function WelcomeBackWidget() {
   const latestVehicle = recentlyViewedVehicles[0];
 
   // Route checks:
-  // The notification icon should only be shown on landing (home) and inventory listing pages.
-  // It should NOT come on the VDP page (because the user is already checking out that car) or other pages.
-  const isLandingPage = !pathname || pathname === "/" || pathname === "";
-
+  // The notification icon should ONLY be shown on the inventory listing page.
+  // It should NOT come on the landing (home) page, VDP page, or other pages.
   const isInventoryListing = useMemo(() => {
     if (!pathname) return false;
     const cleanPath = pathname.replace(/\/+$/, "") || "/";
@@ -62,7 +60,7 @@ export default function WelcomeBackWidget() {
     return false;
   }, [pathname]);
 
-  const shouldShowWidget = isLandingPage || isInventoryListing;
+  const shouldShowWidget = isInventoryListing;
 
   // Mount detection for SSR safety
   useEffect(() => {
@@ -70,10 +68,9 @@ export default function WelcomeBackWidget() {
   }, []);
 
   // Handle visibility timing:
-  // 1. Only run on landing and inventory listing pages (never on VDP or other pages)
+  // 1. Only run on inventory listing pages (never on home, VDP, or other pages)
   // 2. Show the notification icon after 5 seconds of page load (5000ms)
-  // 3. On Landing page (/), show the welcome back popup after 10 seconds of page load (10000ms)
-  // 4. On inventory listing, only show the bell icon (popup opens on click)
+  // 3. On inventory listing, only show the bell icon (popup opens on click)
   useEffect(() => {
     if (!isMounted || !latestVehicle || !shouldShowWidget) {
       setIsVisible(false);
@@ -86,26 +83,15 @@ export default function WelcomeBackWidget() {
     setIsOpen(false);
     userInteractedRef.current = false;
 
-    // 1. Show notification icon after 5 seconds of page load
+    // Show notification icon after 5 seconds of page load
     const iconTimer = setTimeout(() => {
       setIsVisible(true);
     }, 5000);
 
-    // 2. On landing page: show welcome back popup after 10 seconds of page load
-    let popupTimer: NodeJS.Timeout | null = null;
-    if (isLandingPage) {
-      popupTimer = setTimeout(() => {
-        if (!userInteractedRef.current) {
-          setIsOpen(true);
-        }
-      }, 10000);
-    }
-
     return () => {
       clearTimeout(iconTimer);
-      if (popupTimer) clearTimeout(popupTimer);
     };
-  }, [pathname, isLandingPage, isMounted, latestVehicle?.inventory_id, shouldShowWidget]);
+  }, [pathname, isMounted, latestVehicle?.inventory_id, shouldShowWidget]);
 
   // Click outside to dismiss popup
   useEffect(() => {
