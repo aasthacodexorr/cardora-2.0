@@ -27,6 +27,7 @@ function BellIcon({ className }: { className?: string }) {
 import { useRecentlyViewed } from "@/lib/recentlyViewed";
 import { useAppConfig } from "@/app/providers";
 import { getConstants } from "@/constants";
+import { isVehicleDetailSlug } from "@/lib/inventoryUrls";
 
 export default function WelcomeBackWidget() {
   const pathname = usePathname();
@@ -43,8 +44,25 @@ export default function WelcomeBackWidget() {
   // Latest vehicle viewed
   const latestVehicle = recentlyViewedVehicles[0];
 
-  // Route check
-  const isHomePage = pathname === "/" || pathname === "";
+  // Route checks:
+  // The notification icon should only be shown on landing (home) and inventory listing pages.
+  // It should NOT come on the VDP page (because the user is already checking out that car) or other pages.
+  const isLandingPage = !pathname || pathname === "/" || pathname === "";
+
+  const isInventoryListing = useMemo(() => {
+    if (!pathname) return false;
+    const cleanPath = pathname.replace(/\/+$/, "") || "/";
+    if (cleanPath === "/inventory") return true;
+    if (cleanPath.startsWith("/inventory/")) {
+      const segments = cleanPath.slice("/inventory/".length).split("/").filter(Boolean);
+      if (segments.length === 0) return true;
+      // If it matches a vehicle detail slug, it is a VDP (not an inventory listing)
+      return !isVehicleDetailSlug(segments);
+    }
+    return false;
+  }, [pathname]);
+
+  const shouldShowWidget = isLandingPage || isInventoryListing;
 
   // Mount detection for SSR safety
   useEffect(() => {
@@ -52,11 +70,16 @@ export default function WelcomeBackWidget() {
   }, []);
 
   // Handle visibility timing:
-  // 1. Show the notification icon after 5 seconds of page load (5000ms)
-  // 2. On Home page (/), show the welcome back popup after 10 seconds of page load (10000ms)
-  // 3. On all other pages (VDP, Inventory listing, etc.), only show the bell icon (popup opens on click)
+  // 1. Only run on landing and inventory listing pages (never on VDP or other pages)
+  // 2. Show the notification icon after 5 seconds of page load (5000ms)
+  // 3. On Landing page (/), show the welcome back popup after 10 seconds of page load (10000ms)
+  // 4. On inventory listing, only show the bell icon (popup opens on click)
   useEffect(() => {
-    if (!isMounted || !latestVehicle) return;
+    if (!isMounted || !latestVehicle || !shouldShowWidget) {
+      setIsVisible(false);
+      setIsOpen(false);
+      return;
+    }
 
     // Reset visibility on route change so delay takes effect
     setIsVisible(false);
@@ -68,9 +91,9 @@ export default function WelcomeBackWidget() {
       setIsVisible(true);
     }, 5000);
 
-    // 2. On home page: show welcome back popup after 10 seconds of page load
+    // 2. On landing page: show welcome back popup after 10 seconds of page load
     let popupTimer: NodeJS.Timeout | null = null;
-    if (isHomePage) {
+    if (isLandingPage) {
       popupTimer = setTimeout(() => {
         if (!userInteractedRef.current) {
           setIsOpen(true);
@@ -82,7 +105,7 @@ export default function WelcomeBackWidget() {
       clearTimeout(iconTimer);
       if (popupTimer) clearTimeout(popupTimer);
     };
-  }, [pathname, isHomePage, isMounted, latestVehicle?.inventory_id]);
+  }, [pathname, isLandingPage, isMounted, latestVehicle?.inventory_id, shouldShowWidget]);
 
   // Click outside to dismiss popup
   useEffect(() => {
@@ -118,7 +141,7 @@ export default function WelcomeBackWidget() {
   };
 
   // Do not render anything during SSR, if no vehicle has been viewed, or if not yet visible
-  if (!isMounted || !latestVehicle || !isVisible) {
+  if (!isMounted || !latestVehicle || !shouldShowWidget || !isVisible) {
     return null;
   }
 
