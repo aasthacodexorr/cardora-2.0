@@ -205,10 +205,10 @@ export default function PopularFeatureSearchChips() {
                 type="button"
                 onClick={() => handleToggle(featureName)}
                 aria-pressed={active}
-                className={`shrink-0 inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-full text-xs sm:text-[13px] font-medium leading-none cursor-pointer select-none transition-all duration-150 ${
+                className={`shrink-0 inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-full text-xs sm:text-[13px] font-semibold leading-none cursor-pointer select-none transition-all duration-150 ${
                   active
                     ? "bg-[#111827] text-white border border-[#111827] shadow-xs hover:bg-black"
-                    : "bg-white text-gray-800 border border-gray-300 hover:border-gray-400 hover:bg-gray-50 active:bg-gray-100"
+                    : "bg-white  text-gray-800 border border-gray-300 hover:border-gray-400 bg-gray-50 active:bg-gray-100"
                 }`}
               >
                 {tag.icon && (
@@ -216,7 +216,7 @@ export default function PopularFeatureSearchChips() {
                   <img
                     src={tag.icon}
                     alt=""
-                    className={`w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain transition-all shrink-0 ${
+                    className={`w-3.5 h-3.5 sm:w-5 sm:h-5 object-contain transition-all shrink-0 ${
                       active ? "brightness-0 invert" : "opacity-80"
                     }`}
                     loading="lazy"
