@@ -7,6 +7,7 @@ import { WishlistProvider } from "@/context/WishlistContext";
 import { DrawerProvider } from "@/context/DrawerContext";
 import { useDrawer } from "@/context/DrawerContext";
 import WishlistDrawer from "@/components/inventory/WishlistDrawer";
+import WelcomeBackWidget from "@/components/common/WelcomeBackWidget";
 import { LAST_VISIT_STORAGE_KEY, SESSION_VISIT_STORAGE_KEY } from "@/lib/visitorTracking";
 
 export const AppConfigContext = createContext<AppConfig>(defaultAppConfig);
@@ -44,6 +45,7 @@ export function Providers({ children, config }: { children: React.ReactNode; con
           <DrawerProvider>
             <VisitorTracker />
             <WishlistDrawerWithState />
+            <WelcomeBackWidget />
             {children}
           </DrawerProvider>
         </WishlistProvider>

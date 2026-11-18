@@ -11,3 +11,5 @@ export { default as GetInTouch } from "./GetInTouch";
 export { default as DreamVehicleCTA } from "./DreamVehicleCTA";
 export { PriceDrop } from "./PriceDrop";
 export type { PriceDropProps } from "./PriceDrop";
+export { default as WelcomeBackWidget } from "./WelcomeBackWidget";
+
