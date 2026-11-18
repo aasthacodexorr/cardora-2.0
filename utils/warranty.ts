@@ -1,4 +1,22 @@
+import moment from "moment";
 import { ManufacturerWarrantyDetail } from "@/types/vehicle";
+
+export interface CalculatedWarrantyDetail extends ManufacturerWarrantyDetail {
+  mileage_remaining: string;
+  warranty_validity_date: string;
+  warranty_remaining_duration: string;
+}
+
+/**
+ * Coerces value to integer safely, removing any commas or non-numeric characters.
+ */
+export function coerceToInteger(val: unknown): number {
+  if (val === null || val === undefined || val === "") return 0;
+  if (typeof val === "number") return isNaN(val) ? 0 : Math.floor(val);
+  const cleaned = String(val).replace(/[^0-9-]/g, "");
+  const num = parseInt(cleaned, 10);
+  return isNaN(num) ? 0 : num;
+}
 
 /**
  * Safely parses manufacturer_warranty_details from various possible formats:
@@ -32,60 +50,131 @@ export function parseWarrantyDetails(data: unknown): ManufacturerWarrantyDetail[
 }
 
 /**
+ * Parses in_service_date (Unix seconds, milliseconds, or date string) into a moment object.
+ */
+export function parseMomentDate(val: unknown): moment.Moment {
+  if (val === null || val === undefined || val === "") {
+    return moment.invalid();
+  }
+  if (typeof val === "number") {
+    return val < 1e11 ? moment.unix(val) : moment(val);
+  }
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    const num = Number(trimmed);
+    if (!isNaN(num) && num > 0) {
+      return num < 1e11 ? moment.unix(num) : moment(num);
+    }
+    return moment(trimmed);
+  }
+  return moment(val as any);
+}
+
+/**
  * Parses in_service_date Unix timestamp into a valid Date object.
  * Returns null if missing or invalid.
  */
 export function parseInServiceDate(inServiceDate: unknown): Date | null {
-  if (inServiceDate === null || inServiceDate === undefined || inServiceDate === "") {
-    return null;
-  }
+  const m = parseMomentDate(inServiceDate);
+  return m.isValid() ? m.toDate() : null;
+}
 
-  const num = Number(inServiceDate);
-  if (isNaN(num) || num <= 0) return null;
+/**
+ * Exact warranty calculation formula provided by the reference platform:
+ * Calculates remaining mileage, validity date, and remaining duration for each warranty item.
+ */
+export function getManufacturerWarranties(
+  form: {
+    manufacturer_warranty_details?: unknown;
+    odometer?: unknown;
+    in_service_date?: unknown;
+    km_miles?: string;
+    odometer_unit?: string;
+    [key: string]: any;
+  },
+  referenceToday?: moment.MomentInput
+): CalculatedWarrantyDetail[] {
+  const parsedDetails = parseWarrantyDetails(form?.manufacturer_warranty_details);
+  const manufacturer_warranties = Array.isArray(parsedDetails) ? parsedDetails : [];
 
-  // In-service date in Unix seconds is < 1e11 (timestamp in ms is > 1e12)
-  const ms = num < 1e11 ? num * 1000 : num;
-  const date = new Date(ms);
+  const odometer = coerceToInteger(form?.odometer);
+  const in_service_date = parseMomentDate(form?.in_service_date);
+  const today = referenceToday ? moment(referenceToday) : moment();
+  const number_formatter = new Intl.NumberFormat("en-CA");
+  const km_miles = form?.km_miles || form?.odometer_unit || "Km";
 
-  return isNaN(date.getTime()) ? null : date;
+  return manufacturer_warranties.map((warranty) => {
+    // Mileage Remaining
+    let mileage_remaining = "";
+    let warranty_remaining_duration = "";
+
+    const isUnlimited =
+      warranty?.is_unlimited_mileage === "1" ||
+      warranty?.is_unlimited_mileage === 1 ||
+      warranty?.is_unlimited_mileage === true ||
+      warranty?.is_unlimited_mileage === "true";
+
+    if (isUnlimited) {
+      mileage_remaining = `Unlimited ${km_miles}`;
+    } else {
+      const mileage_limit = coerceToInteger(warranty?.mileage_limit);
+      const remaining = mileage_limit - odometer;
+
+      mileage_remaining =
+        remaining > 0
+          ? `${number_formatter.format(remaining)} ${km_miles}`
+          : "";
+    }
+
+    // Warranty Validity Date
+    let warranty_validity_date = "";
+
+    if (form?.in_service_date && in_service_date.isValid()) {
+      const years = parseInt(String(warranty?.years ?? 0), 10) || 0;
+      const months = parseInt(String(warranty?.months ?? 0), 10) || 0;
+
+      const expiry_date = in_service_date
+        .clone()
+        .add(years, "years")
+        .add(months, "months");
+
+      if (expiry_date.isSameOrAfter(today, "day")) {
+        warranty_validity_date = expiry_date.format("MMM D, YYYY");
+      }
+    }
+
+    if (mileage_remaining && warranty_validity_date) {
+      warranty_remaining_duration = moment(
+        warranty_validity_date,
+        "MMM D, YYYY"
+      ).fromNow();
+    }
+
+    return {
+      ...warranty,
+      mileage_remaining,
+      warranty_validity_date,
+      warranty_remaining_duration,
+    };
+  });
 }
 
 /**
  * Calculates warranty inclusive expiry date:
- * 1. Read years and months.
- * 2. Start from in_service_date.
- * 3. Add specified years and months using calendar date logic.
- * 4. Subtract 1 calendar day to get inclusive expiry date.
+ * Starts from in_service_date and adds specified years and months.
  */
 export function calculateWarrantyExpiryDate(
   inServiceDate: unknown,
   years: string | number | undefined,
   months: string | number | undefined
 ): Date | null {
-  const startDate = parseInServiceDate(inServiceDate);
-  if (!startDate) return null;
+  const m = parseMomentDate(inServiceDate);
+  if (!m.isValid()) return null;
 
   const y = Number(years) || 0;
-  const m = Number(months) || 0;
+  const mo = Number(months) || 0;
 
-  // Use UTC calendar date parts to avoid timezone & daylight-saving issues
-  const startYear = startDate.getUTCFullYear();
-  const startMonth = startDate.getUTCMonth();
-  const startDay = startDate.getUTCDate();
-
-  const targetYear = startYear + y;
-  const targetMonth = startMonth + m;
-
-  // Clamp day to the number of days in target month (e.g. Jan 31 + 1 mo -> Feb 28/29)
-  const daysInTargetMonth = new Date(Date.UTC(targetYear, targetMonth + 1, 0)).getUTCDate();
-  const clampedDay = Math.min(startDay, daysInTargetMonth);
-
-  const targetDate = new Date(Date.UTC(targetYear, targetMonth, clampedDay));
-
-  // Subtract one calendar day to get the inclusive expiry date
-  targetDate.setUTCDate(targetDate.getUTCDate() - 1);
-
-  return targetDate;
+  return m.add(y, "years").add(mo, "months").toDate();
 }
 
 export interface RemainingDurationResult {
@@ -157,71 +246,94 @@ export function isUnlimitedMileage(val: unknown): boolean {
 }
 
 /**
- * Formats a warranty coverage string for display:
- * "Engine, transmission, & drivetrain is expected to expire in 8 days or 134,273 Km"
- * or "High-voltage battery is expected to expire in 8 days" (if unlimited)
- * or "Engine, transmission, & drivetrain has expired" (if expired)
+ * Formats a calculated warranty coverage string for display:
+ * "Engine, transmission, & drivetrain is expected to expire in 2 years or 89,273 Km"
+ * or "High-voltage battery is expected to expire in 2 years or Unlimited Km"
+ * or "Basic warranty has expired"
  */
 export function formatWarrantyCoverageText(
-  detail: ManufacturerWarrantyDetail,
-  inServiceDate: unknown,
-  currentDate: Date = new Date()
+  detail: ManufacturerWarrantyDetail | CalculatedWarrantyDetail,
+  inServiceDate?: unknown,
+  currentDate: Date = new Date(),
+  odometer: unknown = 0,
+  kmMiles: string = "Km"
 ): { text: string; isExpired: boolean } {
   const coverage = (detail.coverage || "Warranty").trim();
-  const unlimited = isUnlimitedMileage(detail.is_unlimited_mileage);
 
-  let mileageSuffix = "";
-  if (!unlimited && detail.mileage_limit !== undefined && detail.mileage_limit !== null && detail.mileage_limit !== "") {
-    const limit = Number(detail.mileage_limit);
-    if (!isNaN(limit) && limit > 0) {
-      mileageSuffix = ` or ${limit.toLocaleString("en-CA")} Km`;
-    }
-  }
-
-  const expiry = calculateWarrantyExpiryDate(inServiceDate, detail.years, detail.months);
-
-  if (!expiry) {
-    // In-service date missing or invalid
-    if (mileageSuffix) {
+  // If detail already contains pre-calculated fields from getManufacturerWarranties
+  const calcDetail = detail as CalculatedWarrantyDetail;
+  if (
+    typeof calcDetail.mileage_remaining === "string" &&
+    typeof calcDetail.warranty_validity_date === "string" &&
+    typeof calcDetail.warranty_remaining_duration === "string"
+  ) {
+    if (calcDetail.warranty_remaining_duration && calcDetail.mileage_remaining) {
       return {
-        text: `${coverage} (Coverage up to ${mileageSuffix.replace(/^ or /, "")})`,
+        text: `${coverage} is expected to expire ${calcDetail.warranty_remaining_duration} or ${calcDetail.mileage_remaining}`,
         isExpired: false,
       };
     }
-    return {
-      text: coverage,
-      isExpired: false,
-    };
-  }
 
-  const duration = formatRemainingDuration(currentDate, expiry);
+    if (calcDetail.warranty_remaining_duration) {
+      return {
+        text: `${coverage} is expected to expire ${calcDetail.warranty_remaining_duration}`,
+        isExpired: false,
+      };
+    }
 
-  if (duration.isExpired) {
+    if (calcDetail.mileage_remaining && !calcDetail.warranty_validity_date) {
+      if (calcDetail.years || calcDetail.months) {
+        return {
+          text: `${coverage} has expired`,
+          isExpired: true,
+        };
+      }
+      return {
+        text: `${coverage} (Coverage up to ${calcDetail.mileage_remaining})`,
+        isExpired: false,
+      };
+    }
+
     return {
       text: `${coverage} has expired`,
       isExpired: true,
     };
   }
 
-  return {
-    text: `${coverage} ${duration.durationText}${mileageSuffix}`,
-    isExpired: false,
-  };
+  // Fallback: Compute on-the-fly using getManufacturerWarranties formula
+  const calculated = getManufacturerWarranties(
+    {
+      manufacturer_warranty_details: [detail],
+      in_service_date: inServiceDate,
+      odometer,
+      km_miles: kmMiles,
+    },
+    currentDate
+  )[0];
+
+  if (!calculated) {
+    return {
+      text: coverage,
+      isExpired: false,
+    };
+  }
+
+  return formatWarrantyCoverageText(calculated);
 }
 
 export interface WarrantyGroup {
   warrantyType: string;
-  items: ManufacturerWarrantyDetail[];
+  items: (ManufacturerWarrantyDetail | CalculatedWarrantyDetail)[];
 }
 
 /**
  * Groups warranty detail entries by warranty_type preserving order.
  */
-export function groupWarrantiesByType(
-  details: ManufacturerWarrantyDetail[]
-): WarrantyGroup[] {
-  const groups: WarrantyGroup[] = [];
-  const map = new Map<string, WarrantyGroup>();
+export function groupWarrantiesByType<T extends ManufacturerWarrantyDetail>(
+  details: T[]
+): { warrantyType: string; items: T[] }[] {
+  const groups: { warrantyType: string; items: T[] }[] = [];
+  const map = new Map<string, { warrantyType: string; items: T[] }>();
 
   for (const item of details) {
     const typeName = (item.warranty_type || "Original manufacturer").trim();
