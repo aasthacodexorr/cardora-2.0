@@ -394,7 +394,7 @@ export const FILTER_KEYS: Record<string, string> = {
   body_type: "bodyStyles",
   transmission: "transmissions",
   fuel_type: "fuelTypes",
-  popular_features: "popular-features",
+  popular_features: "popular_features",
 };
  
 export const modelMakeAssociations = new Map<string, string>(Object.entries(BASELINE_MODEL_TO_MAKE));
