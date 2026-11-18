@@ -664,7 +664,10 @@ const GroupedCurrentRefinements = () => {
   const { items, refine } = useCurrentRefinements();
   const { setIndexUiState } = useInstantSearch();
 
-  if (items.length === 0) return null;
+  // Exclude popular_features so selecting a key feature only highlights the chip above without creating a separate filter field below
+  const visibleItems = items.filter((item) => item.attribute !== "popular_features");
+
+  if (visibleItems.length === 0) return null;
 
   // Keep refinement chips in a predictable order.
   // This is especially important when a user selects a MODEL first:
@@ -674,7 +677,7 @@ const GroupedCurrentRefinements = () => {
     model: 1,
   };
 
-  const orderedItems = [...items].sort((a, b) => {
+  const orderedItems = [...visibleItems].sort((a, b) => {
     const priorityA = refinementPriority[a.attribute] ?? 2;
     const priorityB = refinementPriority[b.attribute] ?? 2;
 
