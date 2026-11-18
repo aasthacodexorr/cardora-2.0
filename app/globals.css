@@ -273,6 +273,17 @@ html {
 }
 
 
+/* Recently Viewed Placeholder Toggle (prevents category pills showing first then jumping) */
+.recently-viewed-placeholder {
+  display: none;
+}
+html.is-returning-visitor .recently-viewed-placeholder {
+  display: block !important;
+}
+html:not(.is-returning-visitor) .recently-viewed-placeholder {
+  display: none !important;
+}
+
 @keyframes bell-ring {
   0%, 100% {
     transform: rotate(0deg);

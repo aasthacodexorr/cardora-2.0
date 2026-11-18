@@ -2,7 +2,7 @@
    Home Page
    Root page of the Cardora website.
    Composes all homepage sections in order:
-   Hero → CategoryPills → RecentlyViewedVehicles →
+   Hero → RecentlyViewedVehicles → CategoryPills →
    PreQualify → NextRide → FeaturedVehicles →
    Reviews → CardoraDifference → GetInTouch → Footer
 ========================= */
@@ -21,6 +21,7 @@ import {
   FeaturedVehicles,
   Reviews,
   DealershipDifference,
+  RecentlyViewedVehicles,
 } from "@/components/home";
 
 // Shared/reusable sections
@@ -36,6 +37,7 @@ const HomePage = () => {
       </div>
 
       {/* Homepage sections */}
+      <RecentlyViewedVehicles />
       <CategoryPills />
       <PreQualify />
       <NextRide />
