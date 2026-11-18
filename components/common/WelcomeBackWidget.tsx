@@ -179,7 +179,7 @@ export default function WelcomeBackWidget() {
   }
 
   return (
-    <div className="fixed bottom-5 left-4 sm:bottom-6 sm:left-6 z-40 flex flex-col items-start select-none">
+    <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[60] flex flex-col items-start select-none pointer-events-auto">
       {/* Welcome Back Popup Card */}
       <AnimatePresence>
         {isOpen && (
@@ -189,28 +189,28 @@ export default function WelcomeBackWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.96 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
-            className="relative bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden w-[calc(100vw-32px)] max-w-[315px] sm:max-w-[325px] mb-3 text-left"
+            className="relative bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden w-[calc(100vw-32px)] max-w-[300px] sm:max-w-[325px] mb-2.5 sm:mb-3 text-left max-h-[calc(100dvh-90px)] flex flex-col"
           >
             {/* Top brand-colored arched cap */}
-            <div className="h-2.5 bg-brand w-full" />
+            <div className="h-2.5 bg-brand w-full flex-shrink-0" />
 
             {/* Close button */}
             <button
               type="button"
               onClick={handleClose}
               aria-label="Close"
-              className="absolute top-4 right-3.5 text-gray-400 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer z-10"
+              className="absolute top-3.5 right-3 text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer z-20"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <div className="p-4 pt-3.5">
+            <div className="p-3.5 sm:p-4 pt-2.5 sm:pt-3.5 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               {/* Header */}
-              <div className="text-center">
-                <h3 className="text-brand font-bold text-xl tracking-tight leading-tight">
+              <div className="text-center pr-6 pl-6">
+                <h3 className="text-brand font-bold text-lg sm:text-xl tracking-tight leading-tight">
                   Welcome back!
                 </h3>
-                <p className="text-gray-500 text-xs sm:text-[13px] mt-0.5">
+                <p className="text-gray-500 text-[12px] sm:text-[13px] mt-0.5">
                   Continue where you left off
                 </p>
               </div>
@@ -224,7 +224,7 @@ export default function WelcomeBackWidget() {
                 className="group/item block focus:outline-none"
               >
                 {/* Vehicle Image */}
-                <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden bg-gray-100 mt-3 border border-gray-100">
+                <div className="relative w-full h-[120px] sm:h-[150px] rounded-xl overflow-hidden bg-gray-100 mt-2.5 sm:mt-3 border border-gray-100 flex-shrink-0">
                   <Image
                     src={imageSrc}
                     alt={vehicleTitle}
@@ -237,7 +237,7 @@ export default function WelcomeBackWidget() {
 
                 {/* Vehicle Title */}
                 <h4
-                  className="text-foreground group-hover/item:text-brand font-bold text-[15px] sm:text-[16px] text-center mt-3 truncate px-1 transition-colors"
+                  className="text-foreground group-hover/item:text-brand font-bold text-[14px] sm:text-[16px] text-center mt-2.5 sm:mt-3 truncate px-1 transition-colors"
                   title={vehicleTitle}
                 >
                   {vehicleTitle}
@@ -245,7 +245,7 @@ export default function WelcomeBackWidget() {
               </Link>
 
               {/* Action Buttons Row 1: See More & Not Now */}
-              <div className="grid grid-cols-2 gap-2.5 mt-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mt-2.5 sm:mt-3">
                 <Link
                   href={vdpUrl}
                   target="_blank"
@@ -265,7 +265,7 @@ export default function WelcomeBackWidget() {
               </div>
 
               {/* Action Button Row 2: Book test drive (opens schedule-an-appointment-with-expert in new tab) */}
-              <div className="mt-2.5">
+              <div className="mt-2 sm:mt-2.5">
                 <Link
                   href={scheduleAppointmentUrl}
                   target="_blank"
@@ -288,7 +288,7 @@ export default function WelcomeBackWidget() {
         type="button"
         onClick={handleToggle}
         aria-label="Welcome Back - View recently viewed vehicle"
-        className="relative w-12 h-12 sm:w-13 sm:h-13 bg-brand hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-xl shadow-brand/25 border border-brand-green2 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+        className="relative w-11 h-11 sm:w-13 sm:h-13 bg-brand hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-xl shadow-brand/25 border border-brand-green2 hover:scale-105 active:scale-95 transition-all cursor-pointer"
       >
         <BellIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white animate-bell-ring" />
         <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-brand font-bold text-[11px] rounded-full flex items-center justify-center shadow-md border border-brand/20">
