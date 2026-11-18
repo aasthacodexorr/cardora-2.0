@@ -38,6 +38,7 @@ export default function WelcomeBackWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const userInteractedRef = useRef(false);
 
   // Latest vehicle viewed
   const latestVehicle = recentlyViewedVehicles[0];
@@ -50,33 +51,36 @@ export default function WelcomeBackWidget() {
     setIsMounted(true);
   }, []);
 
-  // Handle visibility timing and open-by-default behavior (same as Tabangi):
-  // - On all pages where a vehicle has been viewed (Home, VDP, Inventory, etc.), the widget appears after a delay (~2.5s)
-  // - On Home page (/), the popup is OPEN by default
-  // - On all other pages (including VDP, Inventory listing, Finance, About, etc.), the popup is NOT opened by default (only the bell icon is shown)
+  // Handle visibility timing:
+  // 1. Show the notification icon after 5 seconds of page load (5000ms)
+  // 2. On Home page (/), show the welcome back popup after 10 seconds of page load (10000ms)
+  // 3. On all other pages (VDP, Inventory listing, etc.), only show the bell icon (popup opens on click)
   useEffect(() => {
     if (!isMounted || !latestVehicle) return;
 
     // Reset visibility on route change so delay takes effect
     setIsVisible(false);
     setIsOpen(false);
+    userInteractedRef.current = false;
 
-    let openTimer: NodeJS.Timeout | null = null;
-    const delayTimer = setTimeout(() => {
+    // 1. Show notification icon after 5 seconds of page load
+    const iconTimer = setTimeout(() => {
       setIsVisible(true);
+    }, 5000);
 
-      if (isHomePage) {
-        // On Home page: open popup by default
-        openTimer = setTimeout(() => {
+    // 2. On home page: show welcome back popup after 10 seconds of page load
+    let popupTimer: NodeJS.Timeout | null = null;
+    if (isHomePage) {
+      popupTimer = setTimeout(() => {
+        if (!userInteractedRef.current) {
           setIsOpen(true);
-        }, 150);
-      }
-      // On all other pages (including VDP and /inventory), isOpen stays false by default
-    }, 2500);
+        }
+      }, 10000);
+    }
 
     return () => {
-      clearTimeout(delayTimer);
-      if (openTimer) clearTimeout(openTimer);
+      clearTimeout(iconTimer);
+      if (popupTimer) clearTimeout(popupTimer);
     };
   }, [pathname, isHomePage, isMounted, latestVehicle?.inventory_id]);
 
@@ -89,6 +93,7 @@ export default function WelcomeBackWidget() {
         if (bellButton && bellButton.contains(event.target as Node)) {
           return;
         }
+        userInteractedRef.current = true;
         setIsOpen(false);
       }
     };
@@ -103,10 +108,12 @@ export default function WelcomeBackWidget() {
   }, [isOpen]);
 
   const handleClose = () => {
+    userInteractedRef.current = true;
     setIsOpen(false);
   };
 
   const handleToggle = () => {
+    userInteractedRef.current = true;
     setIsOpen((prev) => !prev);
   };
 
