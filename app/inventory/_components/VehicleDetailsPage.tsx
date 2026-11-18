@@ -35,8 +35,18 @@ import CoverageModal from "@/components/inventory/CoverageModal";
 import TradeInLink from "@/components/inventory/TradeInLink";
 import RecentlyViewedTracker from "@/components/inventory/RecentlyViewedTracker";
 import { getEffectivePrice } from "@/utils/pricing";
+import { parsePopularFeatures } from "@/utils/popularFeatures";
 import VehicleFeatures from "@/components/inventory/VehicleFeatures";
+import WarrantyStatus from "@/components/inventory/WarrantyStatus";
+import PopularFeatures from "@/components/inventory/PopularFeatures";
 import MetaVehicleViewContent from "@/components/MetaVehicleViewContent";
+import {
+    ENABLE_PHASE2_MOCK,
+    mockWarrantyData,
+    mockPopularFeatures,
+    mockPopularTagsConfig,
+    mockCarMaxFeatures,
+} from "@/data/mockVehiclePhase2";
 
 // Force dynamic rendering — vehicle data changes frequently
 export const dynamic = "force-dynamic";
@@ -118,6 +128,18 @@ export default async function VehicleDetailsPage({
         : [DEFAULT_PLACEHOLDER_IMAGE || `${SITE_CONFIG.urls.assetBaseUrl}/image/default-placeholder.jpg`];
 
     const isSold = vehicle.status?.toLowerCase() !== "instock";
+
+    const parsedVehicleFeatures = parsePopularFeatures(vehicle.popular_features);
+    const hasVehicleFeatures = parsedVehicleFeatures.length > 0;
+
+    const vehicleForFeatures = ENABLE_PHASE2_MOCK
+        ? {
+            ...vehicle,
+            popular_features: hasVehicleFeatures
+                ? vehicle.popular_features
+                : mockCarMaxFeatures,
+        }
+        : vehicle;
 
     let host = "www.cardora.ca";
     try {
@@ -244,7 +266,25 @@ export default async function VehicleDetailsPage({
                             {/* Specs grid & Extended Coverage */}
                             <div className="w-full max-w-[925px] px-2 lg:px-0">
                                 <AboutVehicle vehicle={vehicle} />
-                                <div className="w-full border-t border-gray-200 mt-4">
+
+
+                                {/* Manufacturer Warranty Status */}
+                                <WarrantyStatus
+                                    vehicle={
+                                        ENABLE_PHASE2_MOCK
+                                            ? {
+                                                ...vehicle,
+                                                show_manufacturer_warranty_details:
+                                                    mockWarrantyData.show_manufacturer_warranty_details,
+                                                in_service_date: mockWarrantyData.in_service_date,
+                                                manufacturer_warranty_details:
+                                                    mockWarrantyData.manufacturer_warranty_details,
+                                            }
+                                            : vehicle
+                                    }
+                                />
+
+                                <div className="w-full border-t border-gray-200 mt-6">
                                     <div className="flex flex-col sm:flex-row items-center border border-gray-200 rounded-2xl px-6 py-4  mt-4 bg-white w-full mx-auto gap-5 box-border font-sans">
                                         <div className="flex items-center sm:text-left gap-3">
                                             <div className="flex-shrink-0">
@@ -301,9 +341,13 @@ export default async function VehicleDetailsPage({
                         )}
                     </div>
 
+
+
                     {/* Finance Calculator - Now spans full responsive width within the centralized container bounds */}
                     <div className="mt-12 w-full">
-                        {/* <VehicleFeatures bodyType={vehicle.body_type} />  */}
+                        {/* CarMax-Style Vehicle Features Showcase */}
+                                <VehicleFeatures vehicle={vehicleForFeatures} />
+
                         <FinanceCalculator
                             vehiclePrice={getEffectivePrice(vehicle.price, vehicle.special_price) ?? undefined}
                             inventoryId={id}

@@ -5,6 +5,7 @@
 
 import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
 import { AppConfig } from "@/lib/appConfig";
+import { getFeatureQueryVariants } from "@/constants/popularFeatures";
 import {
   parseMakeModelSelections,
   readRouteState,
@@ -218,6 +219,11 @@ function expandFacetFiltersWithModelVariants(
           if (variants.length > 1) {
             return variants.map((v) => `model:${v}`);
           }
+        } else if (attr === "popular_features") {
+          const variants = getFeatureQueryVariants(rawVal);
+          if (variants.length > 1) {
+            return variants.map((v) => `popular_features:${v}`);
+          }
         } else if (
           attr === "exterior_color" ||
           attr === "body_type" ||
@@ -248,6 +254,14 @@ function expandFacetFiltersWithModelVariants(
               const variants = getModelVariants(rawVal);
               variants.forEach((v) => {
                 const f = `model:${v}`;
+                if (!expanded.includes(f)) expanded.push(f);
+              });
+              return;
+            } else if (attr === "popular_features") {
+              modified = true;
+              const variants = getFeatureQueryVariants(rawVal);
+              variants.forEach((v) => {
+                const f = `popular_features:${v}`;
                 if (!expanded.includes(f)) expanded.push(f);
               });
               return;
@@ -352,9 +366,9 @@ export function getTypesenseClient(config: AppConfig) {
   const typesenseAdapter = new TypesenseInstantSearchAdapter({
     server: typesenseServerConfig,
     additionalSearchParameters: {
-      query_by: "make,model,year_search,trim,vin,stock_no,exterior_color,body_type,vehicle_type,transmission,fuel_type",
+      query_by: "make,model,year_search,trim,vin,stock_no,exterior_color,body_type,vehicle_type,transmission,fuel_type,popular_features",
       num_typos: "0",
-      facet_by: "year,make,model,exterior_color,body_type,vehicle_type,transmission,fuel_type,location,price,odometer",
+      facet_by: "year,make,model,exterior_color,body_type,vehicle_type,transmission,fuel_type,location,price,odometer,popular_features",
       sort_by: "_text_match:desc,created_at:desc",
     },
   });

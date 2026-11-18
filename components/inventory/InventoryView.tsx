@@ -11,7 +11,8 @@ import { AIChatSidebar, AIResultsPanel, useAISearch } from "@/components/invento
 import { Header, Footer } from "@/components/layout";
 
 // Inventory components
-import { HitCard } from "@/components/inventory";
+import { HitCard, PopularFeatureSearchChips } from "@/components/inventory";
+import { isFeatureMatch, getCanonicalFeatureName } from "@/constants/popularFeatures";
 
 // Shared components
 import { GetInTouch } from "@/components/common";
@@ -754,6 +755,34 @@ const GroupedCurrentRefinements = () => {
       return;
     }
 
+    if (category.attribute === "popular_features") {
+      setIndexUiState((prevIndexUiState) => {
+        const currentRefinementList = prevIndexUiState.refinementList || {};
+        const currentFeatures = (currentRefinementList.popular_features || []).map(String);
+        const nextFeatures = currentFeatures.filter(
+          (f) =>
+            !isFeatureMatch(f, refinement.label) &&
+            !isFeatureMatch(f, String(refinement.value))
+        );
+
+        const nextRefinementList: Record<string, string[]> = {
+          ...currentRefinementList,
+        };
+        if (nextFeatures.length > 0) {
+          nextRefinementList.popular_features = nextFeatures;
+        } else {
+          delete nextRefinementList.popular_features;
+        }
+
+        return {
+          ...prevIndexUiState,
+          page: 1,
+          refinementList: nextRefinementList,
+        };
+      });
+      return;
+    }
+
     const targetNorm = (category.attribute === "year" ? refinement.label : formatFacetLabel(refinement.label))
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "");
@@ -808,7 +837,9 @@ const GroupedCurrentRefinements = () => {
                 className="flex items-center bg-white rounded-lg px-[12px] py-[6px] border border-gray-200 text-[14px] text-gray-600 font-light shadow-sm"
               >
                 <span className="cursor-pointer tracking-wider font-light">
-                  {formatFacetLabel(refinement.label)}
+                  {category.attribute === "popular_features"
+                    ? (getCanonicalFeatureName(refinement.label) || refinement.label)
+                    : formatFacetLabel(refinement.label)}
                 </span>
                 <button
                   onClick={() => handleRemoveRefinement(category, refinement)}
@@ -2435,6 +2466,9 @@ const InventoryContent = ({
                         sortItems={getSortItems(TYPESENSE_COLLECTION_NAME)}
                       />
                     </div>
+
+                    {/* Popular Vehicle Feature Chips */}
+                    <PopularFeatureSearchChips />
                   </div>
 
                   

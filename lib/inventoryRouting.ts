@@ -1,6 +1,12 @@
 import { AppConfig } from "@/lib/appConfig";
 import { extractLocationFromSlug } from "@/lib/locationPages";
 import type { UiState } from "instantsearch.js";
+import {
+  POPULAR_FEATURE_LIST,
+  POPULAR_FEATURE_DEFINITIONS,
+  getCanonicalFeatureName,
+  isFeatureMatch,
+} from "@/constants/popularFeatures";
 
 type PlainObject = Record<string, any>;
 
@@ -388,6 +394,7 @@ export const FILTER_KEYS: Record<string, string> = {
   body_type: "bodyStyles",
   transmission: "transmissions",
   fuel_type: "fuelTypes",
+  popular_features: "features",
 };
  
 export const modelMakeAssociations = new Map<string, string>(Object.entries(BASELINE_MODEL_TO_MAKE));
@@ -600,6 +607,7 @@ const BASELINE_FACET_VALUES: Record<string, string[]> = {
     "Summit White, Ebony", "Crimson Red Tin, Jet", "Titanium Rush Metallic",
     "Moonstone Gray Metallic"
   ],
+  popular_features: [...POPULAR_FEATURE_LIST],
 };
 
 interface FacetRegistry {
@@ -621,7 +629,8 @@ function initFacetRegistry(attribute: string, values: Iterable<string>) {
   const reg = FACET_REGISTRIES[attribute];
   for (const rawV of values) {
     if (!rawV) continue;
-    const formatted = attribute === "year" ? rawV : formatFacetLabel(rawV);
+    const canonical = attribute === "popular_features" ? (getCanonicalFeatureName(rawV) || rawV) : null;
+    const formatted = attribute === "year" ? rawV : (canonical || formatFacetLabel(rawV));
     reg.exact.add(rawV);
     reg.exact.add(formatted);
     const lower = rawV.toLowerCase();
@@ -647,6 +656,9 @@ for (const [attr, vals] of Object.entries(BASELINE_FACET_VALUES)) {
   initFacetRegistry(attr, vals);
 }
 initFacetRegistry("model", BASELINE_KNOWN_MODELS);
+POPULAR_FEATURE_DEFINITIONS.forEach((def) => {
+  initFacetRegistry("popular_features", [def.name, def.id, ...def.aliases]);
+});
 
 export function registerFacetValues(attribute: string, values: Iterable<string>) {
   initFacetRegistry(attribute, values);
@@ -670,6 +682,11 @@ export function parseNamedQueryValue(value: string, attribute?: string): string 
     return queryValueToModel(decoded);
   }
 
+  if (attribute === "popular_features") {
+    const canonical = getCanonicalFeatureName(decoded);
+    if (canonical) return canonical;
+  }
+
   const reg = attribute ? FACET_REGISTRIES[attribute] : undefined;
   if (reg) {
     const lower = decoded.toLowerCase();
@@ -678,7 +695,11 @@ export function parseNamedQueryValue(value: string, attribute?: string): string 
     const withSpaces = lower.replace(/-/g, " ");
     if (reg.byLower.has(withSpaces)) return reg.byLower.get(withSpaces)!;
     if (reg.bySlug.has(withSpaces)) return reg.bySlug.get(withSpaces)!;
-    if (reg.exact.has(decoded)) return attribute === "year" ? decoded : formatFacetLabel(decoded);
+    if (reg.exact.has(decoded)) {
+      if (attribute === "year") return decoded;
+      if (attribute === "popular_features") return getCanonicalFeatureName(decoded) || decoded;
+      return formatFacetLabel(decoded);
+    }
   }
 
   // If attribute wasn't specified, check all registries
@@ -773,6 +794,7 @@ function resolveUnkeyedQueryToken(token: string, refinementList: PlainObject): b
     "transmission",
     "fuel_type",
     "exterior_color",
+    "popular_features",
   ];
 
   for (const attr of attributesToCheck) {
@@ -1019,6 +1041,16 @@ export function serializePublicUrl(route: PlainObject, locationSlugOverride?: st
     }
   });
 
+  // 2b. Popular Features -> query params
+  const popularFeatures: string[] = refinementList.popular_features || [];
+  if (popularFeatures.length > 0) {
+    const serializedValues = popularFeatures.map((f) => {
+      const canonical = getCanonicalFeatureName(f) || f;
+      return queryValue(canonical);
+    });
+    queryParams.push(`${FILTER_KEYS.popular_features}=${serializedValues.join(",")}`);
+  }
+
   // 3. Ranges (price, odometer) -> query params
   const [rawPriceLow, rawPriceHigh] = getRangeBounds(route.range?.price);
   if (rawPriceLow !== undefined && rawPriceLow !== "") {
@@ -1118,6 +1150,25 @@ export function readRouteState(): PlainObject {
             refinementList.make = [...new Set([...(refinementList.make || []), ...impliedMakes])];
           }
         }
+        return;
+      }
+
+      // Check popular features
+      if (
+        key === "features" ||
+        key === "feature" ||
+        key === "popular_features" ||
+        key === "popular_feature" ||
+        key === "popularFeatures"
+      ) {
+        const values = value
+          .split(",")
+          .filter(Boolean)
+          .map((v) => parseNamedQueryValue(v, "popular_features"))
+          .filter(Boolean);
+        refinementList.popular_features = [
+          ...new Set([...(refinementList.popular_features || []), ...values]),
+        ];
         return;
       }
 
@@ -1345,7 +1396,12 @@ export const createInventoryStateMapping = (config: AppConfig) => {
         const seenNorms = new Set<string>();
         const deduped: string[] = [];
         refinementList[attr].forEach((item: string) => {
-          const formatted = attr === "year" ? String(item) : formatFacetLabel(String(item));
+          const formatted =
+            attr === "year"
+              ? String(item)
+              : attr === "popular_features"
+                ? (getCanonicalFeatureName(String(item)) || String(item))
+                : formatFacetLabel(String(item));
           const norm = formatted.toLowerCase().replace(/[^a-z0-9]/g, "");
           if (!seenNorms.has(norm)) {
             seenNorms.add(norm);
