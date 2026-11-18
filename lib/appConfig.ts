@@ -131,6 +131,11 @@ export const defaultAppConfig = defineAppConfig({
     interest_rate: 7.99,
     tax: 13,
   },
+  vehicle_default_popular_tags: [] as Array<{
+    label: string;
+    icon: string;
+    value: string;
+  }>,
 });
 
 export type AppConfig = typeof defaultAppConfig;
@@ -311,13 +316,24 @@ export async function getAppConfig(): Promise<AppConfig> {
 
     const apiConfig = await res.json();
     const mergedConfig = deepMerge(defaultAppConfig, apiConfig);
-    
+
+    const rawPopularTags =
+      apiConfig?.vehicle_default_popular_tags ??
+      apiConfig?.site?.vehicle_default_popular_tags ??
+      apiConfig?.dealership?.vehicle_default_popular_tags ??
+      mergedConfig?.vehicle_default_popular_tags ??
+      defaultAppConfig.vehicle_default_popular_tags ??
+      [];
+
+    const safePopularTags = Array.isArray(rawPopularTags) ? rawPopularTags : [];
+
     // Apply fallback logic to all config sections to ensure null/undefined/"" values use defaults
     return {
       dealership: getSafeDealershipConfig(mergedConfig.dealership),
       site: getSafeSiteConfig(mergedConfig.site),
       schema_org: getSafeSchemaOrgConfig(mergedConfig.schema_org),
       payment_calculator: getSafePaymentCalculatorConfig(mergedConfig.payment_calculator),
+      vehicle_default_popular_tags: safePopularTags,
     };
   } catch (error) {
     console.error("Failed to fetch app configuration", error);

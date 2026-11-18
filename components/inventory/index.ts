@@ -11,5 +11,7 @@ export { default as AboutVehicle } from "./AboutVehicle";
 export { default as Faq }  from "./Faq";
 export { default as FinanceCalculator } from "./FinanceCalculator";
 export { default as Terms } from "./Terms";
+export { default as WarrantyStatus } from "./WarrantyStatus";
+export { default as PopularFeatures } from "./PopularFeatures";
 export { PriceAndCTA, VehicleHeader } from "./VehicleInfo";
 export { HitCardSkeleton, InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "./HitCardSkeleton";
