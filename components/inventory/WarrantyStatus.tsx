@@ -114,10 +114,6 @@ export default function WarrantyStatus({ vehicle }: WarrantyStatusProps) {
             </div>
           ))}
         </div>
-
-        <p className="text-[12px] md:text-[13px] text-gray-500 mt-5 pt-2 border-t border-gray-100">
-          See manufacturer&apos;s website for warranty details.
-        </p>
       </div>
     </section>
   );

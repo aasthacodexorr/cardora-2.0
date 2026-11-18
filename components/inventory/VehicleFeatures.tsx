@@ -1,26 +1,82 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Vehicle } from "@/types/vehicle";
 
-import { getVehicleFeatures } from "./vehicleFeaturesConfig";
+import {
+  extractVehicleFeatureNames,
+  getMatchedVehicleFeatures,
+  getVehicleFeaturesHeadline,
+  VehicleFeatureItem,
+} from "./vehicleFeaturesConfig";
 
 type VehicleFeaturesProps = {
+  vehicle?: Vehicle | Record<string, any> | null;
   bodyType?: string | null;
+  features?: string[];
 };
 
-export default function VehicleFeatures({ bodyType }: VehicleFeaturesProps) {
+export default function VehicleFeatures({
+  vehicle,
+  bodyType,
+  features: explicitFeatures,
+}: VehicleFeaturesProps) {
   const carouselRef = useRef<HTMLUListElement>(null);
-  const [unavailableAssets, setUnavailableAssets] = useState<Set<string>>(
-    () => new Set(),
-  );
-  const features = getVehicleFeatures(bodyType);
+  const [unavailableAssets, setUnavailableAssets] = useState<Set<string>>(() => new Set());
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
 
-  if (features.length === 0) return null;
+  // 1. Resolve selected features list from explicit prop or vehicle document
+  const rawFeatures = useMemo(() => {
+    if (explicitFeatures && explicitFeatures.length > 0) {
+      return explicitFeatures;
+    }
+    return extractVehicleFeatureNames(vehicle);
+  }, [explicitFeatures, vehicle]);
 
-  const markAssetUnavailable = (asset: string) => {
-    setUnavailableAssets((previous) => new Set(previous).add(asset));
+  // 2. Resolve body type
+  const effectiveBodyType = bodyType ?? vehicle?.body_type ?? vehicle?.body_style ?? null;
+
+  // 3. Match against CarMax CRM feature definitions
+  const matchedFeatures: VehicleFeatureItem[] = useMemo(() => {
+    return getMatchedVehicleFeatures(rawFeatures, effectiveBodyType);
+  }, [rawFeatures, effectiveBodyType]);
+
+  // 4. Dynamic CarMax-style headline and subheading description
+  const { heading, subheading } = useMemo(() => {
+    return getVehicleFeaturesHeadline(matchedFeatures);
+  }, [matchedFeatures]);
+
+  // Check scroll position to disable/enable arrow buttons
+  const checkScrollState = useCallback(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 10);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+  }, []);
+
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    checkScrollState();
+    el.addEventListener("scroll", checkScrollState, { passive: true });
+    window.addEventListener("resize", checkScrollState);
+    return () => {
+      el.removeEventListener("scroll", checkScrollState);
+      window.removeEventListener("resize", checkScrollState);
+    };
+  }, [checkScrollState, matchedFeatures]);
+
+  // If vehicle has no matching features, hide the entire section
+  if (matchedFeatures.length === 0) {
+    return null;
+  }
+
+  const markAssetUnavailable = (featureId: string) => {
+    setUnavailableAssets((previous) => new Set(previous).add(featureId));
   };
 
   const scroll = (direction: "left" | "right") => {
@@ -28,104 +84,120 @@ export default function VehicleFeatures({ bodyType }: VehicleFeaturesProps) {
     const firstCard = carousel?.querySelector<HTMLElement>("[data-feature-card]");
     if (!carousel || !firstCard) return;
 
-    const gap = Number.parseFloat(getComputedStyle(carousel).columnGap) || 0;
+    const gap = Number.parseFloat(getComputedStyle(carousel).columnGap) || 16;
+    const scrollAmount = firstCard.offsetWidth + gap;
+
     carousel.scrollBy({
-      left: direction === "left" ? -(firstCard.offsetWidth + gap) : firstCard.offsetWidth + gap,
+      left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
     });
   };
 
   return (
-    <section className="mt-10 w-full px-4 md:px-10" aria-labelledby="vehicle-features-heading">
-      <div className="mb-4 flex items-end justify-between gap-4">
-        <div>
-          <h2
-            id="vehicle-features-heading"
-            className="text-[20px] lg:text-[26px] font-semibold text-black"
+    <section
+      className="w-full my-8 font-sans select-none mx-auto max-w-[1490px] px-4 sm:px-6 lg:px-8"
+      aria-labelledby="vehicle-features-showcase-heading"
+    >
+      {/* Header section with CarMax style typography and controls */}
+      <div className="mb-5 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div className="max-w-2xl">
+          <p
+            id="vehicle-features-showcase-heading"
+            className="text-[15px] sm:text-[17px] font-semibold text-gray-700 tracking-tight"
           >
-            Even more to love
-          </h2>
-          <h1 className="text-[25px] lg:text-[35px] mt-1 w-full lg:max-w-xl font-semibold leading-tight text-black">
-            Maintains your set distance, warns of blind-spot traffic, and folds rear seats flat.
-          </h1>
+            {heading}
+          </p>
+          {subheading && (
+            <h2 className="mt-1 text-[22px] sm:text-[26px] lg:text-[30px] font-bold leading-tight text-gray-950">
+              {subheading}
+            </h2>
+          )}
         </div>
-        {features.length > 1 && (
-          <div className="shrink-0 items-center gap-1 hidden sm:flex">
+
+        {matchedFeatures.length > 1 && (
+          <div className="shrink-0 flex items-center gap-2 self-end sm:self-auto">
             <button
               type="button"
               onClick={() => scroll("left")}
+              disabled={!canScrollLeft}
               aria-label="Previous vehicle features"
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-100"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white text-gray-700 shadow-xs transition-all hover:bg-gray-100 hover:border-gray-400 active:scale-95 disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               type="button"
               onClick={() => scroll("right")}
+              disabled={!canScrollRight}
               aria-label="Next vehicle features"
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-100"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white text-gray-700 shadow-xs transition-all hover:bg-gray-100 hover:border-gray-400 active:scale-95 disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
         )}
       </div>
+
+      {/* Horizontal Carousel */}
       <ul
         ref={carouselRef}
-        aria-label="Vehicle features carousel"
-        className="flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch] [touch-action:pan-x_pan-y]"
+        aria-label="Vehicle features showcase carousel"
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
       >
-        {features.map((feature) => {
+        {matchedFeatures.map((feature) => {
           const image = feature.image;
           const video = feature.video;
-          const asset = image?.src ?? video;
-          const assetUnavailable = !asset || unavailableAssets.has(asset);
+          const isUnavailable = unavailableAssets.has(feature.id);
 
           return (
             <li
               key={feature.id}
               data-feature-card
-              className="flex w-[72%] shrink-0 snap-start flex-col sm:w-[42%] md:w-[31%] lg:w-[28%]"
+              className="flex w-[75%] sm:w-[250px] md:w-[260px] lg:w-[270px] max-w-[280px] shrink-0 snap-start flex-col"
             >
-              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-gray-100">
-                {!assetUnavailable && image && (
-                  <Image
-                    src={image}
-                    alt={feature.name}
-                    width={image.width}
-                    height={image.height}
-                    className="h-full w-full object-cover"
-                    onError={() => markAssetUnavailable(image.src)}
-                  />
-                )}
-                {!assetUnavailable && video && (
+              {/* Media Card Container */}
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-gray-100 border border-gray-200/80 shadow-xs group">
+                {!isUnavailable && video && (
                   <video
                     src={video}
                     aria-label={feature.name}
                     autoPlay
                     muted
                     loop
+                    playsInline
                     preload="metadata"
                     className="h-full w-full object-cover"
-                    onError={() => markAssetUnavailable(video)}
+                    onError={() => markAssetUnavailable(feature.id)}
                   />
                 )}
-                {assetUnavailable && (
-                  <span className="flex h-full items-center justify-center px-3 text-sm text-gray-500">
-                    Image unavailable
-                  </span>
+
+                {!isUnavailable && !video && image && (
+                  <Image
+                    src={image}
+                    alt={feature.name}
+                    fill
+                    sizes="(max-width: 640px) 75vw, 270px"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-103"
+                    onError={() => markAssetUnavailable(feature.id)}
+                  />
+                )}
+
+                {isUnavailable && (
+                  <div className="flex h-full w-full items-center justify-center px-4 text-center text-xs text-gray-400">
+                    Feature preview unavailable
+                  </div>
                 )}
               </div>
-              {feature.category && (
-                <p className="my-2 text-[14px] leading-4 text-gray-500">
+
+              {/* Feature Details */}
+              <div className="mt-3 flex flex-col">
+                <span className="text-[12px] font-semibold uppercase tracking-wider text-gray-500">
                   {feature.category}
-                </p>
-              )}
-              <h3
-                className={`${feature.category ? "" : "mt-2"}text-[16px] font-semibold leading-4 text-gray-900`}
-              >
-                {feature.name}
-              </h3>
+                </span>
+                <h3 className="mt-1 text-[16px] font-semibold leading-snug text-gray-900">
+                  {feature.name}
+                </h3>
+              </div>
             </li>
           );
         })}

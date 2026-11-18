@@ -45,6 +45,17 @@ export const mockPopularFeatures = [
   "Backup Camera",
 ];
 
+export const mockCarMaxFeatures = [
+  "Adaptive Cruise Control",
+  "Lane Departure Warning",
+  "Blind Spot Monitoring",
+  "Apple CarPlay & Android Auto",
+  "Front Seat Heaters",
+  "Parking Sensors",
+  "Heated Steering Wheel",
+  "Navigation System",
+];
+
 export const mockPopularTagsConfig: PopularFeatureTag[] = [
   {
     label: "Apple CarPlay",
