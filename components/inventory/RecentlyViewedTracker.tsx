@@ -37,6 +37,13 @@ export default function RecentlyViewedTracker({
 
     lastTrackedKey.current = trackingKey;
     addRecentlyViewed(normalizedId, vehicle ?? undefined);
+    if (typeof window !== "undefined") {
+      try {
+        window.sessionStorage.setItem("cardora_last_vdp_view_time", Date.now().toString());
+      } catch {
+        // Ignore storage errors
+      }
+    }
   }, [addRecentlyViewed, inventoryId, vehicle]);
 
   return null;

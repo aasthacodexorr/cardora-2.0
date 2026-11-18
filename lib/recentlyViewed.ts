@@ -322,6 +322,14 @@ export function addRecentlyViewed(
   next.unshift(nextItem);
 
   saveItems(next.slice(0, MAX_STORED_RECENTLY_VIEWED));
+
+  if (typeof window !== "undefined") {
+    try {
+      window.sessionStorage.setItem("cardora_last_vdp_view_time", now.toString());
+    } catch {
+      // Ignore storage errors
+    }
+  }
 }
 
 export function clearRecentlyViewed() {
