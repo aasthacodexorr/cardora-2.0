@@ -224,7 +224,7 @@ export default function WelcomeBackWidget() {
                 className="group/item block focus:outline-none"
               >
                 {/* Vehicle Image */}
-                <div className="relative w-full h-[120px] sm:h-[150px] rounded-xl overflow-hidden bg-gray-100 mt-2.5 sm:mt-3 border border-gray-100 flex-shrink-0">
+                <div className="relative w-full h-[170px] rounded-xl overflow-hidden bg-gray-100 mt-2.5 sm:mt-3 border border-gray-100 flex-shrink-0">
                   <Image
                     src={imageSrc}
                     alt={vehicleTitle}
