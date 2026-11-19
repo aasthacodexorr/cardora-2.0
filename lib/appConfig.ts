@@ -344,7 +344,7 @@ export async function getAppConfig(): Promise<AppConfig> {
     // Apply fallback logic to all config sections to ensure null/undefined/"" values use defaults
     return {
       dealership: getSafeDealershipConfig(mergedConfig.dealership),
-      // site: getSafeSiteConfig(mergedConfig.site),
+      site: getSafeSiteConfig(mergedConfig.site),
       schema_org: getSafeSchemaOrgConfig(mergedConfig.schema_org),
       payment_calculator: getSafePaymentCalculatorConfig(mergedConfig.payment_calculator),
       vehicle_default_popular_tags: safePopularTags,
