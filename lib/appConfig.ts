@@ -192,7 +192,7 @@ export function getSafeSiteConfig(apiConfig: AppConfig['site']) {
   const defaultS = defaultAppConfig.site;
   
   return {
-    saas_api: fallbackValue(apiConfig.saas_api, defaultS.saas_api),
+    saas_api: defaultS.saas_api,
     cdn_api: fallbackValue(apiConfig.cdn_api, defaultS.cdn_api),
     collection: fallbackValue(apiConfig.collection, defaultS.collection),
     feature_inventory_key: fallbackValue(apiConfig.feature_inventory_key, defaultS.feature_inventory_key),
