@@ -94,7 +94,7 @@ export default function VehicleSpecificationsAccordion({
   };
 
   return (
-    <div className="w-full max-w-[800px] font-sans space-y-2 select-none">
+    <div className="w-full max-w-[800px] font-sans space-y-2 ">
       {Object.entries(categoriesData).map(([key, config]) => {
         const subCategories = config.data;
         const hasContent = Object.keys(subCategories).length > 0;

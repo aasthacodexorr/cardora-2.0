@@ -205,7 +205,7 @@ export default function PopularFeatureSearchChips() {
                 type="button"
                 onClick={() => handleToggle(featureName)}
                 aria-pressed={active}
-                className={`shrink-0 inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-full text-xs sm:text-[13px] font-semibold leading-none cursor-pointer select-none transition-all duration-150 ${
+                className={`shrink-0 inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-full text-xs sm:text-[13px] font-semibold leading-none cursor-pointer  transition-all duration-150 ${
                   active
                     ? "bg-[#111827] text-white border border-[#111827] shadow-xs hover:bg-black"
                     : "bg-white  text-gray-800 border border-gray-300 hover:border-gray-400 bg-gray-50 active:bg-gray-100"

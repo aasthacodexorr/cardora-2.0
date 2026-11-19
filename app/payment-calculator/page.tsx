@@ -413,7 +413,7 @@ export default function PaymentCalculator() {
                                         onChange={(e) => setIncludeTax(e.target.checked)}
                                         className="h-4 w-4 text-emerald-600 "
                                     />
-                                    <label htmlFor="sales-tax" className="ml-2 text-base font-medium text-gray-700 select-none">
+                                    <label htmlFor="sales-tax" className="ml-2 text-base font-medium text-gray-700 ">
                                         Include Sales Tax
                                     </label>
                                 </div>
