@@ -72,6 +72,7 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
     id: "parking-sensors",
     name: "Parking Sensors",
     aliases: [
+      "parking sensors‡",
       "parking sensors",
       "parking sensor",
       "parking-sensors",
@@ -108,6 +109,8 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
     id: "adaptive-cruise-control",
     name: "Adaptive Cruise Control",
     aliases: [
+      "automated cruise control‡",
+      "automated cruise control",
       "adaptive cruise control",
       "adaptive cruise",
       "adaptive-cruise-control",
@@ -119,8 +122,9 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
     id: "blind-spot-monitoring",
     name: "Blind Spot Monitoring",
     aliases: [
-      "blind spot monitoring",
+      "blind spot monitor‡",
       "blind spot monitor",
+      "blind spot monitoring",
       "blind spot detection",
       "blind-spot-monitoring",
       "blind-spot-monitor",
@@ -259,6 +263,7 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
     id: "lane-departure-warning",
     name: "Lane Departure Warning",
     aliases: [
+      "lane departure warning‡",
       "lane departure warning",
       "land departure warning", // CRM typo variant
       "lane keep assist",
@@ -275,17 +280,25 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
       "power gach/deck lid",
       "power gach/ deck lid",
       "power gach / deck lid",
+      "power gach or deck lid",
+      "power gach deck lid",
+      "power hatch / deck lid",
+      "power hatch/deck lid",
+      "power hatch or deck lid",
+      "power hatch deck lid",
       "power deck lid",
       "power liftgate",
       "power tailgate",
       "power trunk",
       "power-liftgate",
+      "power hatch",
     ],
   },
   {
     id: "memory-seats",
     name: "Memory Seats",
     aliases: [
+      "memory seat(s)",
       "memory seats",
       "memory seat",
       "driver seat memory",
@@ -297,6 +310,7 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
     id: "power-seats",
     name: "Power Seats",
     aliases: [
+      "power seat(s)",
       "power seats",
       "power seat",
       "power driver seat",
@@ -309,7 +323,9 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
     id: "ac-seats",
     name: "A/C Seats",
     aliases: [
+      "a/c seat(s)",
       "a/c seats",
+      "ac seat(s)",
       "ac seats",
       "a/c seat",
       "ventilated seats",
@@ -327,7 +343,10 @@ export function normalizeFeatureKey(str: string): string {
   if (!str) return "";
   return str
     .toLowerCase()
-    .replace(/[&/\\#,+()$~%.'":*?<>{}]/g, " ")
+    .replace(/[‡†*®™]/g, "")
+    .replace(/\(s\)/g, "s")
+    .replace(/&/g, " and ")
+    .replace(/[/\\#,+()$~%.'":*?<>{}]/g, " ")
     .replace(/[-_]/g, " ")
     .replace(/\s+/g, " ")
     .trim();

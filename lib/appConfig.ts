@@ -52,9 +52,9 @@ export const defaultAppConfig = defineAppConfig({
       "https://zopsoftware-asset.b-cdn.net/image/3052a46429ae1b30c67d59f82c1b3a07/1691004750_0b3143a68b415b9465e9.jpg",
   },
   site: {
-    saas_api: "https://cardora.zopsoftware.com",
+    saas_api: "https://demo.zopsoftware.com",
     cdn_api: "https://zopsoftware-asset.b-cdn.net",
-    collection: "07cb7c095c0cf712732a976016079e19",
+    collection: "56d5b06765ad7f3843fd182cf2b4afe0",
     feature_inventory_key:
       "Rjl5ckZSUmJVaE5raS9KRi9BUDV2bld6S2h0a3dSOFJYMTcybnBnQ2N3Yz1oZmUweyJmaWx0ZXJfYnkiOiJzdGF0dXM6W0luc3RvY2tdICYmIGZlYXR1cmVfbGlzdGluZzoxICYmIHZpc2liaWxpdHk6PjAgJiYgZGVsZXRlZF9hdDo9MCJ9",
     default_sort: "/sort/status_rank:asc,created_at:desc",
@@ -344,7 +344,7 @@ export async function getAppConfig(): Promise<AppConfig> {
     // Apply fallback logic to all config sections to ensure null/undefined/"" values use defaults
     return {
       dealership: getSafeDealershipConfig(mergedConfig.dealership),
-      site: getSafeSiteConfig(mergedConfig.site),
+      // site: getSafeSiteConfig(mergedConfig.site),
       schema_org: getSafeSchemaOrgConfig(mergedConfig.schema_org),
       payment_calculator: getSafePaymentCalculatorConfig(mergedConfig.payment_calculator),
       vehicle_default_popular_tags: safePopularTags,

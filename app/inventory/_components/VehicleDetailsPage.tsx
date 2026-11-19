@@ -35,17 +35,12 @@ import CoverageModal from "@/components/inventory/CoverageModal";
 import TradeInLink from "@/components/inventory/TradeInLink";
 import RecentlyViewedTracker from "@/components/inventory/RecentlyViewedTracker";
 import { getEffectivePrice } from "@/utils/pricing";
-import { parsePopularFeatures } from "@/utils/popularFeatures";
 import VehicleFeatures from "@/components/inventory/VehicleFeatures";
 import WarrantyStatus from "@/components/inventory/WarrantyStatus";
-import PopularFeatures from "@/components/inventory/PopularFeatures";
 import MetaVehicleViewContent from "@/components/MetaVehicleViewContent";
 import {
     ENABLE_PHASE2_MOCK,
     mockWarrantyData,
-    mockPopularFeatures,
-    mockPopularTagsConfig,
-    mockCarMaxFeatures,
 } from "@/data/mockVehiclePhase2";
 
 // Force dynamic rendering — vehicle data changes frequently
@@ -128,18 +123,6 @@ export default async function VehicleDetailsPage({
         : [DEFAULT_PLACEHOLDER_IMAGE || `${SITE_CONFIG.urls.assetBaseUrl}/image/default-placeholder.jpg`];
 
     const isSold = vehicle.status?.toLowerCase() !== "instock";
-
-    const parsedVehicleFeatures = parsePopularFeatures(vehicle.popular_features);
-    const hasVehicleFeatures = parsedVehicleFeatures.length > 0;
-
-    const vehicleForFeatures = ENABLE_PHASE2_MOCK
-        ? {
-            ...vehicle,
-            popular_features: hasVehicleFeatures
-                ? vehicle.popular_features
-                : mockCarMaxFeatures,
-        }
-        : vehicle;
 
     let host = "www.cardora.ca";
     try {
@@ -346,7 +329,7 @@ export default async function VehicleDetailsPage({
                     {/* Finance Calculator - Now spans full responsive width within the centralized container bounds */}
                     <div className="mt-12 w-full">
                         {/* CarMax-Style Vehicle Features Showcase */}
-                                {/* <VehicleFeatures vehicle={vehicleForFeatures} /> */}
+                        <VehicleFeatures vehicle={vehicle} />
 
                         <FinanceCalculator
                             vehiclePrice={getEffectivePrice(vehicle.price, vehicle.special_price) ?? undefined}

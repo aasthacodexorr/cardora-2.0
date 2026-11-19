@@ -24,6 +24,7 @@ export default function VehicleFeatures({
   features: explicitFeatures,
 }: VehicleFeaturesProps) {
   const carouselRef = useRef<HTMLUListElement>(null);
+  const [failedVideos, setFailedVideos] = useState<Set<string>>(() => new Set());
   const [unavailableAssets, setUnavailableAssets] = useState<Set<string>>(() => new Set());
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -75,6 +76,10 @@ export default function VehicleFeatures({
     return null;
   }
 
+  const markVideoFailed = (featureId: string) => {
+    setFailedVideos((previous) => new Set(previous).add(featureId));
+  };
+
   const markAssetUnavailable = (featureId: string) => {
     setUnavailableAssets((previous) => new Set(previous).add(featureId));
   };
@@ -95,7 +100,7 @@ export default function VehicleFeatures({
 
   return (
     <section
-      className="w-full my-8 font-sans select-none mx-auto max-w-[1490px] px-4 sm:px-6 lg:px-8"
+      className="w-full my-8 font-sans select-none mx-auto max-w-[1440px] xl:max-w-[1600px] px-4 md:px-8 lg:px-10 2xl:px-0"
       aria-labelledby="vehicle-features-showcase-heading"
     >
       {/* Header section with CarMax style typography and controls */}
@@ -147,6 +152,7 @@ export default function VehicleFeatures({
         {matchedFeatures.map((feature) => {
           const image = feature.image;
           const video = feature.video;
+          const hasVideo = Boolean(video) && !failedVideos.has(feature.id);
           const isUnavailable = unavailableAssets.has(feature.id);
 
           return (
@@ -157,7 +163,7 @@ export default function VehicleFeatures({
             >
               {/* Media Card Container */}
               <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-gray-100 border border-gray-200/80 shadow-xs group">
-                {!isUnavailable && video && (
+                {!isUnavailable && hasVideo && video && (
                   <video
                     src={video}
                     aria-label={feature.name}
@@ -167,11 +173,11 @@ export default function VehicleFeatures({
                     playsInline
                     preload="metadata"
                     className="h-full w-full object-cover"
-                    onError={() => markAssetUnavailable(feature.id)}
+                    onError={() => markVideoFailed(feature.id)}
                   />
                 )}
 
-                {!isUnavailable && !video && image && (
+                {!isUnavailable && !hasVideo && image && (
                   <Image
                     src={image}
                     alt={feature.name}
