@@ -72,7 +72,7 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
     id: "parking-sensors",
     name: "Parking Sensors",
     aliases: [
-      "parking sensors‡",
+      "parking sensors",
       "parking sensors",
       "parking sensor",
       "parking-sensors",
@@ -109,7 +109,7 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
     id: "adaptive-cruise-control",
     name: "Adaptive Cruise Control",
     aliases: [
-      "automated cruise control‡",
+      "automated cruise control",
       "automated cruise control",
       "adaptive cruise control",
       "adaptive cruise",
@@ -122,7 +122,7 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
     id: "blind-spot-monitoring",
     name: "Blind Spot Monitoring",
     aliases: [
-      "blind spot monitor‡",
+      "blind spot monitor",
       "blind spot monitor",
       "blind spot monitoring",
       "blind spot detection",
@@ -263,7 +263,7 @@ export const POPULAR_FEATURE_DEFINITIONS: PopularFeatureMeta[] = [
     id: "lane-departure-warning",
     name: "Lane Departure Warning",
     aliases: [
-      "lane departure warning‡",
+      "lane departure warning",
       "lane departure warning",
       "land departure warning", // CRM typo variant
       "lane keep assist",
@@ -343,7 +343,7 @@ export function normalizeFeatureKey(str: string): string {
   if (!str) return "";
   return str
     .toLowerCase()
-    .replace(/[‡†*®™]/g, "")
+    .replace(/[†*®™]/g, "")
     .replace(/\(s\)/g, "s")
     .replace(/&/g, " and ")
     .replace(/[/\\#,+()$~%.'":*?<>{}]/g, " ")

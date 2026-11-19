@@ -30,6 +30,17 @@ import memorySeats from "@/assets/features/pickup/p_10.png";
 import powerSeats from "@/assets/features/pickup/p_11.png";
 import powerHatchDeckLid from "@/assets/features/pickup/p_power_hatch.png";
 
+// Dedicated assets for newly added features
+import pushToStartImg from "@/assets/features/shared/push_to_start.png";
+import alloyWheelsImg from "@/assets/features/shared/alloy_wheels.png";
+import leatherSeatsImg from "@/assets/features/shared/leather_seats.png";
+import headsUpDisplayImg from "@/assets/features/shared/heads_up_display.png";
+import towPackImg from "@/assets/features/shared/tow_pack.png";
+import roofRailsImg from "@/assets/features/shared/roof_rails.png";
+import sunroofImg from "@/assets/features/shared/sunroof.png";
+import rearParkingCameraImg from "@/assets/features/shared/rear_parking_camera.png";
+import threeSixtyCameraImg from "@/assets/features/shared/360_degree_camera.png";
+
 import { parsePopularFeatures } from "@/utils/popularFeatures";
 import { findPopularFeatureDefinition } from "@/constants/popularFeatures";
 
@@ -123,20 +134,15 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "rear-view camera",
       "rear view camera",
     ],
-    getImage: (bt) =>
-      bt === "Pickup"
-        ? pickupParkingSensors
-        : bt === "SUV"
-          ? suvParkingSensors
-          : sedanParkingSensors,
+    getImage: () => rearParkingCameraImg,
   },
   {
     id: "parking-sensors",
-    name: "Parking Sensors‡",
+    name: "Parking Sensors",
     category: "Driver Assistance",
     description: "Audible proximity alerts help you measure distance and dodge obstacles while parking.",
     aliases: [
-      "parking sensors‡",
+      "parking sensors",
       "parking sensors",
       "parking sensor",
       "parking-sensors",
@@ -172,7 +178,7 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "roof-rack",
       "luggage rack",
     ],
-    getImage: () => suvAdaptiveCruise,
+    getImage: () => roofRailsImg,
   },
   {
     id: "alloy-wheels",
@@ -187,15 +193,15 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "alloy-wheels",
       "custom wheels",
     ],
-    getImage: () => sedanRemoteStart,
+    getImage: () => alloyWheelsImg,
   },
   {
     id: "adaptive-cruise-control",
-    name: "Automated Cruise Control‡",
+    name: "Automated Cruise Control",
     category: "Driver Assistance",
     description: "Automatically adjusts vehicle speed to maintain a preset distance from the car ahead.",
     aliases: [
-      "automated cruise control‡",
+      "automated cruise control",
       "automated cruise control",
       "adaptive cruise control",
       "adaptive cruise",
@@ -218,11 +224,11 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
   },
   {
     id: "blind-spot-monitoring",
-    name: "Blind Spot Monitor‡",
+    name: "Blind Spot Monitor",
     category: "Driver Assistance",
     description: "Scans alongside adjacent lanes and alerts you if a vehicle is hidden in your blind spot.",
     aliases: [
-      "blind spot monitor‡",
+      "blind spot monitor",
       "blind spot monitor",
       "blind spot monitoring",
       "blind spot detection",
@@ -340,7 +346,7 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "panoramic roof",
       "sun-roof",
     ],
-    getImage: () => sedanRemoteStart,
+    getImage: () => sunroofImg,
   },
   {
     id: "push-to-start",
@@ -355,7 +361,7 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "keyless start",
       "keyless go",
     ],
-    getImage: () => heatedSteeringWheel,
+    getImage: () => pushToStartImg,
   },
   {
     id: "leather-seats",
@@ -369,7 +375,7 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "leather-seats",
       "leather seating",
     ],
-    getImage: () => powerSeats,
+    getImage: () => leatherSeatsImg,
   },
   {
     id: "heads-up-display",
@@ -383,7 +389,7 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "hud",
       "head up display",
     ],
-    getImage: () => appleCarPlayAndNav,
+    getImage: () => headsUpDisplayImg,
   },
   {
     id: "360-degree-camera",
@@ -399,7 +405,7 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "bird's eye view",
       "birds eye view",
     ],
-    getImage: (bt) => (bt === "SUV" ? suvParkingSensors : sedanParkingSensors),
+    getImage: () => threeSixtyCameraImg,
   },
   {
     id: "tow-pack",
@@ -415,15 +421,15 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "tow hitch",
       "trailer hitch",
     ],
-    getImage: () => pickupRemoteStart,
+    getImage: () => towPackImg,
   },
   {
     id: "lane-departure-warning",
-    name: "Lane Departure Warning‡",
+    name: "Lane Departure Warning",
     category: "Driver Assistance",
     description: "Warns if your vehicle unintentionally drifts from its detected lane and helps guide steering.",
     aliases: [
-      "lane departure warning‡",
+      "lane departure warning",
       "lane departure warning",
       "land departure warning",
       "lane keep assist",
@@ -527,7 +533,7 @@ function normalizeFeatureKey(str: string): string {
   if (!str) return "";
   return str
     .toLowerCase()
-    .replace(/[‡†*®™]/g, "")
+    .replace(/[†*®™]/g, "")
     .replace(/\(s\)/g, "s")
     .replace(/&/g, " and ")
     .replace(/[/\\#,+()$~%.'":*?<>{}]/g, " ")
