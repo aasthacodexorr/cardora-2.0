@@ -100,23 +100,16 @@ export default function VehicleFeatures({
 
   return (
     <section
-      className="w-full my-8 font-sans select-none mx-auto max-w-[1440px] xl:max-w-[1600px] px-4 md:px-8 lg:px-10 2xl:px-0"
+      className="w-full my-8 font-sans  mx-auto max-w-[1440px] xl:max-w-[1600px] px-4 md:px-8 lg:px-10 2xl:px-0"
       aria-labelledby="vehicle-features-showcase-heading"
     >
       {/* Header section with CarMax style typography and controls */}
       <div className="mb-5 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div className="max-w-2xl">
-          <p
-            id="vehicle-features-showcase-heading"
-            className="text-[15px] sm:text-[17px] font-semibold text-gray-700 tracking-tight"
-          >
-            {heading}
-          </p>
-          {subheading && (
-            <h2 className="mt-1 text-[22px] sm:text-[26px] lg:text-[30px] font-bold leading-tight text-gray-950">
-              {subheading}
-            </h2>
-          )}
+          <h2 className="text-[22px] font-semibold text-black mb-[15px]">
+            Popular Features
+          </h2>
+          
         </div>
 
         {matchedFeatures.length > 1 && (

@@ -235,7 +235,7 @@ export default async function ServicePage({ params }: PageProps) {
                 <ul className="pl-14">
                   {(currentData.signsList1 || []).map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-[18px] font-medium tracking-wide">
-                      <span className="text-black font-bold text-base select-none leading-none mt-0.5">•</span>
+                      <span className="text-black font-bold text-base  leading-none mt-0.5">•</span>
                       <span>{item}</span>
                     </li>
                   ))}
@@ -265,7 +265,7 @@ export default async function ServicePage({ params }: PageProps) {
                 <ul className="pl-14">
                   {(currentData.signList2 || []).map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-slate-900 text-[18px] font-medium tracking-wide">
-                      <span className="text-black font-bold text-base select-none leading-none mt-0.5">•</span>
+                      <span className="text-black font-bold text-base  leading-none mt-0.5">•</span>
                       <span>{item}</span>
                     </li>
                   ))}

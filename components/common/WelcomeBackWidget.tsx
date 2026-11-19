@@ -70,7 +70,7 @@ export default function WelcomeBackWidget() {
   // Handle visibility timing:
   // 1. Only run on inventory listing pages (never on home, VDP, or other pages)
   // 2. Show the notification icon after 5 seconds of page load (5000ms)
-  // 3. On inventory listing, only show the bell icon (popup opens on click)
+  // 3. Show the popup by default on desktop; mobile starts with it closed.
   useEffect(() => {
     if (!isMounted || !latestVehicle || !shouldShowWidget) {
       setIsVisible(false);
@@ -86,6 +86,7 @@ export default function WelcomeBackWidget() {
     // Show notification icon after 5 seconds of page load
     const iconTimer = setTimeout(() => {
       setIsVisible(true);
+      setIsOpen(window.matchMedia("(min-width: 640px)").matches);
     }, 5000);
 
     return () => {
@@ -169,7 +170,7 @@ export default function WelcomeBackWidget() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.85, y: 20 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[60] flex flex-col items-start select-none pointer-events-auto"
+          className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[60] flex flex-col items-start  pointer-events-auto"
         >
           {/* Welcome Back Popup Card - slides in from bottom to top like Tabangi */}
           <AnimatePresence>
@@ -180,7 +181,7 @@ export default function WelcomeBackWidget() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 40, scale: 0.95 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="relative bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden w-[calc(100vw-32px)] max-w-[300px] sm:max-w-[325px] mb-2.5 sm:mb-3 text-left max-h-[calc(100dvh-90px)] flex flex-col origin-bottom-left"
+                className="relative z-10 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden w-[calc(100vw-32px)] max-w-[300px] sm:max-w-[325px] -mb-6 sm:-mb-8 text-left max-h-[calc(100dvh-90px)] flex flex-col origin-bottom-left"
               >
                 {/* Top brand-colored arched cap */}
                 <div className="h-2.5 bg-brand w-full flex-shrink-0" />
@@ -279,7 +280,7 @@ export default function WelcomeBackWidget() {
             type="button"
             onClick={handleToggle}
             aria-label="Welcome Back - View recently viewed vehicle"
-            className="relative w-11 h-11 sm:w-13 sm:h-13 bg-brand hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-xl shadow-brand/25 border border-brand-green2 hover:scale-105 active:scale-95 transition-all cursor-pointer animate-widget-pulse"
+            className="relative z-0 w-11 h-11 sm:w-13 sm:h-13 bg-brand hover:opacity-90 text-white rounded-full flex items-center justify-center shadow-xl shadow-brand/25 border border-brand-green2 hover:scale-105 active:scale-95 transition-all cursor-pointer animate-widget-pulse"
           >
             <BellIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white animate-bell-ring" />
           </button>

@@ -231,7 +231,7 @@ export default function SkipTheDealership() {
                                     ].map((item, idx) => (
                                         <li key={idx} className="flex justify-between items-center font-medium border-b border-slate-200 py-4">
                                             <span>{item}</span>
-                                            <span className="text-xl select-none">🙁</span>
+                                            <span className="text-xl ">🙁</span>
                                         </li>
                                     ))}
                                 </ul>
@@ -252,7 +252,7 @@ export default function SkipTheDealership() {
                                     ].map((item, idx) => (
                                         <li key={idx} className="flex justify-between items-center border-b border-slate-200 py-4">
                                             <span>{item}</span>
-                                            <span className="text-xl select-none">🙂</span>
+                                            <span className="text-xl ">🙂</span>
                                         </li>
                                     ))}
                                 </ul>
