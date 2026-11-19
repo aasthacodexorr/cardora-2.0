@@ -13,12 +13,13 @@ interface WarrantyStatusProps {
 }
 
 export default function WarrantyStatus({ vehicle }: WarrantyStatusProps) {
-  // 1. Feature toggle check: show_manufacturer_warranty_details must be 1 or true
+  // 1. Feature toggle check: show only for enabled manufacturer warranty details
+  const warrantyFlag = vehicle?.show_manufacturer_warranty_details;
   const isEnabled =
-    vehicle?.show_manufacturer_warranty_details === 1 ||
-    vehicle?.show_manufacturer_warranty_details === "1" ||
-    vehicle?.show_manufacturer_warranty_details === true ||
-    vehicle?.show_manufacturer_warranty_details === "true";
+    warrantyFlag === true ||
+    warrantyFlag === "true" ||
+    warrantyFlag === 1 ||
+    warrantyFlag === "1";
 
   // Hydration-safe date calculation with periodic update on date change
   const [currentDate, setCurrentDate] = useState<Date>(() => new Date());
