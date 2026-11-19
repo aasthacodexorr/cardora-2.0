@@ -5,7 +5,7 @@ import { PopularFeatureTag } from "@/types/vehicle";
  * - Set to true to test UI with mock data.
  * - Set to false to restore actual API-driven behavior.
  */
-export const ENABLE_PHASE2_MOCK = true;
+export const ENABLE_PHASE2_MOCK = false;
 
 export const mockWarrantyData = {
   show_manufacturer_warranty_details: 1,
