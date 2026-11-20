@@ -13,6 +13,7 @@ import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
 import { MessageModal } from "./VehicleInfo";
 import { RecentlyViewedTag } from "@/components/inventory/RecentlyViewedTag";
 import { useRecentlyViewed } from "@/lib/recentlyViewed";
+import StockNumber from "@/components/inventory/StockNumber";
 
 /* =========================
    HitCard Component (Inventory)
@@ -507,7 +508,9 @@ export const HitCard = ({
               )}
             </div>
 
-            <p className="text-[12px] mb-2 font-light text-gray-500 mt-1">Stock #: {stock}</p>
+            <p className="text-[12px] mb-2 font-light text-gray-500 mt-1">
+              Stock #: <StockNumber stockNumber={stock} className="font-semibold" />
+            </p>
           </div>
         </Link>
 
