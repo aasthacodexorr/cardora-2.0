@@ -3,22 +3,26 @@ import type { StaticImageData } from "next/image";
 // Pickup assets
 import pickupParkingSensors from "@/assets/features/pickup/P_5.png";
 import pickupRemoteStart from "@/assets/features/pickup/P_4.png";
+import pickup360 from "@/assets/features/pickup/2_pickup_360.png";
 
 // Sedan assets
 import sedanAdaptiveCruise from "@/assets/features/sedan/as_1.png";
 import sedanLaneDeparture from "@/assets/features/sedan/as_2.png";
 import sedanRemoteStart from "@/assets/features/sedan/as_3.png";
 import sedanParkingSensors from "@/assets/features/sedan/as_4.png";
+import sedan360 from "@/assets/features/sedan/2_sedan_360.png";
 
 // SUV assets
 import suvAdaptiveCruise from "@/assets/features/suv/s_1.png";
 import suvParkingSensors from "@/assets/features/suv/s_2.png";
 import suvLaneDeparture from "@/assets/features/suv/s_3.png";
+import suv360 from "@/assets/features/suv/2_suv_360.png";
 
 // Van assets
 import vanAdaptiveCruise from "@/assets/features/van/v_1.png";
 import vanLaneDeparture from "@/assets/features/van/v_2.png";
 import vanRemoteStart from "@/assets/features/van/v_3.png";
+import van360 from "@/assets/features/van/2_van_360.png";
 
 // Shared / Interior / Connectivity / Comfort assets
 import appleCarPlayAndNav from "@/assets/features/pickup/p_6.png";
@@ -39,7 +43,6 @@ import towPackImg from "@/assets/features/shared/tow_pack.png";
 import roofRailsImg from "@/assets/features/shared/roof_rails.png";
 import sunroofImg from "@/assets/features/shared/sunroof.png";
 import rearParkingCameraImg from "@/assets/features/shared/rear_parking_camera.png";
-import threeSixtyCameraImg from "@/assets/features/shared/360_degree_camera.png";
 
 import { parsePopularFeatures } from "@/utils/popularFeatures";
 import { findPopularFeatureDefinition } from "@/constants/popularFeatures";
@@ -405,7 +408,19 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "bird's eye view",
       "birds eye view",
     ],
-    getImage: () => threeSixtyCameraImg,
+    getImage: (bt) => {
+      switch (bt) {
+        case "Pickup":
+          return pickup360;
+        case "Sedan":
+          return sedan360;
+        case "Van":
+          return van360;
+        case "SUV":
+        default:
+          return suv360;
+      }
+    },
   },
   {
     id: "tow-pack",
@@ -545,7 +560,7 @@ function normalizeFeatureKey(str: string): string {
 /**
  * Extracts raw feature strings from vehicle document (popular_features, features, etc.)
  */
-export function extractVehicleFeatureNames(vehicle: any): string[] {
+export function extractVehicleFeatureNames(vehicle: Record<string, unknown> | null | undefined): string[] {
   if (!vehicle) return [];
 
   if (vehicle.popular_features) {
