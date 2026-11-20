@@ -12,55 +12,143 @@ import { PopularFeatureTag } from "@/types/vehicle";
 import {
   DEFAULT_POPULAR_FEATURE_TAGS,
   isFeatureMatch,
-  getCanonicalFeatureName,
-  PopularFeatureName,
 } from "@/constants/popularFeatures";
 
 export default function PopularFeatureSearchChips() {
   const appConfig = useAppConfig();
 
-  // Initialize with appConfig or default popular feature tags
-  const [featureTags, setFeatureTags] = useState<PopularFeatureTag[]>(() => {
-    const fromConfig = appConfig?.vehicle_default_popular_tags;
+  // 1. Master list of popular vehicle features fetched from Popular Feature API (or appConfig / fallback)
+  const fromConfig = appConfig?.vehicle_default_popular_tags;
+  const initialTags = useMemo(() => {
     return Array.isArray(fromConfig) && fromConfig.length > 0
       ? fromConfig
       : DEFAULT_POPULAR_FEATURE_TAGS;
-  });
+  }, [fromConfig]);
 
-  // Keep synced with appConfig or fetch directly from inventory configurations endpoint
+  const [fetchedTags, setFetchedTags] = useState<PopularFeatureTag[] | null>(null);
+
   useEffect(() => {
-    const fromConfig = appConfig?.vehicle_default_popular_tags;
-    if (Array.isArray(fromConfig) && fromConfig.length > 0) {
-      setFeatureTags(fromConfig);
-      return;
-    }
+    if (Array.isArray(fromConfig) && fromConfig.length > 0) return;
 
+    let cancelled = false;
     fetch(
       "https://demo.zopsoftware.com/api/website/inventory/configurations/default-popular-features"
     )
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setFeatureTags(data);
+        if (!cancelled && Array.isArray(data) && data.length > 0) {
+          setFetchedTags(data);
         }
       })
       .catch(() => {
         // Fallback to DEFAULT_POPULAR_FEATURE_TAGS already present
       });
-  }, [appConfig?.vehicle_default_popular_tags]);
 
-  // Mount refinement list for popular_features so InstantSearch manages the facet attribute
-  useRefinementList({
+    return () => {
+      cancelled = true;
+    };
+  }, [fromConfig]);
+
+  const featureTags = fetchedTags || initialTags;
+
+  // 2. Typesense facet values and counts for popular_features
+  const { items: facetItems } = useRefinementList({
     attribute: "popular_features",
-    limit: 200,
+    limit: 100,
   });
 
-  const { indexUiState, setIndexUiState } = useInstantSearch();
+  const { indexUiState, setIndexUiState, results } = useInstantSearch();
   const { items: currentRefinements } = useCurrentRefinements();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+
+  // Active feature values currently in indexUiState or currentRefinements
+  const activeFeatures = useMemo(() => {
+    const fromUiState: string[] =
+      (indexUiState.refinementList?.popular_features as string[]) || [];
+
+    const featCategory = currentRefinements.find(
+      (c) => c.attribute === "popular_features"
+    );
+    const fromCurrent: string[] =
+      featCategory?.refinements.map((r) => String(r.value || r.label)) || [];
+
+    return Array.from(new Set([...fromUiState, ...fromCurrent]));
+  }, [indexUiState.refinementList?.popular_features, currentRefinements]);
+
+  // Match an API tag to all equivalent Typesense facet values. Inventory data
+  // can contain multiple casings or aliases for the same canonical feature.
+  const findMatchingFacets = useCallback(
+    (tag: PopularFeatureTag) => {
+      const tagVal = (tag.value || "").trim().toLowerCase();
+      const tagLab = (tag.label || "").trim().toLowerCase();
+
+      return facetItems.filter((item) => {
+        const itemVal = (item.value || item.label || "").trim().toLowerCase();
+        if (tagVal && itemVal === tagVal) return true;
+        if (tagLab && itemVal === tagLab) return true;
+        return (
+          isFeatureMatch(item.value, tag.value) ||
+          isFeatureMatch(item.value, tag.label)
+        );
+      });
+    },
+    [facetItems]
+  );
+
+  const findMatchingFacet = useCallback(
+    (tag: PopularFeatureTag) => {
+      const matchingFacets = findMatchingFacets(tag);
+      return matchingFacets.find((item) => item.count > 0) || matchingFacets[0];
+    },
+    [findMatchingFacets]
+  );
+
+  // Check if a specific feature tag is currently active
+  const isFeatureActive = useCallback(
+    (tag: PopularFeatureTag): boolean => {
+      const tagVal = (tag.value || "").trim().toLowerCase();
+      const tagLab = (tag.label || "").trim().toLowerCase();
+
+      return activeFeatures.some((activeVal) => {
+        if (!activeVal) return false;
+        const aLower = activeVal.trim().toLowerCase();
+        if (tagVal && aLower === tagVal) return true;
+        if (tagLab && aLower === tagLab) return true;
+        return (
+          isFeatureMatch(activeVal, tag.value) ||
+          isFeatureMatch(activeVal, tag.label)
+        );
+      });
+    },
+    [activeFeatures]
+  );
+
+  // Dynamic Feature Visibility:
+  // - Compare values against the master list returned by the Popular Feature API
+  // - Display only features that have at least one matching vehicle in the current inventory results
+  // - Hide features that have zero matching vehicles
+  // - Preserve visibility for currently selected features so user can see and deselect them
+  const hasLoadedResults = Boolean(results && results.nbHits !== undefined);
+
+  const visibleTags = useMemo(() => {
+    // If results have not loaded yet and no filters are active, do not display static chips
+    if (!hasLoadedResults && activeFeatures.length === 0) {
+      return [];
+    }
+
+    return featureTags.filter((tag) => {
+      // Always keep active/selected features visible
+      if (isFeatureActive(tag)) {
+        return true;
+      }
+
+      // Display only features that have at least one matching vehicle in current inventory results
+      return findMatchingFacets(tag).some((item) => item.count > 0);
+    });
+  }, [hasLoadedResults, activeFeatures.length, featureTags, isFeatureActive, findMatchingFacets]);
 
   // Check scroll position to display left/right navigation arrows on desktop
   const updateScrollArrows = useCallback(() => {
@@ -81,7 +169,7 @@ export default function PopularFeatureSearchChips() {
       el.removeEventListener("scroll", updateScrollArrows);
       window.removeEventListener("resize", updateScrollArrows);
     };
-  }, [updateScrollArrows]);
+  }, [updateScrollArrows, visibleTags]);
 
   // Scroll left/right smoothly
   const handleScroll = (direction: "left" | "right") => {
@@ -103,33 +191,12 @@ export default function PopularFeatureSearchChips() {
     }
   };
 
-  // Active feature values currently in indexUiState or currentRefinements
-  const activeFeatures = useMemo(() => {
-    const fromUiState: string[] =
-      (indexUiState.refinementList?.popular_features as string[]) || [];
-
-    const featCategory = currentRefinements.find(
-      (c) => c.attribute === "popular_features"
-    );
-    const fromCurrent: string[] =
-      featCategory?.refinements.map((r) => String(r.value || r.label)) || [];
-
-    return Array.from(new Set([...fromUiState, ...fromCurrent]));
-  }, [indexUiState.refinementList?.popular_features, currentRefinements]);
-
-  // Check if a specific feature chip is active
-  const isFeatureActive = useCallback(
-    (featureName: PopularFeatureName): boolean => {
-      return activeFeatures.some((activeVal) =>
-        isFeatureMatch(activeVal, featureName)
-      );
-    },
-    [activeFeatures]
-  );
-
-  // Toggle feature filter on click
-  const handleToggle = (featureName: PopularFeatureName) => {
-    const canonicalName = getCanonicalFeatureName(featureName) || featureName;
+  // Toggle feature filter on click using the actual API value
+  const handleToggle = (tag: PopularFeatureTag) => {
+    const matchingFacet = findMatchingFacet(tag);
+    // Use the actual API / Typesense value for filtering, not just the display label
+    const filterValue = matchingFacet?.value || tag.value || tag.label;
+    if (!filterValue) return;
 
     setIndexUiState((prevState) => {
       const currentRefinementList = prevState.refinementList || {};
@@ -137,19 +204,27 @@ export default function PopularFeatureSearchChips() {
         String
       );
 
-      const isCurrentlyActive = currentFeatures.some((val) =>
-        isFeatureMatch(val, canonicalName)
+      const isCurrentlyActive = currentFeatures.some(
+        (val) =>
+          isFeatureMatch(val, filterValue) ||
+          isFeatureMatch(val, tag.label) ||
+          isFeatureMatch(val, tag.value) ||
+          val.trim().toLowerCase() === filterValue.trim().toLowerCase()
       );
 
       let nextFeatures: string[];
       if (isCurrentlyActive) {
         // Deselect feature: remove all matching instances
         nextFeatures = currentFeatures.filter(
-          (val) => !isFeatureMatch(val, canonicalName)
+          (val) =>
+            !isFeatureMatch(val, filterValue) &&
+            !isFeatureMatch(val, tag.label) &&
+            !isFeatureMatch(val, tag.value) &&
+            val.trim().toLowerCase() !== filterValue.trim().toLowerCase()
         );
       } else {
-        // Select feature: append canonical name
-        nextFeatures = [...currentFeatures, canonicalName];
+        // Select feature: append actual API filter value (supports multiple selections)
+        nextFeatures = [...currentFeatures, filterValue];
       }
 
       const nextRefinementList = { ...currentRefinementList };
@@ -166,6 +241,11 @@ export default function PopularFeatureSearchChips() {
       };
     });
   };
+
+  // If no popular features have matching vehicles in current results, hide the chips container
+  if (visibleTags.length === 0) {
+    return null;
+  }
 
   return (
     <div
@@ -193,22 +273,20 @@ export default function PopularFeatureSearchChips() {
         className="w-full overflow-x-auto no-scrollbar scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
         <div className="inline-flex items-center gap-2 pr-2 py-0.5">
-          {featureTags.map((tag) => {
-            const featureName = (tag.label || tag.value || "") as PopularFeatureName;
-            const active =
-              isFeatureActive(featureName) ||
-              (tag.value ? isFeatureActive(tag.value as PopularFeatureName) : false);
+          {visibleTags.map((tag) => {
+            const active = isFeatureActive(tag);
+            const displayLabel = tag.label || tag.value;
 
             return (
               <button
                 key={tag.label || tag.value}
                 type="button"
-                onClick={() => handleToggle(featureName)}
+                onClick={() => handleToggle(tag)}
                 aria-pressed={active}
-                className={`shrink-0 inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-full text-xs sm:text-[13px] font-semibold leading-none cursor-pointer  transition-all duration-150 ${
+                className={`shrink-0 inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-full text-xs sm:text-[13px] font-semibold leading-none cursor-pointer transition-all duration-150 ${
                   active
                     ? "bg-[#111827] text-white border border-[#111827] shadow-xs hover:bg-black"
-                    : "bg-white  text-gray-800 border border-gray-300 hover:border-gray-400 bg-gray-50 active:bg-gray-100"
+                    : "bg-white text-gray-800 border border-gray-300 hover:border-gray-400 bg-gray-50 active:bg-gray-100"
                 }`}
               >
                 {tag.icon && (
@@ -222,7 +300,7 @@ export default function PopularFeatureSearchChips() {
                     loading="lazy"
                   />
                 )}
-                <span>{tag.label || tag.value}</span>
+                <span>{displayLabel}</span>
               </button>
             );
           })}
