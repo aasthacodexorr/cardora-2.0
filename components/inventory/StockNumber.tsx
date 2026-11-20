@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { MouseEvent } from "react";
 
 interface StockNumberProps {
@@ -14,6 +14,16 @@ export default function StockNumber({
 }: StockNumberProps) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const value = String(stockNumber ?? "");
+
+  useEffect(() => {
+    if (copyState === "idle") return;
+
+    const timeoutId = window.setTimeout(() => {
+      setCopyState("idle");
+    }, 2000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [copyState]);
 
   const copyStockNumber = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -44,7 +54,7 @@ export default function StockNumber({
         <span
           role="status"
           aria-live="polite"
-          className={copyState === "error" ? "ml-1 text-red-600" : "ml-1 text-brand-green"}
+          className={copyState === "error" ? "ml-1 text-red-600" : "ml-1 text-gray-500"}
         >
           {copyState === "copied" ? "Copied" : "Unable to copy"}
         </span>

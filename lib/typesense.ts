@@ -6,7 +6,7 @@
 import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
 import { AppConfig } from "@/lib/appConfig";
 import {
-  getCanonicalFeatureName,
+  DEFAULT_POPULAR_FEATURE_TAGS,
   getFeatureQueryVariants,
   isFeatureMatch,
 } from "@/constants/popularFeatures";
@@ -209,18 +209,30 @@ function getFacetCasingVariants(attribute: string, value: string): string[] {
   return Array.from(set).filter(Boolean);
 }
 
-// Exact Typesense filters miss some populated feature facet values in this collection.
-function getPopularFeaturePrefix(
-  value: string,
+function buildPopularFeatureFilter(
+  selectedValues: string[],
   configuredFeatureValues: string[]
-): string {
-  const configuredValue = configuredFeatureValues.find((candidate) =>
-    isFeatureMatch(value, candidate)
-  );
-  const prefixSource =
-    configuredValue || getCanonicalFeatureName(value) || value;
-  const prefix = prefixSource.trim().split(/\s+/)[0];
-  return prefix || getFeatureQueryVariants(value)[0] || value;
+): string | undefined {
+  const selectedFeatures = Array.from(new Set(selectedValues.map(normalizeFacetValue)));
+  if (selectedFeatures.length === 0) return undefined;
+
+  return selectedFeatures
+    .map((selectedValue) => {
+      const featureValues = new Set([
+        ...getFeatureQueryVariants(selectedValue),
+        ...configuredFeatureValues.filter((configuredValue) =>
+          isFeatureMatch(selectedValue, configuredValue)
+        ),
+      ]);
+      const prefixes = new Set(
+        Array.from(featureValues).flatMap((value) => {
+          const prefix = value.trim().split(/\s+/)[0];
+          return getFacetCasingVariants("popular_features", prefix);
+        })
+      );
+      return `popular_features:[${Array.from(prefixes).map(escapeFilterValue).join(",")}]`;
+    })
+    .join(" && ");
 }
 
 function expandFacetFiltersWithModelVariants(
@@ -297,28 +309,20 @@ function expandFacetFiltersWithModelVariants(
   });
 }
 
-function addPopularFeaturePrefixFilter(
+function addPopularFeatureAndFilter(
   request: any,
+  selectedValues: string[],
   configuredFeatureValues: string[]
 ) {
   const facetFilters: FacetFilterEntry[] = request?.params?.facetFilters || [];
-  const { values, remaining } = extractFacetAttribute(
+  const { remaining } = extractFacetAttribute(
     facetFilters,
     "popular_features"
   );
-  const prefixes = Array.from(
-    new Set(
-      values.map((value) =>
-        getPopularFeaturePrefix(
-          normalizeFacetValue(value),
-          configuredFeatureValues
-        )
-      )
-    )
+  const featureFilter = buildPopularFeatureFilter(
+    selectedValues,
+    configuredFeatureValues
   );
-  const featureFilter = prefixes.length
-    ? `popular_features:[${prefixes.map((value) => `\`${value}\``).join(",")}]`
-    : undefined;
   const filters = [request.params?.filters, featureFilter]
     .filter(Boolean)
     .join(" && ");
@@ -346,8 +350,23 @@ function wrapSearchClientWithMakeModelFilter(
     const expandedRequests: any[] = [];
     const groups: Array<{ request: any; start: number; count: number }> = [];
 
+    const selectedFeatureValues = Array.from(
+      new Set(
+        requests.flatMap((request) => {
+          const { values } = extractFacetAttribute(
+            request?.params?.facetFilters || [],
+            "popular_features"
+          );
+          return values.map(normalizeFacetValue);
+        })
+      )
+    );
     const processedRequests = requests.map((req) =>
-      addPopularFeaturePrefixFilter(req, configuredFeatureValues)
+      addPopularFeatureAndFilter(
+        req,
+        selectedFeatureValues,
+        configuredFeatureValues
+      )
     );
 
     processedRequests.forEach((request) => {
@@ -433,11 +452,11 @@ export function getTypesenseClient(config: AppConfig) {
     },
   });
 
-  const configuredFeatureTags: PopularFeatureTag[] = Array.isArray(
-    config.vehicle_default_popular_tags
-  )
-    ? config.vehicle_default_popular_tags
-    : [];
+  const configuredFeatureTags: PopularFeatureTag[] =
+    Array.isArray(config.vehicle_default_popular_tags) &&
+    config.vehicle_default_popular_tags.length > 0
+      ? config.vehicle_default_popular_tags
+      : DEFAULT_POPULAR_FEATURE_TAGS;
   const configuredFeatureValues = configuredFeatureTags
     .flatMap((tag) => [tag.value, tag.label])
     .filter((value) => value.length > 0);

@@ -106,10 +106,10 @@ export default function WarrantyStatus({ vehicle }: WarrantyStatusProps) {
   const groups = groupWarrantiesByType(calculatedWarranties);
 
   return (
-    <section className="w-full mt-8 font-sans" aria-labelledby="warranty-status-heading">
+    <section className="w-full my-6 lg:mt-8 lg:mb-0 font-sans" aria-labelledby="warranty-status-heading">
       <h2
         id="warranty-status-heading"
-        className="text-[20px] md:text-[22px] font-semibold text-black mb-4"
+        className="text-[20px] md:text-[22px] font-semibold text-black mb-5"
       >
         Warranty status
       </h2>
