@@ -20,7 +20,7 @@ const AboutVehicle = ({ vehicle }: any) => {
   };
 
   return (
-    <div className="bg-card border-none rounded-xl w-full xl:-mt-28 -mt-3">
+    <div className="bg-card border-none rounded-xl w-full my-6 lg:-mt-3 xl:-mt-28 lg:mb-0">
       <motion.h2 
         initial={{ opacity: 0, x: -15 }}
         whileInView={{ opacity: 1, x: 0 }}

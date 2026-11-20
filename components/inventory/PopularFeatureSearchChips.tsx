@@ -14,6 +14,27 @@ import {
   isFeatureMatch,
 } from "@/constants/popularFeatures";
 
+const PopularFeatureChipsSkeleton = () => (
+  <div
+    className="w-full pt-2 pb-1"
+    aria-label="Loading popular vehicle feature filters"
+    aria-busy="true"
+  >
+    <div className="flex items-center gap-2 overflow-hidden py-0.5">
+      {[96, 116, 88, 128, 104, 92].map((width, index) => (
+        <div
+          key={index}
+          style={{ width }}
+          className="relative h-9 shrink-0 overflow-hidden rounded-full border border-gray-200 bg-[#e5e7eb] [transform:translateZ(0)]"
+          aria-hidden="true"
+        >
+          <span className="absolute inset-0 pointer-events-none bg-[linear-gradient(90deg,rgba(229,231,235,0)_0%,rgba(255,255,255,0.85)_50%,rgba(229,231,235,0)_100%)] -translate-x-full animate-[inventoryShimmerSweep_1.35s_ease-in-out_infinite] will-change-transform" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 export default function PopularFeatureSearchChips() {
   const appConfig = useAppConfig();
 
@@ -57,12 +78,24 @@ export default function PopularFeatureSearchChips() {
     limit: 100,
   });
 
-  const { indexUiState, setIndexUiState, results } = useInstantSearch();
+  const { indexUiState, setIndexUiState, results, status } = useInstantSearch();
   const { items: currentRefinements } = useCurrentRefinements();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [hasInitialResults, setHasInitialResults] = useState(false);
+
+  useEffect(() => {
+    if (
+      !hasInitialResults &&
+      status === "idle" &&
+      results &&
+      !results.__isArtificial
+    ) {
+      setHasInitialResults(true);
+    }
+  }, [hasInitialResults, status, results]);
 
   // Active feature values currently in indexUiState or currentRefinements
   const activeFeatures = useMemo(() => {
@@ -131,14 +164,7 @@ export default function PopularFeatureSearchChips() {
   // - Display only features that have at least one matching vehicle in the current inventory results
   // - Hide features that have zero matching vehicles
   // - Preserve visibility for currently selected features so user can see and deselect them
-  const hasLoadedResults = Boolean(results && results.nbHits !== undefined);
-
   const visibleTags = useMemo(() => {
-    // If results have not loaded yet and no filters are active, do not display static chips
-    if (!hasLoadedResults && activeFeatures.length === 0) {
-      return [];
-    }
-
     return featureTags.filter((tag) => {
       // Always keep active/selected features visible
       if (isFeatureActive(tag)) {
@@ -148,7 +174,7 @@ export default function PopularFeatureSearchChips() {
       // Display only features that have at least one matching vehicle in current inventory results
       return findMatchingFacets(tag).some((item) => item.count > 0);
     });
-  }, [hasLoadedResults, activeFeatures.length, featureTags, isFeatureActive, findMatchingFacets]);
+  }, [featureTags, isFeatureActive, findMatchingFacets]);
 
   // Check scroll position to display left/right navigation arrows on desktop
   const updateScrollArrows = useCallback(() => {
@@ -241,6 +267,10 @@ export default function PopularFeatureSearchChips() {
       };
     });
   };
+
+  if (!hasInitialResults) {
+    return <PopularFeatureChipsSkeleton />;
+  }
 
   // If no popular features have matching vehicles in current results, hide the chips container
   if (visibleTags.length === 0) {

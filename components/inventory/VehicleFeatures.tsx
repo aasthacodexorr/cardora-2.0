@@ -100,7 +100,7 @@ export default function VehicleFeatures({
 
   return (
     <section
-      className="w-full mb-8 font-sans  mx-auto max-w-[1440px] xl:max-w-[1600px] px-4 md:px-8 lg:px-10 2xl:px-0"
+      className="w-full my-6 lg:mt-0 lg:mb-8 font-sans  mx-auto max-w-[1440px] xl:max-w-[1600px] px-4 md:px-8 lg:px-10 2xl:px-0"
       aria-labelledby="vehicle-features-showcase-heading"
     >
       {/* Header section with CarMax style typography and controls */}

@@ -292,7 +292,7 @@ export default async function VehicleDetailsPage({
 
                                 {/* Vehicle description */}
                                 {vehicle.vehicle_description && (
-                                    <div className="bg-card border-none rounded-xl p-0 mt-[15px] lg:mt-[45px] flex-wrap">
+                                    <div className="bg-card border-none rounded-xl p-0 my-6 lg:mt-[45px] lg:mb-0 flex-wrap">
                                         <h2 className="text-[22px] font-semibold text-black mb-[15px]">
                                             Vehicle Description
                                         </h2>
