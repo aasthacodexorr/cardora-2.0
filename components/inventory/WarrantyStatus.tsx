@@ -1,12 +1,57 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import type { ReactNode } from "react";
 import { Vehicle } from "@/types/vehicle";
 import {
   getManufacturerWarranties,
   groupWarrantiesByType,
   formatWarrantyCoverageText,
 } from "@/utils/warranty";
+
+function renderEmphasizedWarrantyText(
+  text: string,
+  values: (string | undefined)[]
+): ReactNode[] {
+  const ranges = [...new Set(values.filter((value): value is string => Boolean(value)))]
+    .map((value) => {
+      const start = text.indexOf(value);
+      return start === -1 ? null : { start, end: start + value.length };
+    })
+    .filter((range): range is { start: number; end: number } => range !== null)
+    .sort((a, b) => a.start - b.start || b.end - a.end);
+
+  const nonOverlappingRanges: typeof ranges = [];
+  for (const range of ranges) {
+    if (
+      nonOverlappingRanges.length === 0 ||
+      range.start >= nonOverlappingRanges[nonOverlappingRanges.length - 1].end
+    ) {
+      nonOverlappingRanges.push(range);
+    }
+  }
+
+  const parts: ReactNode[] = [];
+  let cursor = 0;
+
+  for (const [index, range] of nonOverlappingRanges.entries()) {
+    if (range.start > cursor) {
+      parts.push(text.slice(cursor, range.start));
+    }
+    parts.push(
+      <strong key={`emphasis-${index}`} className="font-semibold text-gray-900">
+        {text.slice(range.start, range.end)}
+      </strong>
+    );
+    cursor = range.end;
+  }
+
+  if (cursor < text.length) {
+    parts.push(text.slice(cursor));
+  }
+
+  return parts;
+}
 
 interface WarrantyStatusProps {
   vehicle: Vehicle | Record<string, any>;
@@ -106,7 +151,11 @@ export default function WarrantyStatus({ vehicle }: WarrantyStatusProps) {
                         </svg>
                       </span>
                       <span suppressHydrationWarning className="leading-snug">
-                        {text}
+                        {renderEmphasizedWarrantyText(text, [
+                          (item.coverage || "Warranty").trim(),
+                          item.warranty_remaining_duration,
+                          item.mileage_remaining,
+                        ])}
                       </span>
                     </li>
                   );

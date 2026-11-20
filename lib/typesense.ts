@@ -5,7 +5,12 @@
 
 import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
 import { AppConfig } from "@/lib/appConfig";
-import { getFeatureQueryVariants } from "@/constants/popularFeatures";
+import {
+  getCanonicalFeatureName,
+  getFeatureQueryVariants,
+  isFeatureMatch,
+} from "@/constants/popularFeatures";
+import type { PopularFeatureTag } from "@/types/vehicle";
 import {
   parseMakeModelSelections,
   readRouteState,
@@ -204,6 +209,20 @@ function getFacetCasingVariants(attribute: string, value: string): string[] {
   return Array.from(set).filter(Boolean);
 }
 
+// Exact Typesense filters miss some populated feature facet values in this collection.
+function getPopularFeaturePrefix(
+  value: string,
+  configuredFeatureValues: string[]
+): string {
+  const configuredValue = configuredFeatureValues.find((candidate) =>
+    isFeatureMatch(value, candidate)
+  );
+  const prefixSource =
+    configuredValue || getCanonicalFeatureName(value) || value;
+  const prefix = prefixSource.trim().split(/\s+/)[0];
+  return prefix || getFeatureQueryVariants(value)[0] || value;
+}
+
 function expandFacetFiltersWithModelVariants(
   facetFilters: FacetFilterEntry[] | undefined
 ): FacetFilterEntry[] | undefined {
@@ -218,11 +237,6 @@ function expandFacetFiltersWithModelVariants(
           const variants = getModelVariants(rawVal);
           if (variants.length > 1) {
             return variants.map((v) => `model:${v}`);
-          }
-        } else if (attr === "popular_features") {
-          const variants = getFeatureQueryVariants(rawVal);
-          if (variants.length > 1) {
-            return variants.map((v) => `popular_features:${v}`);
           }
         } else if (
           attr === "exterior_color" ||
@@ -257,14 +271,6 @@ function expandFacetFiltersWithModelVariants(
                 if (!expanded.includes(f)) expanded.push(f);
               });
               return;
-            } else if (attr === "popular_features") {
-              modified = true;
-              const variants = getFeatureQueryVariants(rawVal);
-              variants.forEach((v) => {
-                const f = `popular_features:${v}`;
-                if (!expanded.includes(f)) expanded.push(f);
-              });
-              return;
             } else if (
               attr === "exterior_color" ||
               attr === "body_type" ||
@@ -291,23 +297,58 @@ function expandFacetFiltersWithModelVariants(
   });
 }
 
-function wrapSearchClientWithMakeModelFilter(searchClient: any) {
+function addPopularFeaturePrefixFilter(
+  request: any,
+  configuredFeatureValues: string[]
+) {
+  const facetFilters: FacetFilterEntry[] = request?.params?.facetFilters || [];
+  const { values, remaining } = extractFacetAttribute(
+    facetFilters,
+    "popular_features"
+  );
+  const prefixes = Array.from(
+    new Set(
+      values.map((value) =>
+        getPopularFeaturePrefix(
+          normalizeFacetValue(value),
+          configuredFeatureValues
+        )
+      )
+    )
+  );
+  const featureFilter = prefixes.length
+    ? `popular_features:[${prefixes.map((value) => `\`${value}\``).join(",")}]`
+    : undefined;
+  const filters = [request.params?.filters, featureFilter]
+    .filter(Boolean)
+    .join(" && ");
+
+  return {
+    ...request,
+    params: {
+      ...request.params,
+      filters: filters || undefined,
+      facetFilters:
+        facetFilters.length > 0
+          ? expandFacetFiltersWithModelVariants(remaining)
+          : request.params?.facetFilters,
+    },
+  };
+}
+
+function wrapSearchClientWithMakeModelFilter(
+  searchClient: any,
+  configuredFeatureValues: string[]
+) {
   const originalSearch = searchClient.search.bind(searchClient);
 
   searchClient.search = (requests: any[]) => {
     const expandedRequests: any[] = [];
     const groups: Array<{ request: any; start: number; count: number }> = [];
 
-    const processedRequests = requests.map((req) => {
-      if (!req?.params?.facetFilters) return req;
-      return {
-        ...req,
-        params: {
-          ...req.params,
-          facetFilters: expandFacetFiltersWithModelVariants(req.params.facetFilters),
-        },
-      };
-    });
+    const processedRequests = requests.map((req) =>
+      addPopularFeaturePrefixFilter(req, configuredFeatureValues)
+    );
 
     processedRequests.forEach((request) => {
       try {
@@ -345,6 +386,24 @@ function wrapSearchClientWithMakeModelFilter(searchClient: any) {
         ),
       };
 
+      const hasPopularFeatureRefinement = processedRequests.some((request) =>
+        request?.params?.filters?.includes("popular_features:")
+      );
+
+      if (process.env.NODE_ENV !== "production" && hasPopularFeatureRefinement) {
+        console.debug(
+          "[Typesense popular_features facet]",
+          JSON.stringify(processedRequests.map((request, index) => ({
+            facets: request?.params?.facets,
+            facetFilters: request?.params?.facetFilters || [],
+            numericFilters: request?.params?.numericFilters || [],
+            filters: request?.params?.filters,
+            valuesAndCounts:
+              normalizedResult.results[index]?.facets?.popular_features || {},
+          })))
+        );
+      }
+
       return normalizedResult;
     });
   };
@@ -369,12 +428,25 @@ export function getTypesenseClient(config: AppConfig) {
       query_by: "make,model,year_search,trim,vin,stock_no,exterior_color,body_type,vehicle_type,transmission,fuel_type,popular_features",
       num_typos: "0",
       facet_by: "year,make,model,exterior_color,body_type,vehicle_type,transmission,fuel_type,location,price,odometer,popular_features",
+      max_facet_values: 100,
       sort_by: "_text_match:desc,created_at:desc",
     },
   });
 
+  const configuredFeatureTags: PopularFeatureTag[] = Array.isArray(
+    config.vehicle_default_popular_tags
+  )
+    ? config.vehicle_default_popular_tags
+    : [];
+  const configuredFeatureValues = configuredFeatureTags
+    .flatMap((tag) => [tag.value, tag.label])
+    .filter((value) => value.length > 0);
+
   return {
-    searchClient: wrapSearchClientWithMakeModelFilter(typesenseAdapter.searchClient),
+    searchClient: wrapSearchClientWithMakeModelFilter(
+      typesenseAdapter.searchClient,
+      configuredFeatureValues
+    ),
     TYPESENSE_COLLECTION_NAME: config.site.collection,
   };
 }

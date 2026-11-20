@@ -37,6 +37,7 @@ import RecentlyViewedTracker from "@/components/inventory/RecentlyViewedTracker"
 import { getEffectivePrice } from "@/utils/pricing";
 import VehicleFeatures from "@/components/inventory/VehicleFeatures";
 import WarrantyStatus from "@/components/inventory/WarrantyStatus";
+import StockNumber from "@/components/inventory/StockNumber";
 import MetaVehicleViewContent from "@/components/MetaVehicleViewContent";
 import {
     ENABLE_PHASE2_MOCK,
@@ -212,7 +213,10 @@ export default async function VehicleDetailsPage({
                             />
 
                             <div className="text-[12px] font-light border-b border-gray-200">
-                                <p><strong className="font-medium">STOCK #</strong>: {vehicle?.stock_no}</p>
+                                <p>
+                                    <strong className="font-medium">STOCK #</strong>:{" "}
+                                    <StockNumber stockNumber={vehicle?.stock_no} className="font-semibold" />
+                                </p>
                             </div>
 
                             {/* vehicle header on mobile */}
@@ -327,7 +331,7 @@ export default async function VehicleDetailsPage({
 
 
                     {/* Finance Calculator - Now spans full responsive width within the centralized container bounds */}
-                    <div className="mt-12 w-full">
+                    <div className="lg:mt-12 w-full">
                         {/* CarMax-Style Vehicle Features Showcase */}
                         <VehicleFeatures vehicle={vehicle} />
 

@@ -100,11 +100,11 @@ export default function VehicleFeatures({
 
   return (
     <section
-      className="w-full my-8 font-sans  mx-auto max-w-[1440px] xl:max-w-[1600px] px-4 md:px-8 lg:px-10 2xl:px-0"
+      className="w-full mb-8 font-sans  mx-auto max-w-[1440px] xl:max-w-[1600px] px-4 md:px-8 lg:px-10 2xl:px-0"
       aria-labelledby="vehicle-features-showcase-heading"
     >
       {/* Header section with CarMax style typography and controls */}
-      <div className="mb-5 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+      <div className="lg:mb-5 flex flex-row sm:items-end justify-between gap-3">
         <div className="max-w-2xl">
           <h2 className="text-[22px] font-semibold text-black mb-[15px]">
             Popular Features
@@ -113,7 +113,7 @@ export default function VehicleFeatures({
         </div>
 
         {matchedFeatures.length > 1 && (
-          <div className="shrink-0 flex items-center gap-2 self-end sm:self-auto">
+          <div className="shrink-0 flex items-center gap-2 self-end sm:self-auto mb-5 lg:mb-0">
             <button
               type="button"
               onClick={() => scroll("left")}
