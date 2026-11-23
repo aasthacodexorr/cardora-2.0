@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
@@ -10,6 +10,7 @@ import { getConstants } from "@/constants";
 import { useAppConfig } from "@/app/providers";
 import { useWishlist } from "@/context/WishlistContext";
 import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
+import { parseImageUrls } from "@/utils/formatters";
 import { MessageModal } from "./VehicleInfo";
 import { RecentlyViewedTag } from "@/components/inventory/RecentlyViewedTag";
 import { useRecentlyViewed } from "@/lib/recentlyViewed";
@@ -243,13 +244,35 @@ export const HitCard = ({
     Number.isFinite(downPayment) &&
     downPayment >= 0;
 
-  const imageUrls = hit.image_urls ? hit.image_urls.split(";") : [];
-  let imageSrc = DEFAULT_PLACEHOLDER_IMAGE || `${SITE_CONFIG?.urls?.assetBaseUrl}/image/default-placeholder.jpg`;
+  const defaultPlaceholder =
+    DEFAULT_PLACEHOLDER_IMAGE ||
+    `${SITE_CONFIG?.urls?.assetBaseUrl}/image/default-placeholder.jpg`;
 
-  if (imageUrls.length > 0) {
-    const firstUrl = imageUrls[0].trim();
-    imageSrc = firstUrl.startsWith("/") ? `${SITE_CONFIG?.urls?.assetBaseUrl}${firstUrl}` : firstUrl;
-  }
+  const imageUrls = useMemo(() => {
+    if (!hit.image_urls) return [];
+    return parseImageUrls(hit.image_urls, SITE_CONFIG?.urls?.assetBaseUrl || "");
+  }, [hit.image_urls, SITE_CONFIG?.urls?.assetBaseUrl]);
+
+  const [imgIndex, setImgIndex] = useState(0);
+  const [hasImgError, setHasImgError] = useState(false);
+
+  useEffect(() => {
+    setImgIndex(0);
+    setHasImgError(false);
+  }, [hit.inventory_id, hit.id, hit.image_urls]);
+
+  const imageSrc = useMemo(() => {
+    if (hasImgError || imageUrls.length === 0) return defaultPlaceholder;
+    return imageUrls[imgIndex] || defaultPlaceholder;
+  }, [hasImgError, imageUrls, imgIndex, defaultPlaceholder]);
+
+  const handleImageError = () => {
+    if (imgIndex === 0 && imageUrls.length > 1) {
+      setImgIndex(1);
+    } else {
+      setHasImgError(true);
+    }
+  };
 
   const slug = [hit.inventory_id ?? hit.id, hit.year, hit.make, hit.model, hit.trim]
     .filter(Boolean)
@@ -272,6 +295,7 @@ export const HitCard = ({
               alt={title}
               width={600}
               height={400}
+              onError={handleImageError}
               className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${isSold || isDealPending ? "grayscale opacity-80" : ""
                 }`}
             />

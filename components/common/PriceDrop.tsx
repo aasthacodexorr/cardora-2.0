@@ -45,26 +45,23 @@ export const PriceDrop = ({
   }
 
   return (
-    <span className="inline-flex flex-nowrap items-center justify-end gap-1">
+    <span className="inline-flex flex-nowrap items-center gap-1.5">
       {showArrow && (
         <span
           aria-hidden="true"
-          className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#00a650]"
+          className="inline-flex h-[20px] w-[20px] sm:h-[22px] sm:w-[22px] shrink-0 items-center justify-center rounded-full bg-[#00a650]"
         >
           <svg
-            width="10"
-            height="10"
-            viewBox="0 0 8 9"
+            className="w-3 h-3 text-white"
+            viewBox="0 0 24 24"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+            stroke="currentColor"
+            strokeWidth="3.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <path
-              d="M2 2L8 8M8 8V3.8M8 8H3.8"
-              stroke="white"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+            <line x1="6" y1="6" x2="18" y2="18" />
+            <polyline points="18 9 18 18 9 18" />
           </svg>
         </span>
       )}
@@ -73,7 +70,7 @@ export const PriceDrop = ({
         {formatPrice(currentPrice + safeAdjustment)}
       </span>
 
-      <span className="text-[12px] lg:text-[13px] font-normal text-gray-500 line-through">
+      <span className="text-[14px] sm:text-[15px] lg:text-[16px] font-normal text-gray-500 line-through">
         {formatPrice(originalPrice + safeAdjustment)}
       </span>
     </span>

@@ -30,6 +30,7 @@ export default function VehicleFeatures({
   const [unavailableAssets, setUnavailableAssets] = useState<Set<string>>(() => new Set());
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [hasOverflow, setHasOverflow] = useState(false);
 
   // 1. Resolve selected features list from explicit prop or vehicle document
   const rawFeatures = useMemo(() => {
@@ -52,11 +53,13 @@ export default function VehicleFeatures({
     return getVehicleFeaturesHeadline(matchedFeatures);
   }, [matchedFeatures]);
 
-  // Check scroll position to disable/enable arrow buttons
+  // Check scroll position to disable/enable arrow buttons and detect overflow
   const checkScrollState = useCallback(() => {
     const el = carouselRef.current;
     if (!el) return;
     const { scrollLeft, scrollWidth, clientWidth } = el;
+    const overflow = scrollWidth > clientWidth + 10;
+    setHasOverflow(overflow);
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
   }, []);
@@ -67,7 +70,9 @@ export default function VehicleFeatures({
     checkScrollState();
     el.addEventListener("scroll", checkScrollState, { passive: true });
     window.addEventListener("resize", checkScrollState);
+    const timer = setTimeout(checkScrollState, 100);
     return () => {
+      clearTimeout(timer);
       el.removeEventListener("scroll", checkScrollState);
       window.removeEventListener("resize", checkScrollState);
     };
@@ -118,7 +123,7 @@ export default function VehicleFeatures({
           
         </div>
 
-        {matchedFeatures.length > 1 && (
+        {hasOverflow && (
           <div className="shrink-0 flex items-center gap-2 self-end sm:self-auto mb-5 lg:mb-0">
             <button
               type="button"
@@ -146,19 +151,28 @@ export default function VehicleFeatures({
       <ul
         ref={carouselRef}
         aria-label="Vehicle features showcase carousel"
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
+        className={`flex gap-4 ${
+          matchedFeatures.length === 1
+            ? "w-full overflow-visible pb-4"
+            : "snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
+        }`}
       >
         {matchedFeatures.map((feature) => {
           const image = feature.image;
           const video = feature.video;
           const hasVideo = Boolean(video) && !failedVideos.has(feature.id);
           const isUnavailable = unavailableAssets.has(feature.id);
+          const isSingle = matchedFeatures.length === 1;
 
           return (
             <li
               key={feature.id}
               data-feature-card
-              className="flex w-[75%] sm:w-[250px] md:w-[260px] lg:w-[270px] max-w-[280px] shrink-0 snap-start flex-col"
+              className={`flex shrink-0 snap-start flex-col ${
+                isSingle
+                  ? "w-full max-w-full lg:w-[270px] lg:max-w-[280px]"
+                  : "w-[75%] sm:w-[250px] md:w-[260px] lg:w-[270px] max-w-[280px]"
+              }`}
             >
               {/* Media Card Container */}
               <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-gray-100 border border-gray-200/80 shadow-xs group">
@@ -196,11 +210,8 @@ export default function VehicleFeatures({
 
               {/* Feature Details */}
               <div className="mt-3 flex flex-col">
-                <span className="text-[12px] font-semibold uppercase tracking-wider text-gray-500">
-                  {feature.category}
-                </span>
-                <h3 className="mt-1 text-[16px] font-semibold leading-snug text-gray-900">
-                  {feature.name}
+                <h3 className="text-[16px] font-semibold leading-snug text-gray-900">
+                  {feature.name.replace(/[®™]/g, "").trim()}
                 </h3>
               </div>
             </li>

@@ -16,7 +16,7 @@ import HeroWelcomeBack from "./HeroWelcomeBack";
 import { useVisitorTracking } from "@/lib/visitorTracking";
 
 const Hero = () => {
-  const { isReturningVisitor } = useVisitorTracking();
+  useVisitorTracking();
 
   return (
     <section className="w-full px-3.5 md:px-8 lg:mt-18 bg-hero-bg">
@@ -25,7 +25,12 @@ const Hero = () => {
                       md:pt-[60px] md:pb-[60px]
                       pt-[40px] pb-[30px]">
         <div className="w-full">
-          {isReturningVisitor ? <HeroWelcomeBack /> : <HeroHeadline />}
+          <div className="w-full hero-headline-default">
+            <HeroHeadline />
+          </div>
+          <div className="w-full hero-headline-returning">
+            <HeroWelcomeBack />
+          </div>
         </div>
         <HeroSearchPanel />
       </div>

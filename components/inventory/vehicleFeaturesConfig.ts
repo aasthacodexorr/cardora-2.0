@@ -43,6 +43,7 @@ import towPackImg from "@/assets/features/shared/tow_pack.png";
 import roofRailsImg from "@/assets/features/shared/roof_rails.png";
 import sunroofImg from "@/assets/features/shared/sunroof.png";
 import rearParkingCameraImg from "@/assets/features/shared/rear_parking_camera.png";
+import appleCarPlayImg from "@/assets/features/shared/apple_carplay.png";
 
 import { parsePopularFeatures } from "@/utils/popularFeatures";
 import { findPopularFeatureDefinition } from "@/constants/popularFeatures";
@@ -105,7 +106,7 @@ export function normalizeVehicleBodyType(bodyType: string | null | undefined): V
 export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
   {
     id: "apple-carplay-android-auto",
-    name: "Apple CarPlay® & Android Auto™",
+    name: "Apple CarPlay & Android Auto",
     category: "Entertainment & Technology",
     description: "Sync your smartphone for seamless maps, hands-free messages, podcasts, and audio.",
     aliases: [
@@ -120,7 +121,7 @@ export const CRM_FEATURE_DEFINITIONS: FeatureDefinition[] = [
       "apple_carplay",
       "android_auto",
     ],
-    getImage: () => appleCarPlayAndNav,
+    getImage: () => appleCarPlayImg,
   },
   {
     id: "rear-parking-camera",

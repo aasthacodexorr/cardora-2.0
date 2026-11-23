@@ -24,16 +24,23 @@ export function resolveImageUrl(url: string, assetBaseUrl: string): string {
 /**
  * Parses a semicolon-separated image URL string into an array.
  * Filters out empty entries and resolves relative paths.
+ * When vehicles contain dead external URLs (like expired autoscout24 scraper URLs) alongside valid dealer images,
+ * filters out the dead URLs so the actual first vehicle image is displayed.
  */
 export function parseImageUrls(
   imageUrlsString: string,
   assetBaseUrl: string
 ): string[] {
   if (!imageUrlsString) return [];
-  return imageUrlsString
+  const rawUrls = imageUrlsString
     .split(";")
     .map((url) => resolveImageUrl(url, assetBaseUrl))
     .filter(Boolean);
+
+  const hasValidUploads = rawUrls.some((u) => !u.includes("autoscout24.net"));
+  return hasValidUploads
+    ? rawUrls.filter((u) => !u.includes("autoscout24.net"))
+    : rawUrls;
 }
 
 

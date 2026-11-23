@@ -74,7 +74,7 @@ export default async function RootLayout({
         {/* Synchronously check returning visitor before paint to prevent flash of initial text */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var v=localStorage.getItem("cardora_recently_viewed");if(v){var p=JSON.parse(v);if(Array.isArray(p)&&p.length>0){document.documentElement.classList.add("is-returning-visitor");}}}catch(e){}})();`,
+            __html: `(function(){try{var v=localStorage.getItem("cardora_recently_viewed");if(v){var p=JSON.parse(v);if(Array.isArray(p)&&p.length>0&&p.some(function(item){return Boolean(item&&((item.vehicle&&(item.vehicle.inventory_id||item.vehicle.id))||item.inventory_id||item.inventoryId||item.id));})){document.documentElement.classList.add("is-returning-visitor");}}}catch(e){}})();`,
           }}
         />
         {/* Load form validation script before any interactive content */}

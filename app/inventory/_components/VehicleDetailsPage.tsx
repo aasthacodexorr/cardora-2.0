@@ -120,8 +120,11 @@ export default async function VehicleDetailsPage({
         ? stripHtml(vehicle.title)
         : `${vehicle.year} ${vehicle.make} ${vehicle.model} ${vehicle.trim}`;
 
-    const images = vehicle.image_urls
+    const parsedImages = vehicle.image_urls
         ? parseImageUrls(vehicle.image_urls, SITE_CONFIG.urls.assetBaseUrl)
+        : [];
+    const images = parsedImages.length > 0
+        ? parsedImages
         : [DEFAULT_PLACEHOLDER_IMAGE || `${SITE_CONFIG.urls.assetBaseUrl}/image/default-placeholder.jpg`];
 
     const isSold = vehicle.status?.toLowerCase() !== "instock";
@@ -343,6 +346,9 @@ export default async function VehicleDetailsPage({
                             <VehicleFeatures vehicle={vehicle} />
                         </div>
 
+                        {/* Recently Viewed Vehicles (excluding current open vehicle) */}
+                        <VDPRecentlyViewed currentVehicleId={id} />
+
                         <FinanceCalculator
                             vehiclePrice={getEffectivePrice(vehicle.price, vehicle.special_price) ?? undefined}
                             inventoryId={id}
@@ -352,9 +358,6 @@ export default async function VehicleDetailsPage({
 
                 </div>
             </section>
-
-            {/* Recently Viewed Vehicles (excluding current open vehicle) */}
-            <VDPRecentlyViewed currentVehicleId={id} />
 
             {/* Disclaimers & Info banner footer base */}
             <div className="w-full text-left text-xs md:text-[12px] px-3 md:px-10 bg-neutral-mediumDarkGray/10 pt-10 pb-16 italic text-black">

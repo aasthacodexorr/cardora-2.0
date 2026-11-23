@@ -19,6 +19,8 @@ import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
 
 
 export const PriceAndCTA = ({ vehicle }: any) => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG } = getConstants(appConfig);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<"asIs" | "price" | null>(null);
   const [showSticky, setShowSticky] = useState(false);
@@ -178,13 +180,46 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-                          <div className="flex flex-wrap items-baseline gap-x-1 gap-y-1">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                             <PriceDrop
                               price={vehicle?.price}
                               specialPrice={vehicle?.special_price}
-                              className="text-[24px] font-extrabold leading-none text-price-black"
-                              showArrow={false}
+                              className="text-[24px] sm:text-[28px] font-extrabold leading-none text-price-black"
+                              showArrow={true}
                             />
+
+                            {/* Info icon next to price */}
+                            <div data-price-tooltip className="relative inline-flex items-center group">
+                              <button
+                                type="button"
+                                onClick={() => toggleTooltip("price")}
+                                aria-label="Price information"
+                                className="flex items-center justify-center p-0.5"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors cursor-pointer"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </button>
+
+                              <span
+                                className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 normal-case font-normal tracking-normal w-[240px] max-w-[calc(100vw-32px)] bg-black px-3 py-2 text-xs text-white shadow-lg z-[100] rounded-md transition-opacity duration-200 ${
+                                  activeTooltip === "price"
+                                    ? "opacity-100 visible"
+                                    : "opacity-0 invisible"
+                                } group-hover:opacity-100 group-hover:visible`}
+                              >
+                                {appConfig?.site?.inventory_pricing_verbage || "Price does not include taxes and licensing fees."}
+                              </span>
+                            </div>
                           </div>
 
                           {hasPriceDrop && savingsAmount > 0 && (
@@ -195,43 +230,11 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         </div>
 
                       <div className="mt-1 text-xs font-medium text-gray-500 flex items-center gap-1">
-                        + HST &amp; licensing{" "}
-                        <p data-price-tooltip className="relative inline-flex items-center group">
-                          <button
-                            type="button"
-                            onClick={() => toggleTooltip("price")}
-                            aria-label="Price information"
-                            className="flex items-center justify-center"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5 text-gray-500 cursor-pointer"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </button>
-
-                          <span
-                            className={`absolute bottom-full left-1/2  -translate-x-1/2 mb-2 normal-case font-normal tracking-normal w-[240px] max-w-[calc(100vw-32px)] bg-black px-3 py-2 text-xs text-white shadow-lg z-[100] rounded-md transition-opacity duration-200 ${activeTooltip === "price"
-                              ? "opacity-100 visible"
-                              : "opacity-0 invisible"
-                              } group-hover:opacity-100 group-hover:visible`}
-                          >
-                            Listed price does not include taxes and licensing fees.
-                            <span className="absolute left-1/2 -translate-x-1/2 bottom-[-6px] h-3 w-3 rotate-45 bg-black" />
-                          </span>
-                        </p>
+                        + HST &amp; licensing
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
             ) : (
               /* =========================
