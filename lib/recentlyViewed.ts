@@ -497,11 +497,11 @@ export async function validateRecentlyViewedStatus(appConfig?: any) {
     if (ids.length === 0) return;
 
     const host =
-      appConfig?.site?.typesense_host || "v6eba1srpfohj89dp-1.a1.typesense.net";
+      appConfig?.site?.typesense_host;
     const port = Number(appConfig?.site?.typesense_port) || 443;
     const protocol = appConfig?.site?.typesense_protocol || "https";
     const collection =
-      appConfig?.site?.collection || "56d5b06765ad7f3843fd182cf2b4afe0";
+      appConfig?.site?.collection;
     const searchKey = appConfig?.site?.inventory_search_only_key;
 
     if (!searchKey || !collection || !host) return;
