@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRecentlyViewed, RECENTLY_VIEWED_STORAGE_KEY } from "@/lib/recentlyViewed";
+import {
+  useRecentlyViewed,
+  RECENTLY_VIEWED_STORAGE_KEY,
+  isSoldVehicle,
+} from "@/lib/recentlyViewed";
 
 export const LAST_VISIT_STORAGE_KEY = "cardora_last_visit";
 export const SESSION_VISIT_STORAGE_KEY = "cardora_session_visit";
@@ -24,6 +28,8 @@ export function hasViewedAnyVehicle(): boolean {
       (item) =>
         Boolean(
           item &&
+            !isSoldVehicle(item) &&
+            !isSoldVehicle(item.vehicle) &&
             ((item.vehicle && (item.vehicle.inventory_id || item.vehicle.id)) ||
               item.inventory_id ||
               item.inventoryId ||

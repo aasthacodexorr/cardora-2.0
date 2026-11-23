@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import { useRecentlyViewed } from "@/lib/recentlyViewed";
+import { useRecentlyViewed, isSoldVehicle } from "@/lib/recentlyViewed";
 
 interface RecentlyViewedTrackerProps {
   inventoryId: string | number;
@@ -19,6 +19,12 @@ export default function RecentlyViewedTracker({
   useEffect(() => {
     const normalizedId = String(inventoryId).trim();
     if (!normalizedId) {
+      return;
+    }
+
+    // Do NOT track sold vehicles in recently viewed; remove if previously tracked
+    if (vehicle && isSoldVehicle(vehicle)) {
+      addRecentlyViewed(normalizedId, vehicle);
       return;
     }
 
