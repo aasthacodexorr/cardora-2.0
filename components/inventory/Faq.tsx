@@ -89,6 +89,14 @@ export default function VehicleSpecificationsAccordion({
     standard: false, 
   });
 
+  const hasAnyContent = Object.values(categoriesData).some(
+    (config) => Object.keys(config.data).length > 0
+  );
+
+  if (!hasAnyContent) {
+    return null;
+  }
+
   const toggleSection = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   };

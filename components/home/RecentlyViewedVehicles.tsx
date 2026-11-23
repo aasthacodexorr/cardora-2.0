@@ -65,7 +65,7 @@ export default function RecentlyViewedVehicles() {
   // CSS will display it if html.is-returning-visitor, preventing CategoryPills from flashing above it.
   if (!isMounted) {
     return (
-      <section className="recently-viewed-placeholder w-full bg-background mt-8 sm:mt-5 mb-8 sm:mb-1">
+      <section className="recently-viewed-placeholder w-full bg-background mt-6 sm:mt-5 mb-6 sm:mb-5">
         <div className="max-w-[1280px] xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 md:px-8 lg:px-14">
           <div className="flex items-center justify-between mb-6 md:mb-2">
             <h2 className="text-[28px] lg:text-[40px] font-bold text-foreground tracking-tight">
@@ -73,7 +73,7 @@ export default function RecentlyViewedVehicles() {
             </h2>
           </div>
 
-          <div className="flex overflow-x-auto gap-4 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain -mx-4 px-4 md:-mx-8 md:px-8 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
+          <div className="flex overflow-x-auto gap-4 sm:gap-6 pb-3 pt-1 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain -mx-4 px-4 md:-mx-8 md:px-8 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
@@ -92,7 +92,7 @@ export default function RecentlyViewedVehicles() {
   }
 
   return (
-    <section className="w-full bg-background mt-8 sm:mt-5 mb-0 sm:mb-1">
+    <section className="w-full bg-background mt-6 sm:mt-5 mb-6 sm:mb-5">
       <div className="max-w-[1280px] xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 md:px-8 lg:px-14">
         <div className="flex items-center justify-between mb-6 md:mb-2">
           <h2 className="text-[28px] lg:text-[40px] font-bold text-foreground tracking-tight">
@@ -125,12 +125,12 @@ export default function RecentlyViewedVehicles() {
 
         <div
           ref={carouselRef}
-          className="flex overflow-x-auto gap-4 sm:gap-6 pb-0 pt-1 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain -mx-4 px-4 md:-mx-8 md:px-8 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0"
+          className="flex overflow-x-auto gap-4 sm:gap-6 pb-3 pt-1 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain -mx-4 px-4 md:-mx-8 md:px-8 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0"
         >
           {displayVehicles.map((vehicle, index) => (
             <div
               key={String(vehicle.inventory_id ?? vehicle.id ?? index)}
-              className="w-[82%] sm:w-[320px] md:w-[340px] shrink-0 snap-start flex flex-col lg:w-auto"
+              className="w-[82%] sm:w-[320px] md:w-[340px] shrink-0 snap-start flex flex-col self-stretch lg:w-auto"
             >
               <HitCard
                 hit={vehicle}

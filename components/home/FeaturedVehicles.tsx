@@ -227,21 +227,19 @@ export default function FeaturedVehicles() {
                     slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
                   }`}
                 >
-                  <article className="rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
-                    <div className="bg-muted p-4">
-                      <div className="overflow-hidden rounded-xl">
-                        <Image
-                          src={v.image || defaultImg}
-                          alt={v.title}
-                          width={380}
-                          height={250}
-                          className="block w-full h-full object-cover"
-                          priority={index < 3}
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = defaultImg;
-                          }}
-                        />
-                      </div>
+                  <article className="rounded-[20px] border border-border-standard bg-white overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
+                    <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-[19px] bg-white">
+                      <Image
+                        src={v.image || defaultImg}
+                        alt={v.title}
+                        fill
+                        sizes="(max-width: 640px) 280px, (max-width: 1024px) 340px, 400px"
+                        className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
+                        priority={index < 3}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = defaultImg;
+                        }}
+                      />
                     </div>
 
                     <div className="p-5 flex flex-col flex-1 justify-between">
