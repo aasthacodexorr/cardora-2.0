@@ -284,6 +284,26 @@ html:not(.is-returning-visitor) .recently-viewed-placeholder {
   display: none !important;
 }
 
+/* Hero Headline Toggle (prevents flash of default headline before Welcome Back) */
+.hero-headline-returning {
+  display: none;
+}
+.hero-headline-default {
+  display: block;
+}
+html.is-returning-visitor .hero-headline-default {
+  display: none !important;
+}
+html.is-returning-visitor .hero-headline-returning {
+  display: block !important;
+}
+html:not(.is-returning-visitor) .hero-headline-default {
+  display: block !important;
+}
+html:not(.is-returning-visitor) .hero-headline-returning {
+  display: none !important;
+}
+
 @keyframes bell-ring {
   0%, 100% {
     transform: rotate(0deg);
