@@ -16,6 +16,7 @@ export default function VDPRecentlyViewed({
   const carouselRef = useRef<HTMLUListElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [hasOverflow, setHasOverflow] = useState(false);
 
   const { recentlyViewedVehicles } = useRecentlyViewed();
 
@@ -40,6 +41,8 @@ export default function VDPRecentlyViewed({
     const el = carouselRef.current;
     if (!el) return;
     const { scrollLeft, scrollWidth, clientWidth } = el;
+    const overflow = scrollWidth > clientWidth + 10;
+    setHasOverflow(overflow);
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
   }, []);
@@ -87,7 +90,7 @@ export default function VDPRecentlyViewed({
             Recently Viewed
           </h2>
 
-          {otherVehicles.length > 1 && (
+          {hasOverflow && (
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -115,13 +118,21 @@ export default function VDPRecentlyViewed({
         <ul
           ref={carouselRef}
           aria-label="Recently viewed vehicles carousel"
-          className="flex snap-x snap-mandatory gap-6 overflow-x-auto overflow-y-visible overscroll-x-contain scroll-smooth py-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
+          className={`flex gap-6 ${
+            otherVehicles.length === 1
+              ? "w-full overflow-visible py-2 pb-4"
+              : "snap-x snap-mandatory overflow-x-auto overflow-y-visible overscroll-x-contain scroll-smooth py-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
+          }`}
         >
           {otherVehicles.map((vehicle, index) => (
             <li
               key={String(vehicle.inventory_id ?? vehicle.id ?? index)}
               data-card-item
-              className="w-[85%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-72px)/4)] shrink-0 snap-start flex flex-col"
+              className={`${
+                otherVehicles.length === 1
+                  ? "w-full sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-72px)/4)]"
+                  : "w-[85%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-72px)/4)]"
+              } shrink-0 snap-start flex flex-col`}
             >
               <HitCard
                 hit={vehicle}
