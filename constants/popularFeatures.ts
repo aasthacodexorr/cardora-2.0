@@ -345,8 +345,8 @@ export function normalizeFeatureKey(str: string): string {
     .toLowerCase()
     .replace(/[†*®™]/g, "")
     .replace(/\(s\)/g, "s")
-    .replace(/&/g, " and ")
-    .replace(/[/\\#,+()$~%.'":*?<>{}]/g, " ")
+    .replace(/\s*(?:[/\\&]|\b(?:and|or)\b)\s*/g, " and ")
+    .replace(/[#,+()$~%.'":*?<>{}]/g, " ")
     .replace(/[-_]/g, " ")
     .replace(/\s+/g, " ")
     .trim();

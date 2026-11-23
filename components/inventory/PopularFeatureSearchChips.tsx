@@ -320,15 +320,21 @@ export default function PopularFeatureSearchChips() {
                 }`}
               >
                 {tag.icon && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={tag.icon}
-                    alt=""
-                    className={`w-3.5 h-3.5 sm:w-5 sm:h-5 object-contain transition-all shrink-0 ${
-                      active ? "brightness-0 invert" : "opacity-80"
+                  <span
+                    className={`inline-flex w-3.5 h-3.5 sm:w-5 sm:h-5 shrink-0 items-center justify-center ${
+                      active ? "rounded-full bg-white p-0.5" : ""
                     }`}
-                    loading="lazy"
-                  />
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={tag.icon}
+                      alt=""
+                      className={`h-full w-full object-contain transition-opacity ${
+                        active ? "" : "opacity-80"
+                      }`}
+                      loading="lazy"
+                    />
+                  </span>
                 )}
                 <span>{displayLabel}</span>
               </button>
