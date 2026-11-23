@@ -15,4 +15,5 @@ export { default as WarrantyStatus } from "./WarrantyStatus";
 export { default as PopularFeatures } from "./PopularFeatures";
 export { default as PopularFeatureSearchChips } from "./PopularFeatureSearchChips";
 export { PriceAndCTA, VehicleHeader } from "./VehicleInfo";
+export { default as VDPRecentlyViewed } from "./VDPRecentlyViewed";
 export { HitCardSkeleton, InventoryGridSkeleton, InventoryLoadMoreSkeleton } from "./HitCardSkeleton";

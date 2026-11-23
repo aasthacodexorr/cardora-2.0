@@ -20,8 +20,7 @@ import { getEffectivePrice, isValidPriceDrop } from "@/utils/pricing";
 
 export const PriceAndCTA = ({ vehicle }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTooltip, setActiveTooltip] = useState<"asIs" | "finance" | "cash" | null>(null);
-  const [activePriceTab, setActivePriceTab] = useState<"finance" | "cash">("finance");
+  const [activeTooltip, setActiveTooltip] = useState<"asIs" | "price" | null>(null);
   const [showSticky, setShowSticky] = useState(false);
 
   const inlineContainerRef = useRef<HTMLDivElement>(null);
@@ -85,7 +84,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
   }, []);
 
   // 3. Toggle tooltip
-  const toggleTooltip = (tooltip: "asIs" | "finance" | "cash") => {
+  const toggleTooltip = (tooltip: "asIs" | "price") => {
     setActiveTooltip((current) =>
       current === tooltip ? null : tooltip
     );
@@ -168,36 +167,6 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                ========================= */
               <div className="my-2">
                 <div
-                  role="tablist"
-                  aria-label="Vehicle pricing"
-                  className="mb-3 flex border-gray-300 p-0.5"
-                >
-                  {(["finance", "cash"] as const).map((tab) => (
-                    <button
-                      key={tab}
-                      id={`${tab}-price-tab`}
-                      type="button"
-                      role="tab"
-                      aria-selected={activePriceTab === tab}
-                      aria-controls="vehicle-price-panel"
-                      onClick={() => {
-                        setActivePriceTab(tab);
-                        setActiveTooltip(null);
-                      }}
-                      className={`flex-1 cursor-pointer px-3 py-1 text-[12px] font-semibold transition-colors ${activePriceTab === tab
-                        ? "text-brand border-b-3 border-brand-green"
-                        : "text-gray-800 hover:bg-gray-50"
-                        }`}
-                    >
-                      {tab === "finance" ? "Finance" : "Cash"}
-                    </button>
-                  ))}
-                </div>
-
-                <div
-                  id="vehicle-price-panel"
-                  role="tabpanel"
-                  aria-labelledby={`${activePriceTab}-price-tab`}
                   className="relative rounded-xl bg-[#f1f8f5] px-4 lg:px-3 py-4"
                 >
                   {!isSold && hasPriceDrop && (
@@ -213,7 +182,6 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                             <PriceDrop
                               price={vehicle?.price}
                               specialPrice={vehicle?.special_price}
-                              adjustment={activePriceTab === "cash" ? 2000 : 0}
                               className="text-[24px] font-extrabold leading-none text-price-black"
                               showArrow={false}
                             />
@@ -227,11 +195,12 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                         </div>
 
                       <div className="mt-1 text-xs font-medium text-gray-500 flex items-center gap-1">
-                        + HST &amp; licensing {activePriceTab === "finance" ? " | O.A.C" : ""} <p data-price-tooltip className="relative inline-flex items-center group">
+                        + HST &amp; licensing{" "}
+                        <p data-price-tooltip className="relative inline-flex items-center group">
                           <button
                             type="button"
-                            onClick={() => toggleTooltip(activePriceTab)}
-                            aria-label={`${activePriceTab === "finance" ? "Finance" : "Cash"} price information`}
+                            onClick={() => toggleTooltip("price")}
+                            aria-label="Price information"
                             className="flex items-center justify-center"
                           >
                             <svg
@@ -249,7 +218,7 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                           </button>
 
                           <span
-                            className={`absolute bottom-full left-1/2  -translate-x-1/2 mb-2 normal-case font-normal tracking-normal w-[240px] max-w-[calc(100vw-32px)] bg-black px-3 py-2 text-xs text-white shadow-lg z-[100] rounded-md transition-opacity duration-200 ${activeTooltip === activePriceTab
+                            className={`absolute bottom-full left-1/2  -translate-x-1/2 mb-2 normal-case font-normal tracking-normal w-[240px] max-w-[calc(100vw-32px)] bg-black px-3 py-2 text-xs text-white shadow-lg z-[100] rounded-md transition-opacity duration-200 ${activeTooltip === "price"
                               ? "opacity-100 visible"
                               : "opacity-0 invisible"
                               } group-hover:opacity-100 group-hover:visible`}
