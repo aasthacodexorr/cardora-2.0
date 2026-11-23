@@ -36,6 +36,7 @@ import TradeInLink from "@/components/inventory/TradeInLink";
 import RecentlyViewedTracker from "@/components/inventory/RecentlyViewedTracker";
 import { getEffectivePrice } from "@/utils/pricing";
 import VehicleFeatures from "@/components/inventory/VehicleFeatures";
+import VDPRecentlyViewed from "@/components/inventory/VDPRecentlyViewed";
 import WarrantyStatus from "@/components/inventory/WarrantyStatus";
 import StockNumber from "@/components/inventory/StockNumber";
 import MetaVehicleViewContent from "@/components/MetaVehicleViewContent";
@@ -290,6 +291,11 @@ export default async function VehicleDetailsPage({
                                     </div>
                                 </div>
 
+                                {/* Popular features in responsive */}
+                                <div className="block lg:hidden w-full mt-6">
+                                    <VehicleFeatures vehicle={vehicle} isMobileInline />
+                                </div>
+
                                 {/* Vehicle description */}
                                 {vehicle.vehicle_description && (
                                     <div className="bg-card border-none rounded-xl p-0 my-6 lg:mt-[45px] lg:mb-0 flex-wrap">
@@ -332,8 +338,10 @@ export default async function VehicleDetailsPage({
 
                     {/* Finance Calculator - Now spans full responsive width within the centralized container bounds */}
                     <div className="lg:mt-12 w-full">
-                        {/* CarMax-Style Vehicle Features Showcase */}
-                        <VehicleFeatures vehicle={vehicle} />
+                        {/* CarMax-Style Vehicle Features Showcase (Desktop) */}
+                        <div className="hidden lg:block">
+                            <VehicleFeatures vehicle={vehicle} />
+                        </div>
 
                         <FinanceCalculator
                             vehiclePrice={getEffectivePrice(vehicle.price, vehicle.special_price) ?? undefined}
@@ -344,6 +352,9 @@ export default async function VehicleDetailsPage({
 
                 </div>
             </section>
+
+            {/* Recently Viewed Vehicles (excluding current open vehicle) */}
+            <VDPRecentlyViewed currentVehicleId={id} />
 
             {/* Disclaimers & Info banner footer base */}
             <div className="w-full text-left text-xs md:text-[12px] px-3 md:px-10 bg-neutral-mediumDarkGray/10 pt-10 pb-16 italic text-black">
