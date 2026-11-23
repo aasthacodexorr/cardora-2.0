@@ -301,7 +301,7 @@ export default async function VehicleDetailsPage({
 
                                 {/* Vehicle description */}
                                 {vehicle.vehicle_description && (
-                                    <div className="bg-card border-none rounded-xl p-0 my-6 lg:mt-[45px] lg:mb-0 flex-wrap">
+                                    <div className="bg-card border-none rounded-xl p-0 mt-6 mb-0 lg:mt-[45px] lg:mb-0 flex-wrap">
                                         <h2 className="text-[22px] font-semibold text-black mb-[15px]">
                                             Vehicle Description
                                         </h2>
@@ -314,13 +314,15 @@ export default async function VehicleDetailsPage({
                             </div>
 
                             {/* Accordion list */}
-                            <div className="w-full flex justify-start lg:mt-4 mt-0 max-w-[860px]">
-                                <VehicleSpecificationsAccordion
-                                    standardJson={vehicle.standard}
-                                    techSpecsJson={vehicle.technical_specification}
-                                    optionalJson={vehicle.optional}
-                                />
-                            </div>
+                            {(vehicle.standard || vehicle.technical_specification || vehicle.optional) && (
+                                <div className="w-full flex justify-start lg:mt-4 mt-0 max-w-[860px]">
+                                    <VehicleSpecificationsAccordion
+                                        standardJson={vehicle.standard}
+                                        techSpecsJson={vehicle.technical_specification}
+                                        optionalJson={vehicle.optional}
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         {/* Right column: sticky sidebar (desktop) */}

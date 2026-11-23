@@ -19,6 +19,52 @@ export interface RecentlyViewedItem {
 }
 
 /**
+ * Determines whether a vehicle is considered sold.
+ * In Cardora, any vehicle with status other than "instock" (e.g. "Sold")
+ * or with an explicit sold flag is treated as sold.
+ */
+export function isSoldVehicle(v: unknown): boolean {
+  if (!v || typeof v !== "object") return false;
+  const item = v as Record<string, any>;
+  const vehicle = (item.vehicle && typeof item.vehicle === "object" ? item.vehicle : item) as Record<string, any>;
+
+  // Check explicit boolean or numeric flags
+  if (
+    vehicle.is_sold === true ||
+    vehicle.is_sold === 1 ||
+    vehicle.is_sold === "1" ||
+    vehicle.is_sold === "true" ||
+    item.is_sold === true ||
+    item.is_sold === 1 ||
+    item.is_sold === "1" ||
+    item.is_sold === "true" ||
+    vehicle.isSold === true ||
+    item.isSold === true
+  ) {
+    return true;
+  }
+
+  // Check status field
+  const rawStatus = vehicle.status ?? item.status;
+  if (rawStatus !== undefined && rawStatus !== null) {
+    const status = String(rawStatus).trim().toLowerCase();
+    if (status === "sold") return true;
+    if (status && status !== "instock" && status !== "in stock") {
+      return true;
+    }
+  }
+
+  // Check sub_status field
+  const rawSubStatus = vehicle.sub_status ?? item.sub_status;
+  if (rawSubStatus !== undefined && rawSubStatus !== null) {
+    const subStatus = String(rawSubStatus).trim().toLowerCase();
+    if (subStatus === "sold") return true;
+  }
+
+  return false;
+}
+
+/**
  * Extracts only the vehicle fields required by the HitCard component
  * to keep stored vehicle data compact and structured according to the API model.
  */
@@ -134,6 +180,11 @@ function parseItems(value: string): RecentlyViewedItem[] {
         vehicleData = extractHitCardData(item.vehicle);
       } else if (item.make || item.model || item.price || item.image_urls) {
         vehicleData = extractHitCardData(item);
+      }
+
+      // Exclude sold vehicles from recently viewed
+      if (isSoldVehicle(vehicleData) || isSoldVehicle(item)) {
+        return [];
       }
 
       const idRaw =
@@ -291,6 +342,23 @@ export function addRecentlyViewed(
     return;
   }
 
+  // If vehicle is sold, do not add it and remove it from existing storage if present
+  if (
+    (vehicleObj && isSoldVehicle(vehicleObj)) ||
+    (vehicleData && isSoldVehicle(vehicleData))
+  ) {
+    const currentItems = parseItems(readSnapshot());
+    const next = currentItems.filter(
+      (item) =>
+        item.inventoryId !== normalizedId &&
+        String(item.inventory_id) !== normalizedId
+    );
+    if (next.length !== currentItems.length) {
+      saveItems(next);
+    }
+    return;
+  }
+
   const currentItems = parseItems(readSnapshot());
   const previousItem = currentItems.find(
     (item) =>
@@ -358,6 +426,8 @@ export function useRecentlyViewed() {
         (item) =>
           (item.inventoryId === normalizedId ||
             String(item.inventory_id) === normalizedId) &&
+          !isSoldVehicle(item.vehicle) &&
+          !isSoldVehicle(item) &&
           item.visitCount >= 1
       )
     );
@@ -371,6 +441,8 @@ export function useRecentlyViewed() {
         (item) =>
           (item.inventoryId === normalizedId ||
             String(item.inventory_id) === normalizedId) &&
+          !isSoldVehicle(item.vehicle) &&
+          !isSoldVehicle(item) &&
           item.visitCount >= 2
       )
     );
@@ -380,7 +452,7 @@ export function useRecentlyViewed() {
     () =>
       recentlyViewed
         .map((item) => item.vehicle)
-        .filter((v): v is HitCardHit => Boolean(v && (v.inventory_id || v.id))),
+        .filter((v): v is HitCardHit => Boolean(v && (v.inventory_id || v.id) && !isSoldVehicle(v))),
     [recentlyViewed]
   );
 
@@ -394,4 +466,89 @@ export function useRecentlyViewed() {
     addRecentlyViewed,
     clearRecentlyViewed,
   };
+}
+
+let hasValidatedStatusInSession = false;
+
+/**
+ * Validates the live status of stored recently viewed vehicles against Typesense.
+ * If any previously viewed vehicle is now marked as sold or unavailable,
+ * it is automatically pruned from localStorage.
+ */
+export async function validateRecentlyViewedStatus(appConfig?: any) {
+  if (typeof window === "undefined" || hasValidatedStatusInSession) return;
+
+  try {
+    const rawItems = parseItems(readSnapshot());
+    if (rawItems.length === 0) return;
+
+    const ids = rawItems
+      .map((item) =>
+        String(
+          item.inventory_id ??
+            item.inventoryId ??
+            item.vehicle?.inventory_id ??
+            item.vehicle?.id ??
+            ""
+        ).trim()
+      )
+      .filter(Boolean);
+
+    if (ids.length === 0) return;
+
+    const host =
+      appConfig?.site?.typesense_host || "v6eba1srpfohj89dp-1.a1.typesense.net";
+    const port = Number(appConfig?.site?.typesense_port) || 443;
+    const protocol = appConfig?.site?.typesense_protocol || "https";
+    const collection =
+      appConfig?.site?.collection || "56d5b06765ad7f3843fd182cf2b4afe0";
+    const searchKey = appConfig?.site?.inventory_search_only_key;
+
+    if (!searchKey || !collection || !host) return;
+
+    hasValidatedStatusInSession = true;
+
+    const filterIds = ids.slice(0, 50).join(",");
+    const url = `${protocol}://${host}:${port}/collections/${collection}/documents/search?q=*&filter_by=id:=[${filterIds}]&include_fields=id,inventory_id,status,sub_status,is_sold&per_page=50`;
+
+    const res = await fetch(url, {
+      headers: { "X-TYPESENSE-API-KEY": searchKey },
+    });
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const hits: any[] = data.hits || [];
+
+    const statusMap = new Map<string, any>();
+    for (const hit of hits) {
+      const doc = hit.document;
+      if (doc) {
+        if (doc.id) statusMap.set(String(doc.id), doc);
+        if (doc.inventory_id) statusMap.set(String(doc.inventory_id), doc);
+      }
+    }
+
+    const current = parseItems(readSnapshot());
+    const valid = current.filter((item) => {
+      const id = String(
+        item.inventory_id ??
+          item.inventoryId ??
+          item.vehicle?.inventory_id ??
+          item.vehicle?.id ??
+          ""
+      ).trim();
+      const liveDoc = statusMap.get(id);
+      if (liveDoc && isSoldVehicle(liveDoc)) {
+        return false;
+      }
+      return true;
+    });
+
+    if (valid.length !== current.length) {
+      saveItems(valid);
+    }
+  } catch (err) {
+    // Silently continue if network check fails
+  }
 }

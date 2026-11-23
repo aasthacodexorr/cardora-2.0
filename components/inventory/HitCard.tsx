@@ -285,35 +285,39 @@ export const HitCard = ({
 
   return (
     <>
-      <div className="relative flex flex-col justify-between h-full bg-white border border-border-standard rounded-[20px] overflow-visible group/card">
+      <div className="relative flex flex-col justify-between h-full flex-1 w-full bg-white border border-border-standard rounded-[20px] overflow-hidden group/card shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow">
         {/* Clickable Card Body Area */}
         <Link href={vehicleUrl} className="flex flex-col flex-1 focus:outline-none">
-          {/* Image & Badges */}
-          <div className="relative overflow-hidden rounded-t-[19px] p-3">
+          {/* Image & Badges - Full width edge-to-edge across the top of the card */}
+          <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-[19px] bg-white">
             <Image
               src={imageSrc}
               alt={title}
-              width={600}
-              height={400}
+              fill
+              sizes="(max-width: 640px) 280px, (max-width: 1024px) 340px, 400px"
               onError={handleImageError}
-              className={`w-full object-cover h-[240px] min-h-[240px] 2xl:h-[260px] 2xl:min-h-[260px] rounded-xl transition-transform duration-500 ${isSold || isDealPending ? "grayscale opacity-80" : ""
+              className={`w-full h-full object-contain transition-transform duration-500 group-hover/card:scale-105 ${isSold || isDealPending ? "grayscale opacity-80" : ""
                 }`}
             />
 
-            {showRecentlyViewedBadge && isRecentlyViewedVehicle && (
-              <div>
-                <RecentlyViewedTag />
-              </div>
-            )}
-
             {isSold && (
-              <div className="absolute top-4 -left-10 rotate-[-45deg] text-white text-[14px] font-bold uppercase tracking-[3px] shadow-lg w-[160px] text-center py-[6px] z-10 bg-sold-overlay">
+              <div
+                className={`absolute uppercase left-3 z-10 rounded-lg bg-sold-overlay px-3 py-1.5 text-[13px] font-medium leading-none text-white ${
+                  isRecentlyViewedVehicle ? "top-14" : "top-3"
+                }`}
+              >
                 Sold
               </div>
             )}
 
+            {showRecentlyViewedBadge && isRecentlyViewedVehicle && (
+              <div className="absolute top-3 left-3 z-10">
+                <RecentlyViewedTag variant="inline" />
+              </div>
+            )}
+
             {isDealPending && (
-              <div className="absolute uppercase ml-1 top-4 left-1/2 -translate-x-1/2 w-fit whitespace-nowrap text-white text-[11px] font-semibold shadow-lg text-center py-[6px] px-3 rounded-md z-10 bg-brand-green">
+              <div className="absolute bottom-3 left-3 z-10 rounded-full bg-brand-green px-2.5 py-1 text-[12px] font-medium leading-none text-white shadow-sm">
                 Deal Pending
               </div>
             )}
@@ -345,7 +349,7 @@ export const HitCard = ({
                     });
                   }
                 }}
-                className="absolute top-[14px] right-[14px] p-1.5 cursor-pointer rounded-full bg-white/90 hover:bg-white transition-colors shadow-md z-20"
+                className="absolute top-3 right-3 p-1.5 cursor-pointer rounded-full bg-white/90 hover:bg-white transition-colors shadow-md z-20"
                 aria-label={isInWishlist(inventoryId) ? "Remove from wishlist" : "Add to wishlist"}
               >
                 <Heart
@@ -358,13 +362,13 @@ export const HitCard = ({
 
           {/* Price drop tag */}
           {!isSold && hasPriceDrop && hit?.vehicle_type?.toLowerCase() != "as-is" && (
-            <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2 py-1.5 -mt-1 text-[13px] font-medium leading-none text-white">
+            <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2 py-1.5 mt-3 text-[13px] font-medium leading-none text-white">
               Price drop
             </div>
           )}
 
           {/* Details Body */}
-          <div className="flex flex-col flex-1 px-[15px] pt-2 pb-0 text-start">
+          <div className="flex flex-col flex-1 px-[15px] pt-3 pb-0 text-start">
             <h3 className="text-[16px] font-[600] text-foreground leading-[22px] line-clamp-2">
               {title}
             </h3>
