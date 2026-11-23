@@ -219,28 +219,42 @@ export default function FeaturedVehicles() {
                 !hasMoreThanThree && vehicles.length === 1 ? "justify-center" : ""
               }`}
             >
-              {displayVehicles.map((v, index) => (
-                <div
-                  key={`${v.id}-${index}`}
-                  data-slide
-                  className={`snap-center shrink-0 lg:flex-shrink-0 px-2 md:px-3 ${
-                    slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
-                  }`}
-                >
-                  <article className="rounded-[20px] border border-border-standard bg-white overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
-                    <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-[19px] bg-white">
-                      <Image
-                        src={v.image || defaultImg}
-                        alt={v.title}
-                        fill
-                        sizes="(max-width: 640px) 280px, (max-width: 1024px) 340px, 400px"
-                        className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
-                        priority={index < 3}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = defaultImg;
-                        }}
-                      />
-                    </div>
+              {displayVehicles.map((v, index) => {
+                const isPlaceholder =
+                  !v.image ||
+                  v.image === defaultImg ||
+                  (typeof v.image === "string" &&
+                    (v.image.includes("default-placeholder") ||
+                      v.image.includes("1659125544_f21e016f7d07e43069d9") ||
+                      v.image.includes("1691004750_0b3143a68b415b9465e9")));
+
+                return (
+                  <div
+                    key={`${v.id}-${index}`}
+                    data-slide
+                    className={`snap-center shrink-0 lg:flex-shrink-0 px-2 md:px-3 ${
+                      slidesToShow === 1 ? "w-full" : slidesToShow === 2 ? "w-1/2" : "w-1/3"
+                    }`}
+                  >
+                    <article className="rounded-[20px] border border-border-standard bg-white overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
+                      <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-[19px] bg-white">
+                        <Image
+                          src={v.image || defaultImg}
+                          alt={v.title}
+                          fill
+                          sizes="(max-width: 640px) 280px, (max-width: 1024px) 340px, 400px"
+                          className={`w-full h-full ${
+                            isPlaceholder ? "object-cover" : "object-contain"
+                          } transition-transform duration-500 hover:scale-105`}
+                          priority={index < 3}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = defaultImg;
+                            target.classList.remove("object-contain");
+                            target.classList.add("object-cover");
+                          }}
+                        />
+                      </div>
 
                     <div className="p-5 flex flex-col flex-1 justify-between">
                       <div>
@@ -256,7 +270,8 @@ export default function FeaturedVehicles() {
                     </div>
                   </article>
                 </div>
-              ))}
+              );
+            })}
             </div>
           </div>
 

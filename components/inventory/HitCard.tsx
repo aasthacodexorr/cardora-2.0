@@ -266,6 +266,15 @@ export const HitCard = ({
     return imageUrls[imgIndex] || defaultPlaceholder;
   }, [hasImgError, imageUrls, imgIndex, defaultPlaceholder]);
 
+  const isPlaceholder =
+    hasImgError ||
+    imageUrls.length === 0 ||
+    imageSrc === defaultPlaceholder ||
+    (typeof imageSrc === "string" &&
+      (imageSrc.includes("default-placeholder") ||
+        imageSrc.includes("1659125544_f21e016f7d07e43069d9") ||
+        imageSrc.includes("1691004750_0b3143a68b415b9465e9")));
+
   const handleImageError = () => {
     if (imgIndex === 0 && imageUrls.length > 1) {
       setImgIndex(1);
@@ -296,8 +305,11 @@ export const HitCard = ({
               fill
               sizes="(max-width: 640px) 280px, (max-width: 1024px) 340px, 400px"
               onError={handleImageError}
-              className={`w-full h-full object-contain transition-transform duration-500 group-hover/card:scale-105 ${isSold || isDealPending ? "grayscale opacity-80" : ""
-                }`}
+              className={`w-full h-full ${
+                isPlaceholder ? "object-cover" : "object-contain"
+              } transition-transform duration-500 group-hover/card:scale-105 ${
+                isSold || isDealPending ? "grayscale opacity-80" : ""
+              }`}
             />
 
             {isSold && (
