@@ -28,6 +28,7 @@ import { useRecentlyViewed } from "@/lib/recentlyViewed";
 import { useAppConfig } from "@/app/providers";
 import { getConstants } from "@/constants";
 import { isVehicleDetailSlug } from "@/lib/inventoryUrls";
+import { parseImageUrls } from "@/utils/formatters";
 
 export default function WelcomeBackWidget() {
   const pathname = usePathname();
@@ -38,11 +39,18 @@ export default function WelcomeBackWidget() {
   const [isMounted, setIsMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [wbImgIndex, setWbImgIndex] = useState(0);
+  const [wbHasError, setWbHasError] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const userInteractedRef = useRef(false);
 
   // Latest vehicle viewed
   const latestVehicle = recentlyViewedVehicles[0];
+
+  useEffect(() => {
+    setWbImgIndex(0);
+    setWbHasError(false);
+  }, [latestVehicle?.inventory_id, latestVehicle?.id, latestVehicle?.image_urls]);
 
   // Route checks:
   // The notification icon should ONLY be shown on the inventory listing page.
@@ -154,13 +162,26 @@ export default function WelcomeBackWidget() {
   const vdpUrl = `/inventory/${slug}`;
   const scheduleAppointmentUrl = "/schedule-an-appointment-with-expert";
 
-  // Extract vehicle image
-  const imageUrls = latestVehicle.image_urls ? latestVehicle.image_urls.split(";") : [];
-  let imageSrc = DEFAULT_PLACEHOLDER_IMAGE || `${SITE_CONFIG?.urls?.assetBaseUrl}/image/default-placeholder.jpg`;
-  if (imageUrls.length > 0 && imageUrls[0]) {
-    const firstUrl = imageUrls[0].trim();
-    imageSrc = firstUrl.startsWith("/") ? `${SITE_CONFIG?.urls?.assetBaseUrl}${firstUrl}` : firstUrl;
-  }
+  // Extract vehicle image with fallback logic
+  const parsedUrls = latestVehicle?.image_urls
+    ? parseImageUrls(latestVehicle.image_urls, SITE_CONFIG?.urls?.assetBaseUrl || "")
+    : [];
+  const defaultPlaceholder =
+    DEFAULT_PLACEHOLDER_IMAGE ||
+    `${SITE_CONFIG?.urls?.assetBaseUrl}/image/default-placeholder.jpg`;
+
+  const imageSrc =
+    wbHasError || parsedUrls.length === 0
+      ? defaultPlaceholder
+      : parsedUrls[wbImgIndex] || defaultPlaceholder;
+
+  const handleWbImgError = () => {
+    if (wbImgIndex === 0 && parsedUrls.length > 1) {
+      setWbImgIndex(1);
+    } else {
+      setWbHasError(true);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -224,6 +245,7 @@ export default function WelcomeBackWidget() {
                         sizes="(max-width: 640px) 280px, 320px"
                         className="object-cover group-hover/item:scale-105 transition-transform duration-300"
                         unoptimized
+                        onError={handleWbImgError}
                       />
                     </div>
 
