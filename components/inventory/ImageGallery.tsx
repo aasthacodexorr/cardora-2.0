@@ -11,6 +11,8 @@ import Image from "next/image";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { RecentlyViewedTag } from "./RecentlyViewedTag";
 import { useRecentlyViewed } from "@/lib/recentlyViewed";
+import { useAppConfig } from "@/app/providers";
+import { getConstants } from "@/constants";
 
 import LightGallery from "lightgallery/react";
 import type { LightGallery as LightGalleryInstance } from "lightgallery/lightgallery";
@@ -41,10 +43,30 @@ type ImageGalleryProps = {
 };
 
 export const ImageGallery = ({ images, title, inventoryId, isSold = false, centered }: ImageGalleryProps) => {
+  const appConfig = useAppConfig();
+  const { SITE_CONFIG, DEFAULT_PLACEHOLDER_IMAGE } = getConstants(appConfig);
+  const fallbackPlaceholder =
+    DEFAULT_PLACEHOLDER_IMAGE ||
+    `${SITE_CONFIG?.urls?.assetBaseUrl}/image/default-placeholder.jpg`;
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for left, 1 for right
   const [stripHeight, setStripHeight] = useState<number | null>(null);
+  const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
   const { wasViewedBeforeCurrentVisit } = useRecentlyViewed();
+
+  const handleImageError = (index: number) => {
+    setFailedIndices((prev) => {
+      const next = new Set(prev);
+      next.add(index);
+      return next;
+    });
+
+    // If 0-th image fails and there are more images, show 1st index instead
+    if (index === 0 && images.length > 1 && activeIndex === 0) {
+      goTo(1);
+    }
+  };
 
   const lightboxRef = useRef<LightGalleryInstance | null>(null);
   const desktopThumbsRef = useRef<HTMLDivElement | null>(null);
@@ -255,11 +277,16 @@ export const ImageGallery = ({ images, title, inventoryId, isSold = false, cente
                 onDragEnd={handleDragEnd}
               >
                 <Image
-                  src={images[activeIndex]}
+                  src={
+                    failedIndices.has(activeIndex)
+                      ? fallbackPlaceholder
+                      : images[activeIndex] || fallbackPlaceholder
+                  }
                   alt={`${title} - Image ${activeIndex + 1}`}
                   fill
                   priority
                   draggable={false}
+                  onError={() => handleImageError(activeIndex)}
                   className={`object-cover pointer-events-none ${isSold ? "grayscale opacity-90" : ""}`}
                 />
               </motion.div>
@@ -307,10 +334,15 @@ export const ImageGallery = ({ images, title, inventoryId, isSold = false, cente
                   }`}
                 >
                   <Image
-                    src={img}
+                    src={
+                      failedIndices.has(idx)
+                        ? fallbackPlaceholder
+                        : img || fallbackPlaceholder
+                    }
                     alt={`Thumbnail ${idx + 1}`}
                     width={80}
                     height={60}
+                    onError={() => handleImageError(idx)}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -338,10 +370,15 @@ export const ImageGallery = ({ images, title, inventoryId, isSold = false, cente
               }`}
             >
               <Image
-                src={img}
+                src={
+                  failedIndices.has(idx)
+                    ? fallbackPlaceholder
+                    : img || fallbackPlaceholder
+                }
                 alt={`Thumbnail ${idx + 1}`}
                 width={155}
                 height={125}
+                onError={() => handleImageError(idx)}
                 className="w-full h-full object-cover rounded-md"
               />
             </button>
@@ -349,10 +386,15 @@ export const ImageGallery = ({ images, title, inventoryId, isSold = false, cente
         </div>
       ) : <div className="hidden md:block w-[165px] 2xl:w-[200px]">
           <Image
-            src={images[0]}
+            src={
+              failedIndices.has(0)
+                ? fallbackPlaceholder
+                : images[0] || fallbackPlaceholder
+            }
             alt={`Thumbnail`}
             width={168}
             height={136}
+            onError={() => handleImageError(0)}
             className="w-full object-cover rounded-lg cursor-pointer"
           />
         </div>}
