@@ -61,6 +61,17 @@ export function useVisitorTracking() {
   // and user has viewed at least one VDP with available recently viewed vehicle cards
   const hasRecentlyViewedCards = isMounted && recentlyViewedVehicles.length > 0;
 
+  useEffect(() => {
+    if (!isMounted) return;
+    if (typeof document !== "undefined") {
+      if (hasRecentlyViewedCards) {
+        document.documentElement.classList.add("is-returning-visitor");
+      } else {
+        document.documentElement.classList.remove("is-returning-visitor");
+      }
+    }
+  }, [isMounted, hasRecentlyViewedCards]);
+
   return {
     isReturningVisitor: hasRecentlyViewedCards,
     hasViewedVehicles: hasRecentlyViewedCards,
