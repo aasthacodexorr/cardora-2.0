@@ -87,7 +87,7 @@ export default function RecentlyViewedVehicles() {
         <div className="max-w-[1280px] xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 md:px-8 lg:px-14">
           <div className="flex items-center justify-between mb-6 md:mb-2">
             <h2 className="text-[28px] lg:text-[40px] font-bold text-foreground tracking-tight">
-              Recently Viewed
+              Recently viewed
             </h2>
           </div>
 
@@ -114,7 +114,7 @@ export default function RecentlyViewedVehicles() {
       <div className="max-w-[1280px] xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 md:px-8 lg:px-14">
         <div className="flex items-center justify-between mb-6 md:mb-4">
           <h2 className="text-[28px] lg:text-[40px] font-bold text-foreground tracking-tight">
-            Recently Viewed
+            Recently viewed
           </h2>
 
           {displayVehicles.length > 1 && (

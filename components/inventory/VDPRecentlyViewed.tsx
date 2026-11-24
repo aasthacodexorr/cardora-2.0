@@ -88,7 +88,7 @@ export default function VDPRecentlyViewed({
       <div className="max-w-[1440px] xl:max-w-[1600px] mx-auto px-4 md:px-8 lg:px-10 2xl:px-0">
         <div className="flex items-center justify-between mb-4 md:mb-6">
           <h2 className="text-[22px] md:text-[28px] font-bold text-foreground tracking-tight">
-            Recently Viewed
+            Recently viewed
           </h2>
 
           {hasOverflow && (
