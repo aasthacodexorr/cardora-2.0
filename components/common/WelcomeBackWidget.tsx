@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { X, ArrowRight } from "lucide-react";
+import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 function BellIcon({ className }: { className?: string }) {
@@ -29,6 +29,7 @@ import { useAppConfig } from "@/app/providers";
 import { getConstants } from "@/constants";
 import { isVehicleDetailSlug } from "@/lib/inventoryUrls";
 import { parseImageUrls } from "@/utils/formatters";
+import { MessageModal } from "@/components/inventory/VehicleInfo";
 
 export default function WelcomeBackWidget() {
   const pathname = usePathname();
@@ -38,6 +39,7 @@ export default function WelcomeBackWidget() {
 
   const [isMounted, setIsMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isRequestInfoOpen, setIsRequestInfoOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [wbImgIndex, setWbImgIndex] = useState(0);
   const [wbHasError, setWbHasError] = useState(false);
@@ -160,7 +162,6 @@ export default function WelcomeBackWidget() {
     .replace(/^-+|-+$/g, "");
 
   const vdpUrl = `/inventory/${slug}`;
-  const scheduleAppointmentUrl = "/schedule-an-appointment-with-expert";
 
   // Extract vehicle image with fallback logic
   const parsedUrls = latestVehicle?.image_urls
@@ -278,18 +279,18 @@ export default function WelcomeBackWidget() {
                     </button>
                   </div>
 
-                  {/* Action Button Row 2: Book test drive (opens schedule-an-appointment-with-expert in new tab) */}
+                  {/* Action Button Row 2: Request information */}
                   <div className="mt-2 sm:mt-2.5">
-                    <Link
-                      href={scheduleAppointmentUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setIsOpen(false)}
-                      className="w-full bg-brand hover:opacity-90 text-white text-xs sm:text-[13px] font-semibold py-2.5 px-3 rounded-lg text-center flex items-center justify-center gap-1.5 transition-opacity shadow-sm border border-brand-green2"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsOpen(false);
+                        setIsRequestInfoOpen(true);
+                      }}
+                      className="w-full cursor-pointer bg-brand hover:opacity-90 text-white text-xs sm:text-[13px] font-semibold py-2.5 px-3 rounded-lg text-center flex items-center justify-center gap-1.5 transition-opacity shadow-sm border border-brand-green2"
                     >
-                      <span>Book test drive</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+                      Request info
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -308,6 +309,11 @@ export default function WelcomeBackWidget() {
           </button>
         </motion.div>
       )}
+      <MessageModal
+        isOpen={isRequestInfoOpen}
+        onClose={() => setIsRequestInfoOpen(false)}
+        vehicle={latestVehicle}
+      />
     </AnimatePresence>
   );
 }
