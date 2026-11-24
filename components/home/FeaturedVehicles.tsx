@@ -194,7 +194,7 @@ export default function FeaturedVehicles() {
 
   return (
     <section className="w-full bg-background mt-[36px] mb-[35px] overflow-hidden font-carmax">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-10 lg:py-12 relative">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-3 py-10 lg:py-12 relative">
         <h2 className="text-[28px] lg:text-[44px] lg:font-bold text-foreground tracking-tight text-center mb-12 lg:mb-8">
           Shop featured vehicles
         </h2>

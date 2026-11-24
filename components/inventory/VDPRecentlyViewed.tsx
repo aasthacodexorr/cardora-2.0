@@ -84,8 +84,8 @@ export default function VDPRecentlyViewed({
   }
 
   return (
-    <section className="w-full bg-background mt-6 md:mt-12 mb-8 md:mb-14 font-sans">
-      <div className="max-w-[1440px] xl:max-w-[1600px] mx-auto px-4 md:px-8 lg:px-10 2xl:px-0">
+    <section className="w-full overflow-hidden bg-background mt-6 md:mt-12 mb-8 md:mb-14 font-sans">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-4">
         <div className="flex items-center justify-between mb-4 md:mb-6">
           <h2 className="text-[22px] font-bold text-foreground tracking-tight">
             Recently viewed
@@ -115,33 +115,26 @@ export default function VDPRecentlyViewed({
           )}
         </div>
 
-        {/* Carousel list with 3 cards per view on desktop (lg:), 2 on tablet, 1 on mobile */}
-        <ul
-          ref={carouselRef}
-          aria-label="Recently viewed vehicles carousel"
-          className={`flex gap-6 ${
-            otherVehicles.length === 1
-              ? "w-full overflow-visible py-2 pb-4"
-              : "snap-x snap-mandatory overflow-x-auto overflow-y-visible overscroll-x-contain scroll-smooth py-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
-          }`}
-        >
-          {otherVehicles.map((vehicle, index) => (
-            <li
-              key={String(vehicle.inventory_id ?? vehicle.id ?? index)}
-              data-card-item
-              className={`${
-                otherVehicles.length === 1
-                  ? "w-full sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-48px)/3)]"
-                  : "w-[85%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-48px)/3)]"
-              } shrink-0 snap-start flex flex-col`}
-            >
-              <HitCard
-                hit={vehicle}
-                showRecentlyViewedBadge={false}
-              />
-            </li>
-          ))}
-        </ul>
+        <div className="px-4 md:px-0">
+          <ul
+            ref={carouselRef}
+            aria-label="Recently viewed vehicles carousel"
+            className="flex snap-x snap-mandatory overflow-x-auto overflow-y-visible overscroll-x-contain scroll-smooth py-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
+          >
+            {otherVehicles.map((vehicle, index) => (
+              <li
+                key={String(vehicle.inventory_id ?? vehicle.id ?? index)}
+                data-card-item
+                className="w-full shrink-0 snap-start px-2 md:w-1/2 md:px-3 lg:w-1/4"
+              >
+                <HitCard
+                  hit={vehicle}
+                  showRecentlyViewedBadge={false}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
