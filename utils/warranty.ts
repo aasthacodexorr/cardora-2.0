@@ -140,14 +140,17 @@ export function getManufacturerWarranties(
 
       if (expiry_date.isSameOrAfter(today, "day")) {
         warranty_validity_date = expiry_date.format("MMM D, YYYY");
+        if (mileage_remaining) {
+          const durationText = formatRemainingDuration(
+            today.toDate(),
+            expiry_date.toDate()
+          ).durationText;
+          warranty_remaining_duration = durationText.replace(
+            "is expected to expire ",
+            ""
+          );
+        }
       }
-    }
-
-    if (mileage_remaining && warranty_validity_date) {
-      warranty_remaining_duration = moment(
-        warranty_validity_date,
-        "MMM D, YYYY"
-      ).fromNow();
     }
 
     return {
