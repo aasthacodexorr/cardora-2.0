@@ -180,11 +180,11 @@ export const PriceAndCTA = ({ vehicle }: any) => {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                             <PriceDrop
                               price={vehicle?.price}
                               specialPrice={vehicle?.special_price}
-                              className="text-[24px] sm:text-[28px] font-extrabold leading-none text-price-black"
+                              className="text-[24px] sm:text-[26px] font-extrabold leading-none text-price-black"
                               showArrow={true}
                             />
 

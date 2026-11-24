@@ -45,14 +45,14 @@ export const PriceDrop = ({
   }
 
   return (
-    <span className="inline-flex flex-nowrap items-center gap-1.5">
+    <span className="inline-flex flex-nowrap items-center gap-2">
       {showArrow && (
         <span
           aria-hidden="true"
-          className="inline-flex h-[20px] w-[20px] sm:h-[22px] sm:w-[22px] shrink-0 items-center justify-center rounded-full bg-[#00a650]"
+          className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#00a650]"
         >
           <svg
-            className="w-3 h-3 text-white"
+            className="h-2.5 w-2.5 text-white"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -70,7 +70,7 @@ export const PriceDrop = ({
         {formatPrice(currentPrice + safeAdjustment)}
       </span>
 
-      <span className="text-[14px] sm:text-[15px] lg:text-[16px] font-normal text-gray-500 line-through">
+      <span className="text-[13px] mt-1 font-normal text-gray-500 line-through">
         {formatPrice(originalPrice + safeAdjustment)}
       </span>
     </span>
