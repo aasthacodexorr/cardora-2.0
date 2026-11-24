@@ -66,8 +66,7 @@ export default function RecentlyViewedVehicles() {
     if (!carousel) return;
 
     const card = carousel.querySelector("[data-card-item]") as HTMLElement | null;
-    const gap = typeof window !== "undefined" && window.innerWidth >= 640 ? 24 : 16;
-    const step = card ? card.offsetWidth + gap : carousel.clientWidth * 0.8;
+    const step = card ? card.offsetWidth : carousel.clientWidth;
     const scrollAmount =
       typeof window !== "undefined" && window.innerWidth >= 1024
         ? step * 3
@@ -84,20 +83,24 @@ export default function RecentlyViewedVehicles() {
   if (!isMounted) {
     return (
       <section className="recently-viewed-placeholder w-full bg-background mt-6 sm:mt-5 mb-6 sm:mb-5">
-        <div className="max-w-[1280px] xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 md:px-8 lg:px-14">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between mb-6 md:mb-2">
             <h2 className="text-[28px] lg:text-[40px] font-bold text-foreground tracking-tight">
               Recently viewed
             </h2>
           </div>
 
-          <div className="flex overflow-x-auto gap-4 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain -mx-4 px-4 md:-mx-8 md:px-8 lg:mx-0 lg:px-0">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="w-[82%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-48px)/3)] shrink-0 snap-start bg-card rounded-2xl p-4 border border-border/40 h-[380px] animate-pulse"
-              />
-            ))}
+          <div className="px-4 md:px-0">
+            <div className="flex overflow-x-auto pb-4 pt-1 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="w-full shrink-0 snap-start px-2 md:w-1/2 md:px-0 lg:w-1/3"
+                >
+                  <div className="h-[380px] animate-pulse rounded-2xl border border-border/40 bg-card p-4" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -111,9 +114,9 @@ export default function RecentlyViewedVehicles() {
 
   return (
     <section className="w-full bg-background mt-6 sm:mt-5 mb-6 sm:mb-5">
-      <div className="max-w-[1280px] xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 md:px-8 lg:px-14">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-2">
         <div className="flex items-center justify-between mb-6 md:mb-4">
-          <h2 className="text-[28px] lg:text-[40px] font-bold text-foreground tracking-tight">
+          <h2 className="text-[28px] lg:px-3 lg:text-[40px] font-bold text-foreground tracking-tight">
             Recently viewed
           </h2>
 
@@ -141,22 +144,24 @@ export default function RecentlyViewedVehicles() {
           )}
         </div>
 
-        <div
-          ref={carouselRef}
-          className="flex overflow-x-auto gap-4 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain -mx-4 px-4 md:-mx-8 md:px-8 lg:mx-0 lg:px-0"
-        >
-          {displayVehicles.map((vehicle, index) => (
-            <div
-              key={String(vehicle.inventory_id ?? vehicle.id ?? index)}
-              data-card-item
-              className="w-[82%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-48px)/3)] shrink-0 snap-start flex flex-col self-stretch"
-            >
-              <HitCard
-                hit={vehicle}
-                showRecentlyViewedBadge={false}
-              />
-            </div>
-          ))}
+        <div className="px-4 md:px-0">
+          <div
+            ref={carouselRef}
+            className="flex overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain"
+          >
+            {displayVehicles.map((vehicle, index) => (
+              <div
+                key={String(vehicle.inventory_id ?? vehicle.id ?? index)}
+                data-card-item
+                className="w-full shrink-0 snap-start px-2 md:w-1/2 md:px-3 lg:w-1/3"
+              >
+                <HitCard
+                  hit={vehicle}
+                  showRecentlyViewedBadge={false}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
