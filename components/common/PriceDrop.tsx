@@ -1,4 +1,5 @@
-
+import Image from "next/image";
+import priceDropIcon from "@/assets/icons/price-drop.png";
 import { getEffectivePrice, isValidPriceDrop, type PriceValue } from "@/utils/pricing";
 
 export type PriceDropProps = {
@@ -49,20 +50,16 @@ export const PriceDrop = ({
       {showArrow && (
         <span
           aria-hidden="true"
-          className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#00a650]"
+          className="relative inline-flex h-4 w-4 shrink-0 items-center"
         >
-          <svg
-            className="h-2.5 w-2.5 text-white"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="6" y1="6" x2="18" y2="18" />
-            <polyline points="18 9 18 18 9 18" />
-          </svg>
+          <Image
+            src={priceDropIcon}
+            alt=""
+            width={29}
+            height={28}
+            unoptimized
+            className="absolute left-1/2 top-1/2 min-w-[40px] -translate-x-1/2 -translate-y-1/2"
+          />
         </span>
       )}
 

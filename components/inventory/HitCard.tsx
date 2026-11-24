@@ -372,12 +372,13 @@ export const HitCard = ({
             )}
           </div>
 
-          {/* Price drop tag */}
-          {!isSold && hasPriceDrop && hit?.vehicle_type?.toLowerCase() != "as-is" && (
-            <div className="w-fit mx-3 z-10 rounded-lg bg-brand px-2 py-1.5 mt-3 text-[13px] font-medium leading-none text-white">
-              Price drop
-            </div>
-          )}
+          <div className="mx-3 mt-3 h-[25px]">
+            {!isSold && hasPriceDrop && hit?.vehicle_type?.toLowerCase() != "as-is" && (
+              <div className="w-fit z-10 rounded-lg bg-brand px-2 py-1.5 text-[13px] font-medium leading-none text-white">
+                Price drop
+              </div>
+            )}
+          </div>
 
           {/* Details Body */}
           <div className="flex flex-col flex-1 px-[15px] pt-3 pb-0 text-start">
@@ -391,7 +392,7 @@ export const HitCard = ({
             </p>
 
             {/* Price Selection / Call for price */}
-            <div ref={tooltipRef}>
+            <div ref={tooltipRef} className="py-4">
               {!isSold ? (
                 hit?.vehicle_type?.toLowerCase() === "as-is" ? (
                   <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px]">
@@ -412,7 +413,7 @@ export const HitCard = ({
                 ) : price > 0 ? (
                   <div className="w-full">
                     {/* Price & Tooltip */}
-                    <div className="flex items-center justify-between gap-2 pt-2">
+                    <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1 min-w-0">
                         <PriceDrop
                           price={hit.price}
@@ -496,11 +497,13 @@ export const HitCard = ({
                   </p>
                 </>
               )}
-            </div>
 
-            <p className="text-[12px] mb-2 font-light text-gray-500 mt-1">
+              <p className="text-[12px] mb-2 font-light text-gray-500 mt-1">
               Stock #: <StockNumber stockNumber={stock} className="font-semibold" />
             </p>
+            </div>
+
+            
           </div>
         </Link>
 
