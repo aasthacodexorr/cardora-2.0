@@ -13,7 +13,7 @@ export function RecentlyViewedTag({
           : "inline-flex items-center whitespace-nowrap rounded-lg bg-white px-2 py-1.5 text-[13px] font-medium leading-none text-black border border-gray-500 "
       }
     >
-      Recently Viewed
+      Recently viewed
     </span>
   );
 }
