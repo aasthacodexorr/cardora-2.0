@@ -70,7 +70,7 @@ export default function RecentlyViewedVehicles() {
     const step = card ? card.offsetWidth + gap : carousel.clientWidth * 0.8;
     const scrollAmount =
       typeof window !== "undefined" && window.innerWidth >= 1024
-        ? step * 2
+        ? step * 3
         : step;
 
     carousel.scrollBy({
@@ -95,7 +95,7 @@ export default function RecentlyViewedVehicles() {
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="w-[82%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-72px)/4)] shrink-0 snap-start bg-card rounded-2xl p-4 border border-border/40 h-[380px] animate-pulse"
+                className="w-[82%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-48px)/3)] shrink-0 snap-start bg-card rounded-2xl p-4 border border-border/40 h-[380px] animate-pulse"
               />
             ))}
           </div>
@@ -149,7 +149,7 @@ export default function RecentlyViewedVehicles() {
             <div
               key={String(vehicle.inventory_id ?? vehicle.id ?? index)}
               data-card-item
-              className="w-[82%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-72px)/4)] shrink-0 snap-start flex flex-col self-stretch"
+              className="w-[82%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-48px)/3)] shrink-0 snap-start flex flex-col self-stretch"
             >
               <HitCard
                 hit={vehicle}

@@ -115,7 +115,7 @@ export default function VDPRecentlyViewed({
           )}
         </div>
 
-        {/* Carousel list with 4 cards per view on desktop (lg:), 2 on tablet, 1 on mobile */}
+        {/* Carousel list with 3 cards per view on desktop (lg:), 2 on tablet, 1 on mobile */}
         <ul
           ref={carouselRef}
           aria-label="Recently viewed vehicles carousel"
@@ -131,8 +131,8 @@ export default function VDPRecentlyViewed({
               data-card-item
               className={`${
                 otherVehicles.length === 1
-                  ? "w-full sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-72px)/4)]"
-                  : "w-[85%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-72px)/4)]"
+                  ? "w-full sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-48px)/3)]"
+                  : "w-[85%] sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-48px)/3)]"
               } shrink-0 snap-start flex flex-col`}
             >
               <HitCard
