@@ -119,7 +119,7 @@ export default function VDPRecentlyViewed({
           <ul
             ref={carouselRef}
             aria-label="Recently viewed vehicles carousel"
-            className="flex w-full gap-4 lg:gap-8 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth py-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
+            className="flex w-full gap-4 lg:gap-8 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
           >
             {otherVehicles.map((vehicle, index) => (
               <li
