@@ -111,6 +111,8 @@ export default function PopularFeatureSearchChips() {
     return Array.from(new Set([...fromUiState, ...fromCurrent]));
   }, [indexUiState.refinementList?.popular_features, currentRefinements]);
 
+  const hasActiveFilters = currentRefinements.length > 0;
+
   // Match an API tag to all equivalent Typesense facet values. Inventory data
   // can contain multiple casings or aliases for the same canonical feature.
   const findMatchingFacets = useCallback(
@@ -159,22 +161,17 @@ export default function PopularFeatureSearchChips() {
     [activeFeatures]
   );
 
-  // Dynamic Feature Visibility:
-  // - Compare values against the master list returned by the Popular Feature API
-  // - Display only features that have at least one matching vehicle in the current inventory results
-  // - Hide features that have zero matching vehicles
-  // - Preserve visibility for currently selected features so user can see and deselect them
+  // Keep the full set of chips available while filters are active; facet counts
+  // are scoped to filtered results and can otherwise hide every popular feature.
   const visibleTags = useMemo(() => {
     return featureTags.filter((tag) => {
-      // Always keep active/selected features visible
-      if (isFeatureActive(tag)) {
+      if (hasActiveFilters || isFeatureActive(tag)) {
         return true;
       }
 
-      // Display only features that have at least one matching vehicle in current inventory results
       return findMatchingFacets(tag).some((item) => item.count > 0);
     });
-  }, [featureTags, isFeatureActive, findMatchingFacets]);
+  }, [featureTags, hasActiveFilters, isFeatureActive, findMatchingFacets]);
 
   // Check scroll position to display left/right navigation arrows on desktop
   const updateScrollArrows = useCallback(() => {
@@ -279,7 +276,7 @@ export default function PopularFeatureSearchChips() {
 
   return (
     <div
-      className="relative w-full pt-2 pb-1"
+      className="relative w-full pt-3 pb-1"
       aria-label="Popular vehicle feature filters"
     >
       {/* Left Scroll Arrow with gradient backdrop (Desktop) */}
