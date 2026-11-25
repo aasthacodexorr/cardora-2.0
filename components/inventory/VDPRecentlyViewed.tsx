@@ -130,6 +130,7 @@ export default function VDPRecentlyViewed({
                 <HitCard
                   hit={vehicle}
                   showRecentlyViewedBadge={false}
+                  compact
                 />
               </li>
             ))}

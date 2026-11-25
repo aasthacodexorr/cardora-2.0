@@ -181,11 +181,13 @@ const InfoIcon = () => (
 export interface HitCardProps {
   hit: HitCardHit;
   showRecentlyViewedBadge?: boolean;
+  compact?: boolean;
 }
 
 export const HitCard = ({
   hit,
   showRecentlyViewedBadge = true,
+  compact = false,
 }: HitCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<"price" | "payment" | null>(null);
@@ -372,7 +374,7 @@ export const HitCard = ({
             )}
           </div>
 
-          <div className="mx-3 mt-3 h-[25px]">
+          <div className={`mx-3 ${compact ? "mt-2 h-5" : "mt-3 h-[25px]"}`}>
             {!isSold && hasPriceDrop && hit?.vehicle_type?.toLowerCase() != "as-is" && (
               <div className="w-fit z-10 rounded-lg bg-brand px-2 py-1.5 text-[13px] font-medium leading-none text-white">
                 Price drop
@@ -381,18 +383,33 @@ export const HitCard = ({
           </div>
 
           {/* Details Body */}
-          <div className="flex flex-col flex-1 px-[15px] pt-3 pb-0 text-start">
-            <h3 className="text-[16px] font-[600] text-foreground leading-[22px] line-clamp-2">
+          <div
+            className={`flex flex-col flex-1 px-[15px] ${
+              compact ? "pt-2" : "pt-3"
+            } pb-0 text-start`}
+          >
+            <h3
+              className={`${
+                compact ? "text-[15px] leading-5" : "text-[16px] leading-[22px]"
+              } font-[600] text-foreground line-clamp-2`}
+            >
               {title}
             </h3>
 
             {/* Mileage & Stock */}
-            <p className="text-[14px] text-gray-700/80 leading-[14px] mt-[10px]">
+            <p
+              className={`text-[14px] text-gray-700/80 leading-[14px] ${
+                compact ? "mt-1" : "mt-[10px]"
+              }`}
+            >
               {km.toLocaleString()} KM {drivetrain && drivetrain !== "N/A" && <>&bull; {drivetrain}</>}
             </p>
 
             {/* Price Selection / Call for price */}
-            <div ref={tooltipRef} className="py-4">
+            <div
+              ref={tooltipRef}
+              className={compact ? "py-2" : "py-4"}
+            >
               {!isSold ? (
                 hit?.vehicle_type?.toLowerCase() === "as-is" ? (
                   <div className="text-[17px] w-full font-semibold text-foreground leading-6 mt-2 py-[3px]">
@@ -418,7 +435,9 @@ export const HitCard = ({
                         <PriceDrop
                           price={hit.price}
                           specialPrice={hit.special_price}
-                          className="text-[23px] font-extrabold leading-none text-price-black"
+                          className={`${
+                            compact ? "text-[21px]" : "text-[23px]"
+                          } font-extrabold leading-none text-price-black`}
                         />
 
                         <div className="relative group shrink-0">
@@ -498,7 +517,11 @@ export const HitCard = ({
                 </>
               )}
 
-              <p className="text-[12px] mb-2 font-light text-gray-500 mt-1">
+              <p
+                className={`text-[12px] ${
+                  compact ? "mb-1" : "mb-2"
+                } font-light text-gray-500 mt-1`}
+              >
               Stock #: <StockNumber stockNumber={stock} className="font-semibold" />
             </p>
             </div>
@@ -509,10 +532,16 @@ export const HitCard = ({
 
         {/* Action Buttons */}
         {!isSold && !isDealPending && (
-          <div className="w-full rounded-[12px] mb-3 px-3 mt-auto flex gap-2">
+          <div
+            className={`w-full rounded-[12px] ${
+              compact ? "mb-2" : "mb-3"
+            } px-3 mt-auto flex gap-2`}
+          >
             <a
               href={phoneNumber ? `tel:${phoneNumber}` : "#"}
-              className="cursor-pointer flex-1 text-center rounded-[10px] sm:rounded-[12px] text-gray-800 bg-white hover:bg-gray-100 py-[10px] text-[14px] sm:text-[15px] font-medium transition-colors border border-gray-300 flex items-center justify-center gap-1"
+              className={`cursor-pointer flex-1 text-center rounded-[10px] sm:rounded-[12px] text-gray-800 bg-white hover:bg-gray-100 ${
+                compact ? "py-2" : "py-[10px]"
+              } text-[14px] sm:text-[15px] font-medium transition-colors border border-gray-300 flex items-center justify-center gap-1`}
             >
               <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
@@ -528,7 +557,9 @@ export const HitCard = ({
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="cursor-pointer flex-[2] text-center rounded-[10px] sm:rounded-[12px] text-white py-[10px] text-[14px] sm:text-[15px] font-medium hover:opacity-90 transition-opacity bg-brand border border-brand-green2"
+              className={`cursor-pointer flex-[2] text-center rounded-[10px] sm:rounded-[12px] text-white ${
+                compact ? "py-2" : "py-[10px]"
+              } text-[14px] sm:text-[15px] font-medium hover:opacity-90 transition-opacity bg-brand border border-brand-green2`}
             >
               Check availability
             </button>
