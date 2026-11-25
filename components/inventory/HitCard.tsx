@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
@@ -191,8 +192,16 @@ export const HitCard = ({
 }: HitCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<"price" | "payment" | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<{
+    top: number;
+    left: number;
+    arrowLeft: number;
+    placement: "above" | "below";
+  } | null>(null);
 
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const tooltipTriggerRef = useRef<HTMLButtonElement>(null);
+  const hoveredTooltipRef = useRef<"price" | "payment" | null>(null);
   const appConfig = useAppConfig();
 
   const { SITE_CONFIG, PHONE_NUMBER, DEFAULT_PLACEHOLDER_IMAGE } = getConstants(appConfig);
@@ -214,6 +223,63 @@ export const HitCard = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const updateTooltipPosition = useCallback((trigger: HTMLButtonElement) => {
+    const rect = trigger.getBoundingClientRect();
+    const tooltipWidth = Math.min(240, Math.max(0, window.innerWidth - 32));
+    const center = rect.left + rect.width / 2;
+    const left = Math.max(
+      16,
+      Math.min(center - tooltipWidth / 2, window.innerWidth - tooltipWidth - 16)
+    );
+    const placement = rect.top >= 100 ? "above" : "below";
+
+    setTooltipPosition({
+      top: placement === "above" ? rect.top - 8 : rect.bottom + 8,
+      left,
+      arrowLeft: center - left,
+      placement,
+    });
+  }, []);
+
+  const showTooltip = (
+    type: "price" | "payment",
+    trigger: HTMLButtonElement
+  ) => {
+    tooltipTriggerRef.current = trigger;
+    updateTooltipPosition(trigger);
+    setActiveTooltip(type);
+  };
+
+  useEffect(() => {
+    if (!activeTooltip) return;
+
+    const repositionTooltip = () => {
+      if (tooltipTriggerRef.current) {
+        updateTooltipPosition(tooltipTriggerRef.current);
+      }
+    };
+
+    window.addEventListener("resize", repositionTooltip);
+    window.addEventListener("scroll", repositionTooltip, true);
+
+    return () => {
+      window.removeEventListener("resize", repositionTooltip);
+      window.removeEventListener("scroll", repositionTooltip, true);
+    };
+  }, [activeTooltip, updateTooltipPosition]);
+
+  const toggleTooltip = (
+    type: "price" | "payment",
+    trigger: HTMLButtonElement
+  ) => {
+    if (activeTooltip === type) {
+      setActiveTooltip(null);
+      return;
+    }
+
+    showTooltip(type, trigger);
+  };
 
   const phoneNumber = PHONE_NUMBER || "";
   const title = `${hit.year || ""} ${hit.make || ""} ${hit.model || ""} ${hit.trim || ""}`.trim();
@@ -446,7 +512,23 @@ export const HitCard = ({
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              setActiveTooltip((prev) => (prev === "price" ? null : "price"));
+                              if (hoveredTooltipRef.current === "price") {
+                                showTooltip("price", e.currentTarget);
+                              } else {
+                                toggleTooltip("price", e.currentTarget);
+                              }
+                            }}
+                            onPointerEnter={(e) => {
+                              if (e.pointerType !== "mouse") return;
+                              hoveredTooltipRef.current = "price";
+                              showTooltip("price", e.currentTarget);
+                            }}
+                            onPointerLeave={(e) => {
+                              if (e.pointerType !== "mouse") return;
+                              hoveredTooltipRef.current = null;
+                              setActiveTooltip((prev) =>
+                                prev === "price" ? null : prev
+                              );
                             }}
                             aria-label="Price information"
                             className="flex items-center justify-center p-0.5"
@@ -454,13 +536,6 @@ export const HitCard = ({
                             <InfoIcon />
                           </button>
 
-                          <div
-                            className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 pointer-events-none ${activeTooltip === "price" ? "opacity-100 visible" : "opacity-0 invisible"
-                              } group-hover:opacity-100 group-hover:visible`}
-                          >
-                            Price does not include taxes and licensing fees.
-                            <div className="absolute left-1/2 -translate-x-1/2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -493,7 +568,23 @@ export const HitCard = ({
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          setActiveTooltip((prev) => (prev === "payment" ? null : "payment"));
+                          if (hoveredTooltipRef.current === "payment") {
+                            showTooltip("payment", e.currentTarget);
+                          } else {
+                            toggleTooltip("payment", e.currentTarget);
+                          }
+                        }}
+                        onPointerEnter={(e) => {
+                          if (e.pointerType !== "mouse") return;
+                          hoveredTooltipRef.current = "payment";
+                          showTooltip("payment", e.currentTarget);
+                        }}
+                        onPointerLeave={(e) => {
+                          if (e.pointerType !== "mouse") return;
+                          hoveredTooltipRef.current = null;
+                          setActiveTooltip((prev) =>
+                            prev === "payment" ? null : prev
+                          );
                         }}
                         aria-label="Payment information"
                         className="flex items-center justify-center p-0.5"
@@ -501,13 +592,6 @@ export const HitCard = ({
                         <InfoIcon />
                       </button>
 
-                      <span
-                        className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[240px] max-w-[calc(100vw-32px)] bg-black text-white text-xs sm:text-sm leading-5 px-3 py-2.5 rounded-lg shadow-xl z-[9999] transition-opacity duration-150 pointer-events-none ${activeTooltip === "payment" ? "opacity-100 visible" : "opacity-0 invisible"
-                          } group-hover:opacity-100 group-hover:visible`}
-                      >
-                        Estimated bi-weekly payment. Taxes and licensing fees are not included.
-                        <span className="absolute left-1/2 -translate-x-1/2 bottom-[-5px] w-2.5 h-2.5 bg-black rotate-45" />
-                      </span>
                     </span>
                   </p>
 
@@ -566,6 +650,35 @@ export const HitCard = ({
           </div>
         )}
       </div>
+
+      {activeTooltip && tooltipPosition && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              role="tooltip"
+              className={`fixed z-[10000] w-[240px] max-w-[calc(100vw-32px)] rounded-lg bg-black px-3 py-2.5 text-xs leading-5 text-white shadow-xl sm:text-sm ${
+                tooltipPosition.placement === "above" ? "-translate-y-full" : ""
+              }`}
+              style={{
+                top: tooltipPosition.top,
+                left: tooltipPosition.left,
+              }}
+            >
+              {activeTooltip === "price"
+                ? "Price does not include taxes and licensing fees."
+                : "Estimated bi-weekly payment. Taxes and licensing fees are not included."}
+              <span
+                className="absolute h-2.5 w-2.5 rotate-45 bg-black"
+                style={{
+                  left: tooltipPosition.arrowLeft - 5,
+                  ...(tooltipPosition.placement === "above"
+                    ? { bottom: -5 }
+                    : { top: -5 }),
+                }}
+              />
+            </div>,
+            document.body
+          )
+        : null}
 
       {/* Availability Modal */}
       <MessageModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} vehicle={hit} />
