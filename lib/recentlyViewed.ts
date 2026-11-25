@@ -2,6 +2,7 @@
 
 import { useMemo, useSyncExternalStore } from "react";
 import type { HitCardHit } from "@/components/inventory/HitCard";
+import type { AppConfig } from "@/lib/appConfig";
 
 export const RECENTLY_VIEWED_STORAGE_KEY = "cardora_recently_viewed";
 export const MAX_RECENTLY_VIEWED_HOME = 4;
@@ -468,87 +469,73 @@ export function useRecentlyViewed() {
   };
 }
 
-let hasValidatedStatusInSession = false;
-
 /**
- * Validates the live status of stored recently viewed vehicles against Typesense.
- * If any previously viewed vehicle is now marked as sold or unavailable,
- * it is automatically pruned from localStorage.
+ * Fetches current inventory records for recently viewed IDs. Local vehicle data
+ * is only used to remember which inventory IDs to request, never as card data.
  */
-export async function validateRecentlyViewedStatus(appConfig?: any) {
-  if (typeof window === "undefined" || hasValidatedStatusInSession) return;
+export async function fetchRecentlyViewedInventory(
+  ids: string[],
+  appConfig: AppConfig
+): Promise<HitCardHit[]> {
+  if (ids.length === 0) return [];
 
-  try {
-    const rawItems = parseItems(readSnapshot());
-    if (rawItems.length === 0) return;
-
-    const ids = rawItems
-      .map((item) =>
-        String(
-          item.inventory_id ??
-            item.inventoryId ??
-            item.vehicle?.inventory_id ??
-            item.vehicle?.id ??
-            ""
-        ).trim()
-      )
-      .filter(Boolean);
-
-    if (ids.length === 0) return;
-
-    const host =
-      appConfig?.site?.typesense_host;
-    const port = Number(appConfig?.site?.typesense_port) || 443;
-    const protocol = appConfig?.site?.typesense_protocol || "https";
-    const collection =
-      appConfig?.site?.collection;
-    const searchKey = appConfig?.site?.inventory_search_only_key;
-
-    if (!searchKey || !collection || !host) return;
-
-    hasValidatedStatusInSession = true;
-
-    const filterIds = ids.slice(0, 50).join(",");
-    const url = `${protocol}://${host}:${port}/collections/${collection}/documents/search?q=*&filter_by=id:=[${filterIds}]&include_fields=id,inventory_id,status,sub_status,is_sold&per_page=50`;
-
-    const res = await fetch(url, {
-      headers: { "X-TYPESENSE-API-KEY": searchKey },
-    });
-
-    if (!res.ok) return;
-
-    const data = await res.json();
-    const hits: any[] = data.hits || [];
-
-    const statusMap = new Map<string, any>();
-    for (const hit of hits) {
-      const doc = hit.document;
-      if (doc) {
-        if (doc.id) statusMap.set(String(doc.id), doc);
-        if (doc.inventory_id) statusMap.set(String(doc.inventory_id), doc);
-      }
-    }
-
-    const current = parseItems(readSnapshot());
-    const valid = current.filter((item) => {
-      const id = String(
-        item.inventory_id ??
-          item.inventoryId ??
-          item.vehicle?.inventory_id ??
-          item.vehicle?.id ??
-          ""
-      ).trim();
-      const liveDoc = statusMap.get(id);
-      if (liveDoc && isSoldVehicle(liveDoc)) {
-        return false;
-      }
-      return true;
-    });
-
-    if (valid.length !== current.length) {
-      saveItems(valid);
-    }
-  } catch (err) {
-    // Silently continue if network check fails
+  const { typesense_host, typesense_port, typesense_protocol, collection, inventory_search_only_key } =
+    appConfig.site;
+  if (!inventory_search_only_key || !collection || !typesense_host) {
+    throw new Error("Missing Typesense configuration for recently viewed vehicles");
   }
+
+  const protocol = typesense_protocol || "https";
+  const port = Number(typesense_port) || 443;
+  const url = new URL(
+    `${protocol}://${typesense_host}:${port}/collections/${collection}/documents/search`
+  );
+  url.searchParams.set("q", "*");
+  url.searchParams.set("filter_by", `id:=[${ids.join(",")}]`);
+  url.searchParams.set("per_page", String(ids.length));
+
+  const response = await fetch(url.toString(), {
+    headers: { "X-TYPESENSE-API-KEY": inventory_search_only_key },
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch recently viewed inventory: ${response.status}`);
+  }
+
+  const data = (await response.json()) as {
+    hits?: Array<{ document?: HitCardHit }>;
+  };
+  const vehiclesById = new Map<string, HitCardHit>();
+  for (const hit of data.hits ?? []) {
+    const vehicle = hit.document;
+    if (!vehicle) continue;
+
+    const id = vehicle.inventory_id ?? vehicle.id;
+    if (id !== undefined && id !== null) {
+      vehiclesById.set(String(id), vehicle);
+    }
+    if (vehicle.inventory_id !== undefined && vehicle.inventory_id !== null) {
+      vehiclesById.set(String(vehicle.inventory_id), vehicle);
+    }
+  }
+
+  const currentVehicles = ids.flatMap((id) => {
+    const vehicle = vehiclesById.get(id);
+    return vehicle && !isSoldVehicle(vehicle) ? [vehicle] : [];
+  });
+  const requestedIds = new Set(ids);
+  const currentItems = parseItems(readSnapshot());
+  const syncedItems = currentItems.flatMap((item) => {
+    if (!requestedIds.has(item.inventoryId)) return [item];
+    const vehicle = vehiclesById.get(item.inventoryId);
+    return vehicle && !isSoldVehicle(vehicle)
+      ? [{ ...item, vehicle: extractHitCardData(vehicle, item.inventoryId) }]
+      : [];
+  });
+
+  if (JSON.stringify(syncedItems) !== JSON.stringify(currentItems)) {
+    saveItems(syncedItems);
+  }
+
+  return currentVehicles;
 }

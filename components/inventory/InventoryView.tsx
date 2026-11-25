@@ -822,7 +822,7 @@ const GroupedCurrentRefinements = () => {
   };
 
   return (
-    <div className="w-full flex flex-wrap gap-y-2 gap-x-2 pt-2">
+    <div className="w-full flex flex-wrap gap-y-2 gap-x-2 pt-1 pb-1">
       {orderedItems.map((category) => {
         const seenNorms = new Set<string>();
         const uniqueRefinements = category.refinements.filter((refinement) => {

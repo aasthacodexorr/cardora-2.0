@@ -1,13 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { HitCard } from "@/components/inventory";
-import {
-  useRecentlyViewed,
-  isSoldVehicle,
-  validateRecentlyViewedStatus,
-} from "@/lib/recentlyViewed";
+import { fetchRecentlyViewedInventory, useRecentlyViewed } from "@/lib/recentlyViewed";
 import { useAppConfig } from "@/app/providers";
 
 let hasClientHydrated = false;
@@ -19,21 +15,49 @@ export default function RecentlyViewedVehicles() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  const { recentlyViewedVehicles } = useRecentlyViewed();
+  const { recentlyViewed } = useRecentlyViewed();
+  const idsKey = JSON.stringify(recentlyViewed.map((item) => item.inventoryId));
+  const recentlyViewedIds = useMemo(
+    () => JSON.parse(idsKey) as string[],
+    [idsKey]
+  );
+  const [inventoryVehicles, setInventoryVehicles] = useState<
+    Awaited<ReturnType<typeof fetchRecentlyViewedInventory>>
+  >([]);
+  const [loadedIdsKey, setLoadedIdsKey] = useState<string | null>(null);
 
   useEffect(() => {
     hasClientHydrated = true;
     setIsMounted(true);
   }, []);
 
-  // Display all active (non-sold) recently viewed vehicles on the home page
-  const displayVehicles = recentlyViewedVehicles.filter((v) => !isSoldVehicle(v));
-
-  // Asynchronously validate live status against Typesense on mount
+  // Only render cards from the current inventory response, never the local snapshot.
   useEffect(() => {
-    if (!isMounted || displayVehicles.length === 0) return;
-    validateRecentlyViewedStatus(appConfig);
-  }, [isMounted, appConfig, displayVehicles.length]);
+    if (!isMounted) return;
+
+    let cancelled = false;
+    fetchRecentlyViewedInventory(recentlyViewedIds, appConfig)
+      .then((vehicles) => {
+        if (!cancelled) setInventoryVehicles(vehicles);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          setInventoryVehicles([]);
+          console.error("Failed to load recently viewed inventory:", error);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadedIdsKey(idsKey);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [appConfig, idsKey, isMounted, recentlyViewedIds]);
+
+  const isLoadingInventory =
+    isMounted && recentlyViewedIds.length > 0 && loadedIdsKey !== idsKey;
+  const displayVehicles = loadedIdsKey === idsKey ? inventoryVehicles : [];
 
   const checkScrollState = useCallback(() => {
     const el = carouselRef.current;
@@ -80,7 +104,7 @@ export default function RecentlyViewedVehicles() {
 
   // During SSR / initial load before mount, render a placeholder skeleton for returning visitors.
   // CSS will display it if html.is-returning-visitor, preventing CategoryPills from flashing above it.
-  if (!isMounted) {
+  if (!isMounted || isLoadingInventory) {
     return (
       <section className="recently-viewed-placeholder w-full bg-background mt-6 sm:mt-5 mb-6 sm:mb-5">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6">

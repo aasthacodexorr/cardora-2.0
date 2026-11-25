@@ -368,11 +368,11 @@ export default async function VehicleDetailsPage({
                 </div>
             </div>
 
-            <div className="w-full bg-black mb-18 md:mb-0">
+            {/* <div className="w-full bg-black mb-18 md:mb-0">
                 <div className="max-w-[1440px] xl:max-w-[1600px] 2xl:max-w-full  mx-auto w-full">
-                    {/* <Footer /> */}
+                    <Footer />
                 </div>
-            </div>
+            </div> */}
         </main>
     );
 }

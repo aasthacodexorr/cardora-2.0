@@ -115,17 +115,17 @@ export default function VDPRecentlyViewed({
           )}
         </div>
 
-        <div className="px-4 md:px-0">
+        <div className="px-0 w-full">
           <ul
             ref={carouselRef}
             aria-label="Recently viewed vehicles carousel"
-            className="flex snap-x snap-mandatory overflow-x-auto overflow-y-visible overscroll-x-contain scroll-smooth py-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
+            className="flex w-full gap-4 lg:gap-8 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth py-2 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
           >
             {otherVehicles.map((vehicle, index) => (
               <li
                 key={String(vehicle.inventory_id ?? vehicle.id ?? index)}
                 data-card-item
-                className="w-full shrink-0 snap-start px-2 md:w-1/2 md:px-3 lg:w-1/4"
+                className="shrink-0 w-full px-1 md:px-0 md:w-[calc(50%-8px)] lg:w-[calc((100%-64px)/3)]"
               >
                 <HitCard
                   hit={vehicle}
