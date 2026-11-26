@@ -8,7 +8,7 @@ import { CSS_VARIABLES } from "@/lib/colors";
 import { headers } from "next/headers";
 import { Footer, Header } from "@/components/layout";
 import { MainContent } from "@/components/layout/MainContent";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 
 export async function generateMetadata(): Promise<Metadata> {
   const appConfig = await getAppConfig();
@@ -102,6 +102,8 @@ fbq('track', 'PageView');`,
         </noscript>
         {/* End Meta Pixel Code */}
       </head>
+      {/* Cardora Google Tag Manager */}
+      <GoogleTagManager gtmId="GTM-NH98WPXG" />
       <body className="min-h-full flex flex-col">
         <Providers config={appConfig}>
           <Header />
